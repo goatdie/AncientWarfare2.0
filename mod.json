@@ -1,0 +1,12 @@
+{
+    "name": "Ancient Warfare 2",
+    "author": "GoatDie#4068",
+    "version": "1.0.3",
+    "description": "The overhaul of old Chun_Qiu(Ancient Warfare) with many new features",
+    "iconPath": "icon.png",
+    "Dependencies": [],
+    "OptionalDependencies": [
+        "一米_中文名"
+    ],
+    "IncompatibleWith": []
+}

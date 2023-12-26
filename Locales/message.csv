@@ -1,0 +1,12 @@
+key,cz,en,ch
+mandateofheavenMessage,$kingdom$天命降临——$king$,The Throne of $kingdom$ has a new owner $king$,$kingdom$的天子——$king$登基
+historicalMessage,特殊人物$ren$降临这个世界,The special figure $ren$ has arrived,歷史人物$ren$來到這個世界
+losemandateofheavenMessage,$kingdom$天命失去了——最后一个皇帝$king$,The Throne of $kingdom$ has been lost，$king$ is the last king,$kingdom$的天命不再——$king$是末代皇帝
+warmandateofheavenMessage,$kingdom2$向$kingdom$发动了一场天命争夺战争,$kingdom$ has been challenged，$kingdom2$ is taking its mandate of heaven away,$kingdom2$向$kingdom$发动了一场天命争夺战争
+losekingdommandateofheavenMessage,$kingdom$失去了天命,$kingdom$ has lost its place.,$kingdom$失去了天命
+joinanotherkingdomMessage,$kingdom2$发起了叛乱并加入了$kingdom$,$kingdom2$ rebelled and has joined $kingdom$,$kingdom2$发起了叛乱并加入了$kingdom$
+reclaimwarendMessage,$kingdom2$和$kingdom$之间的收复战争结束了赢家是$winner$,The reclaim war between $kingdom2$ and $kingdom$ has ended，the winner is $winner$,$kingdom2$和$kingdom$之间的收复战争结束了赢家是$winner$
+usurpationMessage,天命之子 $first$ 在$kingdom$篡位,The usurpation in $kingdom$ has ended，the usurper is $first$,天命之子 $first$ 在$kingdom$篡位
+vassalWarStartMessage,$first$ 在$kingdom2$开始了附庸战争,The Vassal War has started in $kingdom$，the instigator is $first$,$first$ 在$kingdom2$开始了附庸战争
+vassalWarEndMessage,$first$ 在$kingdom2$结束了附庸战争,The Vassal War has ended in $kingdom2$，the victor is $first$,$first$ 在$kingdom2$结束了附庸战争
+IndependenceWarMessage,$kingdom$ 宣布独立于 $kingdom2$!,$kingdom$ declares independence from $kingdom2$!,$kingdom$ 宣布独立于 $kingdom2$!

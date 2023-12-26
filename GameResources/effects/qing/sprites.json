@@ -1,0 +1,7 @@
+{
+  "Default": {
+    "PivotX": 0.65,
+    "PivotY": 0.2,
+	"PixelsPerUnit": 10.0
+  }
+}

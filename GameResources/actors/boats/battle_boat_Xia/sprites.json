@@ -1,0 +1,41 @@
+{
+    "Default": {
+        "PivotX": 0.4,
+        "PivotY": 0.17,
+        "RectX": 0,
+        "RectY": 0,
+        "PixelsPerUnit": 1
+    },
+    "Specific": [{
+        "Path": "90@0.png",
+        "PivotX": 0.27,
+        "PivotY": 0.17,
+        "RectX": 0,
+        "RectY": 0,
+        "PixelsPerUnit": 1
+    },
+    {
+        "Path": "90@1.png",
+        "PivotX": 0.27,
+        "PivotY": 0.17,
+        "RectX": 0,
+        "RectY": 0,
+        "PixelsPerUnit": 1
+    },
+    {
+        "Path": "-90@0.png",
+        "PivotX": 0.27,
+        "PivotY": 0.17,
+        "RectX": 0,
+        "RectY": 0,
+        "PixelsPerUnit": 1
+    },
+    {
+        "Path": "-90@1.png",
+        "PivotX": 0.27,
+        "PivotY": 0.17,
+        "RectX": 0,
+        "RectY": 0,
+        "PixelsPerUnit": 1
+    }]
+}
