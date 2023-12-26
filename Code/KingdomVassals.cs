@@ -22,10 +22,8 @@ namespace Figurebox//注意到的问题 附庸关系缺少结束年份 导致历
 {
     public class KingdomVassals : MonoBehaviour
     {
-        public static bool is_chinese = false;
         public static void init()
         {
-            is_chinese = LocalizedTextManager.instance.language == "cz" || LocalizedTextManager.instance.language == "ch";
         }
 
         // 设置Kingdom对象的id
@@ -1134,9 +1132,9 @@ namespace Figurebox//注意到的问题 附庸关系缺少结束年份 导致历
             }
 
             // Then, remove invalid cities from the list
-            cityList.RemoveAll(city => city == null || city.data == null || city.data.storage == null || city.getTile() == null || city.getPopulationTotal(true) == null);
+            cityList.RemoveAll(city => city == null || city.data == null || city.data.storage == null || city.getTile() == null || city.getPopulationTotal(true) == 0);
         }
-
+    /*
         [HarmonyPrefix]
         [HarmonyPatch(typeof(CityBehCheckCulture), "recalcMainCulture")]
         public static bool PrefixRecalcMainCulture(CityBehCheckCulture __instance, City pCity)
@@ -1272,5 +1270,6 @@ namespace Figurebox//注意到的问题 附庸关系缺少结束年份 导致历
 
             return true;  // If everything checks out, proceed with the original method
         }
+        */
     }
 }

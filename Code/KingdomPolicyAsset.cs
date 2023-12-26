@@ -8,28 +8,52 @@ delegate void ExecutePolicy(KingdomPolicyAsset policy, Kingdom kingdom, KingdomP
 
 class KingdomPolicyStateAsset : Asset
 {
-    public HashSet<KingdomPolicyAsset> all_optional_policies; // 所有可选政策
-    public string[] all_optional_policies_ids; // 所有可选政策id，保存时使用的格式，为了更容易实现和维护在不同的游戏存档
+    /// <summary>
+    /// 所有当前状态类型可选的政策
+    /// </summary>
+    public HashSet<string> all_optional_policies;
 }
 
 
 class KingdomPolicyAsset : Asset
 {
-    public HashSet<KingdomPolicyAsset> all_prepositions; // 所有前置政策
-    public string[] all_prepositions_ids; // 所有前置政策id，保存时使用的格式，为了更容易实现和维护在不同的游戏存档
-    public ExecutePolicy execute_policy; // 执行政策的相关逻辑行为
-    public int Progress = 100; //进度
+    /// <summary>
+    /// 所有前置政策
+    /// </summary>
+    public HashSet<string> all_prepositions;
+    /// <summary>
+    /// 所有分支政策
+    /// </summary>
+    public HashSet<string> branches;
+    /// <summary>
+    /// 执行政策的相关逻辑行为
+    /// </summary>
+    public ExecutePolicy execute_policy;
+    public int cost = 100; //进度 //进度我认为不应该放在这里， 应该单独起一个PolicyData的玩意，是应该作为每个国家独特的数据
+                                        // 在这里的应该是一个共同的信息, 可能更合适的是耗时之类的概念
     public string path_icon;
+    /// <summary>
+    /// 描述文本的key
+    /// </summary>
     public string description;
+    /// <summary>
+    /// 政策名称的key
+    /// </summary>
     public string policyname;
-    public HashSet<KingdomPolicyAsset> branches; //分支政策
+    public Kingdom special_kingdom; //给特定国家的特殊国策
 }
 
 
 class KingdomPolicyGraphAsset : Asset
 {
-    public HashSet<KingdomPolicyAsset> all_policies; // 所有政策
-    public HashSet<KingdomPolicyStateAsset> all_states; // 所有状态
+    /// <summary>
+    /// 所有政策
+    /// </summary>
+    public HashSet<KingdomPolicyAsset> all_policies;
+    /// <summary>
+    /// 所有状态
+    /// </summary>
+    public HashSet<KingdomPolicyStateAsset> all_states;
 }
 
 // 三个类继承自library

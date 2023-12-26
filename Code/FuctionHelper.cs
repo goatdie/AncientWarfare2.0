@@ -16,6 +16,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using System.ComponentModel;
 using System.Globalization;
+using NeoModLoader.General;
 
 namespace Figurebox
 {
@@ -32,7 +33,7 @@ namespace Figurebox
 
 
         public static int tianmingvalue = 0;
-        public static bool is_chinese = false;
+        public static bool is_chinese => LocalizedTextManager.instance.language == "cz" || LocalizedTextManager.instance.language == "ch";
         public static bool notdoingwellinwar = false;
 
         [HarmonyPostfix]
@@ -43,10 +44,10 @@ namespace Figurebox
             switch (pMessage.text)
             {
                 case "baseLog":
-                    __result = Localization.getLocalization(pMessage.text);
+                    __result = LM.Get(pMessage.text);
                     break;
                 case "historicalMessage":
-                    string text = Localization.getLocalization(pMessage.text);
+                    string text = LM.Get(pMessage.text);
                     if (pMessage.unit == null)
                     {
                         pMessage.icon = "iconDeathMark";
@@ -59,7 +60,7 @@ namespace Figurebox
                     __result = text;
                     break;
                 case "mandateofheavenMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     if (pMessage.unit == null)
                     {
                         pMessage.icon = "iconDead";
@@ -74,7 +75,7 @@ namespace Figurebox
                     __result = text;
                     break;
                 case "losemandateofheavenMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     if (pMessage.unit == null)
                     {
                         pMessage.icon = "iconDead";
@@ -89,20 +90,20 @@ namespace Figurebox
                     __result = text;
                     break;
                 case "warmandateofheavenMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$kingdom$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$kingdom2$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>" }));
                     pMessage.icon = "iconDocument";
                     __result = text;
                     break;
                 case "losekingdommandateofheavenMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$kingdom$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special1, "</color>" }));
                     pMessage.icon = "iconDocument";
                     __result = text;
                     break;
                 case "joinanotherkingdomMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
 
                     text = text.Replace("$kingdom$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$kingdom2$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>" }));
@@ -110,7 +111,7 @@ namespace Figurebox
                     __result = text;
                     break;
                 case "reclaimwarendMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$kingdom$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$kingdom2$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>" }));
                     text = text.Replace("$winner$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special3, true), ">", pMessage.special3, "</color>" }));
@@ -118,28 +119,28 @@ namespace Figurebox
                     __result = text;
                     break;
                 case "usurpationMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$kingdom$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$first$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special1, "</color>" }));
                     pMessage.icon = "iconDocument";
                     __result = text;
                     break;
                 case "vassalWarStartMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$first$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$kingdom2$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>" }));
                     pMessage.icon = "iconDocument"; // 修改为你想要的图标
                     __result = text;
                     break;
                 case "vassalWarEndMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$first$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$kingdom2$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>" }));
                     pMessage.icon = "iconDocument"; // 修改为你想要的图标
                     __result = text;
                     break;
                 case "IndependenceWarMessage":
-                    text = Localization.getLocalization(pMessage.text);
+                    text = LM.Get(pMessage.text);
                     text = text.Replace("$kingdom$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>" }));
                     text = text.Replace("$kingdom2$", string.Concat(new string[] { "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>" }));
                     pMessage.icon = "iconDocument";
@@ -165,75 +166,72 @@ namespace Figurebox
         [HarmonyPatch(typeof(Actor), "setProfession")]
         public static void setKing_Postfix(Actor __instance, UnitProfession pType)
         {
-            is_chinese = LocalizedTextManager.instance.language == "cz" || LocalizedTextManager.instance.language == "ch";
-            if (is_chinese)
+            if (!is_chinese) return;
+            string[] array1 = new string[] { "洪", "建", "永", "弘", "正", "景", "康", "嘉", "兴", "明", "平", "盛", "隆" };
+            string[] array2 = new string[] { "武", "文", "乐", "熙", "治", "德", "泰", "运", "阳", "靖", "乾", "庆" };
+            //var list2 = new List<string> { "", "", "" };
+
+
+            var result = GetRandomStrings(array1, array2);
+
+
+            if (pType == UnitProfession.King && !__instance.hasTrait("zhuhou"))
             {
-                string[] array1 = new string[] { "洪", "建", "永", "弘", "正", "景", "康", "嘉", "兴", "明", "平", "盛", "隆" };
-                string[] array2 = new string[] { "武", "文", "乐", "熙", "治", "德", "泰", "运", "阳", "靖", "乾", "庆" };
-                //var list2 = new List<string> { "", "", "" };
-
-
-                var result = GetRandomStrings(array1, array2);
-
-
-                if (pType == UnitProfession.King && !__instance.hasTrait("zhuhou"))
+                foreach (War war in World.world.wars.getWars(__instance.kingdom))
                 {
-                    foreach (War war in World.world.wars.getWars(__instance.kingdom))
+                    foreach (Kingdom defender in war.getDefenders())
                     {
-                        foreach (Kingdom defender in war.getDefenders())
+                        //Debug.Log("叛乱国家列:"+defender.data.name);
+                        if (defender == __instance.kingdom && war._asset == AssetManager.war_types_library.get("inspire"))
                         {
-                            //Debug.Log("叛乱国家列:"+defender.data.name);
-                            if (defender == __instance.kingdom && war._asset == AssetManager.war_types_library.get("inspire"))
-                            {
-                                //Debug.Log("inspire不执行setking");
-                                __instance.addTrait("rebel");
-                                return;
-                            }
-                            if (defender == __instance.kingdom && war._asset == AssetManager.war_types_library.get("rebellion"))
-                            {
-                                __instance.addTrait("rebel");
-                                //Debug.Log("rebel不执行setking");
-                                return;
-                            }
+                            //Debug.Log("inspire不执行setking");
+                            __instance.addTrait("rebel");
+                            return;
                         }
-                    }
-                    //给他反抗军特质完了反抗军特质执行一次setprofe然后同时删除反抗军特质
-                    __instance.addTrait("zhuhou");
-                    /* __instance.addTrait("guizu");
-                     __instance.removeTrait("noble");
-                     __instance.removeTrait("shibing");*/
-                    if (__instance != null && __instance.city != null && __instance.kingdom.capital != null)
-                    {
-                        __instance.city = __instance.kingdom.capital;
-                        string kingId = __instance.data.id;
-                        if (kingdomYearNameData.ContainsKey(kingId))
+                        if (defender == __instance.kingdom && war._asset == AssetManager.war_types_library.get("rebellion"))
                         {
-                            kingdomYearNameData[kingId] = result;
+                            __instance.addTrait("rebel");
+                            //Debug.Log("rebel不执行setking");
+                            return;
                         }
-                        else
-                        {
-                            kingdomYearNameData.Add(kingId, result);
-                        }
-
-                        // Use result from the kingdomYearNameData dictionary
-                        string yearName = kingdomYearNameData[kingId];
-                        int dashIndex = __instance.kingdom.data.name.IndexOf("-");
-                        if (dashIndex >= 0)
-                        {
-                            __instance.kingdom.data.name = __instance.kingdom.data.name.Substring(0, dashIndex);
-                        }
-
-                        __instance.kingdom.data.name = __instance.kingdom.data.name + "-" + yearName + "元年";
                     }
                 }
+                //给他反抗军特质完了反抗军特质执行一次setprofe然后同时删除反抗军特质
+                __instance.addTrait("zhuhou");
+                /* __instance.addTrait("guizu");
+                 __instance.removeTrait("noble");
+                 __instance.removeTrait("shibing");*/
+                if (__instance != null && __instance.city != null && __instance.kingdom.capital != null)
+                {
+                    __instance.city = __instance.kingdom.capital;
+                    string kingId = __instance.data.id;
+                    if (kingdomYearNameData.ContainsKey(kingId))
+                    {
+                        kingdomYearNameData[kingId] = result;
+                    }
+                    else
+                    {
+                        kingdomYearNameData.Add(kingId, result);
+                    }
 
-                /*if (pType == UnitProfession.Unit)
-               {
-                   __instance.removeTrait("zhuhou");
+                    // Use result from the kingdomYearNameData dictionary
+                    string yearName = kingdomYearNameData[kingId];
+                    int dashIndex = __instance.kingdom.data.name.IndexOf("-");
+                    if (dashIndex >= 0)
+                    {
+                        __instance.kingdom.data.name = __instance.kingdom.data.name.Substring(0, dashIndex);
+                    }
 
-               }*/
-
+                    __instance.kingdom.data.name = __instance.kingdom.data.name + "-" + yearName + "元年";
+                }
             }
+
+            /*if (pType == UnitProfession.Unit)
+           {
+               __instance.removeTrait("zhuhou");
+
+           }*/
+
         }
 
         static List<Actor> kingsThatHaveLogged = new List<Actor>();
@@ -325,7 +323,6 @@ namespace Figurebox
                 // 向字典中添加新的数据
                 kingYearData.Add(kingId, 1); // 添加 year 数据并将其设置为 1
             }
-            is_chinese = LocalizedTextManager.instance.language == "cz" || LocalizedTextManager.instance.language == "ch";
             if (is_chinese)
             {
                 if (prevCurrentYear != currentYear && __instance.king.hasTrait("zhuhou") && __instance.data.name.Length >= 6)
@@ -585,7 +582,7 @@ namespace Figurebox
                     City newCapital = __instance.kingdom.cities
                         .Select(city =>
                         {
-                            double score = (city.data.age - __instance.kingdom.capital.data.age) * 1 +
+                            double score = (city.getAge() - __instance.kingdom.capital.getAge()) * 1 +
                                            (city.getPopulationTotal() - __instance.kingdom.capital.getPopulationTotal()) * 2 +
                                            (city.zones.Count - __instance.kingdom.capital.zones.Count) * 0.35 +
                                            (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);

@@ -31,12 +31,6 @@ namespace Figurebox
   [ModEntry]
   class Main : MonoBehaviour
   {
-
-    private static bool tabInitialized = false;
-    private static bool tabsHidden = false;
-
-    public Dictionary<int, ActorData> actorToData = new Dictionary<int, ActorData>();
-    public Dictionary<int, BaseStats> actorToCurStats = new Dictionary<int, BaseStats>();
     #region
     public static Main instance;
     public FunctionHelper functionHelper = new FunctionHelper();
@@ -47,15 +41,13 @@ namespace Figurebox
     public MoreKingdoms moreKingdoms = new MoreKingdoms();
     public Traits Traits = new Traits();
     #endregion
-    internal static Harmony harmony;
     public static GameObject backgroundAvatar;
     public static GameObject citybg;
     public MoreBuildings moreBuildings = new MoreBuildings();
     public BuildingLibrary buildingLibrary = new BuildingLibrary();
     public List<string> addRaces = new List<string>(){
             "Xia"
-            };
-    public List<string> addActors = new List<string>();
+    };
     // public const string mainPath = "worldbox_Data/StreamingAssets/Mods/NCMS/Core/Temp/Mods/AncientWarfare2.0";
     public static string mainPath => Mod.Info.Path; // 这种方式更鲁棒, 可以适配不同的模组文件夹位置
 
@@ -63,24 +55,21 @@ namespace Figurebox
 
     void Start()
     {
-      Dictionary<string, ScrollWindow> allWindows = (Dictionary<string, ScrollWindow>)Reflection.GetField(typeof(ScrollWindow), null, "allWindows");
-      Reflection.CallStaticMethod(typeof(ScrollWindow), "checkWindowExist", "inspect_unit");
+      Dictionary<string, ScrollWindow> allWindows = ScrollWindow.allWindows;
+      ScrollWindow.checkWindowExist("inspect_unit");
       allWindows["inspect_unit"].gameObject.SetActive(false);
-      Reflection.CallStaticMethod(typeof(ScrollWindow), "checkWindowExist", "village");
+      ScrollWindow.checkWindowExist("village");
       allWindows["village"].gameObject.SetActive(false);
-      Reflection.CallStaticMethod(typeof(ScrollWindow), "checkWindowExist", "kingdom");
+      ScrollWindow.checkWindowExist("kingdom");
       allWindows["kingdom"].gameObject.SetActive(false);
       backgroundAvatar = GameObject.Find($"Canvas Container Main/Canvas - Windows/windows/inspect_unit/Background/Scroll View/Viewport/Content/Part 1/BackgroundAvatar");
       CityHistoryWindow.init();
       KingdomHistoryWindow.init();
       KingdomPolicyWindow.init();
       NameGeneratorAssets.init();
-      Reflection.CallStaticMethod(typeof(BannerGenerator), "loadTexturesFromResources", "Xia");
+      BannerGenerator.loadTexturesFromResources("Xia");
 
       patchHarmony();
-
-
-
     }
 
     void Awake()
@@ -88,14 +77,15 @@ namespace Figurebox
       LM.LoadLocales(Path.Combine(mainPath, "Locales/lang.csv"));
       LM.LoadLocales(Path.Combine(mainPath, "Locales/message.csv"));
       LM.LoadLocales(Path.Combine(mainPath, "Locales/trait.csv"));
+      LM.LoadLocales(Path.Combine(mainPath, "Locales/others.csv"));
       LM.AddToCurrentLocale("","");
 #if 一米_中文名
       MonoBehaviour.print("词库加载!" + mainPath + "/name_generators/Xia");
       CN_NameGeneratorLibrary.SubmitDirectoryToLoad(mainPath + "/name_generators/Xia");
       WordLibraryManager.SubmitDirectoryToLoad(mainPath + "/name_generators/lib");
       NameGeneratorInitialzier.init();
-      Localization.AddOrSet("familyname", "姓");
-      Localization.AddOrSet("clanname", "氏");
+      LM.AddToCurrentLocale("familyname", "姓");
+      LM.AddToCurrentLocale("clanname", "氏");
 #endif
       LM.ApplyLocale();//之前是只加载了, 忘记应用了
       Traits.init();

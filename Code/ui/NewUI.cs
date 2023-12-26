@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using NCMS;
 using NCMS.Utils;
+using NeoModLoader.General;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;

@@ -201,10 +201,11 @@ namespace Figurebox
 
         public static bool tianmingP(BaseSimObject pTarget, WorldTile pTile = null)
         {
-            Actor a = Reflection.GetField(pTarget.GetType(), pTarget, "a") as Actor;
+            if (pTarget == null || pTarget.a == null || !pTarget.isAlive()) return false;
+            Actor a = pTarget.a;
             int tianmingCtr = 0;
             Race race = AssetManager.raceLibrary.get(a.asset.race);
-            ActorContainer actorContainer = (ActorContainer)Reflection.GetField(typeof(Race), race, "units");
+            ActorContainer actorContainer = race.units;
             var Units = actorContainer.getSimpleList();
             bool tianmingBoolValue;
             a.kingdom.data.get("tianmingbool", out tianmingBoolValue);
