@@ -189,7 +189,7 @@ namespace Figurebox
             {
                 textButton.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta += new Vector2(0, 10);
             }
-            textButton.gameObject.GetComponent<RectTransform>().sizeDelta += size;
+            textButton.gameObject.GetComponent<RectTransform>().sizeDelta = size;
         }
 
         public static void createTab(string buttonID, string tabID, string name, string desc, int xPos)
