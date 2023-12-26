@@ -87,7 +87,7 @@ namespace Figurebox
             first.base_stats[S.diplomacy] += 15;
             first.base_stats[S.warfare] += 14;
             first.base_stats[S.intelligence] += 14;
-            add_and_unlock_trait.add(first);
+            add_and_unlock_trait(first);
             ActorTrait formerking = new ActorTrait
             {
                 id = "formerking",

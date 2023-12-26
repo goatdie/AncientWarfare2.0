@@ -30,7 +30,7 @@ namespace Figurebox
         private static bool UIReadyToLoad = false;
         private static bool Loading = false;
         public static Kingdom currentKingdom;
-        private static Button KingdomPolicyWindowEntry
+        private static Button KingdomPolicyWindowEntry;
         private static GameObject kingdomAndKingTextObject;
 
         // 1层封装
