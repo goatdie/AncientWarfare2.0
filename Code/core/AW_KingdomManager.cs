@@ -1,0 +1,50 @@
+using System.Collections.Generic;
+
+namespace Figurebox.core;
+
+public class AW_KingdomManager : KingdomManager
+{
+    public AW_KingdomManager(List<KingdomAsset> pKingdomAssetsToCreatedAsHidden)
+    {
+        foreach (KingdomAsset item in pKingdomAssetsToCreatedAsHidden)
+        {
+            newHiddenKingdom(item);
+        }
+    }
+
+    internal static void init()
+    {
+        List<KingdomAsset> kingdom_assets_to_created_as_hidden = new();
+        foreach (var hidden_kingdom in World.world.kingdoms.list_hidden)
+        {
+            kingdom_assets_to_created_as_hidden.Add(hidden_kingdom.asset);
+        }
+
+        World.world.kingdoms.clear();
+        World.world.kingdoms = new AW_KingdomManager(kingdom_assets_to_created_as_hidden);
+        World.world.list_base_managers[World.world.list_base_managers.FindIndex(x => x is KingdomManager)] =
+            World.world.kingdoms;
+    }
+
+    public override Kingdom loadObject(KingdomData pData)
+    {
+        AW_Kingdom val = new();
+        val.setHash(_latest_hash++);
+        val.loadData(pData);
+        addObject(val);
+        return val;
+    }
+
+    public override Kingdom newObject(string pSpecialID = null)
+    {
+        AW_Kingdom new_kingdom = new();
+        new_kingdom.setHash(_latest_hash++);
+        KingdomData tdata = new();
+        tdata.id = string.IsNullOrEmpty(pSpecialID) ? World.world.mapStats.getNextId(type_id) : pSpecialID;
+        tdata.created_time = World.world.getCreationTime();
+        new_kingdom.data = tdata;
+
+        addObject(new_kingdom);
+        return new_kingdom;
+    }
+}
