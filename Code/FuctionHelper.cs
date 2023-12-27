@@ -168,7 +168,7 @@ namespace Figurebox
         {
             if (!is_chinese) return;
             string[] array1 = new string[] { "洪", "建", "永", "弘", "正", "景", "康", "嘉", "兴", "明", "平", "盛", "隆" };
-            string[] array2 = new string[] { "武", "文", "乐", "熙", "治", "德", "泰", "运", "阳", "靖", "乾", "庆" };
+            string[] array2 = new string[] { "武", "文", "乐", "熙", "治", "德", "泰", "运", "阳", "靖", "统", "乾", "庆" };
             //var list2 = new List<string> { "", "", "" };
 
 

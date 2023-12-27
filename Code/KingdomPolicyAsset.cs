@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using NeoModLoader.General;
+using UnityEngine;
 
 namespace Figurebox;
 
