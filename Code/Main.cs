@@ -1,28 +1,13 @@
-using System;
-using NeoModLoader.api;
-using NeoModLoader.api.attributes;
+using System.Collections.Generic;
+using System.IO;
+using Figurebox.core;
+using Figurebox.UI.Patches;
+using HarmonyLib;
 using NCMS;
-using NCMS.Utils;
+using NeoModLoader.api;
 using NeoModLoader.General;
 using NeoModLoader.services;
 using UnityEngine;
-using ReflectionUtility;
-using HarmonyLib;
-using Figurebox;
-using Figurebox.core;
-using Figurebox.UI.Patches;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Config;
-using System.Reflection;
-using UnityEngine.Tilemaps;
-using System.IO;
-using Figurebox.Utils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 #if 一米_中文名
 using Chinese_Name;
 #endif
@@ -61,6 +46,8 @@ namespace Figurebox
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             Traits.init();
             AW_KingdomManager.init();
+            KingdomPolicyLibrary.Instance.init();
+            KingdomPolicyStateLibrary.Instance.init();
             //loadBanners("Xia");
             // NewUI.init();
             NameGeneratorAssets.init();
@@ -125,6 +112,23 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(KingdomVassals));
             Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
             print("Create and patch all:CTraits");
+        }
+
+        public static void LogWarning(string pMessage, bool pShowStackTrace = false)
+        {
+            LogService.LogWarning($"[AW2.0]: {pMessage}");
+            if (pShowStackTrace)
+            {
+                LogService.LogStackTraceAsWarning();
+            }
+        }
+        public static void LogInfo(string pMessage, bool pShowStackTrace = false)
+        {
+            LogService.LogInfo($"[AW2.0]: {pMessage}");
+            if (pShowStackTrace)
+            {
+                LogService.LogStackTraceAsInfo();
+            }
         }
 
         #region

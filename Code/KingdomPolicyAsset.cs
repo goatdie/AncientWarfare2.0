@@ -1,24 +1,23 @@
-using System;
 using System.Collections.Generic;
-using NeoModLoader.General;
-using UnityEngine;
-
+using Figurebox.core;
 namespace Figurebox;
 
+public delegate void ExecutePolicy(KingdomPolicyAsset policy, AW_Kingdom kingdom, KingdomPolicyData policy_data, KingdomPolicyStateAsset state);
+public delegate KingdomPolicyAsset FindPolicy(AW_Kingdom kingdom, KingdomPolicyData policy_data, KingdomPolicyStateAsset state);
 
-
-delegate void ExecutePolicy(KingdomPolicyAsset policy, Kingdom kingdom, KingdomPolicyStateAsset state);
-
-class KingdomPolicyStateAsset : Asset
+public class KingdomPolicyStateAsset : Asset
 {
     /// <summary>
     /// 所有当前状态类型可选的政策
     /// </summary>
     public HashSet<string> all_optional_policies;
+    /// <summary>
+    ///     查找下一个政策的方法
+    /// </summary>
+    public FindPolicy policy_finder;
 }
 
-
-class KingdomPolicyAsset : Asset
+public class KingdomPolicyAsset : Asset
 {
     /// <summary>
     /// 所有前置政策
@@ -29,16 +28,23 @@ class KingdomPolicyAsset : Asset
     /// </summary>
     public HashSet<string> branches;
     /// <summary>
-    /// 执行政策的相关逻辑行为
+    ///     在计划阶段的花费时间
     /// </summary>
-    public ExecutePolicy execute_policy;
-    public int cost = 100; //进度 //进度我认为不应该放在这里， 应该单独起一个PolicyData的玩意，是应该作为每个国家独特的数据
-                                        // 在这里的应该是一个共同的信息, 可能更合适的是耗时之类的概念
-    public string path_icon;
+    public int cost_in_plan = 100;
+    /// <summary>
+    ///     在执行阶段的花费时间
+    /// </summary>
+    public int cost_in_progress = 100;
     /// <summary>
     /// 描述文本的key
     /// </summary>
     public string description;
+    /// <summary>
+    /// 执行政策的相关逻辑行为
+    /// </summary>
+    public ExecutePolicy execute_policy;
+
+    public string path_icon;
     /// <summary>
     /// 政策名称的key
     /// </summary>
@@ -46,8 +52,7 @@ class KingdomPolicyAsset : Asset
     public Kingdom special_kingdom; //给特定国家的特殊国策
 }
 
-
-class KingdomPolicyGraphAsset : Asset
+public class KingdomPolicyGraphAsset : Asset
 {
     /// <summary>
     /// 所有政策

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-
 namespace Figurebox.core;
 
 public class AW_KingdomManager : KingdomManager
@@ -13,6 +12,18 @@ public class AW_KingdomManager : KingdomManager
         foreach (KingdomAsset item in pKingdomAssetsToCreatedAsHidden)
         {
             newHiddenKingdom(item);
+        }
+    }
+
+    public override void update(float pElapsed)
+    {
+        base.update(pElapsed);
+
+        if (World.world.isPaused()) return;
+
+        foreach (var civ_kingdom in list_civs)
+        {
+            ((AW_Kingdom)civ_kingdom).UpdateForPolicy(pElapsed);
         }
     }
 

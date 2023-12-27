@@ -1,12 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-
 namespace Figurebox;
+
 class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
 {
+    public static KingdomPolicyLibrary Instance { get; } = new();
     // 这里可以根据需要添加特定于 KingdomPolicyAsset 的方法
-
+    public override void init()
+    {
+        base.init();
+        add(new KingdomPolicyAsset
+        {
+            id = "hello_world"
+        }).execute_policy = (pPolicy, pKingdom, pPolicyData, pState) => //这个玩意也可以独立在外边写
+        {
+            Main.LogInfo($"{(pKingdom.king == null ? "no king" : pKingdom.king.getName())}: Hello World! 当前政策id: {pPolicyData.current_policy_id}, 当前政策状态: {pPolicyData.p_status}, 当前政策剩余进度: {pPolicyData.p_progress}, 当前政治状态id: {pState.id}");
+        };
+    }
     // 例如，执行所有政策的方法
     public void ExecuteAllPolicies(Kingdom kingdom, KingdomPolicyStateAsset state)
     {
