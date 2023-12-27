@@ -1,26 +1,14 @@
-using UnityEngine;
-using HarmonyLib;
-using ReflectionUtility;
-using Figurebox.Utils;
-using NCMS.Utils;
-using ai;
-using System.Collections.Generic;
-using UnityEngine.UI;
 using System;
-using System.Reflection;
-using Figurebox;
+using System.Collections.Generic;
 using System.Linq;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
-using System.ComponentModel;
-using System.Globalization;
+using Figurebox.Utils;
+using HarmonyLib;
 using NeoModLoader.General;
-
+using UnityEngine;
+using Random = System.Random;
 namespace Figurebox
 {
-    class FunctionHelper           //失去天命后首都周围地减低轻微忠诚度，飞地直接独立或者加入其他国家 天命减少 国王的氏族绝嗣,（没有开国之君特质) 收复战争得先判断双方实力
+    class FunctionHelper //失去天命后首都周围地减低轻微忠诚度，飞地直接独立或者加入其他国家 天命减少 国王的氏族绝嗣,（没有开国之君特质) 收复战争得先判断双方实力
     {
         public static FunctionHelper instance;
         public static Dictionary<string, int> kingYearData = new Dictionary<string, int>();
@@ -33,8 +21,40 @@ namespace Figurebox
 
 
         public static int tianmingvalue = 0;
-        public static bool is_chinese => LocalizedTextManager.instance.language == "cz" || LocalizedTextManager.instance.language == "ch";
         public static bool notdoingwellinwar = false;
+
+        static List<Actor> kingsThatHaveLogged = new List<Actor>();
+
+
+
+        // ...
+
+
+
+        private static Dictionary<War, City> storedCapitals = new Dictionary<War, City>();
+        private static Dictionary<War, int> initialCityCounts = new Dictionary<War, int>();
+        // 创建一个Dictionary用于保存War Id和Name
+        public static Dictionary<string, string> warIdNameDict = new Dictionary<string, string>();
+        public static Dictionary<string, double> WarStartDate = new Dictionary<string, double>();
+        public static Dictionary<string, List<string>> Attackers = new Dictionary<string, List<string>>();
+        public static Dictionary<string, List<string>> Defenders = new Dictionary<string, List<string>>();
+        public static Dictionary<string, int> WarEndDate = new Dictionary<string, int>();
+        public static Dictionary<string, double> WarEndDateFloat = new Dictionary<string, double>();
+
+
+        private static Dictionary<War, List<City>> storedCities = new Dictionary<War, List<City>>();
+        public static Dictionary<War, List<City>> storedDefenderCities = new Dictionary<War, List<City>>();
+
+        public static Dictionary<string, string> kingdomCityData = new Dictionary<string, string>();
+        public static Dictionary<string, string> kingdomCityNameyData = new Dictionary<string, string>();
+        public static Dictionary<string, Dictionary<string, Tuple<int, int, int>>> CityYearData = new Dictionary<string, Dictionary<string, Tuple<int, int, int>>>();
+        public static Dictionary<string, int> KingStartYearInKingdom = new Dictionary<string, int>();
+        public static Dictionary<string, List<string>> KingKingdomName = new Dictionary<string, List<string>>();
+        public static Dictionary<string, string> KingName = new Dictionary<string, string>();
+        public static Dictionary<string, List<string>> KingKingdoms = new Dictionary<string, List<string>>();
+        public static List<string> kingdomids = new List<string>();
+        public static Dictionary<string, int> KingEndYearInKingdom = new Dictionary<string, int>();
+        public static bool is_chinese => LocalizedTextManager.instance.language == "cz" || LocalizedTextManager.instance.language == "ch";
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(WorldLogMessageExtensions), "getFormatedText")]
@@ -233,8 +253,6 @@ namespace Figurebox
            }*/
 
         }
-
-        static List<Actor> kingsThatHaveLogged = new List<Actor>();
         //static int Actionlib.year = 1;
 
         [HarmonyPostfix]
@@ -254,30 +272,17 @@ namespace Figurebox
                 int yeardata = World.world.mapStats.getCurrentYear();
 
                 // 检查字典中是否已经存在这个kingName
-                if (!TmkingData.ContainsKey(kingName))
-                {
-                    TmkingData.Add(kingName, kingdomName);
-                }
-                else
-                {
-                    // 如果字典中已存在此kingName，则更新kingdomName的值
-                    TmkingData[kingName] = kingdomName;
-                }
+                // 如果字典中已存在此kingName，则更新kingdomName的值
+                TmkingData[kingName] = kingdomName;
                 if (!YearData.ContainsKey(kingName))
                 {
                     YearData.Add(kingName, yeardata);
-                }
-                else
-                {
-                    // 如果字典中已存在此kingName，则不更新 yeardata的值
-                    //YearData[kingName] = kingdomName;
                 }
             }
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Kingdom), "updateAge")]
-
         public static void setKing_Postfix(Kingdom __instance)
         {
             if (__instance.king != null && __instance.king.hasTrait("immortal")) { __instance.king.removeTrait("immortal"); }
@@ -315,8 +320,8 @@ namespace Figurebox
 
             if (kingYearData.ContainsKey(kingId))
             {
-                kingYearData[kingId]++;                                    // 如果字典中已经包含了当前 king 的数据，则更新它
-                                                                           // 更新 year 数据
+                kingYearData[kingId]++; // 如果字典中已经包含了当前 king 的数据，则更新它
+                // 更新 year 数据
             }
             else
             {
@@ -326,10 +331,10 @@ namespace Figurebox
             if (is_chinese)
             {
                 if (prevCurrentYear != currentYear && __instance.king.hasTrait("zhuhou") && __instance.data.name.Length >= 6)
-                {//prevCurrentYear =currentYear;
-                 // Debug.Log("年"+ kingYearData[kingId]);
-                 // 更新特定 kingId 的 year 数据
-                 //kingYearData[kingId]++;
+                { //prevCurrentYear =currentYear;
+                    // Debug.Log("年"+ kingYearData[kingId]);
+                    // 更新特定 kingId 的 year 数据
+                    //kingYearData[kingId]++;
 
                     int hyphenIndex = __instance.data.name.LastIndexOf('-');
                     if (hyphenIndex >= 0)
@@ -346,7 +351,7 @@ namespace Figurebox
                 if(lastChar == "元年"&& __instance.king != null){
                     return;
                 }
-                       __instance.data.name = __instance.data.name.Remove(__instance.data.name.Length - 2)+"元年";   
+                       __instance.data.name = __instance.data.name.Remove(__instance.data.name.Length - 2)+"元年";
 
 
 
@@ -607,7 +612,6 @@ namespace Figurebox
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Kingdom), "updateAge")]
-
         public static void CheckTianmingstatus_Postfix(Kingdom __instance)
         {
             if (__instance.king == null) { return; }
@@ -644,15 +648,6 @@ namespace Figurebox
                 }
             }
         }
-
-
-
-        // ...
-
-
-
-        private static Dictionary<War, City> storedCapitals = new Dictionary<War, City>();
-        private static Dictionary<War, int> initialCityCounts = new Dictionary<War, int>();
 
 
         [HarmonyPostfix]
@@ -750,10 +745,10 @@ namespace Figurebox
                 }
 
                 if (war._asset != AssetManager.war_types_library.get("spite") &&
-                war.main_defender.king != null &&
-                war.main_defender.king.hasTrait("天命") &&
-                (war._asset == AssetManager.war_types_library.get("normal") || war._asset == AssetManager.war_types_library.get("vassal_war") ||
-               war._asset == AssetManager.war_types_library.get("whisper_of_war")))
+                    war.main_defender.king != null &&
+                    war.main_defender.king.hasTrait("天命") &&
+                    (war._asset == AssetManager.war_types_library.get("normal") || war._asset == AssetManager.war_types_library.get("vassal_war") ||
+                     war._asset == AssetManager.war_types_library.get("whisper_of_war")))
                 {
                     war._asset = AssetManager.war_types_library.get("tianming");
 
@@ -886,13 +881,6 @@ namespace Figurebox
 
 
         }
-        // 创建一个Dictionary用于保存War Id和Name
-        public static Dictionary<string, string> warIdNameDict = new Dictionary<string, string>();
-        public static Dictionary<string, double> WarStartDate = new Dictionary<string, double>();
-        public static Dictionary<string, List<string>> Attackers = new Dictionary<string, List<string>>();
-        public static Dictionary<string, List<string>> Defenders = new Dictionary<string, List<string>>();
-        public static Dictionary<string, int> WarEndDate = new Dictionary<string, int>();
-        public static Dictionary<string, double> WarEndDateFloat = new Dictionary<string, double>();
 
 
         [HarmonyPostfix]
@@ -1019,10 +1007,6 @@ namespace Figurebox
                 }
             }
         }
-
-
-        private static Dictionary<War, List<City>> storedCities = new Dictionary<War, List<City>>();
-        public static Dictionary<War, List<City>> storedDefenderCities = new Dictionary<War, List<City>>();
         //下次做个移交友军领土的
         [HarmonyPostfix]
         [HarmonyPatch(typeof(WarManager), "update")]
@@ -1253,21 +1237,6 @@ namespace Figurebox
             return true;
         }
 
-
-
-
-
-
-
-        public static Dictionary<string, string> kingdomCityData = new Dictionary<string, string>();
-        public static Dictionary<string, string> kingdomCityNameyData = new Dictionary<string, string>();
-        public static Dictionary<string, Dictionary<string, Tuple<int, int, int>>> CityYearData = new Dictionary<string, Dictionary<string, Tuple<int, int, int>>>();
-        public static Dictionary<string, int> KingStartYearInKingdom = new Dictionary<string, int>();
-        public static Dictionary<string, List<string>> KingKingdomName = new Dictionary<string, List<string>>();
-        public static Dictionary<string, string> KingName = new Dictionary<string, string>();
-        public static Dictionary<string, List<string>> KingKingdoms = new Dictionary<string, List<string>>();
-        public static List<string> kingdomids = new List<string>();
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Actor), "setProfession")]
         public static void setKinghistory_Postfix(Actor __instance, UnitProfession pType)
@@ -1312,8 +1281,8 @@ namespace Figurebox
                 KingKingdomName[__instance.data.id].Add(kingdomname);
                 if (kingYearData.ContainsKey(__instance.data.id))
                 {
-                    kingYearData[__instance.data.id]++;                                    // 如果字典中已经包含了当前 king 的数据，则更新它
-                                                                                           // 更新 year 数据
+                    kingYearData[__instance.data.id]++; // 如果字典中已经包含了当前 king 的数据，则更新它
+                    // 更新 year 数据
                 }
                 else
                 {
@@ -1327,7 +1296,6 @@ namespace Figurebox
                 }
             }
         }
-        public static Dictionary<string, int> KingEndYearInKingdom = new Dictionary<string, int>();
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Actor), "killHimself")]
@@ -1358,7 +1326,6 @@ namespace Figurebox
             return true;
         }
 
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Kingdom), "removeUnit")]
         public static bool getkingleft1_prefix(Actor pUnit, Kingdom __instance)
@@ -1388,8 +1355,6 @@ namespace Figurebox
             return true;
         }
 
-
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(City), "update")]
         public static void CityAgePostfix(City __instance)
@@ -1411,9 +1376,9 @@ namespace Figurebox
                 if (!CityYearData.ContainsKey(cityId))
                 {
                     CityYearData[cityId] = new Dictionary<string, Tuple<int, int, int>>
-            {
-                { combinedKey, new Tuple<int, int, int>(recaptureCount, yeardata, 0) }
-            };
+                    {
+                        { combinedKey, new Tuple<int, int, int>(recaptureCount, yeardata, 0) }
+                    };
                 }
             }
             else if (kingdomCityData[cityId] != kingdomId)
@@ -1444,31 +1409,6 @@ namespace Figurebox
             }
         }
 
-
-
-
-
-
-
-
-
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(CityWindow), "OnEnable")]
-        public static bool cityOnEnable_Prefix(CityWindow __instance)
-        {
-            CityHistoryWindow.currentCity = __instance.city;
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(KingdomWindow), "OnEnable")]
-        public static bool KingdomOnEnable_Prefix(KingdomWindow __instance)
-        {
-            KingdomHistoryWindow.currentKingdom = __instance.kingdom;
-            return true;
-        }
-
-
         public static int CalculateKingdomValue(Kingdom k)
         {
             int populationTotal = k.getPopulationTotal();
@@ -1484,170 +1424,9 @@ namespace Figurebox
             return populationTotal + cityCount + armySize + stewardship;
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(SaveManager), "saveToCurrentPath")]
-        public static void SaveMapDataPostfix()
-        {
-            Debug.Log("保存自定义数据");
-            string savePath = SaveManager.currentSavePath;
-            string customDataPath = Path.Combine(savePath, "customData.json");
-            string warDataSavePath = Path.Combine(savePath, "WarDataSave.json");
-
-
-            CustomData customData = new CustomData()
-            {
-                DkingYearData = kingYearData,
-                DYearData = YearData,
-                DTmkingData = TmkingData,
-                Dtianmingvalue = tianmingvalue,
-                DkingdomYearNameData = kingdomYearNameData,
-                DkingdomCityData = kingdomCityData,
-                DkingdomCityNameyData = kingdomCityNameyData,
-                DCityYearData = CityYearData,
-                DKingStartYearInKingdom = KingStartYearInKingdom,
-                DKingName = KingName,
-                DKingKingdomName = KingKingdomName,
-                DKingKingdoms = KingKingdoms,
-                Dkingdomids = kingdomids,
-                DKingEndYearInKingdom = KingEndYearInKingdom,
-                DkingdomVassalEstablishmentTime = kingdomVassalEstablishmentTime,
-                DkingdomVassalEndTime = kingdomVassalEndTime
-
-
-
-            };
-            WarDataSave warDataSave = new WarDataSave
-            {
-                DwarIdNameDict = warIdNameDict,
-                DWarStartDate = WarStartDate,// 将 war 的开始日期数据赋值到 WarStartDate，
-                DAttackers = Attackers,// 将攻击者数据赋值到 Attackers，
-                DDefenders = Defenders,
-                DWarEndDate = WarEndDate,
-                DWarEndDateFloat = WarEndDateFloat
-
-            };
-            File.WriteAllText(warDataSavePath, JsonConvert.SerializeObject(warDataSave, Formatting.Indented));
-
-
-
-            //settings.StringEscapeHandling = StringEscapeHandling.EscapeNonAscii; // 添加这一行
-
-
-            File.WriteAllText(customDataPath, JsonConvert.SerializeObject(customData, Formatting.Indented));
-
-            string backupFilePath = Path.Combine(savePath, "customData_backup.json");
-            File.Copy(customDataPath, backupFilePath, true);
-        }
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(MapBox), "generateNewMap")]
-        public static void createMapPostfix()
-        {
-
-            cleanData();
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(SaveManager), "loadData")]
-        public static void LoadDataPostfix(SavedMap pData)
-        {
-            Debug.Log("加载自定义数据");
-
-            int curslot = SaveManager.currentSlot + 1;
-            string savePath = SaveManager.currentSavePath;
-            Debug.Log(savePath);
-
-            string customDataPath = Path.Combine(savePath, "customData.json");
-            string warDataSavePath = Path.Combine(savePath, "WarDataSave.json");
-
-
-            if (File.Exists(warDataSavePath))
-            {
-                string jsonData = File.ReadAllText(warDataSavePath);
-
-                // 从 JSON 数据反序列化出 warDataSave 对象
-                WarDataSave warDataSave = JsonConvert.DeserializeObject<WarDataSave>(jsonData);
-
-                WarStartDate = warDataSave.DWarStartDate;
-                Attackers = warDataSave.DAttackers;
-                Defenders = warDataSave.DDefenders;
-                warIdNameDict = warDataSave.DwarIdNameDict;
-                WarEndDateFloat = warDataSave.DWarEndDateFloat;
-                WarEndDate = warDataSave.DWarEndDate;
-            }
-
-            if (File.Exists(customDataPath))
-            {
-                string jsonData = File.ReadAllText(customDataPath);
-
-
-                // settings.Converters.Add(new CityYearKeyTypeConverter());
-
-                CustomData customData = JsonConvert.DeserializeObject<CustomData>(jsonData);
-                cleanData();
-                kingYearData = customData.DkingYearData;
-                YearData = customData.DYearData;
-                TmkingData = customData.DTmkingData;
-                tianmingvalue = customData.Dtianmingvalue;
-                kingdomYearNameData = customData.DkingdomYearNameData;
-                kingdomCityData = customData.DkingdomCityData;
-                kingdomCityNameyData = customData.DkingdomCityNameyData;
-                CityYearData = customData.DCityYearData;
-                KingStartYearInKingdom = customData.DKingStartYearInKingdom;
-                KingName = customData.DKingName;
-                KingKingdomName = customData.DKingKingdomName;
-                KingKingdoms = customData.DKingKingdoms;
-                kingdomids = customData.Dkingdomids;
-                KingEndYearInKingdom = customData.DKingEndYearInKingdom;
-                kingdomVassalEstablishmentTime = customData.DkingdomVassalEstablishmentTime;
-                kingdomVassalEndTime = customData.DkingdomVassalEndTime;
-
-
-
-            }
-
-        }
-
-
-        public static void cleanData()
-        {
-            Debug.Log("清理数据");
-            kingYearData.Clear();
-            YearData.Clear();
-            TmkingData.Clear();
-            tianmingvalue = 0;
-            kingdomYearNameData.Clear();
-            kingdomCityData.Clear();
-            kingdomCityNameyData.Clear();
-            CityYearData.Clear();
-            KingName.Clear();
-            KingStartYearInKingdom.Clear();
-            KingKingdomName.Clear();
-            KingKingdoms.Clear();
-            kingdomids.Clear();
-            warIdNameDict.Clear();
-            WarStartDate.Clear();
-            Attackers.Clear();
-            Defenders.Clear();
-            WarEndDateFloat.Clear();
-            WarEndDate.Clear();
-            KingEndYearInKingdom.Clear();
-            kingdomVassalEstablishmentTime.Clear();
-            kingdomVassalEndTime.Clear();
-            KingdomVassals.bannerLoaders.Clear();
-
-            foreach (var Toggleitem in PowerButtons.ToggleValues.ToList())
-            {
-                if (PowerButtons.GetToggleValue(Toggleitem.Key))
-                {
-
-                    PowerButtons.ToggleButton(Toggleitem.Key);
-                }
-            }
-        }
-
         public static string GetRandomStrings(string[] array1, string[] array2)
         {
-            var rand = new System.Random();
+            var rand = new Random();
             var result = "";
 
             var index1 = rand.Next(array1.Length);
@@ -1658,42 +1437,5 @@ namespace Figurebox
 
             return result;
         }
-
-
-
-    }
-    class CustomData
-    {
-        public Dictionary<string, int> DkingYearData = new Dictionary<string, int>();
-        public Dictionary<string, int> DYearData = new Dictionary<string, int>();
-        public Dictionary<string, string> DTmkingData = new Dictionary<string, string>();
-        public Dictionary<string, string> DkingdomYearNameData = new Dictionary<string, string>();
-        public Dictionary<string, string> DkingdomCityData = new Dictionary<string, string>();
-        public Dictionary<string, string> DkingdomCityNameyData = new Dictionary<string, string>();
-        //[JsonConverter(typeof(CityYearKeyDictionaryConverter))]
-        public Dictionary<string, Dictionary<string, Tuple<int, int, int>>> DCityYearData { get; set; }
-        public Dictionary<string, int> DKingStartYearInKingdom = new Dictionary<string, int>();
-        public Dictionary<string, string> DKingName { get; set; }
-        public Dictionary<string, List<string>> DKingKingdoms = new Dictionary<string, List<string>>();
-        public Dictionary<string, List<string>> DKingKingdomName = new Dictionary<string, List<string>>();
-        public List<string> Dkingdomids = new List<string>();
-        public Dictionary<string, int> DKingEndYearInKingdom = new Dictionary<string, int>();
-        public Dictionary<string, int> DkingdomVassalEstablishmentTime = new Dictionary<string, int>();
-        public Dictionary<string, int> DkingdomVassalEndTime = new Dictionary<string, int>();
-
-
-        public int Dtianmingvalue = 0;
-
-    }
-    public class WarDataSave
-    {
-        public Dictionary<string, string> DwarIdNameDict = new Dictionary<string, string>();
-        public Dictionary<string, double> DWarStartDate = new Dictionary<string, double>();
-        public Dictionary<string, List<string>> DAttackers = new Dictionary<string, List<string>>();
-        public Dictionary<string, List<string>> DDefenders = new Dictionary<string, List<string>>();
-        public Dictionary<string, int> DWarEndDate = new Dictionary<string, int>();
-        public Dictionary<string, double> DWarEndDateFloat = new Dictionary<string, double>();
-
-        // 其他需要保存的信息
     }
 }
