@@ -6,6 +6,10 @@ public class AW_KingdomManager : KingdomManager
 {
     public AW_KingdomManager(List<KingdomAsset> pKingdomAssetsToCreatedAsHidden)
     {
+        dict.Clear();
+        list.Clear();
+        list_hidden.Clear();
+        dict_hidden.Clear();
         foreach (KingdomAsset item in pKingdomAssetsToCreatedAsHidden)
         {
             newHiddenKingdom(item);
