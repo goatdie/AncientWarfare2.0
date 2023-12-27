@@ -1,8 +1,94 @@
 using Figurebox.constants;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 namespace Figurebox.core;
+
 
 public class AW_Kingdom : Kingdom
 {
+
+    public Actor heir;
+
+    public void clearHeirData()
+    {
+        this.heir = null;
+    }
+    public bool hasHeir()
+    {
+        return this.heir != null;
+    }
+    public override void Dispose()
+    {
+        this.heir = null;
+        base.Dispose();
+
+
+    }
+    public void SetHeir(Actor pActor)
+	{
+        this.clearHeirData();
+		this.heir= pActor;
+		
+	}
+    public Actor FindHeir()
+    {
+        List<Actor> candidates = new List<Actor>();
+
+        // 假设继承人必须来自王室家族
+        Clan royalClan = BehaviourActionBase<Kingdom>.world.clans.get(this.data.royal_clan_id);
+        if (royalClan != null)
+        {
+            foreach (var member in royalClan.units.Values)
+            {
+                // 添加适合的候选人
+                if (IsSuitableForHeir(member))
+                {
+                    candidates.Add(member);
+                }
+            }
+        }
+
+        // 根据某些标准排序候选人
+        candidates.Sort((a, b) => CompareCandidates(a, b));
+
+        // 返回最合适的候选人
+        
+           Actor heir = candidates.FirstOrDefault();
+    if (heir != null)
+    {
+        Debug.Log("找到了合适的继承人: " + heir.data.name); 
+        return heir;
+    }
+    else
+    {
+        Debug.Log("没找到合适的继承人");
+        return null;
+    }
+    }
+    private bool IsSuitableForHeir(Actor member)
+    {
+        // 检查成员是否活着，年龄是否符合，并且不是当前的国王
+        return member.isAlive() && !member.isKing();
+    }
+
+
+    private int CompareCandidates(Actor a, Actor b)
+    {
+        // 定义比较候选人的逻辑，例如根据年龄、领导能力等
+        return a.getAge().CompareTo(b.getAge()); // 示例逻辑
+    }
+
+
+
+
+
+
+
+
+
+
+
     public KingdomPolicyData policy_data = new();
     /// <summary>
     ///     更新政策进度
