@@ -11,7 +11,7 @@ namespace Figurebox
         private static GameObject textRef;
 
 
-        public static void createActorUI(Actor actor, GameObject parent, Vector3 pos)
+        public static UiUnitAvatarElement createActorUI(Actor actor, GameObject parent, Vector3 pos)
         {
             GameObject GO = Object.Instantiate(Main.backgroundAvatar);
             GO.transform.SetParent(parent.transform);
@@ -29,6 +29,7 @@ namespace Figurebox
             GOButton.OnHoverOut(Tooltip.hideTooltip);
             GOButton.onClick.AddListener(() => showActor(actor));
             GO.AddComponent<GraphicRaycaster>();
+            return avatarElement;
         }
 
         private static void actorTooltip(Actor actor)
