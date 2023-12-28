@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Figurebox.core;
+using Figurebox.patch.MoH;
 using Figurebox.Utils;
 using HarmonyLib;
 using ModDeclaration;
@@ -176,6 +177,7 @@ namespace Figurebox
         void patchHarmony()
         {
             Harmony.CreateAndPatchAll(typeof(RacesLibrary));
+            Harmony.CreateAndPatchAll(typeof(MoHCorePatch));
 /*
             Harmony.CreateAndPatchAll(typeof(FunctionHelper));
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));
