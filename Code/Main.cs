@@ -74,7 +74,7 @@ namespace Figurebox
             KingdomVassals.init();
 
             moreKingdoms.init();
-            buildingLibrary.init();
+            BuildingLibrary.init();
 
             instance = this;
             print("Translation loaded");
