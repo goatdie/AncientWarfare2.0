@@ -1,13 +1,19 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using FigureBox.Code.patch;
+using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.patch;
 using Figurebox.Save;
+using Figurebox.test;
 using Figurebox.UI.Patches;
 using HarmonyLib;
+using ModDeclaration;
 using NCMS;
 using NeoModLoader.api;
+using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using NeoModLoader.services;
 using UnityEngine;
@@ -18,7 +24,7 @@ using Chinese_Name;
 namespace Figurebox
 {
   [ModEntry]
-  internal class Main : MonoBehaviour, ILocalizable
+  internal class Main : MonoBehaviour, ILocalizable, IMod, IReloadable
   {
     public static GameObject backgroundAvatar;
     public static GameObject citybg;
@@ -35,6 +41,7 @@ namespace Figurebox
     // public const string mainPath = "worldbox_Data/StreamingAssets/Mods/NCMS/Core/Temp/Mods/AncientWarfare2.0";
     public static string mainPath => Mod.Info.Path; // 这种方式更鲁棒, 可以适配不同的模组文件夹位置
 
+    public static ModDeclare mod_declare { get; private set; }
     void Awake()
     {
       LM.AddToCurrentLocale("", "");
@@ -103,6 +110,70 @@ namespace Figurebox
     {
       return Path.Combine(pModDeclare.FolderPath, "Locales");
     }
+    public ModDeclare GetDeclaration()
+    {
+      return mod_declare;
+    }
+    public GameObject GetGameObject()
+    {
+      return gameObject;
+    }
+    public string GetUrl()
+    {
+      return mod_declare.RepoUrl;
+    }
+    public void OnLoad(ModDeclare pModDecl, GameObject pGameObject)
+    {
+      mod_declare = pModDecl;
+
+      Mod.Info = typeof(Info)
+        .GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
+          {
+            typeof(NCMod)
+          },
+          null)
+        ?.Invoke(new object[]
+        {
+          new NCMod
+          {
+            name = pModDecl.Name,
+            author = pModDecl.Author,
+            description = pModDecl.Description,
+            path = pModDecl.FolderPath,
+            version = pModDecl.Version,
+            iconPath = pModDecl.IconPath,
+            targetGameBuild = pModDecl.TargetGameBuild
+          }
+        }) as Info;
+
+      Configure();
+    }
+    [Hotfixable]
+    public void Reload()
+    {
+      foreach (City city in World.world.cities.list)
+      {
+        int count = 0;
+        foreach (Actor actor in city.units)
+        {
+          if (actor == null)
+          {
+            count++;
+          }
+        }
+        if (count == 0) continue;
+        LogWarning($"There are {count} actors be null in {city.data.id}({city.getCityName()})'s units. Fix it temporarily.");
+        city.units.Remove(null);
+        city.units.checkAddRemove();
+      }
+    }
+    private void Configure()
+    {
+      if (Environment.UserName == "Inmny" || Environment.UserName == "1")
+      {
+        Config.isEditor = true;
+      }
+    }
 
     void patchHarmony()
     {
@@ -122,6 +193,13 @@ namespace Figurebox
       Harmony.CreateAndPatchAll(typeof(WarPatch));
 
       Harmony.CreateAndPatchAll(typeof(CustomSaveManager));
+
+      if (DebugConst.ACTOR_TEST)
+      {
+        Harmony.CreateAndPatchAll(typeof(ActorTest));
+        BatchTest<Actor>.SelfPatch();
+      }
+      if (DebugConst.CITY_TEST) Harmony.CreateAndPatchAll(typeof(CityTest));
       print("Create and patch all:CTraits");
     }
 

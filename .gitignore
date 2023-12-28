@@ -4,3 +4,4 @@ obj
 !.gitignore
 !.gitattributes
 !.github
+!.*.cs
