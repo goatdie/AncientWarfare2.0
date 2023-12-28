@@ -137,7 +137,7 @@ namespace Figurebox
             AssetManager.raceLibrary.addBuildingOrderKey(SB.order_hall_1, "1hall_Xia");
             AssetManager.raceLibrary.addBuildingOrderKey(SB.order_hall_2, "2hall_Xia");
             AssetManager.raceLibrary.addBuildingOrderKey(SB.order_windmill_0, "windmill_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_windmill_1, "windmill_Xia");
+            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_windmill_1, "windmill_Xia_0");
             AssetManager.raceLibrary.addBuildingOrderKey(SB.order_docks_0, "fishing_docks_Xia");
             AssetManager.raceLibrary.addBuildingOrderKey(SB.order_docks_1, "docks_Xia");
             AssetManager.raceLibrary.addBuildingOrderKey(SB.order_watch_tower, "watch_tower_Xia");
