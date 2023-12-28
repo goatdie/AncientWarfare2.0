@@ -1,24 +1,17 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using NCMS;
-using NCMS.Utils;
-using UnityEngine;
-using ReflectionUtility;
-using Figurebox.Utils;
-
 namespace Figurebox
 {
     class NewGodPowers
-    {  
+    {
+        public static Kingdom SelectKingdom1 = null;
+        public static Kingdom SelectKingdom2 = null;
         public static void init()
         {
             initPowers();
             // initStats();
         }
 
-      
-  
+
+
         public static Actor spawnUnit(WorldTile pTile, string pPowerID)
         {
             GodPower godPower = AssetManager.powers.get(pPowerID);
@@ -37,7 +30,7 @@ namespace Figurebox
             {
                 text = godPower.actor_asset_id;
             }
-            Actor actor = World.world.units.spawnNewUnit(text, pTile, true,godPower.actorSpawnHeight);
+            Actor actor = World.world.units.spawnNewUnit(text, pTile, true, godPower.actorSpawnHeight);
             actor.addTrait("miracle_born", false);
             actor.data.age_overgrowth = 18;
             actor.data.had_child_timeout = 8f;
@@ -47,12 +40,12 @@ namespace Figurebox
 
         public static void initPowers()
         {
-            
 
-                     GodPower  xiapower = AssetManager.powers.clone("spawn_xia", "_spawnActor");
-             xiapower.name = "spawn_xia";
-             xiapower.actor_asset_id = "unit_Xia";
-             xiapower.click_action = new PowerActionWithID(action_spawn_xia);
+
+            GodPower xiapower = AssetManager.powers.clone("spawn_xia", "_spawnActor");
+            xiapower.name = "spawn_xia";
+            xiapower.actor_asset_id = "unit_Xia";
+            xiapower.click_action = action_spawn_xia;
             /*xiapower.click_action = new PowerActionWithID((WorldTile pTile, string pPower)
                                 =>
             {
@@ -62,11 +55,11 @@ namespace Figurebox
 
             //GodPower power1 = new GodPower();
             //power1.id = "Toggle";
-           // power1.name = "Toggle";
-           // power1.rank = PowerRank.Rank0_free;
-          //  power1.click_action = new PowerActionWithID((WorldTile pTile, string pPower));
-          //  AssetManager.powers.add(xiapower);
-           
+            // power1.name = "Toggle";
+            // power1.rank = PowerRank.Rank0_free;
+            //  power1.click_action = new PowerActionWithID((WorldTile pTile, string pPower));
+            //  AssetManager.powers.add(xiapower);
+
             GodPower vassal = new GodPower();
             vassal.id = "vassal";
             vassal.force_map_text = MapMode.Kingdoms;
@@ -84,11 +77,11 @@ namespace Figurebox
             vassal_remove.click_special_action = new PowerActionWithID(vassal_remove_click);
             AssetManager.powers.add(vassal_remove);
 
-            
+
         }
-                public static bool action_spawn_xia(WorldTile pTile, string pPowerID)
+        public static bool action_spawn_xia(WorldTile pTile, string pPowerID)
         {
-           
+
             Actor actor = spawnUnit(pTile, pPowerID);
             if (actor == null)
             {
@@ -96,9 +89,7 @@ namespace Figurebox
             }
             return true;
         }
-        public static Kingdom SelectKingdom1 = null;
-        public static Kingdom SelectKingdom2 = null;
-         public static bool vassal_click(WorldTile pTile, string pPowerID)
+        public static bool vassal_click(WorldTile pTile, string pPowerID)
         {
 
             if (pTile.zone.city == null)
@@ -143,36 +134,29 @@ namespace Figurebox
 
             return true;
         }
-public static bool vassal_remove_click(WorldTile pTile, string pPowerID)
-{
-    if (pTile.zone.city == null)
-    {
-        return false;
-    }
+        public static bool vassal_remove_click(WorldTile pTile, string pPowerID)
+        {
+            if (pTile.zone.city == null)
+            {
+                return false;
+            }
 
-    if (pTile.zone.city.kingdom == null)
-    {
-        return false;
-    }
+            if (pTile.zone.city.kingdom == null)
+            {
+                return false;
+            }
 
-    if (KingdomVassals.IsVassal(pTile.zone.city.kingdom))
-    {
-        // 这个王国是附庸，所以我们可以移除它的附庸状态
-        int yeardata = World.world.mapStats.getCurrentYear();
-        KingdomVassals.RemoveVassalAndBanner(null, pTile.zone.city.kingdom, yeardata, true);
-        WorldTip.showNow($"The vassal status of {pTile.zone.city.kingdom.data.name} has been removed", pTranslate: false, "top", 6f);
-        return true;
-    }
-    else
-    {
-        // 这个王国不是附庸，所以我们不能移除它的附庸状态
-        WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is not a vassal", pTranslate: false, "top", 6f);
-        return false;
-    }
-}
-
-        
-
-        
+            if (KingdomVassals.IsVassal(pTile.zone.city.kingdom))
+            {
+                // 这个王国是附庸，所以我们可以移除它的附庸状态
+                int yeardata = World.world.mapStats.getCurrentYear();
+                KingdomVassals.RemoveVassalAndBanner(null, pTile.zone.city.kingdom, yeardata, true);
+                WorldTip.showNow($"The vassal status of {pTile.zone.city.kingdom.data.name} has been removed", false, "top", 6f);
+                return true;
+            }
+            // 这个王国不是附庸，所以我们不能移除它的附庸状态
+            WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is not a vassal", false, "top", 6f);
+            return false;
+        }
     }
 }

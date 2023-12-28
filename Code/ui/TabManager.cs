@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using NCMS.Utils;
+using NeoModLoader.General;
 using NeoModLoader.General.UI.Tab;
 using UnityEngine;
+using UnityEngine.Events;
 namespace Figurebox
 {
     internal class TabManager
@@ -24,11 +26,22 @@ namespace Figurebox
             loadButtons();
             tab.UpdateLayout();
         }
-
+        private static PowerButton CreateButton(string id, Sprite sprite, string name, string description, Vector2 position, ButtonType type, Transform parent = null, UnityAction action = null)
+        {
+            if (LocalizedTextManager.stringExists(id))
+            {
+                name = LM.Get(id);
+            }
+            if (LocalizedTextManager.stringExists(id + " Description"))
+            {
+                description = LM.Get(id + " Description");
+            }
+            return PowerButtons.CreateButton(id, sprite, name, description, position, type, parent, action);
+        }
         private static void loadButtons()
         {
             tab.AddPowerButton(TOOL,
-                PowerButtons.CreateButton(
+                CreateButton(
                     "vassal",
                     Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.icon_binfa.png"),
                     "make vassal",
@@ -37,7 +50,7 @@ namespace Figurebox
                     ButtonType.GodPower
                 ));
             tab.AddPowerButton(TOOL,
-                PowerButtons.CreateButton(
+                CreateButton(
                     "vassal_remove",
                     Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.war_independent.png"),
                     "remove vassal",
@@ -251,7 +264,7 @@ namespace Figurebox
              );
              index++;*/
             tab.AddPowerButton(CREATURE,
-                PowerButtons.CreateButton(
+                CreateButton(
                     "spawn_xia",
                     Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconXias.png"),
                     "Xia",
@@ -261,7 +274,7 @@ namespace Figurebox
                 ));
 
             tab.AddPowerButton(INFO,
-                PowerButtons.CreateButton(
+                CreateButton(
                     "TianMing_board",
                     Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconRebel.png"),
                     "Mandate of Heaven Board",
@@ -272,7 +285,7 @@ namespace Figurebox
                     TianmingBoardWindow.openWindow
                 ));
             tab.AddPowerButton(INFO,
-                PowerButtons.CreateButton(
+                CreateButton(
                     "Kingdom_History",
                     Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconkingdomhistory.png"),
                     "Kingdom History",
@@ -283,7 +296,7 @@ namespace Figurebox
                     KingdomHistoryListWindow.openWindow
                 ));
             tab.AddPowerButton(OPTIONS,
-                PowerButtons.CreateButton(
+                CreateButton(
                     "historical_figure",
                     Sprites.LoadSprite($"{Mod.Info.Path}/icon.png"),
                     "Historical Figure",

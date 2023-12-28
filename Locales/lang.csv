@@ -3,3 +3,15 @@ KingdomPolicy,国策,Kingdom Policy
 KingdomPolicy Description,显示一个国家的国策树,Show a kingdom's policy
 KingdomPolicyWindow Title,国策窗口,Kingdom Policy
 Suzerain,宗主国,Suzerain Kingdom
+vassal,创建附庸关系,Make a vassal
+vassal Description,依次选择附庸与宗主国以建立关系,Select a vassal and a suzerain to create a vassalage
+vassal_remove,解除附庸关系,Remove a vassal
+vassal_remove Description,选择要解除附庸关系的附庸国,Select a vassal to remove its vassalage
+spawn_xia,夏人,Xia
+spawn_xia Description, ,From East
+TianMing_board,天命面板,Mandate of Heaven Board
+TianMing_board Description,查看世界中拥有天命的单位,View The Significant Units Within Your World
+Kingdom_History,国家历史,Kingdoms History
+Kingdom_History Description,查看所有国家历史,View all Kingdoms History
+historical_figure,禁止生成历史人物,Randomly Generate Historical Figures
+historical_figure Description,启用该按钮后将禁止生成历史人物,Disable the generation of historical figures(Enable the button to disable the function)

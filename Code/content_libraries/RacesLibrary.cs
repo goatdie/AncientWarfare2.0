@@ -1,22 +1,9 @@
-using System;
-using System.Linq;
-using System.IO;
 using System.Collections.Generic;
-using NCMS.Utils;
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using ReflectionUtility;
-using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
 using HarmonyLib;
-using System.Reflection;
-using System.Reflection.Emit;
+using ReflectionUtility;
+using UnityEngine;
+using UnityEngine.UI;
 //using sfx;
-using Figurebox.Utils;
-using Figurebox;
-using ai.behaviours;
 
 
 namespace Figurebox
@@ -24,13 +11,19 @@ namespace Figurebox
 
     class RacesLibrary
     {
-        internal static List<string> defaultRaces = new List<string>(){
-            "human", "elf", "orc", "dwarf"
+        internal static List<string> defaultRaces = new List<string>()
+        {
+            "human",
+            "elf",
+            "orc",
+            "dwarf"
         };
-        internal static List<string> human = new List<string>(){
+        internal static List<string> human = new List<string>()
+        {
             "human"
         };
-        internal static List<string> additionalRaces = new List<string>(){
+        internal static List<string> additionalRaces = new List<string>()
+        {
             "Xia"
         };
         private static Race tRace;
@@ -51,7 +44,6 @@ namespace Figurebox
             Xia.nameLocale = "Xia";
             Xia.banner_id = "Xia";
             Xia.main_texture_path = "races/Xia/";
-            addraceToLocalizedLibrary("Xia", "Xia");
 
             // Xia.build_order_id = "Xia";
             //  Reflection.CallStaticMethod(typeof(BannerGenerator), "loadTexturesFromResources", "xia");
@@ -64,88 +56,70 @@ namespace Figurebox
             Xia.name_template_culture = "human_culture";
             Xia.name_template_clan = "human_clan";
             Xia.clan_backgrounds = new List<string>
-        {
-            "actors/races/Xia/clans/backgrounds/clan_background_0",
-            "actors/races/Xia/clans/backgrounds/clan_background_1",
-            "actors/races/Xia/clans/backgrounds/clan_background_2",
-            "actors/races/Xia/clans/backgrounds/clan_background_3",
-            "actors/races/Xia/clans/backgrounds/clan_background_4",
-            "actors/races/Xia/clans/backgrounds/clan_background_5",
-            "actors/races/Xia/clans/backgrounds/clan_background_6",
-            "actors/races/Xia/clans/backgrounds/clan_background_7",
-            "actors/races/Xia/clans/backgrounds/clan_background_8",
-            "actors/races/Xia/clans/backgrounds/clan_background_9",
-            "actors/races/Xia/clans/backgrounds/clan_background_10",
-            "actors/races/Xia/clans/backgrounds/clan_background_11",
-            "actors/races/Xia/clans/backgrounds/clan_background_12",
-            "actors/races/Xia/clans/backgrounds/clan_background_13",
-            "actors/races/Xia/clans/backgrounds/clan_background_14",
-            "actors/races/Xia/clans/backgrounds/clan_background_15",
-            "actors/races/Xia/clans/backgrounds/clan_background_16"
-        };
+            {
+                "actors/races/Xia/clans/backgrounds/clan_background_0",
+                "actors/races/Xia/clans/backgrounds/clan_background_1",
+                "actors/races/Xia/clans/backgrounds/clan_background_2",
+                "actors/races/Xia/clans/backgrounds/clan_background_3",
+                "actors/races/Xia/clans/backgrounds/clan_background_4",
+                "actors/races/Xia/clans/backgrounds/clan_background_5",
+                "actors/races/Xia/clans/backgrounds/clan_background_6",
+                "actors/races/Xia/clans/backgrounds/clan_background_7",
+                "actors/races/Xia/clans/backgrounds/clan_background_8",
+                "actors/races/Xia/clans/backgrounds/clan_background_9",
+                "actors/races/Xia/clans/backgrounds/clan_background_10",
+                "actors/races/Xia/clans/backgrounds/clan_background_11",
+                "actors/races/Xia/clans/backgrounds/clan_background_12",
+                "actors/races/Xia/clans/backgrounds/clan_background_13",
+                "actors/races/Xia/clans/backgrounds/clan_background_14",
+                "actors/races/Xia/clans/backgrounds/clan_background_15",
+                "actors/races/Xia/clans/backgrounds/clan_background_16"
+            };
             Xia.clan_icons = new List<string>
-        {
-            "actors/races/Xia/clans/icons/clan_icon_0",
-            "actors/races/Xia/clans/icons/clan_icon_1",
-            "actors/races/Xia/clans/icons/clan_icon_2",
-            "actors/races/Xia/clans/icons/clan_icon_3",
-            "actors/races/Xia/clans/icons/clan_icon_4",
-            "actors/races/Xia/clans/icons/clan_icon_5",
-            "actors/races/Xia/clans/icons/clan_icon_6",
-            "actors/races/Xia/clans/icons/clan_icon_7",
-            "actors/races/Xia/clans/icons/clan_icon_8",
-            "actors/races/Xia/clans/icons/clan_icon_9",
-            "actors/races/Xia/clans/icons/clan_icon_10",
-            "actors/races/Xia/clans/icons/clan_icon_11",
-            "actors/races/Xia/clans/icons/clan_icon_12",
-            "actors/races/Xia/clans/icons/clan_icon_13",
-            "actors/races/Xia/clans/icons/clan_icon_14",
-            "actors/races/Xia/clans/icons/clan_icon_15",
-            "actors/races/Xia/clans/icons/clan_icon_16",
-            "actors/races/Xia/clans/icons/clan_icon_17",
-            "actors/races/Xia/clans/icons/clan_icon_18",
-            "actors/races/Xia/clans/icons/clan_icon_19",
-            "actors/races/Xia/clans/icons/clan_icon_20",
-            "actors/races/Xia/clans/icons/clan_icon_21"
-        };
+            {
+                "actors/races/Xia/clans/icons/clan_icon_0",
+                "actors/races/Xia/clans/icons/clan_icon_1",
+                "actors/races/Xia/clans/icons/clan_icon_2",
+                "actors/races/Xia/clans/icons/clan_icon_3",
+                "actors/races/Xia/clans/icons/clan_icon_4",
+                "actors/races/Xia/clans/icons/clan_icon_5",
+                "actors/races/Xia/clans/icons/clan_icon_6",
+                "actors/races/Xia/clans/icons/clan_icon_7",
+                "actors/races/Xia/clans/icons/clan_icon_8",
+                "actors/races/Xia/clans/icons/clan_icon_9",
+                "actors/races/Xia/clans/icons/clan_icon_10",
+                "actors/races/Xia/clans/icons/clan_icon_11",
+                "actors/races/Xia/clans/icons/clan_icon_12",
+                "actors/races/Xia/clans/icons/clan_icon_13",
+                "actors/races/Xia/clans/icons/clan_icon_14",
+                "actors/races/Xia/clans/icons/clan_icon_15",
+                "actors/races/Xia/clans/icons/clan_icon_16",
+                "actors/races/Xia/clans/icons/clan_icon_17",
+                "actors/races/Xia/clans/icons/clan_icon_18",
+                "actors/races/Xia/clans/icons/clan_icon_19",
+                "actors/races/Xia/clans/icons/clan_icon_20",
+                "actors/races/Xia/clans/icons/clan_icon_21"
+            };
             Xia.hateRaces = List.Of<string>(new string[]
-        {
-            SK.orc
-        });
-            Xia.production = new string[] { "bread", "pie", "tea" };
-            Xia.skin_citizen_male = List.Of<string>(new string[] {
-            "unit_male_1",
-            "unit_male_2",
-            "unit_male_3",
-            "unit_male_4",
-            "unit_male_5",
-            "unit_male_6",
-            "unit_male_7",
-            "unit_male_8",
-            "unit_male_9",
-            "unit_male_10"});//"unit_male_0",
-            Xia.skin_citizen_female = List.Of<string>(new string[] {
-             "unit_female_1",
-            "unit_female_2",
-            "unit_female_3",
-            "unit_female_4",
-            "unit_female_5",
-            "unit_female_6",
-            "unit_female_7",
-            "unit_female_8",
-            "unit_female_9",
-            "unit_female_10"});
-            Xia.skin_warrior = List.Of<string>(new string[] {
-              "unit_warrior_1",
-            "unit_warrior_2",
-            "unit_warrior_3",
-            "unit_warrior_4",
-            "unit_warrior_5",
-            "unit_warrior_6",
-            "unit_warrior_7",
-            "unit_warrior_8",
-            "unit_warrior_9",
-            "unit_warrior_10"});
+            {
+                SK.orc
+            });
+            Xia.production = new string[]
+            {
+                "bread", "pie", "tea"
+            };
+            Xia.skin_citizen_male = List.Of<string>(new string[]
+            {
+                "unit_male_1", "unit_male_2", "unit_male_3", "unit_male_4", "unit_male_5", "unit_male_6", "unit_male_7", "unit_male_8", "unit_male_9", "unit_male_10"
+            }); //"unit_male_0",
+            Xia.skin_citizen_female = List.Of<string>(new string[]
+            {
+                "unit_female_1", "unit_female_2", "unit_female_3", "unit_female_4", "unit_female_5", "unit_female_6", "unit_female_7", "unit_female_8", "unit_female_9", "unit_female_10"
+            });
+            Xia.skin_warrior = List.Of<string>(new string[]
+            {
+                "unit_warrior_1", "unit_warrior_2", "unit_warrior_3", "unit_warrior_4", "unit_warrior_5", "unit_warrior_6", "unit_warrior_7", "unit_warrior_8", "unit_warrior_9", "unit_warrior_10"
+            });
             Xia.nomad_kingdom_id = $"nomads_{Xia.id}";
             AssetManager.raceLibrary.CallMethod("setPreferredStatPool", "diplomacy#1,warfare#1,stewardship#1,intelligence#1");
             AssetManager.raceLibrary.CallMethod("setPreferredFoodPool", "bread#1,fish#1,tea#1");
@@ -176,17 +150,9 @@ namespace Figurebox
             var monk = AssetManager.actor_library.get("monkey");
             var monkname = AssetManager.nameGenerator.get("monkey_name");
             monkname.vowels = new string[]
-           {
-                "bibi",
-                "longtail",
-                "pigtail",
-                "monyet",
-                "monpai",
-                "monk",
-                "woooo",
-                "oo",
-                "aa"
-           };
+            {
+                "bibi", "longtail", "pigtail", "monyet", "monpai", "monk", "woooo", "oo", "aa"
+            };
             // Race monkey = AssetManager.raceLibrary.clone("monkeyrace", "human");
             // monkey.path_icon  = "ui/Icons/iconMonkey";
             // monk.race ="monkeyrace";
@@ -198,12 +164,6 @@ namespace Figurebox
 
             //BannerGenerator.loadTexturesFromResources("xia");
 
-        }
-        public static void addraceToLocalizedLibrary(string id, string text)
-        {
-            string language = Reflection.GetField(LocalizedTextManager.instance.GetType(), LocalizedTextManager.instance, "language") as string;
-            Dictionary<string, string> localizedText = Reflection.GetField(LocalizedTextManager.instance.GetType(), LocalizedTextManager.instance, "localizedText") as Dictionary<string, string>;
-            localizedText.Add(id, text);
         }
 
         /* public static void kingdomColorsDataInit()
@@ -246,29 +206,6 @@ namespace Figurebox
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /*[HarmonyPrefix]
         [HarmonyPatch(typeof(CityBehBuild), "upgradeBuilding")]
         public static bool generateFrameData_post(Building pBuilding, City pCity)
@@ -294,7 +231,7 @@ namespace Figurebox
         public static bool PrefixGetSpriteToRender(ActorBase __instance)
         { Debug.Log("Actor skin id: " + __instance.getUnitTexturePath());
            /* if (__instance.animationContainer != null && __instance.animationContainer.walking != null)
-            { 
+            {
                 ActorAnimation actorAnimation = __instance.animationContainer.walking;
                 if (actorAnimation.frames == null || actorAnimation.frames.Length == 0)
                 {
@@ -360,36 +297,6 @@ namespace Figurebox
 
                 return true;
             }
-        }
-
-
-
-
-
-
-
-
-        public static Sprite[] loadAllSprite(string path, bool withFolders = false)//路径
-        {
-            string p = $"{Main.mainPath}/EmbededResources/{path}";
-            DirectoryInfo folder = new DirectoryInfo(p);
-            List<Sprite> res = new List<Sprite>();
-            foreach (FileInfo file in folder.GetFiles("*.png"))
-            {
-                Sprite sprite = Sprites.LoadSprite($"{file.FullName}");
-                sprite.name = file.Name.Replace(".png", "");
-                res.Add(sprite);
-            }
-            foreach (DirectoryInfo cFolder in folder.GetDirectories())
-            {
-                foreach (FileInfo file in cFolder.GetFiles("*.png"))
-                {
-                    Sprite sprite = Sprites.LoadSprite($"{file.FullName}");
-                    sprite.name = file.Name.Replace(".png", "");
-                    res.Add(sprite);
-                }
-            }
-            return res.ToArray();
         }
     }
 }
