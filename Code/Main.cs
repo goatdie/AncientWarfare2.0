@@ -5,6 +5,7 @@ using System.Reflection;
 using Figurebox.core;
 using Figurebox.patch.MoH;
 using Figurebox.Utils;
+using Figurebox.ai;
 using HarmonyLib;
 using ModDeclaration;
 using NCMS;
@@ -76,6 +77,7 @@ namespace Figurebox
 
             moreKingdoms.init();
             BuildingLibrary.init();
+            KingdomBehLibrary.init();
 
             instance = this;
             print("Translation loaded");

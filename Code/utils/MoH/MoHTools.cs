@@ -14,6 +14,14 @@ public class MoHTools
     /// <summary>
     ///     从存档中读取并直接缓存国家
     /// </summary>
+    public static void SetMoHKingdom(AW_Kingdom kingdom)
+    {
+        MoHKingdom = kingdom;
+    }
+    public static bool IsMoHKingdom(AW_Kingdom kingdom)
+    {
+       return MoHKingdom == kingdom;
+    }
     internal static void LoadFromSave()
     {
 
