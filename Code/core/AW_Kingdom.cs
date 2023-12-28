@@ -1,14 +1,25 @@
-using Figurebox.constants;
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.constants;
 using UnityEngine;
 namespace Figurebox.core;
 
-
-public class AW_Kingdom : Kingdom
+public partial class AW_Kingdom : Kingdom
 {
 
     public Actor heir;
+
+
+
+
+
+
+
+
+
+
+
+    public KingdomPolicyData policy_data = new();
 
     public void clearHeirData()
     {
@@ -22,15 +33,13 @@ public class AW_Kingdom : Kingdom
     {
         this.heir = null;
         base.Dispose();
-
-
     }
     public void SetHeir(Actor pActor)
-	{
+    {
         this.clearHeirData();
-		this.heir= pActor;
-		
-	}
+        this.heir = pActor;
+
+    }
     public Actor FindHeir()
     {
         List<Actor> candidates = new List<Actor>();
@@ -53,18 +62,18 @@ public class AW_Kingdom : Kingdom
         candidates.Sort((a, b) => CompareCandidates(a, b));
 
         // 返回最合适的候选人
-        
-           Actor heir = candidates.FirstOrDefault();
-    if (heir != null)
-    {
-        Debug.Log("找到了合适的继承人: " + heir.data.name); 
-        return heir;
-    }
-    else
-    {
-        Debug.Log("没找到合适的继承人");
-        return null;
-    }
+
+        Actor heir = candidates.FirstOrDefault();
+        if (heir != null)
+        {
+            Debug.Log("找到了合适的继承人: " + heir.data.name);
+            return heir;
+        }
+        else
+        {
+            Debug.Log("没找到合适的继承人");
+            return null;
+        }
     }
     private bool IsSuitableForHeir(Actor member)
     {
@@ -78,18 +87,6 @@ public class AW_Kingdom : Kingdom
         // 定义比较候选人的逻辑，例如根据年龄、领导能力等
         return a.getAge().CompareTo(b.getAge()); // 示例逻辑
     }
-
-
-
-
-
-
-
-
-
-
-
-    public KingdomPolicyData policy_data = new();
     /// <summary>
     ///     更新政策进度
     /// </summary>

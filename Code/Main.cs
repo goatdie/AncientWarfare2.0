@@ -2,12 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Figurebox.constants;
 using Figurebox.core;
-using Figurebox.patch;
-using Figurebox.Save;
-using Figurebox.test;
-using Figurebox.UI.Patches;
+using Figurebox.Utils;
 using HarmonyLib;
 using ModDeclaration;
 using NCMS;
@@ -55,6 +51,7 @@ namespace Figurebox
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             Traits.init();
             AW_KingdomManager.init();
+            _ = KingdomEventsManager.Instance;
             KingdomPolicyLibrary.Instance.init();
             KingdomPolicyStateLibrary.Instance.init();
             //loadBanners("Xia");
@@ -146,6 +143,8 @@ namespace Figurebox
                 }) as Info;
 
             Configure();
+
+            AutoMethodReplaceTool.ReplaceMethods();
         }
         [Hotfixable]
         public void Reload()
@@ -177,7 +176,7 @@ namespace Figurebox
         void patchHarmony()
         {
             Harmony.CreateAndPatchAll(typeof(RacesLibrary));
-
+/*
             Harmony.CreateAndPatchAll(typeof(FunctionHelper));
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));
             Harmony.CreateAndPatchAll(typeof(TianmingGroup));
@@ -199,7 +198,7 @@ namespace Figurebox
                 BatchTest<Actor>.SelfPatch();
             }
             if (DebugConst.CITY_TEST) Harmony.CreateAndPatchAll(typeof(CityTest));
-
+*/
             print("Create and patch all:CTraits");
         }
 

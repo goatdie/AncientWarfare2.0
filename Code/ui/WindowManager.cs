@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using NCMS;
 using NCMS.Utils;
 using UnityEngine;
-using ReflectionUtility;
-
 namespace Figurebox
 {
     class WindowManager
@@ -24,7 +19,7 @@ namespace Figurebox
             TianmingBoardWindow.init();
             KingdomHistoryListWindow.Init();
 
-
+            KingdomMoHWindow.CreateWindow(nameof(KingdomMoHWindow), nameof(KingdomMoHWindow) + " Title");
         }
 
         private static void newWindow(string id, string title)
