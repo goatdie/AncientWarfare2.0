@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "HM+nUk2KaoaZBgpUbFSxDutLLvszeSARkzBhmD0PIbc/LUweP1qUsv6NfyZRnGvHbFb2K70QZhcp2XCZDZJJfA==",
+  "dgSpecHash": "FKhKm/bbvBqJVVYYIiW8Cg87/ZI6rZ1q9WONfUDyd+gT6mkWKlKLiS5WPI2bJCQ0XABSNlCjg68110mSqdNsIQ==",
   "success": true,
-  "projectFilePath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\ExampleMod.csproj",
+  "projectFilePath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\AncientWarfare2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\1\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.3\\microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
     "C:\\Users\\1\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net48\\1.0.3\\microsoft.netframework.referenceassemblies.net48.1.0.3.nupkg.sha512"

@@ -420,9 +420,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\ExampleMod.csproj",
+      "projectUniqueName": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\AncientWarfare2.csproj",
       "projectName": "AcientWarfare2",
-      "projectPath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\ExampleMod.csproj",
+      "projectPath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\AncientWarfare2.csproj",
       "packagesPath": "C:\\Users\\1\\.nuget\\packages\\",
       "outputPath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\obj\\",
       "projectStyle": "PackageReference",
