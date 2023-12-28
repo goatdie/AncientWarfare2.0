@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using FigureBox.Code.patch;
 using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.patch;

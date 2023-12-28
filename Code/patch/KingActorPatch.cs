@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Figurebox;
 using HarmonyLib;
 using UnityEngine;
-namespace FigureBox.Code.patch;
+namespace Figurebox.patch;
 
 internal class KingActorPatch
 {
