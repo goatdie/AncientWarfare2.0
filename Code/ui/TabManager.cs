@@ -282,7 +282,7 @@ namespace Figurebox
                     Vector2.zero,
                     ButtonType.Click,
                     null,
-                    TianmingBoardWindow.openWindow
+                    KingdomMoHWindow.InitAndShow
                 ));
             tab.AddPowerButton(INFO,
                 CreateButton(

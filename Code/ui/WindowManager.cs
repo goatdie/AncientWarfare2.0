@@ -19,7 +19,6 @@ namespace Figurebox
             TianmingBoardWindow.init();
             KingdomHistoryListWindow.Init();
 
-            KingdomMoHWindow.CreateWindow(nameof(KingdomMoHWindow), nameof(KingdomMoHWindow) + " Title");
         }
 
         private static void newWindow(string id, string title)

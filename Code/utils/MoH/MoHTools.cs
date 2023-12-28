@@ -18,4 +18,9 @@ public class MoHTools
     {
 
     }
+    public static string GetMoHDescKey()
+    {
+        if (!ExistMoHKingdom) return "";
+        return "moh_desc_common";
+    }
 }
