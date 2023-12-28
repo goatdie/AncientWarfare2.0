@@ -112,6 +112,7 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(KingdomVassals));
             Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
             Harmony.CreateAndPatchAll(typeof(CityWindowPatch));
+            Harmony.CreateAndPatchAll(typeof(KingdomPatch));
             print("Create and patch all:CTraits");
         }
 
