@@ -15,123 +15,104 @@ namespace Figurebox
 {
     class BuildingLibrary
     {
-        public void init()
-        {
-            loadRaceBuildings();
-        }
-        private BuildingAsset get(string pID)
-        {
-            return AssetManager.buildings.get(pID);
-        }
+private static List<BuildingAsset> humanBuildings = new List<BuildingAsset>();
 
-
-        private void loadRaceBuildings()
-        {
-            /*BuildingAsset temple_X = AssetManager.buildings.get("temple_Xia");
-            temple_X.fundament = new BuildingFundament(5, 5, 8, 0);*/
-
-            var buildingTypesSimple = new string[]{
-                "watch_tower",
-                "docks",
-                "barracks",
-                "temple",
-                "windmill"
-            };
-
-            var buildingTypesExtended = new List<(string, string, BuildingFundament, ConstructionCost)>{
-                ("tent", "house",   new BuildingFundament(1, 1, 2, 0), new ConstructionCost()),
-                ( "house", "1house",  new BuildingFundament(2, 2, 3, 0), new ConstructionCost(5)),
-                ( "1house", "2house", new BuildingFundament(2, 2, 2, 0), new ConstructionCost(4)),
-                ( "2house", "3house", new BuildingFundament(2, 2, 2, 0), new ConstructionCost(pStone: 5)),
-                ( "3house", "4house", new BuildingFundament(2, 3, 2, 0), new ConstructionCost(pStone: 10)),
-                ( "4house", "5house", new BuildingFundament(3, 3, 2, 0), new ConstructionCost(pStone: 15)),
-                ( "5house", null, new BuildingFundament(3, 3, 2, 0), new ConstructionCost(pStone: 20, pCommonMetals: 2, pGold: 10)),
-                ( "hall", "1hall",   new BuildingFundament(6, 6, 4, 0), new ConstructionCost(10, pGold: 10)),
-                ( "1hall", "2hall",  new BuildingFundament(6, 6, 4, 0), new ConstructionCost(pStone: 10, pCommonMetals: 1, pGold: 20)),
-                ( "2hall", null, new BuildingFundament(6, 6, 4, 0), new ConstructionCost(pStone: 15, pCommonMetals: 1, pGold: 100)),
-                ( "fishing_docks", "docks", new BuildingFundament(2, 2, 4, 0), new ConstructionCost(10)),
-            };
-
-            foreach (var race in RacesLibrary.additionalRaces)
+    public static void init()
+    {
+      var buildingTypesSimple = new string[] { "watch_tower", "docks", "barracks", "temple" };
+      var buildingTypesExtended = new List<(string, string, BuildingFundament, ConstructionCost, string, string, int)>
             {
-                foreach (var buildingType in buildingTypesSimple)
-                {
-
-                    BuildingAsset building_base;
-                    string Base_Building = SB.watch_tower_human;
-                    if (buildingType == "docks") { Base_Building = SB.docks_human; }
-                    if (buildingType == "barracks") { Base_Building = SB.barracks_human; }
-                    if (buildingType == "temple") { Base_Building = SB.temple_human; }
-                    if (buildingType == "windmill")
-                    {
-                        Base_Building = SB.windmill_human_1;
-                        building_base = AssetManager.buildings.get(SB.windmill_human_1);
-                    }
-                    else { building_base = AssetManager.buildings.get($"{buildingType}_human"); }
-                    var building = AssetManager.buildings.clone($"{buildingType}_{race}", Base_Building);
-                    building.race = race;
-                    building.canBeUpgraded = false;
-
-                    loadSprites(building);
-                }
-
-                foreach (var buildingType in buildingTypesExtended)
-                {
-                    //int SD = buildingType.Item5;
-                    string Base_Building = SB.tent_human;
-                    if (buildingType.Item1 == "house") { Base_Building = SB.house_human_0; }
-                    if (buildingType.Item1 == "house1") { Base_Building = SB.house_human_1; }
-                    if (buildingType.Item1 == "house2") { Base_Building = SB.house_human_2; }
-                    if (buildingType.Item1 == "house3") { Base_Building = SB.house_human_3; }
-                    if (buildingType.Item1 == "house4") { Base_Building = SB.house_human_4; }
-                    if (buildingType.Item1 == "house5") { Base_Building = SB.house_human_5; }
-                    if (buildingType.Item1 == "hall") { Base_Building = SB.hall_human_0; }
-                    if (buildingType.Item1 == "1hall") { Base_Building = SB.hall_human_1; }
-                    if (buildingType.Item1 == "2hall") { Base_Building = SB.hall_human_2; }
-                    if (buildingType.Item1 == "fishing_docks") { Base_Building = SB.fishing_docks_human; }
-                    var buildingFundament = buildingType.Item3;
-                    var building_base = AssetManager.buildings.get(Base_Building);
-                    if (building_base != null)
-                    {
-                        var building = AssetManager.buildings.clone($"{buildingType.Item1}_{race}", Base_Building);
-                        building.race = race;
-                        building.fundament = buildingFundament;
-                        building.cost = buildingType.Item4;
-
-                        if (!String.IsNullOrEmpty(buildingType.Item2))
-                        {
-
-                            building.canBeUpgraded = true;
-                            building.upgradeTo = $"{buildingType.Item2}_{race}";
-
-                        }
-                        else
-                        {
-                            building.canBeUpgraded = false;
-                            //  building.upgradeTo =null;
-                        }
-
-                        AssetManager.buildings.loadSprites(building);
-                        // loadSprites(building);
-
-
-                        AssetManager.race_build_orders.get("Xia").addUpgrade("watch_tower_Xia", 0, 0, 2, 2, false, false, 0);
-                        // AssetManager.race_build_orders.get("Xia").addUpgrade("Tower" , 0, 0, 30, 8, false, false, 0);
-                        BuildingAsset t = AssetManager.buildings.get("watch_tower_Xia");
-
-                        t.canBeUpgraded = true;
-                        t.tower_projectile = "FireArrow";
-                        t.upgradeTo = "XiaTower";
-                        BuildingAsset temple_xia = AssetManager.buildings.get("temple_Xia");
-                        temple_xia.fundament = new BuildingFundament(4, 3, 9, 0);
-                        BuildingAsset windmill = AssetManager.buildings.get("windmill_Xia");
-                        windmill.upgradeTo = "nullbuild";
-                    }
-                }
-            }
-
-
+              ("tent", "house",   new BuildingFundament(1, 1, 2, 0), new ConstructionCost(), "" , "_0", -1),
+              ( "house", "house",  new BuildingFundament(2, 2, 3, 0), new ConstructionCost(5), "_0", "_1", 0),
+              ( "house", "house", new BuildingFundament(2, 2, 2, 0), new ConstructionCost(4), "_1", "_2", 1),
+              ( "house", "house", new BuildingFundament(2, 2, 2, 0), new ConstructionCost(pStone: 5), "_2", "_3", 2),
+              ( "house", "house", new BuildingFundament(2, 3, 2, 0), new ConstructionCost(pStone: 10), "_3", "_4", 3),
+              ( "house", "house", new BuildingFundament(3, 3, 2, 0), new ConstructionCost(pStone: 15), "_4", "_5", 4),
+              ( "house", null, new BuildingFundament(3, 3, 2, 0), new ConstructionCost(pStone: 20, pCommonMetals: 2, pGold: 10), "_5", "", 5),
+              ( "hall", "hall",   new BuildingFundament(6, 6, 4, 0), new ConstructionCost(10, pGold: 10), "_0", "_1", 0),
+              ( "hall", "hall",  new BuildingFundament(6, 6, 4, 0), new ConstructionCost(pStone: 10, pCommonMetals: 1, pGold: 20), "_1", "_2", 1),
+              ( "hall", null, new BuildingFundament(6, 6, 4, 0), new ConstructionCost(pStone: 15, pCommonMetals: 1, pGold: 100), "_2", "", 2),
+              ( "fishing_docks", "docks", new BuildingFundament(2, 2, 4, 0), new ConstructionCost(10), "", "", -1),
+              ( "windmill", "windmill", new BuildingFundament(2, 2, 4, 0), new ConstructionCost(10), "_0", "_1", -1),
+              ( "windmill", null, new BuildingFundament(2, 2, 4, 0), new ConstructionCost(10), "_1", "", -1),
+            };
+      foreach (var race in RacesLibrary.additionalRaces)
+      {
+        foreach (var buildingType in buildingTypesSimple)
+        {
+          BuildingAsset building_base;
+          string Base_Building = SB.watch_tower_human;
+          if (buildingType == "docks") { Base_Building = SB.docks_human; }
+          if (buildingType == "barracks") { Base_Building = SB.barracks_human; }
+          if (buildingType == "temple") { Base_Building = SB.temple_human; }
+          building_base = AssetManager.buildings.get($"{buildingType}_human");
+          var building = AssetManager.buildings.clone($"{buildingType}_{race}", Base_Building);
+          if (race == "Xia")
+          {
+            building.base_stats[S.health] = building_base.base_stats[S.health] * 3;
+            building.burnable = false;
+            building.affectedByAcid = false;
+            building.canBeDamagedByTornado = false;
+          }
+          building.race = race;
+          building.hasKingdomColor = false;
+          building.setShadow(0f, 0.3f, 0.3f);
+          building.canBeUpgraded = false;
+          loadSprites(building);
+          if (buildingType == "docks") { building.upgradedFrom = $"fishing_docks_{race}"; }
         }
+        foreach (var buildingType in buildingTypesExtended)
+        {
+          string Base_Building = SB.tent_human;
+          string IDI = buildingType.Item1 + buildingType.Item5;
+          if (IDI == "house_0") { Base_Building = SB.house_human_0; }
+          if (IDI == "house_1") { Base_Building = SB.house_human_1; }
+          if (IDI == "house_2") { Base_Building = SB.house_human_2; }
+          if (IDI == "house_3") { Base_Building = SB.house_human_3; }
+          if (IDI == "house_4") { Base_Building = SB.house_human_4; }
+          if (IDI == "house_5") { Base_Building = SB.house_human_5; }
+          if (IDI == "hall_0") { Base_Building = SB.hall_human_0; }
+          if (IDI == "hall_1") { Base_Building = SB.hall_human_1; }
+          if (IDI == "hall_2") { Base_Building = SB.hall_human_2; }
+          if (IDI == "fishing_docks") { Base_Building = SB.fishing_docks_human; }
+          if (IDI == "windmill_0") { Base_Building = SB.windmill_human_0; }
+          if (IDI == "windmill_1") { Base_Building = SB.windmill_human_1; }
+          var building_base = AssetManager.buildings.get(Base_Building);
+          if (buildingType.Item1 != null)
+          {
+            var building = AssetManager.buildings.clone($"{buildingType.Item1}_{race}{buildingType.Item5}", Base_Building);
+            building.race = race;
+            building.setShadow(0f, 0.3f, 0.3f);
+            building.hasKingdomColor = false;
+            building.fundament = buildingType.Item3;
+            building.cost = buildingType.Item4;
+            if (buildingType.Item2 != null)
+            {
+              building.canBeUpgraded = true;
+              building.upgradeTo = $"{buildingType.Item2}_{race}{buildingType.Item6}";
+            }
+            else { building.canBeUpgraded = false; }
+            loadSprites(building);
+            if (race == "Xia")
+            {
+              string SD = $"{buildingType.Item7}"; if (buildingType.Item7 < 1) { SD = ""; }
+              var build = AssetManager.buildings.clone($"{SD}{buildingType.Item1}_{race}", Base_Building);
+              build.race = race;
+              build.setShadow(0f, 0.3f, 0.3f);
+              build.fundament = buildingType.Item3;
+              build.cost = buildingType.Item4;
+              if (buildingType.Item2 != null && IDI != "windmill_0")
+              {
+                build.canBeUpgraded = true;
+                build.upgradeTo = $"{buildingType.Item2}_{race}{buildingType.Item6}";
+              }
+              else { build.canBeUpgraded = false; }
+              loadSprites(build);
+            }
+          }
+        }
+      }
+    }
 
 
 
