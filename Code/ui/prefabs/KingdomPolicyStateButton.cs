@@ -1,4 +1,5 @@
 using DG.Tweening;
+using NeoModLoader.General;
 using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,6 +11,7 @@ public class KingdomPolicyStateButton : APrefab<KingdomPolicyStateButton>
     public Image bg;
     private Button button;
     private Image icon;
+    private Text text;
     private TipButton tip_button;
     public TooltipData tip_data;
     public KingdomPolicyStateAsset state { get; private set; }
@@ -17,6 +19,7 @@ public class KingdomPolicyStateButton : APrefab<KingdomPolicyStateButton>
     {
         if (Initialized) return;
         icon = transform.Find("Icon").GetComponent<Image>();
+        text = transform.Find("Text").GetComponent<Text>();
         bg = GetComponent<Image>();
         button = GetComponent<Button>();
         tip_button = gameObject.GetComponent<TipButton>();
@@ -35,6 +38,7 @@ public class KingdomPolicyStateButton : APrefab<KingdomPolicyStateButton>
     public override void SetSize(Vector2 pSize)
     {
         icon.GetComponent<RectTransform>().sizeDelta = pSize * 0.875f;
+        text.GetComponent<RectTransform>().sizeDelta = pSize * 0.875f;
         base.SetSize(pSize);
     }
     public void Setup(KingdomPolicyStateAsset pPolicyStateAsset, UnityAction<KingdomPolicyStateAsset> pClickAction, bool pSpecial = false, bool pHiddenBackground = false)
@@ -48,7 +52,17 @@ public class KingdomPolicyStateButton : APrefab<KingdomPolicyStateButton>
         }
         bg.enabled = !pHiddenBackground;
         state = pPolicyStateAsset;
-        icon.sprite = string.IsNullOrEmpty(pPolicyStateAsset.path_icon) ? SpriteTextureLoader.getSprite("ui/icons/iconDamage") : SpriteTextureLoader.getSprite(pPolicyStateAsset.path_icon);
+        Sprite iconSprite = SpriteTextureLoader.getSprite(pPolicyStateAsset.path_icon);
+        icon.enabled = iconSprite != null;
+        text.enabled = iconSprite == null;
+        if (iconSprite == null)
+        {
+            text.text = LM.Get(pPolicyStateAsset.path_icon);
+        }
+        else
+        {
+            icon.sprite = iconSprite;
+        }
 
         button.onClick.RemoveAllListeners();
 
@@ -76,6 +90,19 @@ public class KingdomPolicyStateButton : APrefab<KingdomPolicyStateButton>
         icon.transform.localPosition = Vector3.zero;
         Image iconImage = icon.GetComponent<Image>();
         iconImage.sprite = SpriteTextureLoader.getSprite("ui/icons/iconDamage");
+
+        GameObject text = new("Text", typeof(Text));
+        text.transform.SetParent(obj.transform);
+        text.transform.localScale = Vector3.one;
+        text.transform.localPosition = Vector3.zero;
+        Text textComponent = text.GetComponent<Text>();
+        textComponent.alignment = TextAnchor.MiddleCenter;
+        textComponent.resizeTextForBestFit = true;
+        textComponent.resizeTextMinSize = 1;
+        textComponent.resizeTextMaxSize = 18;
+        textComponent.text = "";
+        textComponent.color = Color.black;
+        textComponent.font = LocalizedTextManager.currentFont;
 
         obj.GetComponent<TipButton>().type = "kingdom_policy_state";
         Prefab = obj.AddComponent<KingdomPolicyStateButton>();

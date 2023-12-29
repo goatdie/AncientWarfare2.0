@@ -1,5 +1,6 @@
 using DG.Tweening;
 using NeoModLoader.api.attributes;
+using NeoModLoader.General;
 using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,6 +15,7 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
     public Image bg;
     private Button button;
     private Image icon;
+    private Text text;
     private TipButton tip_button;
     public TooltipData tip_data;
     public KingdomPolicyAsset policy { get; private set; }
@@ -21,6 +23,7 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
     {
         if (Initialized) return;
         icon = transform.Find("Icon").GetComponent<Image>();
+        text = transform.Find("Text").GetComponent<Text>();
         bg = GetComponent<Image>();
         button = GetComponent<Button>();
         tip_button = gameObject.GetComponent<TipButton>();
@@ -39,8 +42,17 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
         }
         bg.enabled = !pHiddenBackground;
         policy = pPolicyAsset;
-        icon.sprite = string.IsNullOrEmpty(pPolicyAsset.path_icon) ? SpriteTextureLoader.getSprite("ui/icons/iconDamage") : SpriteTextureLoader.getSprite(pPolicyAsset.path_icon);
-
+        Sprite iconSprite = SpriteTextureLoader.getSprite(pPolicyAsset.path_icon);
+        icon.enabled = iconSprite != null;
+        text.enabled = iconSprite == null;
+        if (iconSprite == null)
+        {
+            text.text = LM.Get(pPolicyAsset.path_icon);
+        }
+        else
+        {
+            icon.sprite = iconSprite;
+        }
         button.onClick.RemoveAllListeners();
 
         if (pClickAction != null)
@@ -64,6 +76,7 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
     public override void SetSize(Vector2 pSize)
     {
         icon.GetComponent<RectTransform>().sizeDelta = pSize * 0.875f;
+        text.GetComponent<RectTransform>().sizeDelta = pSize * 0.875f;
         base.SetSize(pSize);
     }
     private static void _init()
@@ -80,6 +93,19 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
         icon.transform.localPosition = Vector3.zero;
         Image iconImage = icon.GetComponent<Image>();
         iconImage.sprite = SpriteTextureLoader.getSprite("ui/icons/iconDamage");
+
+        GameObject text = new("Text", typeof(Text));
+        text.transform.SetParent(obj.transform);
+        text.transform.localScale = Vector3.one;
+        text.transform.localPosition = Vector3.zero;
+        Text textComponent = text.GetComponent<Text>();
+        textComponent.alignment = TextAnchor.MiddleCenter;
+        textComponent.resizeTextForBestFit = true;
+        textComponent.resizeTextMinSize = 1;
+        textComponent.resizeTextMaxSize = 18;
+        textComponent.text = "";
+        textComponent.color = Color.black;
+        textComponent.font = LocalizedTextManager.currentFont;
 
         obj.GetComponent<TipButton>().type = "kingdom_policy";
         Prefab = obj.AddComponent<KingdomPolicyButton>();
