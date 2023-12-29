@@ -9,8 +9,8 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
     {
         base.init();
         // 只注册政策, 不要链接状态
-        add("start_slaves", "start_slaves", "start_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
-        add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
+        add("start_slaves", "start_slaves", "start_slaves_desc", "奴", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
+        add("control_slaves", "control_slaves", "control_slaves_desc", "役", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
     }
     public override void post_init()
     {
