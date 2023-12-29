@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Figurebox.constants;
+using NeoModLoader.api.attributes;
 using UnityEngine;
 namespace Figurebox.core;
 
@@ -8,12 +9,6 @@ public partial class AW_Kingdom : Kingdom
 {
 
     public Actor heir;
-
-
-
-
-
-
 
 
 
@@ -96,40 +91,56 @@ public partial class AW_Kingdom : Kingdom
         // 当目前政策都执行完毕或没有政策时，查找新的政策
         if (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed || string.IsNullOrEmpty(policy_data.current_policy_id))
         {
-            if (string.IsNullOrEmpty(policy_data.current_state_id))
+            KingdomPolicyAsset next_policy = null;
+            if (policy_data.policy_queue.Count > 0)
             {
-                policy_data.current_state_id = KingdomPolicyStateLibrary.DefaultState.id;
-            }
-            var state_asset = KingdomPolicyStateLibrary.Instance.get(policy_data.current_state_id);
-            if (state_asset == null)
-            {
-                if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"状态'{policy_data.current_state_id}'不存在, 使用默认", true);
-                state_asset = KingdomPolicyStateLibrary.DefaultState;
-            }
+                var next_policy_in_queue = policy_data.policy_queue.Dequeue();
+                next_policy = KingdomPolicyLibrary.Instance.get(next_policy_in_queue.policy_id);
 
-            var next_policy = state_asset.policy_finder?.Invoke(this, policy_data, state_asset);
-            if (next_policy == null)
-            {
+                if (next_policy != null)
+                {
+                    StartPolicy(next_policy, false, next_policy_in_queue);
+                }
+
+                PolicyDataInQueue.Pool.Recycle(next_policy_in_queue);
                 return;
             }
-            StartPolicy(next_policy, false);
+
+            foreach (string state_id in policy_data.current_states.Values)
+            {
+                var state = KingdomPolicyStateLibrary.Instance.get(state_id);
+                if (state == null) continue;
+                next_policy = state.policy_finder(this);
+                if (!CheckPolicy(next_policy)) continue;
+
+                var policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
+                policy_data_in_queue.policy_id = next_policy.id;
+                policy_data_in_queue.progress = next_policy.cost_in_plan;
+                policy_data.policy_queue.Enqueue(policy_data_in_queue);
+            }
             return;
         }
+
         // 政策随机进展
         if (Toolbox.randomChance(pElapsed))
         {
-            policy_data.p_progress--;
             var policy_asset = KingdomPolicyLibrary.Instance.get(policy_data.current_policy_id);
             if (policy_asset == null)
             {
-                policy_data.current_policy_id = "";
+                ForceStopPolicy();
                 if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"政策'{policy_data.current_policy_id}'不存在, 终止", true);
                 return;
             }
+            // 检查政策是否可用
+            if (policy_asset.check_policy != null && !policy_asset.check_policy.Invoke(policy_asset, this))
+            {
+                ForceStopPolicy();
+                return;
+            }
 
+            policy_data.p_progress--;
             // 每一帧都执行一次(按照概率计算期望是1秒执行一次), 有待调整
-            var state_asset = KingdomPolicyStateLibrary.Instance.get(policy_data.current_state_id);
-            policy_asset.execute_policy(policy_asset, this, policy_data, state_asset);
+            policy_asset.execute_policy(policy_asset, this);
 
             if (policy_data.p_progress <= 0)
             {
@@ -143,27 +154,85 @@ public partial class AW_Kingdom : Kingdom
                     // 实施完成
                     case KingdomPolicyData.PolicyStatus.InProgress:
                         policy_data.p_status = KingdomPolicyData.PolicyStatus.Completed;
+                        policy_data.p_timestamp_done = World.world.mapStats.worldTime;
+                        policy_data.policy_history.Add(policy_data.current_policy_id);
+                        if (!string.IsNullOrEmpty(policy_asset.target_state_id))
+                        {
+                            UpdatePolicyStateTo(policy_asset.target_state_id);
+                        }
                         break;
                 }
             }
         }
     }
     /// <summary>
+    ///     检查政策是否可用
+    /// </summary>
+    /// <param name="pPolicyAsset"></param>
+    /// <returns></returns>
+    [Hotfixable]
+    public bool CheckPolicy(KingdomPolicyAsset pPolicyAsset)
+    {
+        return pPolicyAsset != null
+               && (pPolicyAsset.can_repeat ||
+                   !policy_data.policy_history.Contains(pPolicyAsset.id)
+                   && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed || policy_data.current_policy_id != pPolicyAsset.id))
+               && (!pPolicyAsset.only_moh || IsMoHKingdom)
+               && (pPolicyAsset.all_prepositions == null ||
+                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All && pPolicyAsset.all_prepositions.All(pState => policy_data.current_states.ContainsValue(pState)) ||
+                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.Any && pPolicyAsset.all_prepositions.Any(pState => policy_data.current_states.ContainsValue(pState)))
+               && (pPolicyAsset.check_policy == null || pPolicyAsset.check_policy.Invoke(pPolicyAsset, this));
+    }
+    /// <summary>
     ///     开始尝试执行政策
     /// </summary>
+    /// <remarks>
+    ///     这个方法会自动检查政策是否为null，是否可用, 如果不可用则不会执行, 可以放心直接调用
+    /// </remarks>
     /// <param name="pAsset">目标政策</param>
     /// <param name="pForce">是否强制覆盖当前正在执行的政策</param>
-    public void StartPolicy(KingdomPolicyAsset pAsset, bool pForce)
+    /// <param name="pPolicyDataInQueue">从队列中取出的政策的执行数据</param>
+    /// <returns>是否成功执行</returns>
+    public bool StartPolicy(KingdomPolicyAsset pAsset, bool pForce = false, PolicyDataInQueue pPolicyDataInQueue = null)
     {
+        if (!CheckPolicy(pAsset)) return false;
         // 正在执行其他政策
-        if (!string.IsNullOrEmpty(policy_data.current_policy_id) && policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed && !pForce) return;
+        if (!string.IsNullOrEmpty(policy_data.current_policy_id) && policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed && !pForce) return false;
 
         policy_data.current_policy_id = pAsset.id;
-        policy_data.p_progress = pAsset.cost_in_plan;
-        policy_data.p_status = KingdomPolicyData.PolicyStatus.InPlanning;
+        policy_data.p_progress = pPolicyDataInQueue?.progress ?? pAsset.cost_in_plan;
+        policy_data.p_status = pPolicyDataInQueue?.status ?? KingdomPolicyData.PolicyStatus.InPlanning;
+        policy_data.p_timestamp_start = pPolicyDataInQueue?.timestamp_start ?? World.world.mapStats.worldTime;
+        return true;
     }
     public void ForceStopPolicy()
     {
-
+        policy_data.current_policy_id = "";
+    }
+    /// <summary>
+    ///     更新政治状态
+    /// </summary>
+    /// <param name="pPolicyStateID">新政治状态的ID</param>
+    public void UpdatePolicyStateTo(string pPolicyStateID)
+    {
+        if (string.IsNullOrEmpty(pPolicyStateID))
+        {
+            if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"状态'{nameof(pPolicyStateID)}'为空, 终止", true);
+            return;
+        }
+        UpdatePolicyStateTo(KingdomPolicyStateLibrary.Instance.get(pPolicyStateID));
+    }
+    /// <summary>
+    ///     更新政治状态
+    /// </summary>
+    /// <param name="pPolicyState">新政治状态</param>
+    public void UpdatePolicyStateTo(KingdomPolicyStateAsset pPolicyState)
+    {
+        if (pPolicyState == null)
+        {
+            if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"状态'{nameof(pPolicyState)}'为空, 终止", true);
+            return;
+        }
+        policy_data.current_states[pPolicyState.type] = pPolicyState.id;
     }
 }

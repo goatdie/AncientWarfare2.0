@@ -1,5 +1,7 @@
-using Figurebox.core;
+using System;
 using System.Collections.Generic;
+using Figurebox.constants;
+using Figurebox.core;
 namespace Figurebox.Utils.MoH;
 
 public class MoHTools
@@ -12,7 +14,10 @@ public class MoHTools
     ///     当前天命国家是否存在
     /// </summary>
     public static bool ExistMoHKingdom => MoHKingdom != null && MoHKingdom.isAlive();
-    public static int MOH_Value = 0;
+    public static int MOH_Value = 0;    /// <summary>
+    ///     设置当前天命国家
+    /// </summary>
+    /// <param name="kingdom"></param>
     public static void SetMoHKingdom(AW_Kingdom kingdom)
     {
         MoHKingdom = kingdom;
@@ -60,24 +65,33 @@ public class MoHTools
 
     public static int CalculateKingdomValue(AW_Kingdom k)
     {
-        int kingdomValue = 0;
-        int populationTotal = k.getPopulationTotal();
-        int cityCount = k.cities.Count * 100;
-        int armySize = k.getArmy();
-        int stewardship = 8;
-        if (k.king != null)
+        string social_level_state_id = k.policy_data.GetPolicyStateId(PolicyStateType.social_level);
+        if (string.IsNullOrEmpty(social_level_state_id))
         {
-            stewardship = k.king.GetData().stewardship * 10;
-
-
+            return (int)KingdomPolicyStateLibrary.DefaultState.calc_kingdom_strength(k);
         }
-
-        if (k.policy_data.current_state_id == "default")
-        {
-            kingdomValue = populationTotal + cityCount + armySize + stewardship;
-        }
-
-        return kingdomValue;
+        return (int)(KingdomPolicyStateLibrary.Instance.get(social_level_state_id)?.calc_kingdom_strength(k) ?? 0);
+    }
+    /// <summary>
+    ///     消耗天命, 返回是否成功
+    /// </summary>
+    /// <param name="pValue">消耗量</param>
+    /// <param name="pForce">强制消耗, 无视下限</param>
+    /// <returns>天命国家不存在时返回失败</returns>
+    internal static bool CostMoH(int pValue, bool pForce = false)
+    {
+        // 帮我写一下这个函数
+        throw new NotImplementedException();
+    }
+    /// <summary>
+    ///     恢复的天命(取消国策时会使用)
+    /// </summary>
+    /// <param name="pValue">恢复数额</param>
+    /// <return>天命国家不存在时返回false</return>
+    internal static bool ReturnMoH(int pValue)
+    {
+        // 帮我写一下这个函数
+        throw new NotImplementedException();
     }
     /// <summary>
     ///     从存档中读取并直接缓存国家

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Figurebox.ai;
 using Figurebox.core;
 using Figurebox.patch.MoH;
 using Figurebox.Utils;
-using Figurebox.ai;
 using HarmonyLib;
 using ModDeclaration;
 using NCMS;
@@ -25,7 +25,7 @@ namespace Figurebox
     {
         public static GameObject backgroundAvatar;
         public static GameObject citybg;
-
+        public static Transform prefabs_library;
         public List<string> addRaces = new List<string>()
         {
             "Xia"
@@ -51,11 +51,15 @@ namespace Figurebox
             LM.AddToCurrentLocale("clanname", "氏");
 #endif
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
+            NewUI.PatchResources();
             Traits.init();
             AW_KingdomManager.init();
             _ = KingdomEventsManager.Instance;
             KingdomPolicyLibrary.Instance.init();
             KingdomPolicyStateLibrary.Instance.init();
+
+            KingdomPolicyLibrary.Instance.post_init();
+            KingdomPolicyStateLibrary.Instance.post_init();
             //loadBanners("Xia");
             // NewUI.init();
             NameGeneratorAssets.init();
@@ -68,6 +72,7 @@ namespace Figurebox
             WindowManager.init();
             moreWeapons.init();
             FunctionHelper.instance = functionHelper;
+            Tooltips.init();
             trait_group.init();
             TianmingGroup.init();
             RacesLibrary.init();
@@ -147,26 +152,27 @@ namespace Figurebox
 
             Configure();
 
+            prefabs_library = new GameObject("Prefabs").transform;
+            prefabs_library.SetParent(transform);
+
             AutoMethodReplaceTool.ReplaceMethods();
         }
         [Hotfixable]
         public void Reload()
         {
-            foreach (City city in World.world.cities.list)
+            var locale_dir = GetLocaleFilesDirectory(GetDeclaration());
+            foreach (var file in Directory.GetFiles(locale_dir))
             {
-                int count = 0;
-                foreach (Actor actor in city.units)
+                if (file.EndsWith(".json"))
                 {
-                    if (actor == null)
-                    {
-                        count++;
-                    }
+                    LM.LoadLocale(Path.GetFileNameWithoutExtension(file), file);
                 }
-                if (count == 0) continue;
-                LogWarning($"There are {count} actors be null in {city.data.id}({city.getCityName()})'s units. Fix it temporarily.");
-                city.units.Remove(null);
-                city.units.checkAddRemove();
+                else if (file.EndsWith(".csv"))
+                {
+                    LM.LoadLocales(file);
+                }
             }
+            LM.ApplyLocale();
         }
         private void Configure()
         {

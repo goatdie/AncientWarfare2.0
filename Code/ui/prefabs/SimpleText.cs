@@ -31,6 +31,7 @@ public class SimpleText : APrefab<SimpleText>
     private static void _init()
     {
         GameObject obj = new("SimpleText", typeof(Image));
+        obj.transform.SetParent(Main.prefabs_library);
         obj.GetComponent<Image>().sprite = SpriteTextureLoader.getSprite("ui/special/windowInnerSliced");
         obj.GetComponent<Image>().type = Image.Type.Sliced;
         obj.GetComponent<RectTransform>().sizeDelta = new Vector2(200, 18);
