@@ -97,12 +97,12 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         }
         ScrollWindow.showWindow(nameof(KingdomMoHWindow));
     }
+    [Hotfixable]
     public override void OnNormalEnable()
     {
         base.OnNormalEnable();
         if (!MoHTools.ExistMoHKingdom)
         {
-            Clean();
             return;
         }
         AW_Kingdom moh_kingdom = MoHTools.MoHKingdom;
@@ -127,6 +127,31 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         kingdom_moh_desc.text = LM.Get(MoHTools.GetMoHDescKey());
 
         king_avatar.show(moh_kingdom.king);
+
+        int queue_idx = 0;
+        foreach (var queue in moh_kingdom.policy_data.policy_queue)
+        {
+            KingdomPolicyButton policy_button = policy_queue_pool.getNext(queue_idx++);
+            policy_button.Setup(KingdomPolicyLibrary.Instance.get(queue.policy_id), null, false, true);
+            policy_button.SetSize(new Vector2(28, 28));
+        }
+
+        foreach (var policy in KingdomPolicyLibrary.Instance.list)
+        {
+            if (!moh_kingdom.CheckPolicy(policy)) continue;
+
+            KingdomPolicyButton policy_button = optional_policy_pool.getNext();
+            policy_button.Setup(policy, pPolicy =>
+            {
+
+            }, false, true);
+            policy_button.SetSize(new Vector2(28, 28));
+        }
+    }
+    public override void OnNormalDisable()
+    {
+        base.OnNormalDisable();
+        Clean();
     }
     private void Clean()
     {
@@ -134,5 +159,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         kingdom_moh_desc.text = "NONE";
 
         king_avatar.show(null);
+        policy_queue_pool.clear();
+        optional_policy_pool.clear();
     }
 }

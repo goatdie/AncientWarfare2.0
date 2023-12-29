@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Figurebox.prefabs;
 using NCMS.Utils;
 using NeoModLoader.General;
 using ReflectionUtility;
@@ -9,7 +11,21 @@ namespace Figurebox
     internal class NewUI
     { // thanks to Dej
         private static GameObject textRef;
-
+        private static readonly Dictionary<string, Object> _patched_resources = RF.GetStaticField<Dictionary<string, Object>, ResourcesPatch>("modsResources");
+        /// <summary>
+        ///     将资源添加到游戏中
+        /// </summary>
+        /// <param name="pPath"></param>
+        /// <param name="pObject"></param>
+        private static void PatchResourceToGame(string pPath, Object pObject)
+        {
+            // TODO: 等待下一版本NML将会使用新的API，这里的代码将会被移除
+            _patched_resources[pPath.ToLower()] = pObject;
+        }
+        public static void PatchResources()
+        {
+            PatchResourceToGame("tooltips/tooltip_policy", KingdomPolicyTooltip.Prefab.GetComponent<Tooltip>());
+        }
 
         public static UiUnitAvatarElement createActorUI(Actor actor, GameObject parent, Vector3 pos)
         {

@@ -35,8 +35,6 @@
     <ItemGroup>
       <Content Include=".gitignore" />
       <Content Include="default_config.json" />
-      <Content Include="Locales\cz.json" />
-      <Content Include="Locales\en.json" />
       <Content Include="mod.json" />
     </ItemGroup>
     <ItemGroup>
@@ -125,6 +123,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+      <Folder Include="Code\core\kingdom_vassals\"/>
       <Folder Include="word_libraries\" />
       <Folder Include="name_generators\" />
   </ItemGroup>

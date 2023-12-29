@@ -1,5 +1,6 @@
-using Figurebox.core;
 using System.Collections.Generic;
+using Figurebox.constants;
+using Figurebox.core;
 namespace Figurebox.Utils.MoH;
 
 public class MoHTools
@@ -12,7 +13,10 @@ public class MoHTools
     ///     当前天命国家是否存在
     /// </summary>
     public static bool ExistMoHKingdom => MoHKingdom != null && MoHKingdom.isAlive();
-
+    /// <summary>
+    ///     设置当前天命国家
+    /// </summary>
+    /// <param name="kingdom"></param>
     public static void SetMoHKingdom(AW_Kingdom kingdom)
     {
         MoHKingdom = kingdom;
@@ -46,24 +50,12 @@ public class MoHTools
 
     public static int CalculateKingdomValue(AW_Kingdom k)
     {
-        int kingdomValue = 0;
-        int populationTotal = k.getPopulationTotal();
-        int cityCount = k.cities.Count * 100;
-        int armySize = k.getArmy();
-        int stewardship = 8;
-        if (k.king != null)
+        string social_level_state_id = k.policy_data.GetPolicyStateId(PolicyStateType.social_level);
+        if (string.IsNullOrEmpty(social_level_state_id))
         {
-            stewardship = k.king.GetData().stewardship * 10;
-
-
+            return (int)KingdomPolicyStateLibrary.DefaultState.calc_kingdom_strength(k);
         }
-
-        if (k.policy_data.current_state_id == "default")
-        {
-            kingdomValue = populationTotal + cityCount + armySize + stewardship;
-        }
-
-        return kingdomValue;
+        return (int)(KingdomPolicyStateLibrary.Instance.get(social_level_state_id)?.calc_kingdom_strength(k) ?? 0);
     }
     /// <summary>
     ///     从存档中读取并直接缓存国家
