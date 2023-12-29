@@ -11,6 +11,7 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         // 只注册政策, 不要链接状态
         add("start_slaves", "start_slaves", "start_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
         add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
+         add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.NameIntegration, false, false);
     }
     public override void post_init()
     {

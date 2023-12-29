@@ -186,6 +186,7 @@ namespace Figurebox
         {
             Harmony.CreateAndPatchAll(typeof(RacesLibrary));
             Harmony.CreateAndPatchAll(typeof(MoHCorePatch));
+            Harmony.CreateAndPatchAll(typeof(NamePatch));
 /*
             Harmony.CreateAndPatchAll(typeof(FunctionHelper));
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));

@@ -10,13 +10,17 @@ public partial class AW_Kingdom : Kingdom
 {
 
     public Actor heir;
-
+    public bool NameIntegration = false;//控制国家命名是否姓氏合流
 
 
 
 
     public KingdomPolicyData policy_data = new();
 
+    public void ToggleNameIntegration(bool b)
+    {
+       this.NameIntegration = b;
+    }
     public void clearHeirData()
     {
         this.heir = null;

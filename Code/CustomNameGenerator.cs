@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Chinese_Name;
 #endif
+using Figurebox.core;
 namespace Figurebox;
 #if 一米_中文名
 internal static class NameGeneratorInitialzier
@@ -37,14 +38,18 @@ internal static class NameGeneratorInitialzier
 
     static void NewActorNameGeneratorDefaultParameterGetter(Actor pActor, Dictionary<string, string> pParameters)
     {
-        if (pActor == null)
-        {                              // 自己的逻辑pActor.kingdom.canHasFamilyName()
+        AW_Kingdom awKingdom = pActor.kingdom as AW_Kingdom;
+        if (awKingdom != null && awKingdom.NameIntegration)
+        {
+           // Main.LogInfo("这个人用的改制姓名");            // 自己的逻辑pActor.kingdom.canHasFamilyName()
             string familyName;
             string clanName;
+            string ChineseFamilyName;
 
             pActor.data.get("family_name", out familyName, "");
             pActor.data.get("clan_name", out clanName, "");
-            if (string.IsNullOrEmpty(familyName) || string.IsNullOrEmpty(clanName))
+            pActor.data.get("chinese_family_name", out ChineseFamilyName, "");
+            if (string.IsNullOrEmpty(familyName) || string.IsNullOrEmpty(clanName)|| string.IsNullOrEmpty(ChineseFamilyName))
             {
                 familyName = WordLibraryManager.GetRandomWord("氏");
                 clanName = familyName;
