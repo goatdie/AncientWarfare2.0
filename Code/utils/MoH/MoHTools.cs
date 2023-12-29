@@ -12,10 +12,24 @@ public class MoHTools
     ///     当前天命国家是否存在
     /// </summary>
     public static bool ExistMoHKingdom => MoHKingdom != null && MoHKingdom.isAlive();
-
+    public static int MOH_Value = 0;
     public static void SetMoHKingdom(AW_Kingdom kingdom)
     {
         MoHKingdom = kingdom;
+        MOH_Value = 30;
+    }
+        public static void Clear_MoHKingdom()
+    {
+        MoHKingdom = null;
+        MOH_Value = 0;
+    }
+    public static void SetMOH_Value(int value)
+    {
+        MOH_Value = value;
+    }
+        public static void ChangeMOH_Value(int value) //天命值改变
+    {
+        MOH_Value += value;
     }
     public static bool IsMoHKingdom(AW_Kingdom kingdom)
     {
