@@ -126,10 +126,8 @@ public class MoHTools
         {
             case <= 0:
                 return "moh_desc_bad";
-            case <= 30:
+            case <= 70:
                 return "moh_desc_common";
-            case <= 100:
-                return "moh_desc_good";
             default:
                 return "moh_desc_good";
         }
