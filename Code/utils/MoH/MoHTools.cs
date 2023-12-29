@@ -14,7 +14,10 @@ public class MoHTools
     ///     当前天命国家是否存在
     /// </summary>
     public static bool ExistMoHKingdom => MoHKingdom != null && MoHKingdom.isAlive();
-    public static int MOH_Value = 0;    /// <summary>
+    public static int MOH_Value = 0;
+    public static int MOH_UnderLimit = -30;
+    public static int MOH_UpperLimit = 100;
+    /// <summary>
     ///     设置当前天命国家
     /// </summary>
     /// <param name="kingdom"></param>
@@ -23,7 +26,7 @@ public class MoHTools
         MoHKingdom = kingdom;
         MOH_Value = 30;
     }
-        public static void Clear_MoHKingdom()
+    public static void Clear_MoHKingdom()
     {
         MoHKingdom = null;
         MOH_Value = 0;
@@ -32,7 +35,7 @@ public class MoHTools
     {
         MOH_Value = value;
     }
-        public static void ChangeMOH_Value(int value) //天命值改变
+    public static void ChangeMOH_Value(int value) //天命值改变
     {
         MOH_Value += value;
     }
@@ -80,8 +83,21 @@ public class MoHTools
     /// <returns>天命国家不存在时返回失败</returns>
     internal static bool CostMoH(int pValue, bool pForce = false)
     {
-        // 帮我写一下这个函数
-        throw new NotImplementedException();
+        if (!ExistMoHKingdom)
+        {
+            return false;
+        }
+        if (pForce)
+        {
+            ChangeMOH_Value(-pValue);
+            return true;
+        }
+        if (MOH_Value >= MOH_UnderLimit)
+        {
+            ChangeMOH_Value(-pValue);
+            return true;
+        }
+        return false;
     }
     /// <summary>
     ///     恢复的天命(取消国策时会使用)
@@ -90,8 +106,12 @@ public class MoHTools
     /// <return>天命国家不存在时返回false</return>
     internal static bool ReturnMoH(int pValue)
     {
-        // 帮我写一下这个函数
-        throw new NotImplementedException();
+        if (!ExistMoHKingdom)
+        {
+            return false;
+        }
+        ChangeMOH_Value(+pValue);
+        return true;
     }
     /// <summary>
     ///     从存档中读取并直接缓存国家

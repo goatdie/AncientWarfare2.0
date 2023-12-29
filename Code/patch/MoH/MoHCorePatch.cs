@@ -60,9 +60,9 @@ internal static class MoHCorePatch
 
     public static void MOH_condition_Postfix(Kingdom __instance)
     {
-        if (MoHTools.MOH_Value >= 100)
+        if (MoHTools.MOH_Value >= MoHTools.MOH_UnderLimit)
         {
-            MoHTools.SetMOH_Value(100);
+            MoHTools.SetMOH_Value(MoHTools.MOH_UnderLimit);
         }
         AW_Kingdom awKingdom = __instance as AW_Kingdom;
         if (MoHTools.IsMoHKingdom(awKingdom))
@@ -71,7 +71,7 @@ internal static class MoHCorePatch
             {
                 //天命值在什么条件发生的事件
             }
-            if (MoHTools.MOH_Value <= -30)
+            if (MoHTools.MOH_Value <= MoHTools.MOH_UnderLimit)
             {
                 MoHTools.Clear_MoHKingdom();                //天命去除
             }
