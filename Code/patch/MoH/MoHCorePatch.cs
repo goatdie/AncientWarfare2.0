@@ -60,9 +60,9 @@ internal static class MoHCorePatch
 
     public static void MOH_condition_Postfix(Kingdom __instance)
     {
-        if (MoHTools.MOH_Value >= MoHTools.MOH_UnderLimit)
+        if (MoHTools.MOH_Value >= MoHTools.MOH_UpperLimit)
         {
-            MoHTools.SetMOH_Value(MoHTools.MOH_UnderLimit);
+            MoHTools.SetMOH_Value(MoHTools.MOH_UpperLimit);
         }
         AW_Kingdom awKingdom = __instance as AW_Kingdom;
         if (MoHTools.IsMoHKingdom(awKingdom))
@@ -73,7 +73,8 @@ internal static class MoHCorePatch
             }
             if (MoHTools.MOH_Value <= MoHTools.MOH_UnderLimit)
             {
-                MoHTools.Clear_MoHKingdom();                //天命去除
+                MoHTools.Clear_MoHKingdom();     
+                Debug.Log("去除天命"+awKingdom.data.name+MoHTools.MOH_Value);           //天命去除
             }
         }
 
