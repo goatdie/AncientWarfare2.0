@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Figurebox.constants;
+using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using UnityEngine;
 namespace Figurebox.core;
@@ -177,7 +178,7 @@ public partial class AW_Kingdom : Kingdom
                && (pPolicyAsset.can_repeat ||
                    !policy_data.policy_history.Contains(pPolicyAsset.id)
                    && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed || policy_data.current_policy_id != pPolicyAsset.id))
-               && (!pPolicyAsset.only_moh || IsMoHKingdom)
+               && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
                    pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All && pPolicyAsset.all_prepositions.All(pState => policy_data.current_states.ContainsValue(pState)) ||
                    pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.Any && pPolicyAsset.all_prepositions.Any(pState => policy_data.current_states.ContainsValue(pState)))
