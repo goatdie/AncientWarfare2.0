@@ -11,11 +11,12 @@ namespace Figurebox.prefabs;
 /// </summary>
 public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
 {
-    private Image bg;
+    public Image bg;
     private Button button;
     private Image icon;
-    private KingdomPolicyAsset policy;
     private TipButton tip_button;
+    public TooltipData tip_data;
+    public KingdomPolicyAsset policy { get; private set; }
     protected override void Init()
     {
         if (Initialized) return;
@@ -31,6 +32,11 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
     public void Setup(KingdomPolicyAsset pPolicyAsset, UnityAction<KingdomPolicyAsset> pClickAction = null, bool pSpecial = false, bool pHiddenBackground = false)
     {
         Init();
+        if (pPolicyAsset == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
         bg.enabled = !pHiddenBackground;
         policy = pPolicyAsset;
         icon.sprite = string.IsNullOrEmpty(pPolicyAsset.path_icon) ? SpriteTextureLoader.getSprite("ui/icons/iconDamage") : SpriteTextureLoader.getSprite(pPolicyAsset.path_icon);
@@ -42,14 +48,15 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
             button.onClick.AddListener(() => pClickAction?.Invoke(policy));
         }
         bg.sprite = SpriteTextureLoader.getSprite(pSpecial ? "ui/special/button2" : "ui/special/button");
+        tip_data = new TooltipData
+        {
+            tip_name = policy.id
+        };
     }
     private void showTooltip()
     {
         if (policy == null) return;
-        Tooltip.show(icon.gameObject, tip_button.type, new TooltipData
-        {
-            tip_name = policy.id
-        });
+        Tooltip.show(icon.gameObject, tip_button.type, tip_data);
         icon.transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
         icon.transform.DOKill();
         icon.transform.DOScale(1f, 0.1f).SetEase(Ease.InBack);

@@ -42,6 +42,10 @@ internal class Tooltips
         KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get(pData.tip_name);
         pTooltip.name.text = LM.Get(policy.policyname);
         pTooltip.setDescription(LM.Get(policy.description));
-        Main.LogInfo($"Called {pTooltip.name.text} {pTooltip.description.text}");
+        if (!string.IsNullOrEmpty(pData.tip_description))
+        {
+            int total = pData.tip_description_2 == KingdomPolicyData.PolicyStatus.InPlanning.ToString() ? policy.cost_in_plan : policy.cost_in_progress;
+            pTooltip.addBottomDescription($"{LM.Get(pData.tip_description_2)}: {LM.Get(pData.tip_description)}/{total}");
+        }
     }
 }

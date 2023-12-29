@@ -1,4 +1,7 @@
 key,cz,en
+InPlanning,策划中,In Planning
+InProgress,执行中,In Progress
+Completed,已完成,Completed
 start_slaves,开启奴隶制,Start Slavery
 start_slaves_desc,推动奴隶制改革\n更高的生产力，更多的士兵人口,Higher productivity， more soldiers
 control_slaves,强化奴隶控制,Enforce Slavery
