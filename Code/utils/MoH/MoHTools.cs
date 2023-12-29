@@ -15,8 +15,8 @@ public class MoHTools
     /// </summary>
     public static bool ExistMoHKingdom => MoHKingdom != null && MoHKingdom.isAlive();
     public static int MOH_Value = 0;
-    public static int MOH_UnderLimit = -30;
-    public static int MOH_UpperLimit = 100;
+    public  const int MOH_UnderLimit = -30;
+    public  const int MOH_UpperLimit = 100;
     /// <summary>
     ///     设置当前天命国家
     /// </summary>
