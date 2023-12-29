@@ -140,18 +140,6 @@ namespace Figurebox
         }
       }
     }
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(MapText), "showTextKingdom")]
-    public static void SetTianmingicon_Postfix(MapText __instance, Kingdom pKingdom)
-    {
-      bool tianmingBoolValue;
-      pKingdom.data.get("tianmingbool", out tianmingBoolValue);
-      if (tianmingBoolValue)
-      {
-
-        __instance.base_icon.sprite = Sprites.LoadSprite($"{Mod.Info.Path}/GameResources/iconfirst.png");
-      }
-    }
     [HarmonyPrefix]
     [HarmonyPatch(typeof(KingdomBehCheckKing), "findKing")]
     public static bool CheckRoyal_Prefix(KingdomBehCheckKing __instance, Kingdom pKingdom)

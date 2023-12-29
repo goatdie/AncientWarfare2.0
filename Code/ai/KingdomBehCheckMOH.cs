@@ -17,7 +17,7 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
         {
             if (checkMOHcondition(awKingdom))
             {
-                Debug.Log("天命设置完毕");
+                //Debug.Log("天命设置完毕");
                 MoHTools.SetMoHKingdom(awKingdom);
 
             }
@@ -30,7 +30,7 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
     }
     private bool checkMOHcondition(AW_Kingdom pKingdom)
     {
-        Debug.Log("天命寻找中");
+       // Debug.Log("天命寻找中");
 
         if (pKingdom.king != null && pKingdom.king.hasTrait("first"))
         {
