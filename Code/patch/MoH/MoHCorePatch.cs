@@ -16,4 +16,16 @@ internal static class MoHCorePatch
             __instance.base_icon.sprite = SpriteTextureLoader.getSprite("moh_nameplate");
         }
     }
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Kingdom), "setKing")]
+    public static void setKing_mohPostfix(Kingdom __instance    ,Actor pActor)
+    {
+        AW_Kingdom awKingdom = __instance as AW_Kingdom;
+
+        if (MoHTools.IsMoHKingdom(awKingdom))
+        {
+            pActor.addTrait("天命");
+        }
+    }
+   
 }

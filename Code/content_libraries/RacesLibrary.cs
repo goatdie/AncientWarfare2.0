@@ -126,32 +126,12 @@ namespace Figurebox
             AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "sword", 10);
             AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "ge", 10);
             AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "bow", 5);
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_tent, "tent_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_house_0, "house_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_house_1, "1house_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_house_2, "2house_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_house_3, "3house_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_house_4, "4house_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_house_5, "5house_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_hall_0, "hall_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_hall_1, "1hall_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_hall_2, "2hall_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_windmill_0, "windmill_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_windmill_1, "windmill_Xia_0");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_docks_0, "fishing_docks_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_docks_1, "docks_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_watch_tower, "watch_tower_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_barracks, "barracks_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_temple, "temple_Xia");
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_statue, SB.statue);
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_well, SB.well);
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_bonfire, SB.bonfire);
-            AssetManager.raceLibrary.addBuildingOrderKey(SB.order_mine, SB.mine);
+            AssetManager.raceLibrary.cloneBuildingKeys(SK.human,Xia.id);
             var monk = AssetManager.actor_library.get("monkey");
             var monkname = AssetManager.nameGenerator.get("monkey_name");
             monkname.vowels = new string[]
             {
-                "bibi", "longtail", "pigtail", "monyet", "monpai", "monk", "woooo", "oo", "aa"
+                " bibi", " beruk"," longtail", " pigtail", " monyet", " monpai", " monk", " woooo", " oo", " aa"
             };
             // Race monkey = AssetManager.raceLibrary.clone("monkeyrace", "human");
             // monkey.path_icon  = "ui/Icons/iconMonkey";

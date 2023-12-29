@@ -1,3 +1,5 @@
+using System;
+using UnityEngine;
 using System.Collections.Generic;
 using Figurebox.constants;
 using Figurebox.core;
@@ -24,6 +26,7 @@ public class MoHTools
     {
         MoHKingdom = kingdom;
         MOH_Value = 30;
+        Debug.Log("天命值"+MOH_Value);
     }
     public static void Clear_MoHKingdom()
     {
@@ -37,6 +40,7 @@ public class MoHTools
     public static void ChangeMOH_Value(int value) //天命值改变
     {
         MOH_Value += value;
+        Main.LogInfo("天命改变"+value);
     }
     public static bool IsMoHKingdom(AW_Kingdom kingdom)
     {
