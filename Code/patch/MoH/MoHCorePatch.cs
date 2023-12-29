@@ -1,8 +1,7 @@
-namespace Figurebox.patch.MoH;
-using HarmonyLib;
-using UnityEngine;
-using Figurebox.Utils.MoH;
 using Figurebox.core;
+using Figurebox.Utils.MoH;
+using HarmonyLib;
+namespace Figurebox.patch.MoH;
 
 internal static class MoHCorePatch
 {
@@ -14,7 +13,6 @@ internal static class MoHCorePatch
 
         if (MoHTools.IsMoHKingdom(awKingdom))
         {
-
             __instance.base_icon.sprite = SpriteTextureLoader.getSprite("moh_nameplate");
         }
     }

@@ -12,6 +12,18 @@ public class KingdomPolicyStateAsset : Asset
     /// </summary>
     public CalcKingdomStrength calc_kingdom_strength = KingdomPolicyStateLibrary.DefaultCalcKingdomPower;
     /// <summary>
+    ///     描述文本的key
+    /// </summary>
+    public string description;
+    /// <summary>
+    ///     政策名称的key
+    /// </summary>
+    public string name;
+    /// <summary>
+    ///     图标路径
+    /// </summary>
+    public string path_icon;
+    /// <summary>
     ///     查找下一个政策的方法
     /// </summary>
     public FindPolicy policy_finder;

@@ -7,6 +7,8 @@ namespace Figurebox.Utils.MoH;
 
 public class MoHTools
 {
+    public const int MOH_UnderLimit = -30;
+    public const int MOH_UpperLimit = 100;
     /// <summary>
     ///     当前天命国家
     /// </summary>
@@ -15,9 +17,7 @@ public class MoHTools
     ///     当前天命国家是否存在
     /// </summary>
     public static bool ExistMoHKingdom => MoHKingdom != null && MoHKingdom.isAlive();
-    public static int MOH_Value = 0;
-    public  const int MOH_UnderLimit = -30;
-    public  const int MOH_UpperLimit = 100;
+    public static int MOH_Value { get; private set; }
     /// <summary>
     ///     设置当前天命国家
     /// </summary>
@@ -126,6 +126,14 @@ public class MoHTools
     public static string GetMoHDescKey()
     {
         if (!ExistMoHKingdom) return "";
-        return "moh_desc_common";
+        switch (MOH_Value)
+        {
+            case <= 0:
+                return "moh_desc_bad";
+            case <= 70:
+                return "moh_desc_common";
+            default:
+                return "moh_desc_good";
+        }
     }
 }

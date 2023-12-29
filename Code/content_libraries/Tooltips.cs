@@ -12,6 +12,12 @@ internal class Tooltips
             prefab_id = "tooltips/tooltip_policy",
             callback = showPolicy
         });
+        AssetManager.tooltips.add(new TooltipAsset
+        {
+            id = "kingdom_policy_state",
+            prefab_id = "tooltips/tooltip_policy_state",
+            callback = showPolicyState
+        });
     }
     /// <summary>
     ///     显示政策
@@ -47,5 +53,29 @@ internal class Tooltips
             int total = pData.tip_description_2 == KingdomPolicyData.PolicyStatus.InPlanning.ToString() ? policy.cost_in_plan : policy.cost_in_progress;
             pTooltip.addBottomDescription($"{LM.Get(pData.tip_description_2)}: {LM.Get(pData.tip_description)}/{total}");
         }
+    }
+    /// <summary>
+    ///     显示政治状态
+    /// </summary>
+    /// <remarks>
+    ///     对<paramref name="pData" />的参数做如下约定
+    ///     <list type="table">
+    ///         <item>
+    ///             <term>参数</term><description>说明</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>tip_name</term><description>政治状态Id</description>
+    ///         </item>
+    ///     </list>
+    /// </remarks>
+    /// <param name="pTooltip"></param>
+    /// <param name="pType"></param>
+    /// <param name="pData"></param>
+    [Hotfixable]
+    private static void showPolicyState(Tooltip pTooltip, string pType, TooltipData pData = default)
+    {
+        KingdomPolicyStateAsset state = KingdomPolicyStateLibrary.Instance.get(pData.tip_name);
+        pTooltip.name.text = LM.Get(state.name);
+        pTooltip.setDescription(LM.Get(state.description));
     }
 }

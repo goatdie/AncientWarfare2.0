@@ -25,6 +25,7 @@ namespace Figurebox
         public static void PatchResources()
         {
             PatchResourceToGame("tooltips/tooltip_policy", KingdomPolicyTooltip.Prefab.GetComponent<Tooltip>());
+            PatchResourceToGame("tooltips/tooltip_policy_state", KingdomPolicyStateTooltip.Prefab.GetComponent<Tooltip>());
         }
 
         public static UiUnitAvatarElement createActorUI(Actor actor, GameObject parent, Vector3 pos)

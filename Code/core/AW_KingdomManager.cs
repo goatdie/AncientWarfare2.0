@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Figurebox.attributes;
 namespace Figurebox.core;
 
-public class AW_KingdomManager : KingdomManager
+public partial class AW_KingdomManager : KingdomManager
 {
     public AW_KingdomManager(List<KingdomAsset> pKingdomAssetsToCreatedAsHidden)
     {
@@ -25,6 +26,16 @@ public class AW_KingdomManager : KingdomManager
         {
             ((AW_Kingdom)civ_kingdom).UpdateForPolicy(pElapsed);
         }
+    }
+    [MethodReplace]
+    public new void updateAge()
+    {
+        for (int i = 0; i < list_civs.Count; i++)
+        {
+            list_civs[i].updateAge();
+        }
+        UpdateMoHValue();
+        UpdateMoHCondition();
     }
 
     internal static void init()
