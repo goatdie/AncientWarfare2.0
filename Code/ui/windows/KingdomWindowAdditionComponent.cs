@@ -1,4 +1,5 @@
 using Figurebox.core;
+using Figurebox.prefabs;
 using NeoModLoader.General.UI.Window.Layout;
 using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
@@ -16,14 +17,19 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private UiUnitAvatarElement king_avatar;
     private SimpleText yearNameText;
     private KingdomWindow Window;
-
+    private SimpleText year_name;
+    private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
     private void OnEnable()
     {
         if (!Initialized) return;
-        heir_avatar.show(((AW_Kingdom)Config.selectedKingdom).heir);
-        heir_avatar.GetComponent<Button>().enabled = heir_avatar.gameObject.activeSelf;
-        heir_avatar.GetComponentInChildren<BannerLoader>().gameObject.SetActive(heir_avatar.gameObject.activeSelf);
-        heir_avatar.GetComponentInChildren<BannerLoaderClans>().gameObject.SetActive(heir_avatar.gameObject.activeSelf);
+        heir_avatar.show(kingdom.heir);
+        actorAvatarDisplaySetting(heir_avatar, heir_avatar.gameObject.activeSelf);
+        actorAvatarDisplaySetting(king_avatar, king_avatar.gameObject.activeSelf);
+        void actorAvatarDisplaySetting(UiUnitAvatarElement avatar, bool pActive)
+        {
+            avatar.GetComponent<Button>().enabled = pActive;
+            avatar.GetComponentInChildren<BannerLoader>()?.gameObject.SetActive(pActive);
+            avatar.GetComponentInChildren<BannerLoaderClans>()?.gameObject.SetActive(pActive);
 
         if (heir_avatar.GetComponent<EventTrigger>() == null)
         {
@@ -33,15 +39,6 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         if (!heir_avatar.gameObject.activeSelf)
         {
             heir_avatar.gameObject.SetActive(true);
-        }
-        AW_Kingdom awKingdom = Config.selectedKingdom as AW_Kingdom;
-        if (awKingdom != null && !string.IsNullOrEmpty(awKingdom.policy_data.year_name))
-        {
-            int yearcal = World.world.mapStats.getYearsSince(awKingdom.policy_data.year_start_timestamp);
-            string yearName = awKingdom.policy_data.year_name;
-            string date = (yearcal == 0) ? "元年" : yearcal + 1 + "年";
-            yearNameText.text.text = yearName + date;
-            yearNameText.text.color =awKingdom.kingdomColor.getColorText();
         }
     }
     protected override void Init()
@@ -91,28 +88,19 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         custom_part.name = "Middle";
         custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
 
-
         king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>();
         custom_part.AddChild(king_avatar.gameObject);
         king_avatar.GetComponent<Image>().enabled = true;
         king_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
-        // 创建年号文本
-        var verticalGroup = custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
 
-        yearNameText = Instantiate(SimpleText.Prefab, null);
-        yearNameText.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 12));
-        yearNameText.text.resizeTextMaxSize = 10;
-        verticalGroup.AddChild(yearNameText.gameObject);
-        yearNameText.text.text = "某年";
-        // 设置年号文本的初始内容
-
-
-        // 将年号文本添加到Middle部分
-        verticalGroup.AddChild(yearNameText.gameObject);
+        var middle_bar_group = custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
+        year_name = Instantiate(SimpleText.Prefab, null);
+        year_name.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 16));
+        middle_bar_group.AddChild(year_name.gameObject);
 
         GameObject policy_bar = new("PolicyBar", typeof(Image));
-        verticalGroup.AddChild(policy_bar);
-        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 18);
+        middle_bar_group.AddChild(policy_bar.gameObject);
+        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 16);
         policy_bar.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/special/windowInnerSliced");
         policy_bar.GetComponent<Image>().type = Image.Type.Sliced;
 

@@ -3,6 +3,7 @@ using System.Linq;
 using Figurebox.constants;
 using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
+using NeoModLoader.General;
 using UnityEngine;
 namespace Figurebox.core;
 
@@ -254,5 +255,24 @@ public partial class AW_Kingdom : Kingdom
             return;
         }
         policy_data.current_states[pPolicyState.type] = pPolicyState.id;
+    }
+    /// <summary>
+    ///     获取年号
+    /// </summary>
+    /// <param name="pWithYearNumber">是否带年份后缀</param>
+    /// <returns></returns>
+    public string GetYearName(bool pWithYearNumber)
+    {
+        string text = policy_data.year_name;
+        if (string.IsNullOrEmpty(text))
+        {
+            text = LM.Get("public_year_name");
+        }
+        if (pWithYearNumber)
+        {
+            int num = World.world.mapStats.getYearsSince(policy_data.year_start_timestamp) + 1;
+            return LM.Get("year_name_format").Replace("$year_name$", text).Replace("$year_number$", num == 1 ? LM.Get("first_year_number") : num.ToString());
+        }
+        return text;
     }
 }
