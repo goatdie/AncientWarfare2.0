@@ -1,10 +1,8 @@
 #if 一米_中文名
-using System.Collections.Generic;
-using Figurebox.core;
 using Chinese_Name;
+using Figurebox.core;
 using HarmonyLib;
 namespace Figurebox;
-
 
 public class KingdomYearName
 {
@@ -40,15 +38,12 @@ public class KingdomYearName
 
         // 获取现有的文本
         string existingText = __instance.text.text;
-
+        string final_text = "";
         // 检查现有文本是否已包含年号信息
         if (!existingText.Contains(" | " + nianhao)) // 检查是否已包含该年号
         {
             // 将年号添加到现有文本中
-            string newText = existingText + yearInfo;
-
-            // 更新UI文本
-            __instance.text.text = newText;
+            final_text = existingText + yearInfo;
         }
         else
         {
@@ -57,9 +52,10 @@ public class KingdomYearName
             int endIndex = existingText.IndexOf("年", startIndex);
             if (endIndex != -1)
             {
-                __instance.text.text = existingText.Substring(0, startIndex) + date + existingText.Substring(endIndex + 1);
+                final_text = existingText.Substring(0, startIndex) + date + existingText.Substring(endIndex + 1);
             }
         }
+        __instance.setText(final_text, pKingdom.capital.cityCenter);
     }
 
     [HarmonyPostfix]
@@ -71,6 +67,5 @@ public class KingdomYearName
 
         awKingdom.StartPolicy(policy, true);
     }
-
 }
 #endif

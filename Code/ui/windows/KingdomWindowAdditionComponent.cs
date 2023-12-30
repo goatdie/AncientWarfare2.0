@@ -1,4 +1,5 @@
 using Figurebox.core;
+using Figurebox.prefabs;
 using NeoModLoader.General.UI.Window.Layout;
 using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
@@ -14,22 +15,39 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private UiUnitAvatarElement heir_avatar;
     private UiUnitAvatarElement king_avatar;
     private KingdomWindow Window;
+    private SimpleText year_name;
+    private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
     private void OnEnable()
     {
         if (!Initialized) return;
-        heir_avatar.show(((AW_Kingdom)Config.selectedKingdom).heir);
-        heir_avatar.GetComponent<Button>().enabled = heir_avatar.gameObject.activeSelf;
-        heir_avatar.GetComponentInChildren<BannerLoader>().gameObject.SetActive(heir_avatar.gameObject.activeSelf);
-        heir_avatar.GetComponentInChildren<BannerLoaderClans>().gameObject.SetActive(heir_avatar.gameObject.activeSelf);
+        heir_avatar.show(kingdom.heir);
+        actorAvatarDisplaySetting(heir_avatar, heir_avatar.gameObject.activeSelf);
+        actorAvatarDisplaySetting(king_avatar, king_avatar.gameObject.activeSelf);
+        void actorAvatarDisplaySetting(UiUnitAvatarElement avatar, bool pActive)
+        {
+            avatar.GetComponent<Button>().enabled = pActive;
+            avatar.GetComponentInChildren<BannerLoader>()?.gameObject.SetActive(pActive);
+            avatar.GetComponentInChildren<BannerLoaderClans>()?.gameObject.SetActive(pActive);
 
-        if (heir_avatar.GetComponent<EventTrigger>() == null)
-        {
-            heir_avatar.gameObject.AddComponent<EventTrigger>();
+            if (avatar.GetComponent<EventTrigger>() == null)
+            {
+                avatar.gameObject.AddComponent<EventTrigger>();
+            }
+            avatar.GetComponent<EventTrigger>().enabled = pActive;
+            if (!pActive)
+            {
+                avatar.gameObject.SetActive(true);
+            }
         }
-        heir_avatar.GetComponent<EventTrigger>().enabled = heir_avatar.gameObject.activeSelf;
-        if (!heir_avatar.gameObject.activeSelf)
+        year_name.text.text = kingdom.GetYearName(true);
+        Window.elements.Clear();
+    }
+    private void OnDisable()
+    {
+        int count = Window.cityInfoPlacement.childCount;
+        for (int i = 0; i < count; i++)
         {
-            heir_avatar.gameObject.SetActive(true);
+            Destroy(Window.cityInfoPlacement.GetChild(i).gameObject, 1);
         }
     }
     protected override void Init()
@@ -79,14 +97,19 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         custom_part.name = "Middle";
         custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
 
-        king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>();
+        king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>(true);
         custom_part.AddChild(king_avatar.gameObject);
         king_avatar.GetComponent<Image>().enabled = true;
         king_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
 
+        var middle_bar_group = custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
+        year_name = Instantiate(SimpleText.Prefab, null);
+        year_name.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 16));
+        middle_bar_group.AddChild(year_name.gameObject);
+
         GameObject policy_bar = new("PolicyBar", typeof(Image));
-        custom_part.AddChild(policy_bar);
-        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 36);
+        middle_bar_group.AddChild(policy_bar.gameObject);
+        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 16);
         policy_bar.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/special/windowInnerSliced");
         policy_bar.GetComponent<Image>().type = Image.Type.Sliced;
 
