@@ -1,10 +1,12 @@
 using Figurebox.core;
 using Figurebox.prefabs;
+using Figurebox.prefabs;
 using NeoModLoader.General.UI.Window.Layout;
 using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Figurebox.prefabs;
 namespace Figurebox;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
@@ -14,12 +16,23 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private RectTransform ContentTransform;
     private UiUnitAvatarElement heir_avatar;
     private UiUnitAvatarElement king_avatar;
+    private SimpleText yearNameText;
     private KingdomWindow Window;
+    private SimpleText year_name;
+    private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
     private SimpleText year_name;
     private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
     private void OnEnable()
     {
         if (!Initialized) return;
+        heir_avatar.show(kingdom.heir);
+        actorAvatarDisplaySetting(heir_avatar, heir_avatar.gameObject.activeSelf);
+        actorAvatarDisplaySetting(king_avatar, king_avatar.gameObject.activeSelf);
+        void actorAvatarDisplaySetting(UiUnitAvatarElement avatar, bool pActive)
+        {
+            avatar.GetComponent<Button>().enabled = pActive;
+            avatar.GetComponentInChildren<BannerLoader>()?.gameObject.SetActive(pActive);
+            avatar.GetComponentInChildren<BannerLoaderClans>()?.gameObject.SetActive(pActive);
         heir_avatar.show(kingdom.heir);
         actorAvatarDisplaySetting(heir_avatar, heir_avatar.gameObject.activeSelf);
         actorAvatarDisplaySetting(king_avatar, king_avatar.gameObject.activeSelf);
@@ -107,7 +120,14 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         year_name.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 16));
         middle_bar_group.AddChild(year_name.gameObject);
 
+        var middle_bar_group = custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
+        year_name = Instantiate(SimpleText.Prefab, null);
+        year_name.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 16));
+        middle_bar_group.AddChild(year_name.gameObject);
+
         GameObject policy_bar = new("PolicyBar", typeof(Image));
+        middle_bar_group.AddChild(policy_bar.gameObject);
+        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 16);
         middle_bar_group.AddChild(policy_bar.gameObject);
         policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 16);
         policy_bar.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/special/windowInnerSliced");
@@ -122,4 +142,5 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         base.Init();
         OnEnable();
     }
+
 }
