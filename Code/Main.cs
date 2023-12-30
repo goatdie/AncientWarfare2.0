@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Figurebox.ai;
+using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.patch.MoH;
 using Figurebox.Utils;
@@ -179,6 +180,7 @@ namespace Figurebox
             if (Environment.UserName == "Inmny" || Environment.UserName == "1")
             {
                 Config.isEditor = true;
+                DebugConst.IS_DEVELOPER = true;
             }
         }
 
@@ -189,6 +191,8 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(NamePatch));
             Harmony.CreateAndPatchAll(typeof(KingdomHeirPatch));
             Harmony.CreateAndPatchAll(typeof(KingdomYearName));
+            Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
+            _ = new SlavesPatch();
 /*
             Harmony.CreateAndPatchAll(typeof(FunctionHelper));
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));

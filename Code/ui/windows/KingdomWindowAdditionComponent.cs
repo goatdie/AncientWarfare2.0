@@ -1,13 +1,102 @@
+using Figurebox.core;
+using NeoModLoader.General.UI.Window.Layout;
+using NeoModLoader.General.UI.Window.Utils.Extensions;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 namespace Figurebox;
 
-internal class KingdomWindowAdditionComponent : AdditionComponent
+internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
 {
+    private AutoVertLayoutGroup AutoLayoutRoot;
+    private RectTransform BackgroundTransform;
+    private RectTransform ContentTransform;
+    private UiUnitAvatarElement heir_avatar;
+    private UiUnitAvatarElement king_avatar;
+    private KingdomWindow Window;
+    private void OnEnable()
+    {
+        if (!Initialized) return;
+        heir_avatar.show(((AW_Kingdom)Config.selectedKingdom).heir);
+        heir_avatar.GetComponent<Button>().enabled = heir_avatar.gameObject.activeSelf;
+        heir_avatar.GetComponentInChildren<BannerLoader>().gameObject.SetActive(heir_avatar.gameObject.activeSelf);
+        heir_avatar.GetComponentInChildren<BannerLoaderClans>().gameObject.SetActive(heir_avatar.gameObject.activeSelf);
+
+        if (heir_avatar.GetComponent<EventTrigger>() == null)
+        {
+            heir_avatar.gameObject.AddComponent<EventTrigger>();
+        }
+        heir_avatar.GetComponent<EventTrigger>().enabled = heir_avatar.gameObject.activeSelf;
+        if (!heir_avatar.gameObject.activeSelf)
+        {
+            heir_avatar.gameObject.SetActive(true);
+        }
+    }
     protected override void Init()
     {
+        ContentTransform = transform.Find("Background/Scroll View/Viewport/Content").GetComponent<RectTransform>();
+        BackgroundTransform = transform.Find("Background").GetComponent<RectTransform>();
 
+        var content_size_fitter = ContentTransform.gameObject.AddComponent<ContentSizeFitter>();
+        var layout_group = ContentTransform.gameObject.AddComponent<VerticalLayoutGroup>();
+        AutoLayoutRoot = ContentTransform.gameObject.AddComponent<AutoVertLayoutGroup>();
+
+        content_size_fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        layout_group.spacing = 3;
+        layout_group.childAlignment = TextAnchor.UpperCenter;
+        layout_group.childControlHeight = false;
+        layout_group.childControlWidth = false;
+        layout_group.childForceExpandHeight = false;
+        layout_group.childForceExpandWidth = false;
+        layout_group.padding = new RectOffset(0, 0, 10, 5);
+
+        Window = GetComponent<KingdomWindow>();
     }
-    protected override void OnNormalOpen()
+    internal void Initialize()
     {
-        base.OnNormalOpen();
+        Init();
+        var top = AutoLayoutRoot.BeginHoriGroup(new Vector2(200, 54));
+        top.name = "Top";
+        top.transform.SetSiblingIndex(0);
+        top.AddChild(Window.kingdomBanner.transform.parent.gameObject);
+        var banners = top.BeginVertGroup(default, TextAnchor.UpperCenter, 5, new RectOffset(0, 0, 5, 5));
+        banners.name = "Diplomacy";
+        banners.AddChild(Window.containerBannersWar.transform.parent.gameObject);
+        banners.AddChild(Window.containerBannersAllies.transform.parent.gameObject);
+
+        var cities_fitter = Window.cityInfoPlacement.gameObject.AddComponent<ContentSizeFitter>();
+        var cities_layout = Window.cityInfoPlacement.gameObject.AddComponent<VerticalLayoutGroup>();
+
+        cities_fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        cities_layout.spacing = 3;
+        cities_layout.childAlignment = TextAnchor.UpperCenter;
+        cities_layout.childControlHeight = false;
+        cities_layout.childControlWidth = false;
+        cities_layout.childForceExpandHeight = false;
+        cities_layout.childForceExpandWidth = false;
+
+        var custom_part = AutoLayoutRoot.BeginHoriGroup(new Vector2(200, 36), TextAnchor.MiddleLeft, -4, new RectOffset(-3, 0, 3, 3));
+        custom_part.name = "Middle";
+        custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
+
+        king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>();
+        custom_part.AddChild(king_avatar.gameObject);
+        king_avatar.GetComponent<Image>().enabled = true;
+        king_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
+
+        GameObject policy_bar = new("PolicyBar", typeof(Image));
+        custom_part.AddChild(policy_bar);
+        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 36);
+        policy_bar.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/special/windowInnerSliced");
+        policy_bar.GetComponent<Image>().type = Image.Type.Sliced;
+
+        heir_avatar = Instantiate(king_avatar, null);
+        custom_part.AddChild(heir_avatar.gameObject);
+        heir_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
+        heir_avatar.unit_type_bg.sprite = heir_avatar.type_leader;
+        heir_avatar.transform.Find("Kingdom Icon").gameObject.SetActive(false);
+
+        base.Init();
+        OnEnable();
     }
 }
