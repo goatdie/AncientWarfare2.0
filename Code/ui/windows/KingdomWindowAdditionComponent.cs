@@ -1,12 +1,10 @@
 using Figurebox.core;
 using Figurebox.prefabs;
-using Figurebox.prefabs;
 using NeoModLoader.General.UI.Window.Layout;
 using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Figurebox.prefabs;
 namespace Figurebox;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
@@ -16,19 +14,21 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private RectTransform ContentTransform;
     private UiUnitAvatarElement heir_avatar;
     private UiUnitAvatarElement king_avatar;
-    private SimpleText yearNameText;
     private KingdomWindow Window;
     private SimpleText year_name;
+    private SimpleText yearNameText;
     private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
 
     private void OnEnable()
     {
         if (!Initialized) return;
         heir_avatar.show(kingdom.heir);
+        heir_avatar.unit_type_bg.sprite = heir_avatar.type_leader;
         actorAvatarDisplaySetting(heir_avatar, heir_avatar.gameObject.activeSelf);
         actorAvatarDisplaySetting(king_avatar, king_avatar.gameObject.activeSelf);
         void actorAvatarDisplaySetting(UiUnitAvatarElement avatar, bool pActive)
         {
+            avatar.transform.Find("Mask").gameObject.SetActive(pActive);
             avatar.GetComponent<Button>().enabled = pActive;
             avatar.GetComponentInChildren<BannerLoader>()?.gameObject.SetActive(pActive);
             avatar.GetComponentInChildren<BannerLoaderClans>()?.gameObject.SetActive(pActive);
@@ -49,6 +49,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     }
     private void OnDisable()
     {
+        Window.elements.Clear();
         int count = Window.cityInfoPlacement.childCount;
         for (int i = 0; i < count; i++)
         {
@@ -124,11 +125,19 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         heir_avatar = Instantiate(king_avatar, null);
         custom_part.AddChild(heir_avatar.gameObject);
         heir_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
-        heir_avatar.unit_type_bg.sprite = heir_avatar.type_leader;
+        Button button = heir_avatar.GetComponent<Button>();
+        button.onClick = new Button.ButtonClickedEvent();
+        button.onClick.AddListener(() =>
+        {
+            kingdom.data.name = Window.nameInput.textField.text;
+            Config.selectedUnit = kingdom.heir;
+            ScrollWindow.moveAllToLeftAndRemove();
+            ScrollWindow.showWindow("inspect_unit");
+        });
+        heir_avatar.tooltip_id = "actor_heir";
         heir_avatar.transform.Find("Kingdom Icon").gameObject.SetActive(false);
 
         base.Init();
         OnEnable();
     }
-
 }
