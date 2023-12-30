@@ -6,6 +6,8 @@ using Figurebox.ai;
 using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.patch.MoH;
+using Figurebox.patch.policies;
+using Figurebox.UI.Patches;
 using Figurebox.Utils;
 using HarmonyLib;
 using ModDeclaration;
@@ -84,7 +86,11 @@ namespace Figurebox
             moreKingdoms.init();
             BuildingLibrary.init();
             KingdomBehLibrary.init();
-
+            ActorTaskLibrary.init();
+            ai.ActorJobLibrary.init();
+            ai.CitizenJobLibrary.init();
+            MapModeManager.CreateMapLayer();
+            //NewUI.CreateAndPatchCharIcons();
             instance = this;
             print("Translation loaded");
         }
@@ -200,7 +206,6 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(ClansManager));
             Harmony.CreateAndPatchAll(typeof(KingdomVassals));
 
-            Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
             Harmony.CreateAndPatchAll(typeof(CityWindowPatch));
 
             Harmony.CreateAndPatchAll(typeof(KingdomPatch));

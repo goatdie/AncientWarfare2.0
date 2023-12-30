@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Figurebox.prefabs;
+using Figurebox.Utils;
 using NCMS.Utils;
 using NeoModLoader.General;
 using ReflectionUtility;
@@ -306,6 +309,27 @@ namespace Figurebox
             kingdomHolder.GetComponent<RectTransform>().localPosition = pos;
 
             return kingdomHolder;
+        }
+        public static void CreateAndPatchCharIcons()
+        {
+            foreach (var policy in KingdomPolicyLibrary.Instance.list)
+            {
+                if (string.IsNullOrEmpty(policy.path_icon)) continue;
+                if (!policy.path_icon.Any(x => x >= 256)) continue;
+                _create_and_patch_char_icon_by_path(policy.path_icon);
+            }
+            foreach (var state in KingdomPolicyStateLibrary.Instance.list)
+            {
+                if (string.IsNullOrEmpty(state.path_icon)) continue;
+                if (!state.path_icon.Any(x => x >= 256)) continue;
+                _create_and_patch_char_icon_by_path(state.path_icon);
+            }
+        }
+        private static void _create_and_patch_char_icon_by_path(string path_icon)
+        {
+            char c = Path.GetFileNameWithoutExtension(path_icon)[0];
+            Sprite icon = DynamicSpriteMaker.MakeCharacterSprite(Path.GetFileNameWithoutExtension(path_icon)[0], LocalizedTextManager.currentFont, new Vector2Int(24, 24), Color.black);
+            PatchResourceToGame($"{path_icon}", icon);
         }
     }
 }
