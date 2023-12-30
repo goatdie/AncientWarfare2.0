@@ -5,7 +5,6 @@ using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Figurebox.prefabs;
 namespace Figurebox;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
@@ -15,7 +14,6 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private RectTransform ContentTransform;
     private UiUnitAvatarElement heir_avatar;
     private UiUnitAvatarElement king_avatar;
-    private SimpleText yearNameText;
     private KingdomWindow Window;
     private SimpleText year_name;
     private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
@@ -31,15 +29,25 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
             avatar.GetComponentInChildren<BannerLoader>()?.gameObject.SetActive(pActive);
             avatar.GetComponentInChildren<BannerLoaderClans>()?.gameObject.SetActive(pActive);
 
-            if (heir_avatar.GetComponent<EventTrigger>() == null)
+            if (avatar.GetComponent<EventTrigger>() == null)
             {
-                heir_avatar.gameObject.AddComponent<EventTrigger>();
+                avatar.gameObject.AddComponent<EventTrigger>();
             }
-            heir_avatar.GetComponent<EventTrigger>().enabled = heir_avatar.gameObject.activeSelf;
-            if (!heir_avatar.gameObject.activeSelf)
+            avatar.GetComponent<EventTrigger>().enabled = pActive;
+            if (!pActive)
             {
-                heir_avatar.gameObject.SetActive(true);
+                avatar.gameObject.SetActive(true);
             }
+        }
+        year_name.text.text = kingdom.GetYearName(true);
+        Window.elements.Clear();
+    }
+    private void OnDisable()
+    {
+        int count = Window.cityInfoPlacement.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Window.cityInfoPlacement.GetChild(i).gameObject, 1);
         }
     }
     protected override void Init()
@@ -89,7 +97,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         custom_part.name = "Middle";
         custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
 
-        king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>();
+        king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>(true);
         custom_part.AddChild(king_avatar.gameObject);
         king_avatar.GetComponent<Image>().enabled = true;
         king_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
@@ -114,5 +122,4 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         base.Init();
         OnEnable();
     }
-
 }
