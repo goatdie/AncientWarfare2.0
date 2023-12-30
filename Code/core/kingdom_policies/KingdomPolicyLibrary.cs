@@ -12,6 +12,7 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         add("start_slaves", "start_slaves", "start_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
         add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
          add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.NameIntegration, false, false);
+          add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/icons/iconDamage", 1, 1, null, MajorPolicyExecuteActions.MakeNewYearName, true, false);
     }
     public override void post_init()
     {

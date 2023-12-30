@@ -20,6 +20,7 @@ public class KingdomBehLibrary
         {
             task.addBeh(new KingdomBehCheckMOH());
         }
+         task.addBeh(new KingdomBehCheckHeir());
     }
 
     

@@ -16,4 +16,13 @@ internal static class MajorPolicyExecuteActions
             kingdom.ToggleNameIntegration(true);
         }
     }
+    public static void MakeNewYearName(KingdomPolicyAsset policy, AW_Kingdom kingdom)
+    {
+        Main.LogInfo($"{kingdom.name} 正在尝试推行建立新年号{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+        if(kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress && kingdom.policy_data.p_progress == 0)
+        {
+            KingdomYearName.Make_New_YearName(kingdom);
+
+        }
+    }
 }
