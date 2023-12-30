@@ -31,14 +31,15 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
             avatar.GetComponentInChildren<BannerLoader>()?.gameObject.SetActive(pActive);
             avatar.GetComponentInChildren<BannerLoaderClans>()?.gameObject.SetActive(pActive);
 
-        if (heir_avatar.GetComponent<EventTrigger>() == null)
-        {
-            heir_avatar.gameObject.AddComponent<EventTrigger>();
-        }
-        heir_avatar.GetComponent<EventTrigger>().enabled = heir_avatar.gameObject.activeSelf;
-        if (!heir_avatar.gameObject.activeSelf)
-        {
-            heir_avatar.gameObject.SetActive(true);
+            if (heir_avatar.GetComponent<EventTrigger>() == null)
+            {
+                heir_avatar.gameObject.AddComponent<EventTrigger>();
+            }
+            heir_avatar.GetComponent<EventTrigger>().enabled = heir_avatar.gameObject.activeSelf;
+            if (!heir_avatar.gameObject.activeSelf)
+            {
+                heir_avatar.gameObject.SetActive(true);
+            }
         }
     }
     protected override void Init()
@@ -113,4 +114,5 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         base.Init();
         OnEnable();
     }
+
 }
