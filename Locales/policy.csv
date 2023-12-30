@@ -8,5 +8,7 @@ control_slaves,强化奴隶控制,Enforce Slavery
 control_slaves_desc,防止奴隶暴动\n更多的奴隶人口，但届时暴动强度更大,More slaves， but Stronger rebellions
 name_integration,姓氏合流,Family，Clan Name Integration
 name_integration_desc,让姓氏归一\n从此不分姓氏,Integration between two name types
-kingdom_yearname,改元,Family，Change Year Name
+kingdom_yearname,改元,Change Year Name
 kingdom_yearname_desc,更换年号\n旧年号使用已久是时候换一个了,It's time to change it
+change_capital,迁都,Change Capital
+change_capital_desc,迁改都城\n换一个新国都,It's time to change it

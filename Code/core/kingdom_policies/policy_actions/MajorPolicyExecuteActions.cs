@@ -28,4 +28,12 @@ internal static class MajorPolicyExecuteActions
 
         }
     }
+    public static void ChangeCapital(KingdomPolicyAsset policy, AW_Kingdom kingdom)
+    {
+        Main.LogInfo($"{kingdom.name} 正在尝试推行迁都{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress && kingdom.policy_data.p_progress == 0)
+        {
+           AW_Kingdom.SetNewCapital(kingdom);
+        }
+    }
 }

@@ -1,4 +1,5 @@
 using Figurebox.policy_actions;
+using Figurebox.core;
 namespace Figurebox;
 
 class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
@@ -16,6 +17,7 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         // 姓氏合流
         add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.NameIntegration, false, false);
         add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/icons/iconDamage", 1, 1, null, MajorPolicyExecuteActions.MakeNewYearName, true, false);
+        add("change_capital", "change_capital", "change_capital_desc", "ui/policy/move_capital", 100, 100, InPeace, MajorPolicyExecuteActions.ChangeCapital, true, false);
     }
     public override void post_init()
     {
@@ -66,4 +68,19 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         // 将政策资产保存到文件的逻辑
         // 假设有一个方法将 KingdomPolicyAsset 对象转换为适合保存的数据格式
     }
+public static bool InPeace(KingdomPolicyAsset policy, AW_Kingdom kingdom)
+{
+    // 检查 kingdom 是否存在
+    if (kingdom == null)
+    {
+        return false;
+    }
+
+    // 检查国家是否有任何正在进行的战争
+    bool isAtWar = kingdom.getWars().Count > 0;
+
+    // 如果国家没有参与任何战争，则返回 true，表示国家处于和平状态
+    return !isAtWar;
+}
+
 }

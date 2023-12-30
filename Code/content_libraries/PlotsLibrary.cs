@@ -513,6 +513,7 @@ namespace Figurebox
             kingdom.CallMethod("removeKing");
             kingdom.clearKingData();
             kingdom.setKing(usurper);
+            usurper.city=kingdom.capital;
             WorldLog.logNewKing(kingdom);
 
         }

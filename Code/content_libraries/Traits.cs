@@ -6,6 +6,8 @@ using Unity;
 using ReflectionUtility;
 using System.Text;
 using System.Collections.Generic;
+using Figurebox.core;
+using Figurebox.Utils.MoH;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
@@ -207,59 +209,58 @@ namespace Figurebox
             Race race = AssetManager.raceLibrary.get(a.asset.race);
             ActorContainer actorContainer = race.units;
             var Units = actorContainer.getSimpleList();
-            bool tianmingBoolValue;
-            a.kingdom.data.get("tianmingbool", out tianmingBoolValue);
+            AW_Kingdom awKingdom = a.kingdom as AW_Kingdom;
 
 
-            if (!tianmingBoolValue)
-            {    //Debug.Log("已经有天命了");
+            //Debug.Log("已经有天命了");
+          if(MoHTools.IsMoHKingdom(awKingdom)){return false;} 
+
+            if (a.getAge() > 17 && a.kingdom != null && a.city != null)
+            {//Debug.Log("执行");
+                if (a.kingdom.king == null && a.getAge() > 15)
+                {
+                    a.kingdom.clearKingData();
+                    a.kingdom.setKing(a);
+                    a.city = a.kingdom.capital;
+                    WorldLog.logNewKing(a.kingdom);
+                    return false;
+                }
+                if (a.kingdom.king != null && a.kingdom.king != a && a.hasTrait("zhuhou"))
+                {
+                    a.removeTrait("first");
+                }
+                else if (a.kingdom.king != null && a.kingdom.king != a && !a.hasPlots())
+                {
+                    tryPlotusurpation(a, AssetManager.plots_library.get("historical_character_usurpation"));
+                    //  WorldLog.logKingLeft(a.kingdom, a.kingdom.king);
+                    //a.kingdom.CallMethod("removeKing");
+                    //  a.kingdom.king.city.removeCitizen(a.kingdom.king, false, AttackType.Other);
+                    //a.kingdom.clearKingData();
+                    // a.kingdom.setKing(a);
+                    //  WorldLog.logNewKing(a.kingdom);
+                }
 
 
-                if (a.getAge() > 17 && a.kingdom != null && a.city != null)
-                {//Debug.Log("执行");
-                    if (a.kingdom.king == null && a.getAge() > 15)
+                if (a.kingdom.king != null && a.kingdom.king != a && a.hasPlots())
+                {
+                    foreach (City city in a.kingdom.cities)
                     {
-                        a.kingdom.clearKingData();
-                        a.kingdom.setKing(a);
-                        WorldLog.logNewKing(a.kingdom);
-                        return false;
-                    }
-                    if (a.kingdom.king != null && a.kingdom.king != a && a.hasTrait("zhuhou"))
-                    {
-                        a.removeTrait("first");
-                    }
-                    else if (a.kingdom.king != null && a.kingdom.king != a && !a.hasPlots())
-                    {
-                        tryPlotusurpation(a, AssetManager.plots_library.get("historical_character_usurpation"));
-                        //  WorldLog.logKingLeft(a.kingdom, a.kingdom.king);
-                        //a.kingdom.CallMethod("removeKing");
-                        //  a.kingdom.king.city.removeCitizen(a.kingdom.king, false, AttackType.Other);
-                        //a.kingdom.clearKingData();
-                        // a.kingdom.setKing(a);
-                        //  WorldLog.logNewKing(a.kingdom);
-                    }
-
-
-                    if (a.kingdom.king != null && a.kingdom.king != a && a.hasPlots())
-                    {
-                        foreach (City city in a.kingdom.cities)
+                        if (!city.isHappy() && !(city.leader == null) && city.leader.isAlive())
                         {
-                            if (!city.isHappy() && !(city.leader == null) && city.leader.isAlive())
+                            List<Plot> actorPlots = World.world.plots.getPlotsFor(a, true);
+                            foreach (Plot plot in actorPlots)
                             {
-                                List<Plot> actorPlots = World.world.plots.getPlotsFor(a, true);
-                                foreach (Plot plot in actorPlots)
-                                {
-                                    plot.addSupporter(city.leader);
-                                }
+                                plot.addSupporter(city.leader);
                             }
                         }
-
                     }
 
-
-
                 }
+
+
+
             }
+
             foreach (var unit in Units)
             {
                 if (unit.hasTrait("first"))
