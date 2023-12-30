@@ -51,6 +51,12 @@ public partial class AW_Kingdom : Kingdom
         {
             foreach (var member in royalClan.units.Values)
             {
+                // 排除国王本人
+                if (this.king != null && member == this.king)
+                {
+                    continue;
+                }
+
                 // 添加适合的候选人
                 if (IsSuitableForHeir(member))
                 {
@@ -85,9 +91,37 @@ public partial class AW_Kingdom : Kingdom
 
     private int CompareCandidates(Actor a, Actor b)
     {
-        // 定义比较候选人的逻辑，例如根据年龄、领导能力等
-        return a.getAge().CompareTo(b.getAge()); // 示例逻辑
+        // 男性优先
+        if (a.data.gender == ActorGender.Male && b.data.gender != ActorGender.Male)
+        {
+            return -10;
+        }
+        else if (a.data.gender != ActorGender.Male && b.data.gender == ActorGender.Male)
+        {
+            return 10;
+        }
+
+        // 比较影响力，影响力更高的优先
+        int influenceComparison = b.getInfluence().CompareTo(a.getInfluence());
+        if (influenceComparison != 0)
+        {
+            return influenceComparison;
+        }
+
+        // 比较属性总和，总和更高的优先
+        int aTotalAttributes = a.data.diplomacy + a.data.intelligence + a.data.stewardship + a.data.warfare;
+        int bTotalAttributes = b.data.diplomacy + b.data.intelligence + b.data.stewardship + b.data.warfare;
+        int attributeComparison = bTotalAttributes.CompareTo(aTotalAttributes);
+        if (attributeComparison != 0)
+        {
+            return attributeComparison;
+        }
+
+        // 年龄比较，年龄更小的优先
+        return a.getAge().CompareTo(b.getAge());
     }
+
+
     /// <summary>
     ///     更新政策进度
     /// </summary>
