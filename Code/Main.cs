@@ -190,6 +190,7 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(MoHCorePatch));
             Harmony.CreateAndPatchAll(typeof(NamePatch));
             Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
+            _ = new SlavesPatch();
 /*
             Harmony.CreateAndPatchAll(typeof(FunctionHelper));
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));

@@ -10,7 +10,7 @@ public partial class AW_Kingdom : Kingdom
 {
 
     public Actor heir;
-    public bool NameIntegration = false;//控制国家命名是否姓氏合流
+    public bool NameIntegration = false; //控制国家命名是否姓氏合流
 
 
 
@@ -19,7 +19,7 @@ public partial class AW_Kingdom : Kingdom
 
     public void ToggleNameIntegration(bool b)
     {
-       this.NameIntegration = b;
+        this.NameIntegration = b;
     }
     public void clearHeirData()
     {
@@ -195,14 +195,29 @@ public partial class AW_Kingdom : Kingdom
     ///     这个方法会自动检查政策是否为null，是否可用, 如果不可用则不会执行, 可以放心直接调用
     /// </remarks>
     /// <param name="pAsset">目标政策</param>
-    /// <param name="pForce">是否强制覆盖当前正在执行的政策</param>
+    /// <param name="pForce">是否将当前正在执行的政策后移</param>
     /// <param name="pPolicyDataInQueue">从队列中取出的政策的执行数据</param>
     /// <returns>是否成功执行</returns>
     public bool StartPolicy(KingdomPolicyAsset pAsset, bool pForce = false, PolicyDataInQueue pPolicyDataInQueue = null)
     {
         if (!CheckPolicy(pAsset)) return false;
         // 正在执行其他政策
-        if (!string.IsNullOrEmpty(policy_data.current_policy_id) && policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed && !pForce) return false;
+        if (!string.IsNullOrEmpty(policy_data.current_policy_id) && policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed)
+        {
+            if (!pForce) return false;
+            PolicyDataInQueue policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
+            policy_data_in_queue.policy_id = policy_data.current_policy_id;
+            policy_data_in_queue.progress = policy_data.p_progress;
+            policy_data_in_queue.status = policy_data.p_status;
+            policy_data_in_queue.timestamp_start = policy_data.p_timestamp_start;
+            Queue<PolicyDataInQueue> policy_queue = new();
+            policy_queue.Enqueue(policy_data_in_queue);
+            while (policy_data.policy_queue.Count > 0)
+            {
+                policy_queue.Enqueue(policy_data.policy_queue.Dequeue());
+            }
+            policy_data.policy_queue = policy_queue;
+        }
 
         policy_data.current_policy_id = pAsset.id;
         policy_data.p_progress = pPolicyDataInQueue?.progress ?? pAsset.cost_in_plan;
