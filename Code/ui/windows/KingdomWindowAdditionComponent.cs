@@ -4,6 +4,7 @@ using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Figurebox.prefabs;
 namespace Figurebox;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
@@ -13,7 +14,9 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private RectTransform ContentTransform;
     private UiUnitAvatarElement heir_avatar;
     private UiUnitAvatarElement king_avatar;
+    private SimpleText yearNameText;
     private KingdomWindow Window;
+
     private void OnEnable()
     {
         if (!Initialized) return;
@@ -30,6 +33,15 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         if (!heir_avatar.gameObject.activeSelf)
         {
             heir_avatar.gameObject.SetActive(true);
+        }
+        AW_Kingdom awKingdom = Config.selectedKingdom as AW_Kingdom;
+        if (awKingdom != null && !string.IsNullOrEmpty(awKingdom.policy_data.year_name))
+        {
+            int yearcal = World.world.mapStats.getYearsSince(awKingdom.policy_data.year_start_timestamp);
+            string yearName = awKingdom.policy_data.year_name;
+            string date = (yearcal == 0) ? "元年" : yearcal + 1 + "年";
+            yearNameText.text.text = yearName + date;
+            yearNameText.text.color =awKingdom.kingdomColor.getColorText();
         }
     }
     protected override void Init()
@@ -79,14 +91,28 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         custom_part.name = "Middle";
         custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
 
+
         king_avatar = BackgroundTransform.Find("BackgroundLeft").GetComponentInChildren<UiUnitAvatarElement>();
         custom_part.AddChild(king_avatar.gameObject);
         king_avatar.GetComponent<Image>().enabled = true;
         king_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
+        // 创建年号文本
+        var verticalGroup = custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
+
+        yearNameText = Instantiate(SimpleText.Prefab, null);
+        yearNameText.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 12));
+        yearNameText.text.resizeTextMaxSize = 10;
+        verticalGroup.AddChild(yearNameText.gameObject);
+        yearNameText.text.text = "某年";
+        // 设置年号文本的初始内容
+
+
+        // 将年号文本添加到Middle部分
+        verticalGroup.AddChild(yearNameText.gameObject);
 
         GameObject policy_bar = new("PolicyBar", typeof(Image));
-        custom_part.AddChild(policy_bar);
-        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 36);
+        verticalGroup.AddChild(policy_bar);
+        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 18);
         policy_bar.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/special/windowInnerSliced");
         policy_bar.GetComponent<Image>().type = Image.Type.Sliced;
 
