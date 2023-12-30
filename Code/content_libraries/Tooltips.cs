@@ -1,5 +1,6 @@
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
+using UnityEngine.UI;
 namespace Figurebox;
 
 internal class Tooltips
@@ -18,6 +19,19 @@ internal class Tooltips
             prefab_id = "tooltips/tooltip_policy_state",
             callback = showPolicyState
         });
+        AssetManager.tooltips.add(new TooltipAsset
+        {
+            id = "actor_heir",
+            prefab_id = "tooltips/tooltip_actor",
+            callback = showHeir
+        });
+    }
+    private static void showHeir(Tooltip pTooltip, string pType, TooltipData pData)
+    {
+        AssetManager.tooltips.showActor("village_statistics_heir", pTooltip, pData);
+        Image component = pTooltip.transform.FindRecursive("IconSpecial").GetComponent<Image>();
+        component.sprite = SpriteTextureLoader.getSprite("ui/icons/iconCrown");
+        component.gameObject.SetActive(true);
     }
     /// <summary>
     ///     显示政策
