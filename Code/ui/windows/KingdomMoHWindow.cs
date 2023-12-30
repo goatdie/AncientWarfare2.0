@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.prefabs;
 using Figurebox.Utils.extensions;
@@ -170,6 +171,10 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
             }
         }
         kingdom_moh_desc.text = LM.Get(MoHTools.GetMoHDescKey());
+        if (DebugConst.IS_DEVELOPER)
+        {
+            kingdom_moh_desc.text += $"({MoHTools.MOH_Value})";
+        }
 
         king_avatar.show(moh_kingdom.king);
 
