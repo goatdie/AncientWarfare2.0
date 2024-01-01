@@ -180,6 +180,25 @@ namespace Figurebox
                 }
             }
             LM.ApplyLocale();
+
+            Dictionary<int, (Kingdom, Kingdom)> hash_dict = new();
+            foreach (Kingdom kingdom1 in World.world.kingdoms.list)
+            {
+                foreach (Kingdom kingdom2 in World.world.kingdoms.list)
+                {
+                    int hash = Kingdom.cache_enemy_check.getHash(kingdom1, kingdom2);
+                    if (hash_dict.TryGetValue(hash, out (Kingdom, Kingdom) collision))
+                    {
+                        (Kingdom collision_k1, Kingdom collision_k2) = collision;
+                        if ((collision_k1.id != kingdom1.id || collision_k2.id != kingdom2.id) && (collision_k1.id != kingdom2.id || collision_k2.id != kingdom1.id))
+                            LogInfo($"Hash collision: ({kingdom1.id} {kingdom2.id}) with ({collision_k1.id} {collision_k2.id})");
+                    }
+                    else
+                    {
+                        hash_dict.Add(hash, (kingdom1, kingdom2));
+                    }
+                }
+            }
         }
         private void Configure()
         {

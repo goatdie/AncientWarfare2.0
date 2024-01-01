@@ -6,6 +6,7 @@ public partial class AW_KingdomManager : KingdomManager
 {
     public AW_KingdomManager(List<KingdomAsset> pKingdomAssetsToCreatedAsHidden)
     {
+        _latest_hash = 0;
         dict.Clear();
         list.Clear();
         list_hidden.Clear();
@@ -58,6 +59,7 @@ public partial class AW_KingdomManager : KingdomManager
         val.setHash(_latest_hash++);
         val.loadData(pData);
         addObject(val);
+        setupKingdom(val, true);
         return val;
     }
 
