@@ -88,7 +88,7 @@ namespace Figurebox
             KingdomBehLibrary.init();
             ActorTaskLibrary.init();
             ai.ActorJobLibrary.init();
-            ai.CitizenJobLibrary.init();
+            ai.CitizenJobs.init();
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
             instance = this;
@@ -161,7 +161,7 @@ namespace Figurebox
 
             prefabs_library = new GameObject("Prefabs").transform;
             prefabs_library.SetParent(transform);
-
+            _ = new AWS();
             AutoMethodReplaceTool.ReplaceMethods();
         }
         [Hotfixable]
