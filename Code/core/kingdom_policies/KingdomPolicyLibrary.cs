@@ -16,7 +16,7 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.EnforceSlavesControl, true, false);
         // 姓氏合流
         add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.NameIntegration, false, false);
-        add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/icons/iconDamage", 1, 1, null, MajorPolicyExecuteActions.MakeNewYearName, true, false);
+        add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/policy/change_name", 1, 1, null, MajorPolicyExecuteActions.MakeNewYearName, true, false);
         add("change_capital", "change_capital", "change_capital_desc", "ui/policy/move_capital", 100, 100, InPeace, MajorPolicyExecuteActions.ChangeCapital, true, false);
     }
     public override void post_init()

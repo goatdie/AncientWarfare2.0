@@ -339,8 +339,36 @@ public partial class AW_Kingdom : Kingdom
             if (newCapital != null)
             {
                 kingdom.capital = newCapital;
+                kingdom.king.city = newCapital;
                 //Debug.Log("New capital set to " + newCapital.data.name);
             }
         }
     }
+    public static City FindNewCapital(AW_Kingdom kingdom)
+    {
+        if (kingdom.capital == null || kingdom.cities == null || kingdom.cities.Count == 0)
+        {
+            return null;
+        }
+
+        return kingdom.cities
+            .Select(city =>
+            {
+                double score = (city.getAge() - kingdom.capital.getAge()) * 1 +
+                               (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
+                               (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
+                               (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
+
+                //Debug.Log($"City: {city.data.name}, Score: {score}");
+                return new
+                {
+                    City = city,
+                    Score = score
+                };
+            })
+            .OrderByDescending(cityScore => cityScore.Score)
+            .Select(cityScore => cityScore.City)
+            .FirstOrDefault();
+    }
+
 }

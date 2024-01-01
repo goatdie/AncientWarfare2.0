@@ -16,7 +16,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private UiUnitAvatarElement king_avatar;
     private KingdomWindow Window;
     private SimpleText year_name;
-    private SimpleText yearNameText;
+    private KingdomPolicyButton executing_policy;
     private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
 
     private void OnEnable()
@@ -45,16 +45,39 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         }
         year_name.text.text = kingdom.GetYearName(true);
         year_name.text.color = kingdom.kingdomColor.getColorText();
+
+
+        executing_policy.gameObject.SetActive(true);
+        executing_policy.Setup(string.IsNullOrEmpty(kingdom.policy_data.current_policy_id) || kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ? null : KingdomPolicyLibrary.Instance.get(kingdom.policy_data.current_policy_id), null, false, false);
+        executing_policy.SetSize(new Vector2(16, 16));
+        RectTransform bgRect = executing_policy.bg.GetComponent<RectTransform>();
+        bgRect.sizeDelta = new Vector2(120, 16);
+        executing_policy.tip_data.tip_description = kingdom.policy_data.p_progress.ToString();
+        executing_policy.tip_data.tip_description_2 = kingdom.policy_data.p_status.ToString();
+
         Window.elements.Clear();
+
+
     }
     private void OnDisable()
     {
+
+        executing_policy.tip_data.tip_name = "";
+        if (string.IsNullOrEmpty(executing_policy.tip_data.tip_name))
+        {
+            executing_policy.tip_button.enabled = false;
+
+        }
+
+        // 清除描述
+
         Window.elements.Clear();
         int count = Window.cityInfoPlacement.childCount;
         for (int i = 0; i < count; i++)
         {
             Destroy(Window.cityInfoPlacement.GetChild(i).gameObject, 1);
         }
+
     }
     protected override void Init()
     {
@@ -114,13 +137,17 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         middle_bar_group.AddChild(year_name.gameObject);
 
 
-        GameObject policy_bar = new("PolicyBar", typeof(Image));
-        middle_bar_group.AddChild(policy_bar.gameObject);
-        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 16);
-        middle_bar_group.AddChild(policy_bar.gameObject);
-        policy_bar.GetComponent<RectTransform>().sizeDelta = new Vector2(120, 16);
-        policy_bar.GetComponent<Image>().sprite = Resources.Load<Sprite>("ui/special/windowInnerSliced");
-        policy_bar.GetComponent<Image>().type = Image.Type.Sliced;
+
+
+        executing_policy = Instantiate(KingdomPolicyButton.Prefab, null);
+        executing_policy.Setup(null, null, false, false);
+        executing_policy.SetSize(new Vector2(16, 16));
+        RectTransform bgRect = executing_policy.bg.GetComponent<RectTransform>();
+        bgRect.sizeDelta = new Vector2(120, 16);
+
+        middle_bar_group.AddChild(executing_policy.gameObject);
+
+
 
         heir_avatar = Instantiate(king_avatar, null);
         custom_part.AddChild(heir_avatar.gameObject);

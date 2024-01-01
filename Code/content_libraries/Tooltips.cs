@@ -1,6 +1,7 @@
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine.UI;
+
 namespace Figurebox;
 
 internal class Tooltips
@@ -60,6 +61,7 @@ internal class Tooltips
     private static void showPolicy(Tooltip pTooltip, string pType, TooltipData pData = default)
     {
         KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get(pData.tip_name);
+
         pTooltip.name.text = LM.Get(policy.policyname);
         pTooltip.setDescription(LM.Get(policy.description));
         if (!string.IsNullOrEmpty(pData.tip_description))

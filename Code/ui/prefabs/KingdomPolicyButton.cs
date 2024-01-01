@@ -16,7 +16,7 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
     private Button button;
     private Image icon;
     private Text text;
-    private TipButton tip_button;
+    public TipButton tip_button;
     public TooltipData tip_data;
     public KingdomPolicyAsset policy { get; private set; }
     protected override void Init()
@@ -35,36 +35,46 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
     public void Setup(KingdomPolicyAsset pPolicyAsset, UnityAction<KingdomPolicyAsset> pClickAction = null, bool pSpecial = false, bool pHiddenBackground = false)
     {
         Init();
+        bg.enabled = !pHiddenBackground; // 确保背景总是被启用，除非明确要求隐藏
+
         if (pPolicyAsset == null)
         {
-            gameObject.SetActive(false);
-            return;
-        }
-        bg.enabled = !pHiddenBackground;
-        policy = pPolicyAsset;
-        Sprite iconSprite = SpriteTextureLoader.getSprite(pPolicyAsset.path_icon);
-        icon.enabled = iconSprite != null;
-        text.enabled = iconSprite == null;
-        if (iconSprite == null)
-        {
-            text.text = LM.Get(pPolicyAsset.path_icon);
+            // 当没有内容时，隐藏图标和文本，但保持背景显示
+            icon.enabled = false;
+            text.enabled = false;
         }
         else
         {
-            icon.sprite = iconSprite;
-        }
-        button.onClick.RemoveAllListeners();
+            // 当有内容时，正常设置图标、文本和按钮
+            policy = pPolicyAsset;
+            Sprite iconSprite = SpriteTextureLoader.getSprite(pPolicyAsset.path_icon);
+            icon.enabled = iconSprite != null;
+            text.enabled = iconSprite == null;
+            if (iconSprite == null)
+            {
+                text.text = LM.Get(pPolicyAsset.path_icon);
+            }
+            else
+            {
+                icon.sprite = iconSprite;
+            }
 
-        if (pClickAction != null)
-        {
-            button.onClick.AddListener(() => pClickAction?.Invoke(policy));
+            button.onClick.RemoveAllListeners();
+            if (pClickAction != null)
+            {
+                button.onClick.AddListener(() => pClickAction?.Invoke(policy));
+            }
+
+            tip_data = new TooltipData
+            {
+                tip_name = policy.id
+            };
         }
+
+        // 设置背景图片
         bg.sprite = SpriteTextureLoader.getSprite(pSpecial ? "ui/special/button2" : "ui/special/button");
-        tip_data = new TooltipData
-        {
-            tip_name = policy.id
-        };
     }
+
     private void showTooltip()
     {
         if (policy == null) return;
