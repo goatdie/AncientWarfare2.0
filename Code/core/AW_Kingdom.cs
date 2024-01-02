@@ -1,20 +1,19 @@
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.attributes;
 using Figurebox.constants;
+using Figurebox.patch.MoH;
 using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
+
 namespace Figurebox.core;
 
 public partial class AW_Kingdom : Kingdom
 {
-
     public Actor heir;
     public bool NameIntegration = false; //控制国家命名是否姓氏合流
-
-
 
 
     public KingdomPolicyData policy_data = new();
@@ -23,25 +22,29 @@ public partial class AW_Kingdom : Kingdom
     {
         this.NameIntegration = b;
     }
+
     public void clearHeirData()
     {
         this.heir = null;
     }
+
     public bool hasHeir()
     {
         return this.heir != null;
     }
+
     public override void Dispose()
     {
         this.heir = null;
         base.Dispose();
     }
+
     public void SetHeir(Actor pActor)
     {
         this.clearHeirData();
         this.heir = pActor;
-
     }
+
     public Actor FindHeir()
     {
         List<Actor> candidates = new List<Actor>();
@@ -83,6 +86,7 @@ public partial class AW_Kingdom : Kingdom
             return null;
         }
     }
+
     private bool IsSuitableForHeir(Actor member)
     {
         // 检查成员是否活着，年龄是否符合，并且不是当前的国王
@@ -130,7 +134,8 @@ public partial class AW_Kingdom : Kingdom
     public void UpdateForPolicy(float pElapsed)
     {
         // 当目前政策都执行完毕或没有政策时，查找新的政策
-        if (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed || string.IsNullOrEmpty(policy_data.current_policy_id))
+        if (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
+            string.IsNullOrEmpty(policy_data.current_policy_id))
         {
             KingdomPolicyAsset next_policy = null;
             if (policy_data.policy_queue.Count > 0)
@@ -149,6 +154,7 @@ public partial class AW_Kingdom : Kingdom
 
             foreach (string state_id in policy_data.current_states.Values)
             {
+                if (policy_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) break;
                 var state = KingdomPolicyStateLibrary.Instance.get(state_id);
                 if (state == null) continue;
                 next_policy = state.policy_finder(this);
@@ -159,6 +165,7 @@ public partial class AW_Kingdom : Kingdom
                 policy_data_in_queue.progress = next_policy.cost_in_plan;
                 policy_data.policy_queue.Enqueue(policy_data_in_queue);
             }
+
             return;
         }
 
@@ -172,6 +179,7 @@ public partial class AW_Kingdom : Kingdom
                 if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"政策'{policy_data.current_policy_id}'不存在, 终止", true);
                 return;
             }
+
             // 检查政策是否可用
             if (policy_asset.check_policy != null && !policy_asset.check_policy.Invoke(policy_asset, this))
             {
@@ -201,11 +209,13 @@ public partial class AW_Kingdom : Kingdom
                         {
                             UpdatePolicyStateTo(policy_asset.target_state_id);
                         }
+
                         break;
                 }
             }
         }
     }
+
     /// <summary>
     ///     检查政策是否可用
     /// </summary>
@@ -217,13 +227,17 @@ public partial class AW_Kingdom : Kingdom
         return pPolicyAsset != null
                && (pPolicyAsset.can_repeat ||
                    !policy_data.policy_history.Contains(pPolicyAsset.id)
-                   && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed || policy_data.current_policy_id != pPolicyAsset.id))
+                   && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
+                       policy_data.current_policy_id != pPolicyAsset.id))
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
-                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All && pPolicyAsset.all_prepositions.All(pState => policy_data.current_states.ContainsValue(pState)) ||
-                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.Any && pPolicyAsset.all_prepositions.Any(pState => policy_data.current_states.ContainsValue(pState)))
+                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All &&
+                   pPolicyAsset.all_prepositions.All(pState => policy_data.current_states.ContainsValue(pState)) ||
+                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.Any &&
+                   pPolicyAsset.all_prepositions.Any(pState => policy_data.current_states.ContainsValue(pState)))
                && (pPolicyAsset.check_policy == null || pPolicyAsset.check_policy.Invoke(pPolicyAsset, this));
     }
+
     /// <summary>
     ///     开始尝试执行政策
     /// </summary>
@@ -238,7 +252,8 @@ public partial class AW_Kingdom : Kingdom
     {
         if (!CheckPolicy(pAsset)) return false;
         // 正在执行其他政策
-        if (!string.IsNullOrEmpty(policy_data.current_policy_id) && policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed)
+        if (!string.IsNullOrEmpty(policy_data.current_policy_id) &&
+            policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed)
         {
             if (!pForce) return false;
             PolicyDataInQueue policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
@@ -252,6 +267,7 @@ public partial class AW_Kingdom : Kingdom
             {
                 policy_queue.Enqueue(policy_data.policy_queue.Dequeue());
             }
+
             policy_data.policy_queue = policy_queue;
         }
 
@@ -261,10 +277,12 @@ public partial class AW_Kingdom : Kingdom
         policy_data.p_timestamp_start = pPolicyDataInQueue?.timestamp_start ?? World.world.mapStats.worldTime;
         return true;
     }
+
     public void ForceStopPolicy()
     {
         policy_data.current_policy_id = "";
     }
+
     /// <summary>
     ///     更新政治状态
     /// </summary>
@@ -276,8 +294,10 @@ public partial class AW_Kingdom : Kingdom
             if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"状态'{nameof(pPolicyStateID)}'为空, 终止", true);
             return;
         }
+
         UpdatePolicyStateTo(KingdomPolicyStateLibrary.Instance.get(pPolicyStateID));
     }
+
     /// <summary>
     ///     更新政治状态
     /// </summary>
@@ -289,8 +309,10 @@ public partial class AW_Kingdom : Kingdom
             if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"状态'{nameof(pPolicyState)}'为空, 终止", true);
             return;
         }
+
         policy_data.current_states[pPolicyState.type] = pPolicyState.id;
     }
+
     /// <summary>
     ///     获取年号
     /// </summary>
@@ -303,13 +325,17 @@ public partial class AW_Kingdom : Kingdom
         {
             text = LM.Get("public_year_name");
         }
+
         if (pWithYearNumber)
         {
             int num = World.world.mapStats.getYearsSince(policy_data.year_start_timestamp) + 1;
-            return LM.Get("year_name_format").Replace("$year_name$", text).Replace("$year_number$", num == 1 ? LM.Get("first_year_number") : num.ToString());
+            return LM.Get("year_name_format").Replace("$year_name$", text).Replace("$year_number$",
+                num == 1 ? LM.Get("first_year_number") : num.ToString());
         }
+
         return text;
     }
+
     public static void SetNewCapital(AW_Kingdom kingdom)
     {
         MoHTools.IsMoHKingdom(kingdom);
@@ -317,24 +343,24 @@ public partial class AW_Kingdom : Kingdom
         if (kingdom.capital != null)
         {
             City newCapital = kingdom.cities
-              .Select(city =>
-              {
-                  double score = (city.getAge() - kingdom.capital.getAge()) * 1 +
-                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
-                           (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
-                           (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
+                .Select(city =>
+                {
+                    double score = (city.getAge() - kingdom.capital.getAge()) * 1 +
+                                   (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
+                                   (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
+                                   (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
 
 
-                  //Debug.Log($"City: {city.data.name}, Score: {score}");
-                  return new
-                  {
-                      City = city,
-                      Score = score
-                  };
-              })
-              .OrderByDescending(cityScore => cityScore.Score)
-              .Select(cityScore => cityScore.City)
-              .FirstOrDefault();
+                    //Debug.Log($"City: {city.data.name}, Score: {score}");
+                    return new
+                    {
+                        City = city,
+                        Score = score
+                    };
+                })
+                .OrderByDescending(cityScore => cityScore.Score)
+                .Select(cityScore => cityScore.City)
+                .FirstOrDefault();
 
             if (newCapital != null)
             {
@@ -344,6 +370,7 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
+
     public static City FindNewCapital(AW_Kingdom kingdom)
     {
         if (kingdom.capital == null || kingdom.cities == null || kingdom.cities.Count == 0)
@@ -371,4 +398,23 @@ public partial class AW_Kingdom : Kingdom
             .FirstOrDefault();
     }
 
+    /// <summary>
+    ///     国王即位相关行为
+    /// </summary>
+    /// <param name="pKing"></param>
+    [MethodReplace(nameof(setKing))]
+    public void SetKing(Actor pKing)
+    {
+        #region 原版代码
+
+        king = pKing;
+        king.setProfession(UnitProfession.King);
+        data.kingID = king.data.id;
+        data.timestamp_king_rule = World.world.getCurWorldTime();
+        trySetRoyalClan();
+
+        #endregion
+
+        MoHCorePatch.check_and_add_moh_trait(this, pKing);
+    }
 }

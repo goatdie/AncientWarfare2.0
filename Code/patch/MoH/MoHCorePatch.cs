@@ -1,6 +1,7 @@
 using Figurebox.core;
 using Figurebox.Utils.MoH;
 using HarmonyLib;
+
 namespace Figurebox.patch.MoH;
 
 internal static class MoHCorePatch
@@ -16,16 +17,9 @@ internal static class MoHCorePatch
             __instance.base_icon.sprite = SpriteTextureLoader.getSprite("moh_nameplate");
         }
     }
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Kingdom), "setKing")]
-    public static void setKing_mohPostfix(Kingdom __instance    ,Actor pActor)
-    {
-        AW_Kingdom awKingdom = __instance as AW_Kingdom;
 
-        if (MoHTools.IsMoHKingdom(awKingdom))
-        {
-            pActor.addTrait("天命");
-        }
+    internal static void check_and_add_moh_trait(AW_Kingdom pKingdom, Actor pKing)
+    {
+        if (MoHTools.IsMoHKingdom(pKingdom)) pKing.addTrait("天命");
     }
-   
 }

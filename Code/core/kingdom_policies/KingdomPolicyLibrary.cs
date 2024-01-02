@@ -1,33 +1,43 @@
-using Figurebox.policy_actions;
 using Figurebox.core;
+using Figurebox.policy_actions;
+
 namespace Figurebox;
 
 class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
 {
     public static KingdomPolicyLibrary Instance { get; } = new();
+
     // 这里可以根据需要添加特定于 KingdomPolicyAsset 的方法
     public override void init()
     {
         base.init();
         // 只注册政策, 不要链接状态
         // 开启奴隶制
-        add("start_slaves", "start_slaves", "start_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.StartSlaves, false, false);
+        add("start_slaves", "start_slaves", "start_slaves_desc", "ui/icons/iconDamage", 100, 100, null,
+            MajorPolicyExecuteActions.StartSlaves, false, false);
         // 强化奴隶控制
-        add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.EnforceSlavesControl, true, false);
+        add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null,
+            MajorPolicyExecuteActions.EnforceSlavesControl, true, false);
         // 姓氏合流
-        add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null, MajorPolicyExecuteActions.NameIntegration, false, false);
-        add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/policy/change_name", 1, 1, null, MajorPolicyExecuteActions.MakeNewYearName, true, false);
-        add("change_capital", "change_capital", "change_capital_desc", "ui/policy/move_capital", 100, 100, InPeace, MajorPolicyExecuteActions.ChangeCapital, true, false);
+        add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null,
+            MajorPolicyExecuteActions.NameIntegration, false, false);
+        add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/policy/change_name", 1, 1, null,
+            MajorPolicyExecuteActions.MakeNewYearName, true, false);
+        add("change_capital", "change_capital", "change_capital_desc", "ui/policy/move_capital", 100, 100, InPeace,
+            MajorPolicyExecuteActions.ChangeCapital, true, false);
     }
+
     public override void post_init()
     {
         base.post_init();
         //get("control_slaves").AddPreposition("slaves");
     }
+
     public override void linkAssets()
     {
         base.linkAssets();
     }
+
     public KingdomPolicyAsset add(
         string pID, string pNameKey, string pDescKey, string pPathIcon,
         int pPlanCost, int pProgressCost,
@@ -49,10 +59,10 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
             only_moh = pOnlyMoH
         });
     }
+
     // 例如，执行所有政策的方法
     public void ExecuteAllPolicies(Kingdom kingdom, KingdomPolicyStateAsset state)
     {
-
     }
 
     // 根据ID加载政策资产的方法
@@ -68,19 +78,19 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         // 将政策资产保存到文件的逻辑
         // 假设有一个方法将 KingdomPolicyAsset 对象转换为适合保存的数据格式
     }
-public static bool InPeace(KingdomPolicyAsset policy, AW_Kingdom kingdom)
-{
-    // 检查 kingdom 是否存在
-    if (kingdom == null)
+
+    public static bool InPeace(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        return false;
+        // 检查 kingdom 是否存在
+        if (kingdom == null)
+        {
+            return false;
+        }
+
+        // 检查国家是否有任何正在进行的战争
+        var isAtWar = kingdom.getWars().Any();
+
+        // 如果国家没有参与任何战争，则返回 true，表示国家处于和平状态
+        return !isAtWar;
     }
-
-    // 检查国家是否有任何正在进行的战争
-    bool isAtWar = kingdom.getWars().Count > 0;
-
-    // 如果国家没有参与任何战争，则返回 true，表示国家处于和平状态
-    return !isAtWar;
-}
-
 }

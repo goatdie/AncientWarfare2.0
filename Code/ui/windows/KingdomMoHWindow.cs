@@ -12,6 +12,7 @@ using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+
 namespace Figurebox;
 
 public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
@@ -28,6 +29,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
 
     private Transform policy_queue_transform;
     private static KingdomMoHWindow Instance { get; set; }
+
     protected override void Init()
     {
         GetLayoutGroup().spacing = 3;
@@ -38,12 +40,14 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         king_avatar.show_banner_clan = false;
         king_avatar.show_banner_kingdom = true;
         king_avatar.tooltip_id = "actor_king";
+
         void click_king()
         {
             Config.selectedKingdom = king_avatar._actor.kingdom;
             ScrollWindow.moveAllToLeftAndRemove();
             ScrollWindow.showWindow("kingdom");
         }
+
         king_avatar.gameObject.AddComponent<Button>().onClick.AddListener(click_king);
         king_avatar.transform.Find("Mask").GetComponent<Button>().onClick.AddListener(click_king);
 
@@ -75,13 +79,15 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
 
         AddChild(curr_state_desc.gameObject);
 
-        var curr_state_grid_group = this.BeginGridGroup(7, GridLayoutGroup.Constraint.FixedColumnCount, new Vector2(200, 50), new Vector2(24, 24), new Vector2(4, 2));
+        var curr_state_grid_group = this.BeginGridGroup(7, GridLayoutGroup.Constraint.FixedColumnCount,
+            new Vector2(200, 50), new Vector2(24, 24), new Vector2(4, 2));
         curr_state_grid = curr_state_grid_group.transform;
         Image curr_state_grid_image = curr_state_grid_group.gameObject.AddComponent<Image>();
         curr_state_grid_image.sprite = SpriteTextureLoader.getSprite("ui/special/windowInnerSliced");
         curr_state_grid_image.type = Image.Type.Sliced;
         curr_state_grid_image.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-        curr_state_grid_group.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        curr_state_grid_group.gameObject.AddComponent<ContentSizeFitter>().verticalFit =
+            ContentSizeFitter.FitMode.PreferredSize;
 
         SimpleText policy_queue_desc = Instantiate(SimpleText.Prefab, null);
         policy_queue_desc.Setup("", TextAnchor.MiddleCenter, new Vector2(150, 11));
@@ -94,8 +100,10 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
 
         AddChild(policy_queue_desc.gameObject);
 
-        var policy_queue_part = this.BeginHoriGroup(new Vector2(200, 24), pSpacing: 3, pPadding: new RectOffset(3, 3, 0, 0));
-        var policy_queue = policy_queue_part.BeginHoriGroup(new Vector2(170, 24), pSpacing: 5, pPadding: new RectOffset(3, 3, 0, 0));
+        var policy_queue_part =
+            this.BeginHoriGroup(new Vector2(200, 24), pSpacing: 3, pPadding: new RectOffset(3, 3, 0, 0));
+        var policy_queue =
+            policy_queue_part.BeginHoriGroup(new Vector2(170, 24), pSpacing: 5, pPadding: new RectOffset(3, 3, 0, 0));
         policy_queue_transform = policy_queue.transform;
         Image policy_queue_image = policy_queue.gameObject.AddComponent<Image>();
         policy_queue_image.sprite = SpriteTextureLoader.getSprite("ui/special/windowInnerSliced");
@@ -117,17 +125,22 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         LocalizedTextManager.addTextField(auto_localized_text);
         AddChild(optional_policy_desc.gameObject);
 
-        var optional_policy_grid_group = this.BeginGridGroup(5, GridLayoutGroup.Constraint.FixedColumnCount, new Vector2(200, 50), new Vector2(24, 24), new Vector2(4, 2));
+        var optional_policy_grid_group = this.BeginGridGroup(5, GridLayoutGroup.Constraint.FixedColumnCount,
+            new Vector2(200, 50), new Vector2(24, 24), new Vector2(4, 2));
         optional_policy_grid = optional_policy_grid_group.transform;
         Image optional_policy_grid_image = optional_policy_grid_group.gameObject.AddComponent<Image>();
         optional_policy_grid_image.sprite = SpriteTextureLoader.getSprite("ui/special/windowInnerSliced");
         optional_policy_grid_image.type = Image.Type.Sliced;
         optional_policy_grid_image.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
 
-        policy_queue_pool = new ObjectPoolGenericMono<KingdomPolicyButton>(KingdomPolicyButton.Prefab, policy_queue_transform);
-        optional_policy_pool = new ObjectPoolGenericMono<KingdomPolicyButton>(KingdomPolicyButton.Prefab, optional_policy_grid);
-        curr_state_pool = new ObjectPoolGenericMono<KingdomPolicyStateButton>(KingdomPolicyStateButton.Prefab, curr_state_grid);
+        policy_queue_pool =
+            new ObjectPoolGenericMono<KingdomPolicyButton>(KingdomPolicyButton.Prefab, policy_queue_transform);
+        optional_policy_pool =
+            new ObjectPoolGenericMono<KingdomPolicyButton>(KingdomPolicyButton.Prefab, optional_policy_grid);
+        curr_state_pool =
+            new ObjectPoolGenericMono<KingdomPolicyStateButton>(KingdomPolicyStateButton.Prefab, curr_state_grid);
     }
+
     [Hotfixable]
     internal static void InitAndShow()
     {
@@ -135,13 +148,16 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         {
             Instance = CreateWindow(nameof(KingdomMoHWindow), nameof(KingdomMoHWindow) + " Title");
         }
+
         if (!MoHTools.ExistMoHKingdom)
         {
             WorldTip.showNowTop(LM.Get("NoMoHKingdom"));
             return;
         }
+
         ScrollWindow.showWindow(nameof(KingdomMoHWindow));
     }
+
     [Hotfixable]
     public override void OnNormalEnable()
     {
@@ -150,6 +166,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         {
             return;
         }
+
         AW_Kingdom moh_kingdom = MoHTools.MoHKingdom;
 
         kingdom_name_text.color = Toolbox.makeColor(moh_kingdom.kingdomColor.color_text);
@@ -170,6 +187,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
                     .Replace("$year_number$", year_number.ToString());
             }
         }
+
         kingdom_moh_desc.text = LM.Get(MoHTools.GetMoHDescKey());
         if (DebugConst.IS_DEVELOPER)
         {
@@ -184,11 +202,13 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
             state_button.Setup(KingdomPolicyStateLibrary.Instance.get(key), null, false, true);
             state_button.SetSize(new Vector2(24, 24));
         }
+
         int queue_idx = 0;
         foreach (var queue in moh_kingdom.policy_data.policy_queue)
         {
             KingdomPolicyButton policy_button = policy_queue_pool.getNext(queue_idx++);
-            policy_button.Setup(KingdomPolicyLibrary.Instance.get(queue.policy_id), GetPolicyQueueButtonAction(moh_kingdom, policy_button), false, true);
+            policy_button.Setup(KingdomPolicyLibrary.Instance.get(queue.policy_id),
+                GetPolicyQueueButtonAction(moh_kingdom, policy_button), false, true);
             policy_button.SetSize(new Vector2(28, 28));
         }
 
@@ -200,12 +220,18 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
             policy_button.Setup(policy, GetPolicySelectButtonAction(moh_kingdom, policy_button), false, true);
             policy_button.SetSize(new Vector2(28, 28));
         }
+
         executing_policy.gameObject.SetActive(true);
-        executing_policy.Setup(string.IsNullOrEmpty(moh_kingdom.policy_data.current_policy_id) || moh_kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ? null : KingdomPolicyLibrary.Instance.get(moh_kingdom.policy_data.current_policy_id), null, false, true);
+        executing_policy.Setup(
+            string.IsNullOrEmpty(moh_kingdom.policy_data.current_policy_id) ||
+            moh_kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed
+                ? null
+                : KingdomPolicyLibrary.Instance.get(moh_kingdom.policy_data.current_policy_id), null, false, true);
         executing_policy.SetSize(new Vector2(24, 24));
         executing_policy.tip_data.tip_description = moh_kingdom.policy_data.p_progress.ToString();
         executing_policy.tip_data.tip_description_2 = moh_kingdom.policy_data.p_status.ToString();
     }
+
     [Hotfixable]
     public override void OnNormalDisable()
     {
@@ -213,6 +239,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         Clean();
         Main.LogInfo("OnNormalDisable");
     }
+
     private void Clean()
     {
         kingdom_name_text.text = "NONE";
@@ -222,16 +249,22 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         policy_queue_pool.clear();
         optional_policy_pool.clear();
     }
-    private UnityAction<KingdomPolicyAsset> GetPolicySelectButtonAction(AW_Kingdom moh_kingdom, KingdomPolicyButton policy_button)
+
+    private UnityAction<KingdomPolicyAsset> GetPolicySelectButtonAction(AW_Kingdom moh_kingdom,
+        KingdomPolicyButton policy_button)
     {
         return pPolicyAsset =>
         {
+            if (moh_kingdom.policy_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) return;
             if (!moh_kingdom.CheckPolicy(pPolicyAsset)) return;
-            if (!pPolicyAsset.can_repeat && moh_kingdom.policy_data.policy_queue.Any(x => x.policy_id == pPolicyAsset.id)) return;
+            if (!pPolicyAsset.can_repeat &&
+                moh_kingdom.policy_data.policy_queue.Any(x => x.policy_id == pPolicyAsset.id)) return;
             if (!MoHTools.CostMoH(10, true)) return;
 
-            KingdomPolicyButton policy_button_in_queue = policy_queue_pool.getNext(moh_kingdom.policy_data.policy_queue.Count);
-            policy_button_in_queue.Setup(pPolicyAsset, GetPolicyQueueButtonAction(moh_kingdom, policy_button_in_queue), false, true);
+            KingdomPolicyButton policy_button_in_queue =
+                policy_queue_pool.getNext(moh_kingdom.policy_data.policy_queue.Count);
+            policy_button_in_queue.Setup(pPolicyAsset, GetPolicyQueueButtonAction(moh_kingdom, policy_button_in_queue),
+                false, true);
             policy_button_in_queue.SetSize(new Vector2(28, 28));
 
             PolicyDataInQueue policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
@@ -244,7 +277,9 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
             }
         };
     }
-    private UnityAction<KingdomPolicyAsset> GetPolicyQueueButtonAction(AW_Kingdom moh_kingdom, KingdomPolicyButton policy_button_in_queue)
+
+    private UnityAction<KingdomPolicyAsset> GetPolicyQueueButtonAction(AW_Kingdom moh_kingdom,
+        KingdomPolicyButton policy_button_in_queue)
     {
         return pPolicyAsset =>
         {
@@ -259,6 +294,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
                 {
                     moh_kingdom.policy_data.policy_queue.Enqueue(policy);
                 }
+
                 PolicyDataInQueue.Pool.Recycle(policy);
             }
 
@@ -271,6 +307,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
                     return;
                 }
             }
+
             KingdomPolicyButton policy_button = optional_policy_pool.getNext(0);
             policy_button.Setup(pPolicyAsset, GetPolicySelectButtonAction(moh_kingdom, policy_button), false, true);
             policy_button.SetSize(new Vector2(28, 28));
