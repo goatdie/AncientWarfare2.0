@@ -30,7 +30,7 @@ public partial class AW_Kingdom : Kingdom
 
     public bool hasHeir()
     {
-        return this.heir != null;
+        return heir != null && heir.isAlive();
     }
 
     public override void Dispose()
@@ -403,11 +403,11 @@ public partial class AW_Kingdom : Kingdom
     /// </summary>
     /// <param name="pKing"></param>
     [MethodReplace(nameof(setKing))]
-    public void SetKing(Actor pKing)
+    public new void setKing(Actor pActor)
     {
         #region 原版代码
 
-        king = pKing;
+        king = pActor;
         king.setProfession(UnitProfession.King);
         data.kingID = king.data.id;
         data.timestamp_king_rule = World.world.getCurWorldTime();
@@ -415,6 +415,8 @@ public partial class AW_Kingdom : Kingdom
 
         #endregion
 
-        MoHCorePatch.check_and_add_moh_trait(this, pKing);
+        MoHCorePatch.check_and_add_moh_trait(this, pActor);
+        clearHeirData();
+        KingdomYearName.changeYearname(this);
     }
 }

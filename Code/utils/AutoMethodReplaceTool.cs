@@ -5,11 +5,13 @@ using System.Reflection.Emit;
 using System.Text;
 using Figurebox.attributes;
 using HarmonyLib;
+
 namespace Figurebox.Utils;
 
 internal class AutoMethodReplaceTool
 {
-    private static MethodInfo _origin_method;
+    private static MethodInfo _new_method;
+
     public static void ReplaceMethods()
     {
         Type[] types = Assembly.GetExecutingAssembly().GetTypes();
@@ -17,7 +19,8 @@ internal class AutoMethodReplaceTool
         HashSet<string> replaced_methods = new();
         foreach (Type type in types)
         {
-            MethodInfo[] method_infos = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            MethodInfo[] method_infos = type.GetMethods(BindingFlags.Instance | BindingFlags.Static |
+                                                        BindingFlags.Public | BindingFlags.NonPublic);
             foreach (MethodInfo method_info in method_infos)
             {
                 var attribute = method_info.GetCustomAttribute<MethodReplaceAttribute>();
@@ -37,6 +40,7 @@ internal class AutoMethodReplaceTool
                         method_full_name.Append(parameter.ParameterType.FullName);
                         method_full_name.Append(",");
                     }
+
                     method_full_name.Append(">");
 
                     if (replaced_methods.Contains(method_full_name.ToString()))
@@ -46,6 +50,7 @@ internal class AutoMethodReplaceTool
                         Main.LogWarning($"重复替换方法: {method_full_name}");
                         continue;
                     }
+
                     try
                     {
                         ReplaceMethod(method_info, target_method);
@@ -65,28 +70,43 @@ internal class AutoMethodReplaceTool
             }
         }
     }
-    private static void ReplaceMethod(MethodInfo pOriginalMethod, MethodInfo pTargetMethod)
+
+    private static void ReplaceMethod(MethodInfo pNewMethod, MethodInfo pTargetMethod)
     {
-        _origin_method = pOriginalMethod;
-        Harmony harmony = new($"Figurebox.AutoMethodReplaceTool.{pTargetMethod.DeclaringType.FullName}.{pTargetMethod.Name}");
-        harmony.Patch(pTargetMethod, transpiler: new HarmonyMethod(typeof(AutoMethodReplaceTool), nameof(_method_replace_patch)));
+        _new_method = pNewMethod;
+        Harmony harmony =
+            new($"Figurebox.AutoMethodReplaceTool.{pTargetMethod.DeclaringType.FullName}.{pTargetMethod.Name}");
+        harmony.Patch(pTargetMethod,
+            transpiler: new HarmonyMethod(typeof(AutoMethodReplaceTool), nameof(_method_replace_patch)));
     }
+
     private static IEnumerable<CodeInstruction> _method_replace_patch(IEnumerable<CodeInstruction> instr)
     {
         var codes = new List<CodeInstruction>();
 
-        int param_count = _origin_method.GetParameters().Length + (_origin_method.IsStatic ? 0 : 1);
-        for (int i = 0; i < param_count; i++)
+        var local_method = _new_method;
+        var i = 0;
+        if (!local_method.IsStatic)
+        {
+            codes.Add(new CodeInstruction(OpCodes.Ldarg, i));
+            codes.Add(new CodeInstruction(OpCodes.Castclass, local_method.DeclaringType));
+            i++;
+        }
+
+        var param_count = local_method.GetParameters().Length + (local_method.IsStatic ? 0 : 1);
+        for (; i < param_count; i++)
         {
             codes.Add(new CodeInstruction(OpCodes.Ldarg, i));
         }
-        codes.Add(new CodeInstruction(OpCodes.Callvirt, _origin_method));
+
+        codes.Add(new CodeInstruction(OpCodes.Callvirt, local_method));
         codes.Add(new CodeInstruction(OpCodes.Ret));
 
         foreach (var code in codes)
         {
             Main.LogInfo(code.ToString());
         }
+
         return codes;
     }
 }
