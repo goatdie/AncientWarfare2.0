@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{17363E6E-3842-4CB4-91F4-61667C78E698}</ProjectGuid>
+        <ProjectGuid>{BA1F00FC-6365-47D1-B2E4-7BDA09C27B3C}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>Figurebox</RootNamespace>
@@ -38,13 +38,12 @@
       <Content Include="mod.json" />
     </ItemGroup>
     <ItemGroup>
+        <Reference Include="Assembly-CSharp">
+            <HintPath>..\..\worldbox_Data\StreamingAssets\mods\NML\Assembly-CSharp-Publicized.dll</HintPath>
+        </Reference>
         <Reference Include="NeoModLoader">
             <HintPath>..\..\worldbox_Data\StreamingAssets\mods\NeoModLoader.dll</HintPath>
         </Reference>
-      <Reference Include="Assembly-CSharp">
-        <!--NML提供了公用的公开Assembly-CSharp文件-->
-        <HintPath>..\..\worldbox_Data\StreamingAssets\mods\NML\Assembly-CSharp-Publicized.dll</HintPath>
-      </Reference>
     </ItemGroup>
     <ItemGroup>
     <Reference Include="0Harmony">

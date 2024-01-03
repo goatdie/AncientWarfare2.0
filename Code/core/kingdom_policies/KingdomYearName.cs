@@ -2,12 +2,11 @@
 using Chinese_Name;
 using Figurebox.core;
 using HarmonyLib;
+
 namespace Figurebox;
 
 public class KingdomYearName
 {
-
-
     public static void Make_New_YearName(AW_Kingdom kingdom)
     {
         string KYN_F = WordLibraryManager.GetRandomWord("国号前");
@@ -15,9 +14,8 @@ public class KingdomYearName
         string NYN = KYN_F + KYN_R;
         kingdom.policy_data.year_name = NYN;
         kingdom.policy_data.year_start_timestamp = World.world.getCurWorldTime();
-
-
     }
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MapText), "showTextKingdom")]
     public static void ShowTextKingdom_Postfix(MapText __instance, Kingdom pKingdom)
@@ -55,17 +53,15 @@ public class KingdomYearName
                 final_text = existingText.Substring(0, startIndex) + date + existingText.Substring(endIndex + 1);
             }
         }
+
         __instance.setText(final_text, pKingdom.capital.cityCenter);
     }
 
-    [HarmonyPostfix]
-    [HarmonyPatch(typeof(Kingdom), "setKing")]
-    public static void changeYearname_Postfix(Kingdom __instance)
+    public static void changeYearname(AW_Kingdom __instance)
     {
-        AW_Kingdom awKingdom = __instance as AW_Kingdom;
         KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("kingdom_yearname");
 
-        awKingdom.StartPolicy(policy, true);
+        __instance.StartPolicy(policy, true);
     }
 }
 #endif
