@@ -22,7 +22,7 @@ public class KingdomBehCheckNewCapital : BehaviourActionKingdom
         {
             KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("change_capital");
 
-            awKingdom.StartPolicy(policy, true);
+            awKingdom.StartPolicy(policy, false);
         }
 
 

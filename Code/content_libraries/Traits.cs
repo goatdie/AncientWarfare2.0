@@ -219,10 +219,14 @@ namespace Figurebox
             {//Debug.Log("执行");
                 if (a.kingdom.king == null && a.getAge() > 15)
                 {
-                    a.kingdom.clearKingData();
-                    a.kingdom.setKing(a);
-                    a.ChangeCity(a.kingdom.capital);
-                    WorldLog.logNewKing(a.kingdom);
+                    awKingdom.clearKingData();
+                    awKingdom.setKing(a);
+                    WorldLog.logNewKing(awKingdom);
+                    if (a.city != awKingdom.capital)
+                    {
+                        a.ChangeCity(awKingdom.capital);
+                    }
+
                     return false;
                 }
                 if (a.kingdom.king != null && a.kingdom.king != a && a.hasTrait("zhuhou"))

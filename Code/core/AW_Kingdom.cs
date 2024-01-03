@@ -278,6 +278,7 @@ public partial class AW_Kingdom : Kingdom
         policy_data.p_timestamp_start = pPolicyDataInQueue?.timestamp_start ?? World.world.mapStats.worldTime;
         return true;
     }
+    //检查是否有相同政策
 
     public void ForceStopPolicy()
     {
@@ -419,5 +420,9 @@ public partial class AW_Kingdom : Kingdom
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
+        if (king.city != capital)
+        {
+            king.ChangeCity(capital);
+        }
     }
 }

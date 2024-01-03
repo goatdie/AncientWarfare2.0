@@ -19,7 +19,11 @@ namespace Figurebox
                 Debug.Log("NOT FOUND FOUNDER");
                 return;
             }
-
+            if (pFounder.city == null)
+            {
+                Debug.Log("NOT FOUND FOUNDER City");
+                return;
+            }
             // 如果创建者是Xia种族
             if (pFounder.asset.nameTemplate.Contains("Xia"))
             {
