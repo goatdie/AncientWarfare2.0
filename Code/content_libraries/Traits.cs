@@ -213,7 +213,7 @@ namespace Figurebox
 
 
             //Debug.Log("已经有天命了");
-          if(MoHTools.IsMoHKingdom(awKingdom)){return false;} 
+            if (MoHTools.IsMoHKingdom(awKingdom)) { return false; }
 
             if (a.getAge() > 17 && a.kingdom != null && a.city != null)
             {//Debug.Log("执行");
@@ -221,7 +221,7 @@ namespace Figurebox
                 {
                     a.kingdom.clearKingData();
                     a.kingdom.setKing(a);
-                    a.city = a.kingdom.capital;
+                    a.ChangeCity(a.kingdom.capital);
                     WorldLog.logNewKing(a.kingdom);
                     return false;
                 }

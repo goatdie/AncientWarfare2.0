@@ -3,6 +3,7 @@ using System.Linq;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.patch.MoH;
+using Figurebox.Utils;
 using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
@@ -365,7 +366,7 @@ public partial class AW_Kingdom : Kingdom
             if (newCapital != null)
             {
                 kingdom.capital = newCapital;
-                kingdom.king.city = newCapital;
+                kingdom.king.ChangeCity(newCapital);
                 //Debug.Log("New capital set to " + newCapital.data.name);
             }
         }
