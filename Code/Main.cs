@@ -29,6 +29,7 @@ namespace Figurebox
         public static GameObject backgroundAvatar;
         public static GameObject citybg;
         public static Transform prefabs_library;
+
         public List<string> addRaces = new List<string>()
         {
             "Xia"
@@ -42,6 +43,7 @@ namespace Figurebox
         public static string mainPath => Mod.Info.Path; // 这种方式更鲁棒, 可以适配不同的模组文件夹位置
 
         public static ModDeclare mod_declare { get; private set; }
+
         void Awake()
         {
             LM.AddToCurrentLocale("", "");
@@ -76,7 +78,7 @@ namespace Figurebox
             moreWeapons.init();
             FunctionHelper.instance = functionHelper;
             Tooltips.init();
-            trait_group.init();
+            TraitGroups.init();
             TianmingGroup.init();
             RacesLibrary.init();
             moreActors.init();
@@ -121,18 +123,22 @@ namespace Figurebox
         {
             return Path.Combine(pModDeclare.FolderPath, "Locales");
         }
+
         public ModDeclare GetDeclaration()
         {
             return mod_declare;
         }
+
         public GameObject GetGameObject()
         {
             return gameObject;
         }
+
         public string GetUrl()
         {
             return mod_declare.RepoUrl;
         }
+
         public void OnLoad(ModDeclare pModDecl, GameObject pGameObject)
         {
             mod_declare = pModDecl;
@@ -164,6 +170,7 @@ namespace Figurebox
             _ = new AWS();
             AutoMethodReplaceTool.ReplaceMethods();
         }
+
         [Hotfixable]
         public void Reload()
         {
@@ -179,6 +186,7 @@ namespace Figurebox
                     LM.LoadLocales(file);
                 }
             }
+
             LM.ApplyLocale();
 
             Dictionary<int, (Kingdom, Kingdom)> hash_dict = new();
@@ -190,8 +198,10 @@ namespace Figurebox
                     if (hash_dict.TryGetValue(hash, out (Kingdom, Kingdom) collision))
                     {
                         (Kingdom collision_k1, Kingdom collision_k2) = collision;
-                        if ((collision_k1.id != kingdom1.id || collision_k2.id != kingdom2.id) && (collision_k1.id != kingdom2.id || collision_k2.id != kingdom1.id))
-                            LogInfo($"Hash collision: ({kingdom1.id} {kingdom2.id}) with ({collision_k1.id} {collision_k2.id})");
+                        if ((collision_k1.id != kingdom1.id || collision_k2.id != kingdom2.id) &&
+                            (collision_k1.id != kingdom2.id || collision_k2.id != kingdom1.id))
+                            LogInfo(
+                                $"Hash collision: ({kingdom1.id} {kingdom2.id}) with ({collision_k1.id} {collision_k2.id})");
                     }
                     else
                     {
@@ -200,6 +210,7 @@ namespace Figurebox
                 }
             }
         }
+
         private void Configure()
         {
             if (Environment.UserName == "Inmny" || Environment.UserName == "1")
@@ -251,6 +262,7 @@ namespace Figurebox
                 LogService.LogStackTraceAsWarning();
             }
         }
+
         public static void LogInfo(string pMessage, bool pShowStackTrace = false)
         {
             LogService.LogInfo($"[AW2.0]: {pMessage}");

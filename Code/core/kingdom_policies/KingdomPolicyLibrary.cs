@@ -13,16 +13,21 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         base.init();
         // 只注册政策, 不要链接状态
         // 开启奴隶制
-        add("start_slaves", "start_slaves", "start_slaves_desc", "ui/icons/iconDamage", 100, 100, null,
+        add("start_slaves", "start_slaves", "start_slaves_desc", "ui/policy/start_slaves", 100, 100, null,
             MajorPolicyExecuteActions.StartSlaves, false, false);
         // 强化奴隶控制
         add("control_slaves", "control_slaves", "control_slaves_desc", "ui/icons/iconDamage", 100, 100, null,
             MajorPolicyExecuteActions.EnforceSlavesControl, true, false);
+        // 奴隶军
+        add("slaves_army", "slaves_army", "slaves_army_desc", "ui/icons/iconDamage", 100, 100, null,
+            MajorPolicyExecuteActions.EnableSlavesArmy, false, false);
         // 姓氏合流
         add("name_integration", "name_integration", "name_integration_desc", "ui/icons/iconDamage", 100, 100, null,
             MajorPolicyExecuteActions.NameIntegration, false, false);
+#if 一米_中文名
         add("kingdom_yearname", "kingdom_yearname", "kingdom_yearname_desc", "ui/policy/change_name", 1, 1, null,
             MajorPolicyExecuteActions.MakeNewYearName, true, false);
+#endif
         add("change_capital", "change_capital", "change_capital_desc", "ui/policy/move_capital", 100, 100, InPeace,
             MajorPolicyExecuteActions.ChangeCapital, true, false);
     }
@@ -30,7 +35,9 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
     public override void post_init()
     {
         base.post_init();
-        //get("control_slaves").AddPreposition("slaves");
+        get("start_slaves").AddPreposition(KingdomPolicyStateLibrary.DefaultState);
+        get("control_slaves").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_Slaves);
+        get("slaves_army").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_Slaves);
     }
 
     public override void linkAssets()

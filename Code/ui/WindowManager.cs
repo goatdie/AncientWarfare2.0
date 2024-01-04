@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NCMS.Utils;
 using UnityEngine;
+
 namespace Figurebox
 {
     class WindowManager
@@ -19,6 +20,7 @@ namespace Figurebox
             TianmingBoardWindow.init();
             KingdomHistoryListWindow.Init();
 
+            KingdomPolicyGraphWindow.CreateAndInit(nameof(KingdomPolicyGraphWindow));
         }
 
         private static void newWindow(string id, string title)
@@ -28,10 +30,13 @@ namespace Figurebox
             window = Windows.CreateNewWindow(id, title);
             createdWindows.Add(id, window);
 
-            GameObject scrollView = GameObject.Find($"/Canvas Container Main/Canvas - Windows/windows/{window.name}/Background/Scroll View");
+            GameObject scrollView =
+                GameObject.Find(
+                    $"/Canvas Container Main/Canvas - Windows/windows/{window.name}/Background/Scroll View");
             scrollView.gameObject.SetActive(true);
 
-            content = GameObject.Find($"/Canvas Container Main/Canvas - Windows/windows/{window.name}/Background/Scroll View/Viewport/Content");
+            content = GameObject.Find(
+                $"/Canvas Container Main/Canvas - Windows/windows/{window.name}/Background/Scroll View/Viewport/Content");
             if (content != null)
             {
                 windowContents.Add(id, content);

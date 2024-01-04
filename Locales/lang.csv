@@ -3,6 +3,7 @@ KingdomPolicy,国策,Kingdom Policy
 KingdomPolicy Description,显示一个国家的国策树,Show a kingdom's policy
 KingdomPolicyWindow Title,国策窗口,Kingdom Policy
 KingdomMoHWindow Title,天命国家,Mandate of Heaven
+KingdomPolicyGraphWindow Title,国策图,Kingdom Policy Graph
 Suzerain,宗主国,Suzerain Kingdom
 policy_state,政治状态,Policy State
 policy_queue,国策队列,Policy Queue

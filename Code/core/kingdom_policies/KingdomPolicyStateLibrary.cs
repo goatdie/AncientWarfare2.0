@@ -1,6 +1,7 @@
 using System;
 using Figurebox.constants;
 using Figurebox.core;
+
 namespace Figurebox;
 
 /// <summary>
@@ -8,11 +9,18 @@ namespace Figurebox;
 /// </summary>
 public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
 {
+    /// <summary>
+    ///     社会等级制度: 奴隶制
+    /// </summary>
+    public static KingdomPolicyStateAsset SocialLevel_Slaves;
+
     public static KingdomPolicyStateLibrary Instance { get; } = new();
+
     /// <summary>
     ///     默认政体(政治状态)
     /// </summary>
     public static KingdomPolicyStateAsset DefaultState { get; } = new();
+
     public override void init()
     {
         base.init();
@@ -22,7 +30,7 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         // 原始公平
         add(DefaultState);
         // 奴隶制
-        add("slaves", PolicyStateType.social_level);
+        SocialLevel_Slaves = add("slaves", PolicyStateType.social_level);
         // 封建贵族
         add("aristocrat", PolicyStateType.social_level);
         // 地主
@@ -32,15 +40,19 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         // 无产阶级
         add("proletarian", PolicyStateType.social_level);
     }
+
     public override void post_init()
     {
         base.post_init();
     }
+
     public override void linkAssets()
     {
         base.linkAssets();
     }
-    public KingdomPolicyStateAsset add(string pID, string pType, FindPolicy pPolicyFinder = null, CalcKingdomStrength pCalcKingdomPower = null)
+
+    public KingdomPolicyStateAsset add(string pID, string pType, FindPolicy pPolicyFinder = null,
+        CalcKingdomStrength pCalcKingdomPower = null)
     {
         return add(new KingdomPolicyStateAsset
         {
@@ -50,6 +62,7 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
             calc_kingdom_strength = pCalcKingdomPower ?? DefaultCalcKingdomPower
         });
     }
+
     public static float DefaultCalcKingdomPower(AW_Kingdom pKingdom)
     {
         int kingdomValue = 0;
@@ -61,8 +74,10 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         {
             stewardship = pKingdom.king.data.stewardship * 10;
         }
+
         return populationTotal + cityCount + armySize + stewardship;
     }
+
     public static KingdomPolicyAsset DefaultPolicyFinder(AW_Kingdom pKingdom)
     {
         throw new NotImplementedException();
