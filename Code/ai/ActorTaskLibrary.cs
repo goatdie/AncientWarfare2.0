@@ -1,25 +1,17 @@
 using ai.behaviours;
+using Figurebox.abstracts;
 using Figurebox.ai.behaviours.actor;
 
 namespace Figurebox.ai;
 
-public class ActorTaskLibrary
+public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
 {
-    private static BehaviourTaskActor t;
-
-    internal static void init()
+    protected override void init()
     {
         add_slave_catcher_tasks();
     }
 
-    private static BehaviourTaskActor add(BehaviourTaskActor pTask)
-    {
-        AssetManager.tasks_actor.add(pTask);
-        t = pTask;
-        return pTask;
-    }
-
-    private static void add_slave_catcher_tasks()
+    private void add_slave_catcher_tasks()
     {
         add(new BehaviourTaskActor
         {

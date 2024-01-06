@@ -1,21 +1,13 @@
 using ai.behaviours.conditions;
+using Figurebox.abstracts;
 using Figurebox.ai.conditions;
 using Figurebox.constants;
 
 namespace Figurebox.ai;
 
-public class ActorJobLibrary
+public class ActorJobLibrary : ExtendedLibrary<ActorJob>
 {
-    private static ActorJob t;
-
-    private static ActorJob add(ActorJob pJob)
-    {
-        AssetManager.job_actor.add(pJob);
-        t = pJob;
-        return pJob;
-    }
-
-    internal static void init()
+    protected override void init()
     {
         add(new ActorJob
         {

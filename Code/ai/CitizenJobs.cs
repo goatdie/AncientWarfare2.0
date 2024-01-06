@@ -1,15 +1,16 @@
 using System.Collections.Generic;
+using Figurebox.abstracts;
 using Figurebox.constants;
 
 namespace Figurebox.ai;
 
-public class CitizenJobs
+public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
 {
     public static CitizenJobAsset slave_catcher;
 
     private static readonly List<CitizenJobAsset> _list = new();
 
-    internal static void init()
+    protected override void init()
     {
         slave_catcher = add(new CitizenJobAsset
         {
@@ -22,13 +23,6 @@ public class CitizenJobs
 
 
         post_init();
-    }
-
-    private static CitizenJobAsset add(CitizenJobAsset pAsset)
-    {
-        AssetManager.citizen_job_library.add(pAsset);
-        _list.Add(pAsset);
-        return pAsset;
     }
 
     private static void post_init()

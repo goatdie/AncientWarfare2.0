@@ -89,10 +89,10 @@ namespace Figurebox
             moreKingdoms.init();
             BuildingLibrary.init();
             KingdomBehLibrary.init();
-            ActorTaskLibrary.init();
-            ai.ActorJobLibrary.init();
-            ai.CitizenJobs.init();
-            ai.CityJobLibrary.init();
+            _ = new ActorTaskLibrary();
+            _ = new ai.ActorJobLibrary();
+            _ = new ai.CitizenJobs();
+            _ = new ai.CityJobLibrary();
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
             instance = this;

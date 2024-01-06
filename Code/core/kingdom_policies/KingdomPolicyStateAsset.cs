@@ -18,7 +18,7 @@ public class KingdomPolicyStateAsset : Asset
     /// <summary>
     ///     该政治状态下的城市任务列表, 不包含wait
     /// </summary>
-    public List<string> city_task_list = new();
+    public List<BehaviourTaskCity> city_task_list = new();
 
     /// <summary>
     ///     描述文本的key
@@ -51,9 +51,9 @@ public class KingdomPolicyStateAsset : Asset
         all_optional_policies.UnionWith(pPolicy.Select(p => p.id));
     }
 
-    public void AddCityTasks(params string[] pCityTask)
+    public void AddCityTasks(params BehaviourTaskCity[] pCityTask)
     {
-        city_task_list ??= new List<string>();
+        city_task_list ??= new List<BehaviourTaskCity>();
         city_task_list.AddRange(pCityTask);
     }
 }

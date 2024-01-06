@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Text;
+using Figurebox.abstracts;
 
 namespace Figurebox.ai;
 
-public class CityJobLibrary
+public class CityJobLibrary : ExtendedLibrary<JobCityAsset>
 {
-    internal static void init()
+    protected override void init()
     {
     }
 
@@ -37,7 +38,7 @@ public class CityJobLibrary
             if (state.city_task_list == null || state.city_task_list.Count == 0) continue;
             foreach (var task in state.city_task_list)
             {
-                job.addTask(task);
+                job.addTask(task.id);
                 job.addTask("wait1");
             }
         }
