@@ -52,9 +52,9 @@ internal static class NameGeneratorInitialzier
             // 当 clan_name 存在，且与 family_name 不同，同时 chinese_family_name 为空时，使用 clan_name 更新其他名称
             if (!string.IsNullOrEmpty(clanName) && !clanName.Equals(familyName) && string.IsNullOrEmpty(ChineseFamilyName))
             {
-                 pActor.data.set("family_name", clanName);
+                pActor.data.set("family_name", clanName);
                 pActor.data.set("chinese_family_name", clanName);
-                pActor.getClan().data.set("clan_chinese_family_name", clanName);
+                if (pActor.hasClan()) { pActor.getClan().data.set("clan_chinese_family_name", clanName); }
                 pActor.data.set("name_set", true);
             }
             else if (string.IsNullOrEmpty(familyName) && string.IsNullOrEmpty(clanName) && string.IsNullOrEmpty(ChineseFamilyName))
