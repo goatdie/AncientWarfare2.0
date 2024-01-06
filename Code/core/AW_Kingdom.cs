@@ -94,10 +94,10 @@ public partial class AW_Kingdom : Kingdom
     {
         if (this.heir != null)
         {//等老马更新后检测继承人是否为自己的子嗣
-        if(heir.has_trait_madness)
-        {
-            this.clearHeirData();
-        }
+            if (heir.has_trait_madness||heir==king)
+            {
+                this.clearHeirData();
+            }
         }
     }
 
@@ -449,11 +449,12 @@ public partial class AW_Kingdom : Kingdom
         #region 原版代码
 
         king = pActor;
+        CheckAndSetPrimaryKingdom(king, this);
+
         if (king.city != capital)
         {
             king.ChangeCity(capital);
         }
-        CheckAndSetPrimaryKingdom(king, this);
         king.setProfession(UnitProfession.King);
         data.kingID = king.data.id;
         data.timestamp_king_rule = World.world.getCurWorldTime();
