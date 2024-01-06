@@ -60,7 +60,7 @@ public partial class AW_Kingdom : Kingdom
             foreach (var member in royalClan.units.Values)
             {
                 // 排除国王本人
-                if (this.king != null && member == this.king)
+                if (this.king != null && member == this.king && !member.has_trait_madness)
                 {
                     continue;
                 }
@@ -88,6 +88,16 @@ public partial class AW_Kingdom : Kingdom
         {
             Debug.Log("没找到合适的继承人");
             return null;
+        }
+    }
+    public void CheckHeir()
+    {
+        if (this.heir != null)
+        {//等老马更新后检测继承人是否为自己的子嗣
+        if(heir.has_trait_madness)
+        {
+            this.clearHeirData();
+        }
         }
     }
 
