@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Figurebox.core;
-using Figurebox.Utils;
 using Figurebox.Utils.MoH;
 
 namespace Figurebox
@@ -252,10 +251,6 @@ namespace Figurebox
                     awKingdom.clearKingData();
                     awKingdom.setKing(a);
                     WorldLog.logNewKing(awKingdom);
-                    if (a.city != awKingdom.capital)
-                    {
-                        a.ChangeCity(awKingdom.capital);
-                    }
 
                     return false;
                 }
