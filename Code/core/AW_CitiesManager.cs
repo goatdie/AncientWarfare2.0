@@ -5,7 +5,7 @@ public class AW_CitiesManager : CitiesManager
     internal static void init()
     {
         World.world.cities.clear();
-        World.world.cities = new CitiesManager();
+        World.world.cities = new AW_CitiesManager();
         World.world.list_base_managers[World.world.list_base_managers.FindIndex(x => x is CitiesManager)] =
             World.world.cities;
     }

@@ -6,8 +6,12 @@ namespace Figurebox.ai;
 
 public class CityJobLibrary : ExtendedLibrary<JobCityAsset>
 {
+    protected List<TaskContainer<BehaviourCityCondition, City>> base_city_tasks = new();
+
     protected override void init()
     {
+        var city_tasks = AssetManager.job_city.get("city").tasks;
+        foreach (var task in city_tasks) base_city_tasks.Add(task);
     }
 
     internal static string CheckAndGetCityJob(Dictionary<string, string> pPolicyState)
@@ -43,6 +47,7 @@ public class CityJobLibrary : ExtendedLibrary<JobCityAsset>
             }
         }
 
+        foreach (var base_task in ((CityJobLibrary)Instance).base_city_tasks) job.tasks.Add(base_task);
         AssetManager.job_city.add(job);
     }
 }

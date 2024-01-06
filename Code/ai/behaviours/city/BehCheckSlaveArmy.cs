@@ -1,5 +1,8 @@
 namespace Figurebox.ai.behaviours.city;
 
-public class BehCheckSlaveArmy
+/// <summary>
+///     使用奴隶组织奴隶军
+/// </summary>
+public class BehCheckSlaveArmy : BehaviourActionCity
 {
 }

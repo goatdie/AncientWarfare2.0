@@ -3,7 +3,6 @@ namespace Figurebox.abstracts;
 public abstract class ExtendedLibrary<T> where T : Asset
 {
     private AssetLibrary<T> cached_library;
-    public ExtendedLibrary<T> Instance;
     protected T t;
 
     public ExtendedLibrary()
@@ -11,6 +10,8 @@ public abstract class ExtendedLibrary<T> where T : Asset
         Instance = this;
         init();
     }
+
+    public static ExtendedLibrary<T> Instance { get; private set; }
 
     protected virtual T add(T pObj)
     {
