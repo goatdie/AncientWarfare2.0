@@ -1,6 +1,6 @@
-using System;
 using Figurebox.constants;
 using Figurebox.core;
+using NeoModLoader.api.attributes;
 
 namespace Figurebox;
 
@@ -19,16 +19,14 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
     /// <summary>
     ///     默认政体(政治状态)
     /// </summary>
-    public static KingdomPolicyStateAsset DefaultState { get; } = new();
+    public static KingdomPolicyStateAsset DefaultState { get; private set; }
 
     public override void init()
     {
         base.init();
         // 只注册状态, 不要链接政策
-        DefaultState.id = "default";
-        DefaultState.type = PolicyStateType.social_level;
         // 原始公平
-        add(DefaultState);
+        DefaultState = add("default", PolicyStateType.social_level);
         // 奴隶制
         SocialLevel_Slaves = add("slaves", PolicyStateType.social_level);
         // 封建贵族
@@ -43,7 +41,13 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
 
     public override void post_init()
     {
-        base.post_init();
+        // 添加可选政策
+        DefaultState.AddOptionalPolicy(KingdomPolicyLibrary.Instance.get("start_slaves"));
+
+        SocialLevel_Slaves.AddOptionalPolicy(
+            KingdomPolicyLibrary.Instance.get("control_slaves"),
+            KingdomPolicyLibrary.Instance.get("slaves_army")
+        );
     }
 
     public override void linkAssets()
@@ -51,13 +55,17 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         base.linkAssets();
     }
 
-    public KingdomPolicyStateAsset add(string pID, string pType, FindPolicy pPolicyFinder = null,
+    public KingdomPolicyStateAsset add(string pID, string pType, string pPathIcon = null,
+        FindPolicy pPolicyFinder = null,
         CalcKingdomStrength pCalcKingdomPower = null)
     {
         return add(new KingdomPolicyStateAsset
         {
             id = pID,
             type = pType,
+            name = pID,
+            description = pID + "_desc",
+            path_icon = string.IsNullOrEmpty(pPathIcon) ? "ui/icons/iconDamage" : pPathIcon,
             policy_finder = pPolicyFinder ?? DefaultPolicyFinder,
             calc_kingdom_strength = pCalcKingdomPower ?? DefaultCalcKingdomPower
         });
@@ -78,8 +86,9 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         return populationTotal + cityCount + armySize + stewardship;
     }
 
-    public static KingdomPolicyAsset DefaultPolicyFinder(AW_Kingdom pKingdom)
+    [Hotfixable]
+    public static KingdomPolicyAsset DefaultPolicyFinder(KingdomPolicyStateAsset pState, AW_Kingdom pKingdom)
     {
-        throw new NotImplementedException();
+        return KingdomPolicyLibrary.Instance.get(pState.all_optional_policies.GetRandom());
     }
 }

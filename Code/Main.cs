@@ -58,6 +58,7 @@ namespace Figurebox
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             NewUI.PatchResources();
             Traits.init();
+            AW_CitiesManager.init();
             AW_KingdomManager.init();
             _ = KingdomEventsManager.Instance;
             KingdomPolicyLibrary.Instance.init();
@@ -91,6 +92,7 @@ namespace Figurebox
             ActorTaskLibrary.init();
             ai.ActorJobLibrary.init();
             ai.CitizenJobs.init();
+            ai.CityJobLibrary.init();
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
             instance = this;
@@ -168,6 +170,8 @@ namespace Figurebox
             prefabs_library = new GameObject("Prefabs").transform;
             prefabs_library.SetParent(transform);
             _ = new AWS();
+            _ = new AWDataS();
+            _ = new PolicyStateType();
             AutoMethodReplaceTool.ReplaceMethods();
         }
 

@@ -1,5 +1,6 @@
 using NeoModLoader.General.UI.Prefabs;
-namespace Figurebox.prefabs;
+
+namespace Figurebox.ui.prefabs;
 
 public class WarEventHistoryItem : APrefab<WarEventHistoryItem>
 {

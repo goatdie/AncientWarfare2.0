@@ -1,12 +1,14 @@
 using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
 using UnityEngine.UI;
-namespace Figurebox.prefabs;
+
+namespace Figurebox.ui.prefabs;
 
 public class SimpleText : APrefab<SimpleText>
 {
     public Text text { get; private set; }
     public Image background { get; private set; }
+
     protected override void Init()
     {
         if (Initialized) return;
@@ -14,14 +16,19 @@ public class SimpleText : APrefab<SimpleText>
         text = transform.Find("Text").GetComponent<Text>();
         background = GetComponent<Image>();
     }
-    public void Setup(string pText, TextAnchor pAlignment = TextAnchor.MiddleLeft, Vector2 pSize = default, Sprite pBackground = null)
+
+    public void Setup(string pText, TextAnchor pAlignment = TextAnchor.MiddleLeft, Vector2 pSize = default,
+        Sprite pBackground = null)
     {
         Init();
         SetSize(pSize == default ? new Vector2(200, 18) : pSize);
         text.text = pText;
         text.alignment = pAlignment;
-        background.sprite = pBackground == null ? SpriteTextureLoader.getSprite("ui/special/windowInnerSliced") : pBackground;
+        background.sprite = pBackground == null
+            ? SpriteTextureLoader.getSprite("ui/special/windowInnerSliced")
+            : pBackground;
     }
+
     public override void SetSize(Vector2 pSize)
     {
         base.SetSize(pSize);

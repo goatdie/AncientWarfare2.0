@@ -3,6 +3,7 @@ using System.Linq;
 using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.prefabs;
+using Figurebox.ui.prefabs;
 using Figurebox.Utils.extensions;
 using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;

@@ -5,6 +5,7 @@ using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+
 namespace Figurebox.prefabs;
 
 /// <summary>
@@ -13,12 +14,13 @@ namespace Figurebox.prefabs;
 public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
 {
     public Image bg;
+    public TipButton tip_button;
     private Button button;
     private Image icon;
     private Text text;
-    public TipButton tip_button;
     public TooltipData tip_data;
     public KingdomPolicyAsset policy { get; private set; }
+
     protected override void Init()
     {
         if (Initialized) return;
@@ -31,8 +33,10 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
         tip_button.clickAction = showTooltip;
         base.Init();
     }
+
     [Hotfixable]
-    public void Setup(KingdomPolicyAsset pPolicyAsset, UnityAction<KingdomPolicyAsset> pClickAction = null, bool pSpecial = false, bool pHiddenBackground = false)
+    public void Setup(KingdomPolicyAsset pPolicyAsset, UnityAction<KingdomPolicyAsset> pClickAction = null,
+        bool pSpecial = false, bool pHiddenBackground = false)
     {
         Init();
         bg.enabled = !pHiddenBackground; // 确保背景总是被启用，除非明确要求隐藏
@@ -42,9 +46,11 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
             // 当没有内容时，隐藏图标和文本，但保持背景显示
             icon.enabled = false;
             text.enabled = false;
+            tip_button.enabled = false;
         }
         else
         {
+            tip_button.enabled = true;
             // 当有内容时，正常设置图标、文本和按钮
             policy = pPolicyAsset;
             Sprite iconSprite = SpriteTextureLoader.getSprite(pPolicyAsset.path_icon);
@@ -83,12 +89,14 @@ public class KingdomPolicyButton : APrefab<KingdomPolicyButton>
         icon.transform.DOKill();
         icon.transform.DOScale(1f, 0.1f).SetEase(Ease.InBack);
     }
+
     public override void SetSize(Vector2 pSize)
     {
         icon.GetComponent<RectTransform>().sizeDelta = pSize * 0.875f;
         text.GetComponent<RectTransform>().sizeDelta = pSize * 0.875f;
         base.SetSize(pSize);
     }
+
     private static void _init()
     {
         GameObject obj = new("KingdomPolicyButton", typeof(Image), typeof(Button), typeof(TipButton));

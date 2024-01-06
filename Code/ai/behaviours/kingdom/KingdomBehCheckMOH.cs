@@ -1,13 +1,11 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
+using System.Linq;
 using ai.behaviours;
 using Figurebox.core;
 using Figurebox.Utils.MoH;
-using UnityEngine;
-using System.Linq;
 
 namespace Figurebox.ai;
+
 public class KingdomBehCheckMOH : BehaviourActionKingdom
 {
     public override BehResult execute(Kingdom pKingdom)
@@ -20,16 +18,14 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
             {
                 //Debug.Log("天命设置完毕");
                 MoHTools.SetMoHKingdom(awKingdom);
-
-
             }
+
             return BehResult.Continue;
         }
+
         return BehResult.Continue;
-
-
-
     }
+
     private bool checkMOHcondition(AW_Kingdom pKingdom)
     {
         // Debug.Log("天命寻找中");
@@ -45,12 +41,8 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
             {
                 return true;
             }
-
         }
 
         return false;
     }
-
-
-
 }

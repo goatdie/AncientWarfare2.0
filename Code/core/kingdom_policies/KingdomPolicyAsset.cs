@@ -24,7 +24,7 @@ public delegate void ExecutePolicy(KingdomPolicyAsset policy, AW_Kingdom kingdom
 /// <summary>
 ///     寻找下一个政策的方法
 /// </summary>
-public delegate KingdomPolicyAsset FindPolicy(AW_Kingdom kingdom);
+public delegate KingdomPolicyAsset FindPolicy(KingdomPolicyStateAsset state, AW_Kingdom kingdom);
 
 public class KingdomPolicyAsset : Asset
 {

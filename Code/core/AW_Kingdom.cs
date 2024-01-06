@@ -132,6 +132,7 @@ public partial class AW_Kingdom : Kingdom
     ///     更新政策进度
     /// </summary>
     /// <param name="pElapsed"></param>
+    [Hotfixable]
     public void UpdateForPolicy(float pElapsed)
     {
         // 当目前政策都执行完毕或没有政策时，查找新的政策
@@ -153,12 +154,12 @@ public partial class AW_Kingdom : Kingdom
                 return;
             }
 
+            if (policy_data.current_states.Count == 0) UpdatePolicyStateTo(KingdomPolicyStateLibrary.DefaultState);
             foreach (string state_id in policy_data.current_states.Values)
             {
                 if (policy_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) break;
-                var state = KingdomPolicyStateLibrary.Instance.get(state_id);
-                if (state == null) continue;
-                next_policy = state.policy_finder(this);
+                var state = KingdomPolicyStateLibrary.Instance.get(state_id) ?? KingdomPolicyStateLibrary.DefaultState;
+                next_policy = state.policy_finder(state, this);
                 if (!CheckPolicy(next_policy)) continue;
 
                 var policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();

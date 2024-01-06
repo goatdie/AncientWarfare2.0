@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Figurebox.prefabs;
+using Figurebox.ui.prefabs;
 using Figurebox.Utils;
 using NCMS.Utils;
 using NeoModLoader.General;
@@ -9,12 +9,17 @@ using ReflectionUtility;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+
 namespace Figurebox
 {
     internal class NewUI
-    { // thanks to Dej
+    {
+        // thanks to Dej
         private static GameObject textRef;
-        private static readonly Dictionary<string, Object> _patched_resources = RF.GetStaticField<Dictionary<string, Object>, ResourcesPatch>("modsResources");
+
+        private static readonly Dictionary<string, Object> _patched_resources =
+            RF.GetStaticField<Dictionary<string, Object>, ResourcesPatch>("modsResources");
+
         /// <summary>
         ///     将资源添加到游戏中
         /// </summary>
@@ -25,10 +30,12 @@ namespace Figurebox
             // TODO: 等待下一版本NML将会使用新的API，这里的代码将会被移除
             _patched_resources[pPath.ToLower()] = pObject;
         }
+
         public static void PatchResources()
         {
             PatchResourceToGame("tooltips/tooltip_policy", KingdomPolicyTooltip.Prefab.GetComponent<Tooltip>());
-            PatchResourceToGame("tooltips/tooltip_policy_state", KingdomPolicyStateTooltip.Prefab.GetComponent<Tooltip>());
+            PatchResourceToGame("tooltips/tooltip_policy_state",
+                KingdomPolicyStateTooltip.Prefab.GetComponent<Tooltip>());
         }
 
         public static UiUnitAvatarElement createActorUI(Actor actor, GameObject parent, Vector3 pos)
@@ -58,6 +65,7 @@ namespace Figurebox
             {
                 return;
             }
+
             string text = "actor";
             if (actor.isKing())
             {
@@ -67,6 +75,7 @@ namespace Figurebox
             {
                 text = "actor_leader";
             }
+
             Tooltip.show(actor, text, new TooltipData
             {
                 actor = actor,
@@ -80,14 +89,17 @@ namespace Figurebox
             ScrollWindow.showWindow("inspect_unit");
         }
 
-        public static Button createBGWindowButton(GameObject parent, int posY, string iconName, string buttonName, string buttonTitle,
+        public static Button createBGWindowButton(GameObject parent, int posY, string iconName, string buttonName,
+            string buttonTitle,
             string buttonDesc, UnityAction call)
         {
             PowerButton button = PowerButtons.CreateButton(
                 buttonName,
                 Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.Icons.{iconName}.png"),
                 LocalizedTextManager.stringExists(buttonName) ? LM.Get(buttonName) : buttonTitle, // 手动判断是否覆盖
-                LocalizedTextManager.stringExists($"{buttonName} Description") ? LM.Get($"{buttonName} Description") : buttonDesc,
+                LocalizedTextManager.stringExists($"{buttonName} Description")
+                    ? LM.Get($"{buttonName} Description")
+                    : buttonDesc,
                 new Vector2(118, posY),
                 ButtonType.Click,
                 parent.transform,
@@ -102,9 +114,11 @@ namespace Figurebox
             return buttonButton;
         }
 
-        public static Text addText(string textString, GameObject parent, int sizeFont, Vector3 pos, Vector2 addSize = default(Vector2))
+        public static Text addText(string textString, GameObject parent, int sizeFont, Vector3 pos,
+            Vector2 addSize = default(Vector2))
         {
-            textRef = GameObject.Find($"/Canvas Container Main/Canvas - Windows/windows/leaderBoardWindow/Background/Title");
+            textRef = GameObject.Find(
+                $"/Canvas Container Main/Canvas - Windows/windows/leaderBoardWindow/Background/Title");
             GameObject textGo = Object.Instantiate(textRef, parent.transform);
             textGo.SetActive(true);
 
@@ -132,7 +146,8 @@ namespace Figurebox
         }
 
 
-        public static NameInput createInputOption(string objName, string title, string desc, int posY, GameObject parent, string textValue = "-1")
+        public static NameInput createInputOption(string objName, string title, string desc, int posY,
+            GameObject parent, string textValue = "-1")
         {
             GameObject statHolder = new GameObject("OptionHolder");
             statHolder.transform.SetParent(parent.transform);
@@ -174,23 +189,28 @@ namespace Figurebox
             {
                 text = pInput.inputField.text;
             }
+
             int num = -1;
             if (!int.TryParse(text, out num))
             {
                 return "0";
             }
+
             if (num > 9999)
             {
                 return "9999";
             }
+
             if (num < -9999)
             {
                 return "-9999";
             }
+
             return text;
         }
 
-        public static void createTextButtonWSize(string name, string title, Vector2 pos, Color color, Transform parent, UnityAction callback, Vector2 size)
+        public static void createTextButtonWSize(string name, string title, Vector2 pos, Color color, Transform parent,
+            UnityAction callback, Vector2 size)
         {
             Button textButton = PowerButtons.CreateTextButton(
                 name,
@@ -204,6 +224,7 @@ namespace Figurebox
             {
                 textButton.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta += new Vector2(0, 10);
             }
+
             textButton.gameObject.GetComponent<RectTransform>().sizeDelta = size;
         }
 
@@ -259,7 +280,8 @@ namespace Figurebox
             GameObject cultureHolder = new GameObject("cultureHolder");
             cultureHolder.transform.SetParent(parent.transform);
             Image cultureHolderImg = cultureHolder.AddComponent<Image>();
-            cultureHolderImg.sprite = Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.Icons.culture_background.png");
+            cultureHolderImg.sprite =
+                Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.Icons.culture_background.png");
 
             GameObject partIcon = new GameObject("partIcon");
             partIcon.transform.SetParent(cultureHolder.transform);
@@ -280,12 +302,14 @@ namespace Figurebox
 
             return cultureHolder;
         }
+
         public static GameObject createKingdomBanner(GameObject parent, Kingdom kingdom, Vector3 pos)
         {
             GameObject kingdomHolder = new("kingdomHolder");
             kingdomHolder.transform.SetParent(parent.transform);
             Image kingdomHolderImg = kingdomHolder.AddComponent<Image>();
-            kingdomHolderImg.sprite = Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.Icons.kingdombanner.png");
+            kingdomHolderImg.sprite =
+                Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.Icons.kingdombanner.png");
 
             GameObject backgroundGO = new("background");
             backgroundGO.transform.SetParent(kingdomHolder.transform);
@@ -310,6 +334,7 @@ namespace Figurebox
 
             return kingdomHolder;
         }
+
         public static void CreateAndPatchCharIcons()
         {
             foreach (var policy in KingdomPolicyLibrary.Instance.list)
@@ -318,6 +343,7 @@ namespace Figurebox
                 if (!policy.path_icon.Any(x => x >= 256)) continue;
                 _create_and_patch_char_icon_by_path(policy.path_icon);
             }
+
             foreach (var state in KingdomPolicyStateLibrary.Instance.list)
             {
                 if (string.IsNullOrEmpty(state.path_icon)) continue;
@@ -325,10 +351,12 @@ namespace Figurebox
                 _create_and_patch_char_icon_by_path(state.path_icon);
             }
         }
+
         private static void _create_and_patch_char_icon_by_path(string path_icon)
         {
             char c = Path.GetFileNameWithoutExtension(path_icon)[0];
-            Sprite icon = DynamicSpriteMaker.MakeCharacterSprite(Path.GetFileNameWithoutExtension(path_icon)[0], LocalizedTextManager.currentFont, new Vector2Int(24, 24), Color.black);
+            Sprite icon = DynamicSpriteMaker.MakeCharacterSprite(Path.GetFileNameWithoutExtension(path_icon)[0],
+                LocalizedTextManager.currentFont, new Vector2Int(24, 24), Color.black);
             PatchResourceToGame($"{path_icon}", icon);
         }
     }

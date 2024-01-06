@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using ai.behaviours;
 using Figurebox.core;
-using UnityEngine;
-using System.Linq;
 
 namespace Figurebox.ai;
+
 public class KingdomBehCheckHeir : BehaviourActionKingdom
 {
     public override BehResult execute(Kingdom pKingdom)
@@ -25,8 +21,5 @@ public class KingdomBehCheckHeir : BehaviourActionKingdom
         }
 
         return BehResult.Continue;
-
-
     }
-
 }

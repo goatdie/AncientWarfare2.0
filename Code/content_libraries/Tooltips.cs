@@ -100,6 +100,7 @@ internal class Tooltips
         if (string.IsNullOrEmpty(pData.tip_name)) return;
         KingdomPolicyStateAsset state = KingdomPolicyStateLibrary.Instance.get(pData.tip_name);
         pTooltip.name.text = LM.Get(state.name);
-        pTooltip.setDescription(LM.Get(state.description));
+        if (!string.IsNullOrEmpty(state.description) && LocalizedTextManager.stringExists(state.description))
+            pTooltip.setDescription(LM.Get(state.description));
     }
 }

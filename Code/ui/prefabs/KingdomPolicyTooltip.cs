@@ -1,12 +1,14 @@
 using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
-namespace Figurebox.prefabs;
+
+namespace Figurebox.ui.prefabs;
 
 public class KingdomPolicyTooltip : APrefab<KingdomPolicyTooltip>
 {
     private static void _init()
     {
-        GameObject obj = Instantiate(Resources.Load<Tooltip>("tooltips/tooltip_normal"), Main.prefabs_library).gameObject;
+        GameObject obj = Instantiate(Resources.Load<Tooltip>("tooltips/tooltip_normal"), Main.prefabs_library)
+            .gameObject;
         obj.name = "policy";
 
         Prefab = obj.AddComponent<KingdomPolicyTooltip>();

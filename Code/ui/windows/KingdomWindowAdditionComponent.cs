@@ -1,10 +1,13 @@
+using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.prefabs;
+using Figurebox.ui.prefabs;
 using NeoModLoader.General.UI.Window.Layout;
 using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 namespace Figurebox;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
@@ -12,11 +15,12 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private AutoVertLayoutGroup AutoLayoutRoot;
     private RectTransform BackgroundTransform;
     private RectTransform ContentTransform;
+    private KingdomPolicyStateButton current_state;
+    private KingdomPolicyButton executing_policy;
     private UiUnitAvatarElement heir_avatar;
     private UiUnitAvatarElement king_avatar;
     private KingdomWindow Window;
     private SimpleText year_name;
-    private KingdomPolicyButton executing_policy;
     private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
 
     private void OnEnable()
@@ -26,6 +30,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         heir_avatar.unit_type_bg.sprite = heir_avatar.type_leader;
         actorAvatarDisplaySetting(heir_avatar, heir_avatar.gameObject.activeSelf);
         actorAvatarDisplaySetting(king_avatar, king_avatar.gameObject.activeSelf);
+
         void actorAvatarDisplaySetting(UiUnitAvatarElement avatar, bool pActive)
         {
             avatar.transform.Find("Mask").gameObject.SetActive(pActive);
@@ -37,36 +42,49 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
             {
                 avatar.gameObject.AddComponent<EventTrigger>();
             }
+
             avatar.GetComponent<EventTrigger>().enabled = pActive;
             if (!pActive)
             {
                 avatar.gameObject.SetActive(true);
             }
         }
+
         year_name.text.text = kingdom.GetYearName(true);
         year_name.text.color = kingdom.kingdomColor.getColorText();
 
 
         executing_policy.gameObject.SetActive(true);
-        executing_policy.Setup(string.IsNullOrEmpty(kingdom.policy_data.current_policy_id) || kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ? null : KingdomPolicyLibrary.Instance.get(kingdom.policy_data.current_policy_id), null, false, false);
+        executing_policy.Setup(
+            string.IsNullOrEmpty(kingdom.policy_data.current_policy_id) ||
+            kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed
+                ? null
+                : KingdomPolicyLibrary.Instance.get(kingdom.policy_data.current_policy_id));
         executing_policy.SetSize(new Vector2(16, 16));
         RectTransform bgRect = executing_policy.bg.GetComponent<RectTransform>();
-        bgRect.sizeDelta = new Vector2(120, 16);
+        bgRect.sizeDelta = new Vector2(60, 16);
         executing_policy.tip_data.tip_description = kingdom.policy_data.p_progress.ToString();
         executing_policy.tip_data.tip_description_2 = kingdom.policy_data.p_status.ToString();
 
+        current_state.gameObject.SetActive(true);
+        current_state.Setup(
+            KingdomPolicyStateLibrary.Instance.get(
+                kingdom.policy_data.GetPolicyStateId(PolicyStateType.social_level)) ??
+            KingdomPolicyStateLibrary.DefaultState, null);
+        current_state.SetSize(new Vector2(16, 16));
+        bgRect = current_state.bg.GetComponent<RectTransform>();
+        bgRect.sizeDelta = new Vector2(60, 16);
+
+
         Window.elements.Clear();
-
-
     }
+
     private void OnDisable()
     {
-
         executing_policy.tip_data.tip_name = "";
         if (string.IsNullOrEmpty(executing_policy.tip_data.tip_name))
         {
             executing_policy.tip_button.enabled = false;
-
         }
 
         // 清除描述
@@ -77,8 +95,8 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         {
             Destroy(Window.cityInfoPlacement.GetChild(i).gameObject, 1);
         }
-
     }
+
     protected override void Init()
     {
         ContentTransform = transform.Find("Background/Scroll View/Viewport/Content").GetComponent<RectTransform>();
@@ -99,6 +117,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
 
         Window = GetComponent<KingdomWindow>();
     }
+
     internal void Initialize()
     {
         Init();
@@ -122,7 +141,8 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         cities_layout.childForceExpandHeight = false;
         cities_layout.childForceExpandWidth = false;
 
-        var custom_part = AutoLayoutRoot.BeginHoriGroup(new Vector2(200, 36), TextAnchor.MiddleLeft, -4, new RectOffset(-3, 0, 3, 3));
+        var custom_part = AutoLayoutRoot.BeginHoriGroup(new Vector2(200, 36), TextAnchor.MiddleLeft, -4,
+            new RectOffset(-3, 0, 3, 3));
         custom_part.name = "Middle";
         custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
 
@@ -131,22 +151,30 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         king_avatar.GetComponent<Image>().enabled = true;
         king_avatar.transform.localScale = new Vector3(0.7f, 0.7f);
 
-        var middle_bar_group = custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
+        var middle_bar_group =
+            custom_part.BeginVertGroup(new Vector2(120, 36), TextAnchor.UpperCenter, 2, new RectOffset(0, 0, 0, 0));
         year_name = Instantiate(SimpleText.Prefab, null);
         year_name.Setup("", TextAnchor.MiddleCenter, new Vector2(120, 16));
         middle_bar_group.AddChild(year_name.gameObject);
 
 
+        var policy_group = middle_bar_group.BeginHoriGroup(new Vector2(120, 16), TextAnchor.UpperCenter, 2,
+            new RectOffset(0, 0, 0, 0));
 
+        current_state = Instantiate(KingdomPolicyStateButton.Prefab, null);
+        current_state.Setup(KingdomPolicyStateLibrary.DefaultState, null);
+        current_state.SetSize(new Vector2(16, 16));
+        var bgRect2 = current_state.bg.GetComponent<RectTransform>();
+        bgRect2.sizeDelta = new Vector2(60, 16);
+        policy_group.AddChild(current_state.gameObject);
 
         executing_policy = Instantiate(KingdomPolicyButton.Prefab, null);
         executing_policy.Setup(null, null, false, false);
         executing_policy.SetSize(new Vector2(16, 16));
         RectTransform bgRect = executing_policy.bg.GetComponent<RectTransform>();
-        bgRect.sizeDelta = new Vector2(120, 16);
+        bgRect.sizeDelta = new Vector2(60, 16);
 
-        middle_bar_group.AddChild(executing_policy.gameObject);
-
+        policy_group.AddChild(executing_policy.gameObject);
 
 
         heir_avatar = Instantiate(king_avatar, null);
