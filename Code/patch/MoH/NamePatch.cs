@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Figurebox.Utils;
 using HarmonyLib;
 using UnityEngine;
+using Figurebox.core;
+
 #if 一米_中文名
 using Chinese_Name;
 #endif
@@ -115,7 +117,15 @@ namespace Figurebox
                 actor.data.set("chinese_family_name", ClanChineseFamilyName);
             }
 
-
+            if (!string.IsNullOrEmpty(existingChineseFamilyName))
+            {
+                return; // 如果已经有中文姓氏，不再进行命名
+            }
+            AW_Kingdom awKingdom = actor.kingdom as AW_Kingdom;
+            if (awKingdom.NameIntegration)
+            {
+                return; 
+            }
             // 根据性别设置名字
             string givenName = actor.getName();
             string finalName = actor.data.gender == ActorGender.Male ? clanName + givenName : givenName + familyName;
@@ -123,10 +133,8 @@ namespace Figurebox
             actor.data.set("name_set", true);
             // 检查是否已经设置了中文姓氏
 
-            if (!string.IsNullOrEmpty(existingChineseFamilyName))
-            {
-                return; // 如果已经有中文姓氏，不再进行命名
-            }
+
+
             actor.data.setName(finalName);
         }
 

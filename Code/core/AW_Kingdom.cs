@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.patch.MoH;
@@ -8,6 +9,8 @@ using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
+
+
 
 namespace Figurebox.core;
 
@@ -344,26 +347,7 @@ public partial class AW_Kingdom : Kingdom
 
         if (kingdom.capital != null)
         {
-            City newCapital = kingdom.cities
-                .Select(city =>
-                {
-                    double score = (city.getAge() - kingdom.capital.getAge()) * 1 +
-                                   (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
-                                   (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
-                                   (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
-
-
-                    //Debug.Log($"City: {city.data.name}, Score: {score}");
-                    return new
-                    {
-                        City = city,
-                        Score = score
-                    };
-                })
-                .OrderByDescending(cityScore => cityScore.Score)
-                .Select(cityScore => cityScore.City)
-                .FirstOrDefault();
-
+            City newCapital = FindNewCapital(kingdom);
             if (newCapital != null)
             {
                 kingdom.capital = newCapital;
@@ -380,24 +364,69 @@ public partial class AW_Kingdom : Kingdom
             return null;
         }
 
-        return kingdom.cities
+        // 获取得分最高的城市，数量取决于实际的城市数目，但不超过5个
+        var topCities = kingdom.cities
             .Select(city =>
             {
-                double score = (city.getAge() - kingdom.capital.getAge()) * 1 +
+                double score = (city.getAge() - kingdom.capital.getAge()) +
                                (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
                                (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
                                (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
 
-                //Debug.Log($"City: {city.data.name}, Score: {score}");
-                return new
-                {
-                    City = city,
-                    Score = score
-                };
+                // 计算该城市与其他城市的总距离，并将其反转作为额外得分
+                double distanceScore = kingdom.cities
+                    .Where(c => c != city)
+                    .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
+                // 通过一个因子调整距离得分的影响力，可以根据需要调整
+                distanceScore = 1 / (1 + distanceScore);
+
+                return new { City = city, Score = score + distanceScore };
             })
             .OrderByDescending(cityScore => cityScore.Score)
             .Select(cityScore => cityScore.City)
             .FirstOrDefault();
+
+        return topCities;
+    }
+    public void CheckAndSetPrimaryKingdom(Actor actor, AW_Kingdom kingdomToInherit)
+    {
+        // 检查Actor是否是国王
+        if (actor.isKing() && kingdomToInherit != actor.kingdom)
+        {
+            // 获取Actor当前的王国
+            AW_Kingdom currentKingdom = actor.kingdom as AW_Kingdom;
+
+            // 获取即将继承的王国
+
+
+            // 确保即将继承的王国存在且不是当前的王国
+            if (kingdomToInherit != null && kingdomToInherit != currentKingdom)
+            {
+                // 计算两个王国的价值
+                int currentValue = MoHTools.CalculateKingdomValue(currentKingdom);
+                int newValue = MoHTools.CalculateKingdomValue(kingdomToInherit);
+
+                // 比较价值，确定哪个王国更强
+                if (newValue > currentValue)
+                {
+                    MergeKingdoms(kingdomToInherit, currentKingdom);
+                    kingdomToInherit.setKing(actor); //加一个worldlogmessage
+                }
+                else
+                {
+                    MergeKingdoms(currentKingdom, kingdomToInherit);
+                }
+            }
+        }
+    }
+
+    private void MergeKingdoms(AW_Kingdom strongerKingdom, AW_Kingdom weakerKingdom)
+    {
+
+        foreach (var city in weakerKingdom.cities)
+        {
+            city.joinAnotherKingdom(strongerKingdom);
+        }
     }
 
     /// <summary>
@@ -405,11 +434,16 @@ public partial class AW_Kingdom : Kingdom
     /// </summary>
     /// <param name="pKing"></param>
     [MethodReplace(nameof(setKing))]
-    public new void setKing(Actor pActor)
+    public new void setKing(Actor pActor) //处理联统 并放出世界消息
     {
         #region 原版代码
 
         king = pActor;
+        if (king.city != capital)
+        {
+            king.ChangeCity(capital);
+        }
+        CheckAndSetPrimaryKingdom(king, this);
         king.setProfession(UnitProfession.King);
         data.kingID = king.data.id;
         data.timestamp_king_rule = World.world.getCurWorldTime();
@@ -420,9 +454,6 @@ public partial class AW_Kingdom : Kingdom
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
-        if (king.city != capital)
-        {
-            king.ChangeCity(capital);
-        }
+
     }
 }
