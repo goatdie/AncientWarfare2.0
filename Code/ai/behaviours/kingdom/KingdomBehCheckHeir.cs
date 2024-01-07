@@ -8,6 +8,7 @@ public class KingdomBehCheckHeir : BehaviourActionKingdom
     public override BehResult execute(Kingdom pKingdom)
     {
         AW_Kingdom awKingdom = pKingdom as AW_Kingdom;
+        awKingdom.CheckHeir();
 
         if (awKingdom.hasHeir())
         {

@@ -41,7 +41,6 @@ internal static class NameGeneratorInitialzier
         AW_Kingdom awKingdom = pActor.kingdom as AW_Kingdom;
         if (awKingdom != null && awKingdom.NameIntegration)
         {
-           // Main.LogInfo("这个人用的改制姓名");            // 自己的逻辑pActor.kingdom.canHasFamilyName()
             string familyName;
             string clanName;
             string ChineseFamilyName;
@@ -49,36 +48,51 @@ internal static class NameGeneratorInitialzier
             pActor.data.get("family_name", out familyName, "");
             pActor.data.get("clan_name", out clanName, "");
             pActor.data.get("chinese_family_name", out ChineseFamilyName, "");
-            if (string.IsNullOrEmpty(familyName) || string.IsNullOrEmpty(clanName)|| string.IsNullOrEmpty(ChineseFamilyName))
+
+            // 当 clan_name 存在，且与 family_name 不同，同时 chinese_family_name 为空时，使用 clan_name 更新其他名称
+            if (!string.IsNullOrEmpty(clanName) && !clanName.Equals(familyName) && string.IsNullOrEmpty(ChineseFamilyName))
+            {
+                pActor.data.set("family_name", clanName);
+                pActor.data.set("chinese_family_name", clanName);
+                if (pActor.hasClan()) { pActor.getClan().data.set("clan_chinese_family_name", clanName); }
+                pActor.data.set("name_set", true);
+            }
+            else if (string.IsNullOrEmpty(familyName) && string.IsNullOrEmpty(clanName) && string.IsNullOrEmpty(ChineseFamilyName))
             {
                 familyName = WordLibraryManager.GetRandomWord("氏");
                 clanName = familyName;
                 pActor.data.set("chinese_family_name", familyName);
                 pActor.data.set("family_name", familyName);
                 pActor.data.set("clan_name", familyName);
-
             }
-            pParameters["family_name"] = familyName; // 从data 里取
-            pParameters["clan_name"] = clanName;          // 从data 里取
+            if (string.IsNullOrEmpty(familyName) && string.IsNullOrEmpty(clanName) && !string.IsNullOrEmpty(ChineseFamilyName))
+            {
+                familyName = ChineseFamilyName;
+                pActor.data.set("chinese_family_name", familyName);
+                pActor.data.set("family_name", familyName);
+                pActor.data.set("clan_name", familyName);
+            }
+
+            pParameters["family_name"] = familyName;
+            pParameters["clan_name"] = clanName;
             if (string.IsNullOrEmpty(pParameters["clan_name"]))
             {
-                // 当氏不存在时, 直接拿姓来用, 当然也可以写别的自己的获取什么的
                 pParameters["clan_name"] = pParameters["family_name"];
             }
-            // 将氏存到data里, 这样可以方便传承以及其他地方的使用
-            pActor.data.set("clan_name", pParameters["clan_name"]);            // 以"AW_"作为key的前缀, 可以一定程度上避免和其他模组冲突
+            pActor.data.set("clan_name", pParameters["clan_name"]);
         }
         else
         {
             pParameters["family_name"] = "";
         }
     }
+
     public static void init()
     {
         NewActorNameGenerator generator = new NewActorNameGenerator("Xia_name", "default");
-        generator.AddTemplate("$family_name${千字文}", 1);
-        generator.AddTemplate("$family_name${千字文}{千字文}", 1);
-        generator.AddTemplate("{千字文}{千字文}", 1);
+        generator.AddTemplate("$family_name${中文名字}", 1);
+        generator.AddTemplate("$family_name${中文名字}{中文名字}", 1);
+        generator.AddTemplate("{中文名字}{中文名字}", 1);
         generator.AddTemplate("{千字文}", 1);
         CN_NameGeneratorLibrary.Submit(generator);
 

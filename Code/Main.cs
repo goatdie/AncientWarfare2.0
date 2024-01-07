@@ -232,29 +232,30 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(KingdomHeirPatch));
             Harmony.CreateAndPatchAll(typeof(KingdomYearName));
             Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
+            Harmony.CreateAndPatchAll(typeof(WorldLogPatch));
             _ = new SlavesPatch();
-/*
-            Harmony.CreateAndPatchAll(typeof(FunctionHelper));
-            Harmony.CreateAndPatchAll(typeof(SpecialFigure));
-            Harmony.CreateAndPatchAll(typeof(TianmingGroup));
-            Harmony.CreateAndPatchAll(typeof(ClansManager));
-            Harmony.CreateAndPatchAll(typeof(KingdomVassals));
+            /*
+                        Harmony.CreateAndPatchAll(typeof(FunctionHelper));
+                        Harmony.CreateAndPatchAll(typeof(SpecialFigure));
+                        Harmony.CreateAndPatchAll(typeof(TianmingGroup));
+                        Harmony.CreateAndPatchAll(typeof(ClansManager));
+                        Harmony.CreateAndPatchAll(typeof(KingdomVassals));
 
-            Harmony.CreateAndPatchAll(typeof(CityWindowPatch));
+                        Harmony.CreateAndPatchAll(typeof(CityWindowPatch));
 
-            Harmony.CreateAndPatchAll(typeof(KingdomPatch));
-            Harmony.CreateAndPatchAll(typeof(KingActorPatch));
-            Harmony.CreateAndPatchAll(typeof(WarPatch));
+                        Harmony.CreateAndPatchAll(typeof(KingdomPatch));
+                        Harmony.CreateAndPatchAll(typeof(KingActorPatch));
+                        Harmony.CreateAndPatchAll(typeof(WarPatch));
 
-            Harmony.CreateAndPatchAll(typeof(CustomSaveManager));
+                        Harmony.CreateAndPatchAll(typeof(CustomSaveManager));
 
-            if (DebugConst.ACTOR_TEST)
-            {
-                Harmony.CreateAndPatchAll(typeof(ActorTest));
-                BatchTest<Actor>.SelfPatch();
-            }
-            if (DebugConst.CITY_TEST) Harmony.CreateAndPatchAll(typeof(CityTest));
-*/
+                        if (DebugConst.ACTOR_TEST)
+                        {
+                            Harmony.CreateAndPatchAll(typeof(ActorTest));
+                            BatchTest<Actor>.SelfPatch();
+                        }
+                        if (DebugConst.CITY_TEST) Harmony.CreateAndPatchAll(typeof(CityTest));
+            */
             print("Create and patch all:CTraits");
         }
 
