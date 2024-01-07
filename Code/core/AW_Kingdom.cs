@@ -94,7 +94,7 @@ public partial class AW_Kingdom : Kingdom
     {
         if (this.heir != null)
         {//等老马更新后检测继承人是否为自己的子嗣
-            if (heir.has_trait_madness||heir==king)
+            if (heir.has_trait_madness || heir == king)
             {
                 this.clearHeirData();
             }
@@ -420,11 +420,13 @@ public partial class AW_Kingdom : Kingdom
                 if (newValue > currentValue)
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
-                    kingdomToInherit.setKing(actor); //加一个worldlogmessage
+                    kingdomToInherit.setKing(actor); 
+                    CityTools.LogKingIntegration(actor,currentKingdom,kingdomToInherit);//加一个worldlogmessage
                 }
                 else
                 {
                     MergeKingdoms(currentKingdom, kingdomToInherit);
+                    CityTools.LogKingIntegration(actor,currentKingdom,kingdomToInherit);
                 }
             }
         }
@@ -432,12 +434,22 @@ public partial class AW_Kingdom : Kingdom
 
     private void MergeKingdoms(AW_Kingdom strongerKingdom, AW_Kingdom weakerKingdom)
     {
+        // 创建一个列表来存储需要转移的城市
+        List<City> citiesToTransfer = new List<City>();
 
+        // 先收集所有需要转移的城市
         foreach (var city in weakerKingdom.cities)
+        {
+            citiesToTransfer.Add(city);
+        }
+
+        // 然后将这些城市加入到强国王国
+        foreach (var city in citiesToTransfer)
         {
             city.joinAnotherKingdom(strongerKingdom);
         }
     }
+
 
     /// <summary>
     ///     国王即位相关行为
@@ -451,7 +463,7 @@ public partial class AW_Kingdom : Kingdom
         king = pActor;
         CheckAndSetPrimaryKingdom(king, this);
 
-        if (king.city != capital)
+        if (king.city != capital && capital != null)
         {
             king.ChangeCity(capital);
         }

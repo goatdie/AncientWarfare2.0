@@ -90,9 +90,9 @@ internal static class NameGeneratorInitialzier
     public static void init()
     {
         NewActorNameGenerator generator = new NewActorNameGenerator("Xia_name", "default");
-        generator.AddTemplate("$family_name${千字文}", 1);
-        generator.AddTemplate("$family_name${千字文}{千字文}", 1);
-        generator.AddTemplate("{千字文}{千字文}", 1);
+        generator.AddTemplate("$family_name${中文名字}", 1);
+        generator.AddTemplate("$family_name${中文名字}{中文名字}", 1);
+        generator.AddTemplate("{中文名字}{中文名字}", 1);
         generator.AddTemplate("{千字文}", 1);
         CN_NameGeneratorLibrary.Submit(generator);
 

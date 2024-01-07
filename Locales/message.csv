@@ -10,3 +10,4 @@ usurpationMessage,天命之子 $first$ 在$kingdom$篡位,The usurpation in $kin
 vassalWarStartMessage,$first$ 在$kingdom2$开始了附庸战争,The Vassal War has started in $kingdom$，the instigator is $first$,$first$ 在$kingdom2$开始了附庸战争
 vassalWarEndMessage,$first$ 在$kingdom2$结束了附庸战争,The Vassal War has ended in $kingdom2$，the victor is $first$,$first$ 在$kingdom2$结束了附庸战争
 IndependenceWarMessage,$kingdom$ 宣布独立于 $kingdom2$!,$kingdom$ declares independence from $kingdom2$!,$kingdom$ 宣布独立于 $kingdom2$!
+KingIntegrationMessage,$kingdom$ 的 $king$ 继承了 $kingdom2$的爵位!,$king$ the ruler of $kingdom$ has inherited $kingdom2$!,$kingdom$ 的 $king$ 继承了 $kingdom2$的爵位!

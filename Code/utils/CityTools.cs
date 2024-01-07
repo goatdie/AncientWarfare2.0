@@ -177,7 +177,20 @@ namespace Figurebox.Utils
             IndependenceWarEndMessage.kingdom = pAttacker;
             IndependenceWarEndMessage.add();
         }
-
+        public static void LogKingIntegration(Actor King, Kingdom Main, Kingdom Inherited)
+        {
+            WorldLogMessage warreclaim =
+                new WorldLogMessage("KingIntegrationMessage", King.getName(), Main.name, Inherited.name);
+            //ColorAsset colorAsset = Reflection.GetField(typeof(Kingdom), pKingdom, "colorAsset") as ColorAsset;
+            warreclaim.color_special2 = King.kingdom.kingdomColor.getColorText();
+            warreclaim.color_special1 = Main.kingdomColor.getColorText();
+            warreclaim.color_special3 = Inherited.kingdomColor.getColorText();
+            //mandateofheaven.color_special1 = new Color32(255, 217, 134, 255);
+            //mandateofheaven.unit = pAttacker.king;
+            warreclaim.location = King.currentPosition;
+            warreclaim.kingdom = Main;
+            warreclaim.add();
+        }
         public static void logFigure(Actor pActor)
         {
             if (pActor == null)

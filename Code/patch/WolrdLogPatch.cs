@@ -204,6 +204,23 @@ namespace Figurebox
                     pMessage.icon = "iconDocument";
                     __result = text;
                     break;
+                case "KingIntegrationMessage":
+                    text = LM.Get(pMessage.text);
+                    text = text.Replace("$king$", string.Concat(new string[]
+                    {
+                        "<color=", Toolbox.colorToHex(pMessage.color_special1, true), ">", pMessage.special2, "</color>"
+                    }));
+                    text = text.Replace("$kingdom$", string.Concat(new string[]
+                    {
+                        "<color=", Toolbox.colorToHex(pMessage.color_special2, true), ">", pMessage.special1, "</color>"
+                    }));
+                    text = text.Replace("$Kingdom2$", string.Concat(new string[]
+                    {
+                        "<color=", Toolbox.colorToHex(pMessage.color_special3, true), ">", pMessage.special3, "</color>"
+                    }));
+                    pMessage.icon = "iconDocument";
+                    __result = text;
+                    break;
             }
         }
     }
