@@ -49,7 +49,16 @@ public partial class AW_Kingdom : Kingdom
     public void SetHeir(Actor pActor)
     {
         this.clearHeirData();
+        if (pActor == null)
+        {
+            return;
+        }
         this.heir = pActor;
+        if (heir.city != capital && capital != null)
+        {
+            heir.ChangeCity(capital);
+        }
+
     }
 
     public Actor FindHeir()
@@ -498,8 +507,7 @@ public partial class AW_Kingdom : Kingdom
 
                 // 更新王国名称
                 // 注意：这里您需要根据实际情况决定如何生成新的王国名称
-                string kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国"; //之后按爵位来
-                this.data.name = kingdomname;
+
                 this.createColors(-1);
                 this.generateBanner(false);
                 World.world.zoneCalculator.setDrawnZonesDirty();
@@ -507,6 +515,8 @@ public partial class AW_Kingdom : Kingdom
                 World.world.zoneCalculator.redrawZones();
                 // WLM
                 CityTools.logUsurpation(king, this);
+                string kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国"; //之后按爵位来
+                this.data.name = kingdomname;
                 return;
 
 
