@@ -81,12 +81,12 @@ public partial class AW_Kingdom : Kingdom
         Actor heir = candidates.FirstOrDefault();
         if (heir != null)
         {
-            Debug.Log("找到了合适的继承人: " + heir.data.name);
+           // Debug.Log("找到了合适的继承人: " + heir.data.name);
             return heir;
         }
         else
         {
-            Debug.Log("没找到合适的继承人");
+           // Debug.Log("没找到合适的继承人");
             return null;
         }
     }
