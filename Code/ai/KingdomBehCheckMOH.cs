@@ -25,6 +25,10 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
             }
             return BehResult.Continue;
         }
+        else
+        {
+            
+        }
         return BehResult.Continue;
 
 
@@ -50,6 +54,7 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
 
         return false;
     }
+
 
 
 
