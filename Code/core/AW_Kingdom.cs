@@ -9,6 +9,9 @@ using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
+#if 一米_中文名
+using Chinese_Name;
+#endif
 
 
 
@@ -46,7 +49,16 @@ public partial class AW_Kingdom : Kingdom
     public void SetHeir(Actor pActor)
     {
         this.clearHeirData();
+        if (pActor == null)
+        {
+            return;
+        }
         this.heir = pActor;
+        if (heir.city != capital && capital != null)
+        {
+            heir.ChangeCity(capital);
+        }
+
     }
 
     public Actor FindHeir()
@@ -81,12 +93,12 @@ public partial class AW_Kingdom : Kingdom
         Actor heir = candidates.FirstOrDefault();
         if (heir != null)
         {
-            Debug.Log("找到了合适的继承人: " + heir.data.name);
+            // Debug.Log("找到了合适的继承人: " + heir.data.name);
             return heir;
         }
         else
         {
-            Debug.Log("没找到合适的继承人");
+            // Debug.Log("没找到合适的继承人");
             return null;
         }
     }
@@ -421,13 +433,13 @@ public partial class AW_Kingdom : Kingdom
                 if (newValue > currentValue)
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
-                    kingdomToInherit.setKing(actor); 
-                    CityTools.LogKingIntegration(actor,currentKingdom,kingdomToInherit);//加一个worldlogmessage
+                    kingdomToInherit.setKing(actor);
+                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);//加一个worldlogmessage
                 }
                 else
                 {
                     MergeKingdoms(currentKingdom, kingdomToInherit);
-                    CityTools.LogKingIntegration(actor,currentKingdom,kingdomToInherit);
+                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
             }
         }
@@ -478,6 +490,44 @@ public partial class AW_Kingdom : Kingdom
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
+
+    }
+    //统治家族变更同时换国号
+    [MethodReplace(nameof(trySetRoyalClan))]
+    public new void trySetRoyalClan()
+    {
+        #region 原版代码
+
+        if (this.king != null && this.king.data.clan != string.Empty)
+        {
+            #endregion
+            if (this.data.royal_clan_id != this.king.data.clan && data.royal_clan_id != string.Empty)
+            {
+                // 更新皇室
+                this.data.royal_clan_id = this.king.data.clan;
+
+                // 更新王国名称
+                // 注意：这里您需要根据实际情况决定如何生成新的王国名称
+
+                this.createColors(-1);
+                this.generateBanner(false);
+                World.world.zoneCalculator.setDrawnZonesDirty();
+                World.world.zoneCalculator.clearCurrentDrawnZones(true);
+                World.world.zoneCalculator.redrawZones();
+                // WLM
+                CityTools.logUsurpation(king, this);
+                string kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国"; //之后按爵位来
+                this.data.name = kingdomname;
+                return;
+
+
+
+            }
+            this.data.royal_clan_id = this.king.data.clan;
+
+        }
+
+
 
     }
 }

@@ -507,7 +507,7 @@ namespace Figurebox
                 kingdom.king.unit_group.disband();
             }
 
-            CityTools.logUsurpation(usurper, kingdom);
+           // CityTools.logUsurpation(usurper, kingdom);
             WorldLog.logKingLeft(kingdom, kingdom.king);
 
             kingdom.CallMethod("removeKing");
