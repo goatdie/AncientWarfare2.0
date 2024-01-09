@@ -104,9 +104,9 @@ public partial class AW_Kingdom : Kingdom
     }
     public void CheckHeir()
     {
-        if (this.heir != null)
+        if (this.heir != null && king != null)
         {//等老马更新后检测继承人是否为自己的子嗣
-            if (heir.has_trait_madness || heir == king)
+            if (heir.has_trait_madness || heir == king || heir.getClan() != king.getClan())
             {
                 this.clearHeirData();
             }
@@ -370,7 +370,7 @@ public partial class AW_Kingdom : Kingdom
         if (kingdom.capital != null)
         {
             City newCapital = FindNewCapital(kingdom);
-            if (newCapital != null)
+            if (newCapital != null && kingdom.king != null)
             {
                 kingdom.capital = newCapital;
                 kingdom.king.ChangeCity(newCapital);
@@ -490,6 +490,7 @@ public partial class AW_Kingdom : Kingdom
         clearHeirData();
         KingdomYearName.changeYearname(this);
 
+
     }
     //统治家族变更同时换国号
     [MethodReplace(nameof(trySetRoyalClan))]
@@ -499,7 +500,21 @@ public partial class AW_Kingdom : Kingdom
 
         if (this.king != null && this.king.data.clan != string.Empty)
         {
+            string kingdomname;
+            if (data.royal_clan_id == string.Empty)
+            {
+            if (king.hasTrait("figure"))
+            {
+                string kingdom_name;
+                king.data.get("kingdom_name", out kingdom_name, "");
+
+                kingdomname = kingdom_name;
+                this.data.name = kingdomname;
+            }
+            }
+            
             #endregion
+
             if (this.data.royal_clan_id != this.king.data.clan && data.royal_clan_id != string.Empty)
             {
                 // 更新皇室
@@ -515,7 +530,18 @@ public partial class AW_Kingdom : Kingdom
                 World.world.zoneCalculator.redrawZones();
                 // WLM
                 CityTools.logUsurpation(king, this);
-                string kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国"; //之后按爵位来
+
+                if (king.hasTrait("figure"))
+                {
+                    string kingdom_name;
+                    king.data.get("kingdom_name", out kingdom_name, "");
+
+                    kingdomname = kingdom_name;
+                }
+                else
+                {
+                    kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国";
+                } //之后按爵位来
                 this.data.name = kingdomname;
                 return;
 

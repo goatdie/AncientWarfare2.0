@@ -126,7 +126,9 @@ namespace Figurebox
             AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "sword", 10);
             AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "ge", 10);
             AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "bow", 5);
-            AssetManager.raceLibrary.cloneBuildingKeys(SK.human,Xia.id);
+            AssetManager.raceLibrary.cloneBuildingKeys(SK.human, Xia.id);
+            AssetManager.nameGenerator.clone("Xia_name", "human_name");
+
             var monk = AssetManager.actor_library.get("monkey");
             var monkname = AssetManager.nameGenerator.get("monkey_name");
             monkname.vowels = new string[]

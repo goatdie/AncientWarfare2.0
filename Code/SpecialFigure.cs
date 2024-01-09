@@ -3,6 +3,7 @@ using Figurebox.Utils;
 using HarmonyLib;
 using NCMS.Utils;
 using UnityEngine;
+using Figurebox.Utils.MoH;
 namespace Figurebox
 {
 
@@ -29,67 +30,67 @@ namespace Figurebox
       togglefigurevalue = true;
     }
 
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Clan), "addUnit")]
-    public static bool generateName_Prefix(Actor pActor)
-    {
-      if (pActor.hasTrait("figure") && pActor.data.profession == UnitProfession.Baby)
-      {
-        string temp;
-        pActor.data.get("chinese_family_name", out temp, "");
-        Debug.Log("子答辩姓氏" + temp);
-        if (!string.IsNullOrEmpty(temp))
-        {
-          savedFamilyName = temp;
-          pActor.data.set("chinese_family_name", savedFamilyName);
-        }
+    /* [HarmonyPrefix]
+     [HarmonyPatch(typeof(Clan), "addUnit")]
+     public static bool generateName_Prefix(Actor pActor)
+     {
+       if (pActor.hasTrait("figure") && pActor.data.profession == UnitProfession.Baby)
+       {
+         string temp;
+         pActor.data.get("chinese_family_name", out temp, "");
+         Debug.Log("子答辩姓氏" + temp);
+         if (!string.IsNullOrEmpty(temp))
+         {
+           savedFamilyName = temp;
+           pActor.data.set("chinese_family_name", savedFamilyName);
+         }
 
-        // savedFamilyName = ""; // 重置 savedFamilyName 为 空字符串
-        return false;
-      }
-      if (pActor.hasTrait("figure") && pActor.data.profession != UnitProfession.Baby)
-      {
-        string temp;
-        Debug.Log("姓氏" + savedFamilyName);
+         // savedFamilyName = ""; // 重置 savedFamilyName 为 空字符串
+         return false;
+       }
+       if (pActor.hasTrait("figure") && pActor.data.profession != UnitProfession.Baby)
+       {
+         string temp;
+         Debug.Log("姓氏" + savedFamilyName);
 
-        pActor.data.get("chinese_family_name", out temp, "");
-        Debug.Log("人答辩姓氏" + temp);
-        if (!string.IsNullOrEmpty(temp))
-        {
-          savedFamilyName = temp;
-          pActor.data.set("chinese_family_name", savedFamilyName);
-        }
-        savedFamilyName = ""; // 重置 savedFamilyName 为 空字符串
-        return true;
-      }
+         pActor.data.get("chinese_family_name", out temp, "");
+         Debug.Log("人答辩姓氏" + temp);
+         if (!string.IsNullOrEmpty(temp))
+         {
+           savedFamilyName = temp;
+           pActor.data.set("chinese_family_name", savedFamilyName);
+         }
+         savedFamilyName = ""; // 重置 savedFamilyName 为 空字符串
+         return true;
+       }
 
-      return true;
-    }
+       return true;
+     }
 
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(Clan), "createClan")]
-    public static bool createclan_Prefix(Actor pFounder)
-    {
-      if (pFounder.hasTrait("figure") && pFounder.data.profession != UnitProfession.Baby)
-      {
-        string temp;
-        Debug.Log("家族姓氏" + savedFamilyName);
-        pFounder.data.get("chinese_family_name", out temp, "");
-        Debug.Log("创建clan答辩姓氏" + temp);
-        if (!string.IsNullOrEmpty(temp) && string.IsNullOrEmpty(savedFamilyName))
-        {
-          savedFamilyName = temp;
-          pFounder.data.set("chinese_family_name", savedFamilyName);
-        }
-        else
-        {
-          pFounder.data.set("chinese_family_name", savedFamilyName);
-        }
-        //savedFamilyName = ""; // 重置 savedFamilyName 为 空字符串
-        return true;
-      }
-      return true;
-    }
+     [HarmonyPrefix]
+     [HarmonyPatch(typeof(Clan), "createClan")]
+     public static bool createclan_Prefix(Actor pFounder)
+     {
+       if (pFounder.hasTrait("figure") && pFounder.data.profession != UnitProfession.Baby)
+       {
+         string temp;
+         Debug.Log("家族姓氏" + savedFamilyName);
+         pFounder.data.get("chinese_family_name", out temp, "");
+         Debug.Log("创建clan答辩姓氏" + temp);
+         if (!string.IsNullOrEmpty(temp) && string.IsNullOrEmpty(savedFamilyName))
+         {
+           savedFamilyName = temp;
+           pFounder.data.set("chinese_family_name", savedFamilyName);
+         }
+         else
+         {
+           pFounder.data.set("chinese_family_name", savedFamilyName);
+         }
+         //savedFamilyName = ""; // 重置 savedFamilyName 为 空字符串
+         return true;
+       }
+       return true;
+     }*/
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MapIconLibrary), "drawKings")]
     public static void drawfigure_Postfix(MapIconLibrary __instance, MapIconAsset pAsset)
@@ -130,7 +131,7 @@ namespace Figurebox
       Clan clan = BehaviourActionBase<Kingdom>.world.clans.get(pData.clan);
       foreach (Actor actor in actorList)
       {
-        if (actor.hasTrait("figure") || actor.hasTrait("first") || actor.hasTrait("天命"))
+        if (actor.hasTrait("figure") || actor.hasTrait("first") || MoHTools.MoHKingdom!=null)
         { //Debug.Log("有人来"+actor.getName());
           hasFirstTrait = true;
           break;
@@ -149,7 +150,7 @@ namespace Figurebox
           }
           //actorStatus.getName();
           __result.data.setName(text0);
-
+          actorStatus.set("kingdom_name", "大周");
           actorStatus.set("family_name", "姬");
           actorStatus.set("clan_name", "姬");
           actorStatus.set("name_set", true);
@@ -172,7 +173,7 @@ namespace Figurebox
             return;
           }
           actorStatus.setName(text2);
-
+          actorStatus.set("kingdom_name", "大秦");
           actorStatus.set("family_name", "嬴");
           actorStatus.set("clan_name", "赵");
           actorStatus.set("name_set", true);
@@ -193,6 +194,7 @@ namespace Figurebox
             return;
           }
           actorStatus.name = text3;
+          actorStatus.set("kingdom_name", "大汉");
           actorStatus.set("chinese_family_name", "刘");
           actorStatus.set("family_name", "刘");
           actorStatus.set("clan_name", "刘");
@@ -217,6 +219,7 @@ namespace Figurebox
           SpawnedNames.Add(text5, true);
           actorStatus.favorite = true;
           actorStatus.health = 1500;
+          actorStatus.set("kingdom_name", "大魏");
           actorStatus.set("chinese_family_name", "曹");
           actorStatus.set("family_name", "曹");
           actorStatus.set("clan_name", "曹");
@@ -241,6 +244,7 @@ namespace Figurebox
           SpawnedNames.Add(text5, true);
           actorStatus.favorite = true;
           actorStatus.health = 1500;
+          actorStatus.set("kingdom_name", "大晋");
           actorStatus.set("chinese_family_name", "司马");
           actorStatus.set("family_name", "司马");
           actorStatus.set("clan_name", "司马");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Chinese_Name;
 #endif
 using Figurebox.core;
+
 namespace Figurebox;
 #if 一米_中文名
 internal static class NameGeneratorInitialzier
@@ -104,10 +105,13 @@ internal static class NameGeneratorInitialzier{
 
 
     public static void init(){
-
+          
+      
+       
         // 当中文名不存在时的解决方案, 如果不想给的话, 推荐将中文名设置为硬依赖
         // 设置为硬依赖后, #if 和 #endif 块都可以去除
         // 但当中文名没安装时, 春秋就不会被编译
+
     }
 }
 #endif

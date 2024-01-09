@@ -229,10 +229,11 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(KingdomYearName));
             Harmony.CreateAndPatchAll(typeof(KingdomWindowPatch));
             Harmony.CreateAndPatchAll(typeof(WorldLogPatch));
+            Harmony.CreateAndPatchAll(typeof(SpecialFigure));
             _ = new SlavesPatch();
             /*
                         Harmony.CreateAndPatchAll(typeof(FunctionHelper));
-                        Harmony.CreateAndPatchAll(typeof(SpecialFigure));
+                        
                         Harmony.CreateAndPatchAll(typeof(TianmingGroup));
                         Harmony.CreateAndPatchAll(typeof(ClansManager));
                         Harmony.CreateAndPatchAll(typeof(KingdomVassals));
