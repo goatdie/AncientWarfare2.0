@@ -48,7 +48,7 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconzhuhou",
                 birth = 0f,
                 inherit = 0f,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroups.social_identity_group
             };
 
             add_and_unlock_trait(zhuhou);
@@ -79,7 +79,7 @@ namespace Figurebox
                 id = "first",
                 path_icon = "ui/Icons/traits/iconfirst",
                 inherit = 0f,
-                birth = 0.1f,
+                birth = 0f,
                 group_id = TraitGroups.aw2
                 //opposite = "shunming,yuming",
             };

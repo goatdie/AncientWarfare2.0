@@ -9,6 +9,10 @@ using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using System.CodeDom;
+
+
 #if 一米_中文名
 using Chinese_Name;
 #endif
@@ -241,7 +245,49 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
+    // 升级爵位
+    public void PromoteTitle()
+    {
+        if (policy_data.Title < KingdomPolicyData.KingdomTitle.Emperor)
+        {
+            policy_data.Title++;
+        }
+    }
 
+    // 降级爵位
+    public void DemoteTitle()
+    {
+        if (policy_data.Title > KingdomPolicyData.KingdomTitle.Baron)
+        {
+            policy_data.Title--;
+        }
+    }
+
+    // 设置特定的爵位等级
+    public void SetTitle(KingdomPolicyData.KingdomTitle newTitle)
+    {
+        policy_data.Title = newTitle;
+    }
+    
+    // 根据爵位等级返回中文字符串
+    public string GetTitleString(KingdomPolicyData.KingdomTitle title)
+    {
+        switch (title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                return "伯国";
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                return "侯国";
+            case KingdomPolicyData.KingdomTitle.Duke:
+                return "公国";
+            case KingdomPolicyData.KingdomTitle.King:
+                return "王国";
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return "帝国";
+            default:
+                return "未知";
+        }
+    }
     /// <summary>
     ///     检查政策是否可用
     /// </summary>
@@ -503,16 +549,16 @@ public partial class AW_Kingdom : Kingdom
             string kingdomname;
             if (data.royal_clan_id == string.Empty)
             {
-            if (king.hasTrait("figure"))
-            {
-                string kingdom_name;
-                king.data.get("kingdom_name", out kingdom_name, "");
+                if (king.hasTrait("figure"))
+                {
+                    string kingdom_name;
+                    king.data.get("kingdom_name", out kingdom_name, "");
 
-                kingdomname = kingdom_name;
-                this.data.name = kingdomname;
+                    kingdomname = kingdom_name;
+                    this.data.name = kingdomname;
+                }
             }
-            }
-            
+
             #endregion
 
             if (this.data.royal_clan_id != this.king.data.clan && data.royal_clan_id != string.Empty)

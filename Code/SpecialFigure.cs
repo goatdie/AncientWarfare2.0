@@ -92,7 +92,7 @@ namespace Figurebox
        return true;
      }*/
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(MapIconLibrary), "drawKings")]
+    [HarmonyPatch(typeof(MapIconLibrary), "drawLeaders")]
     public static void drawfigure_Postfix(MapIconLibrary __instance, MapIconAsset pAsset)
     {
       Sprite newIcon = SpriteTextureLoader.getSprite("civ/icons/minimap_figure");
@@ -102,7 +102,7 @@ namespace Figurebox
         List<Actor> actorList = k.units.getSimpleList();
         foreach (Actor actor in actorList)
         {
-          if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing() && !actor.isCityLeader()) && actor.hasTrait("first"))
+          if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing()) && actor.hasTrait("first"))
           {
             Vector3 pPos = actor.currentPosition;
             pPos.y -= 3f;

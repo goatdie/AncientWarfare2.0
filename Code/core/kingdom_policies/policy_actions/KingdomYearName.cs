@@ -16,6 +16,24 @@ public class KingdomYearName
         kingdom.policy_data.year_start_timestamp = World.world.getCurWorldTime();
     }
 
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(MapText), "showTextKingdom")]
+    public static void ShowTextKingdom_Title(MapText __instance, ref Kingdom pKingdom)
+    {
+        AW_Kingdom awKingdom = pKingdom as AW_Kingdom;
+        if (awKingdom != null)
+        {
+            // 获取爵位头衔
+            string titleString = awKingdom.GetTitleString(awKingdom.policy_data.Title);
+            string Text = pKingdom.name + titleString + "  " + pKingdom.getPopulationTotal().ToString();
+            
+            // 将爵位头衔添加到王国名称之后
+            __instance.setText(Text, pKingdom.capital.cityCenter);
+        }
+
+
+    }
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MapText), "showTextKingdom")]
     public static void ShowTextKingdom_Postfix(MapText __instance, Kingdom pKingdom)
