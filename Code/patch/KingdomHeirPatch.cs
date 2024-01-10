@@ -27,7 +27,7 @@ class KingdomHeirPatch
         return true;
     }
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(MapIconLibrary), "drawKings")]
+    [HarmonyPatch(typeof(MapIconLibrary), "drawLeaders")]
     public static void DrawHeir_Postfix(MapIconLibrary __instance, MapIconAsset pAsset)
     {
         Sprite newIcon = SpriteTextureLoader.getSprite("civ/icons/minimap_heir");
@@ -37,7 +37,7 @@ class KingdomHeirPatch
             List<Actor> actorList = k.units.getSimpleList();
             foreach (Actor actor in actorList)
             {
-                if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing() && !actor.isCityLeader()) && actor.IsHeir())
+                if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing()&&!actor.isCityLeader()) && actor.IsHeir())
                 {
                     Vector3 pPos = actor.currentPosition;
                     pPos.y -= 3f;

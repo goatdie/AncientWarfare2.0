@@ -268,10 +268,15 @@ public partial class AW_Kingdom : Kingdom
     {
         policy_data.Title = newTitle;
     }
-    
+
     // 根据爵位等级返回中文字符串
     public string GetTitleString(KingdomPolicyData.KingdomTitle title)
     {
+        if (title == KingdomPolicyData.KingdomTitle.Emperor && MoHTools.IsMoHKingdom(this))
+        {
+            return "朝";
+        }
+
         switch (title)
         {
             case KingdomPolicyData.KingdomTitle.Baron:

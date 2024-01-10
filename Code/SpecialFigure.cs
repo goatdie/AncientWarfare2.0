@@ -92,7 +92,7 @@ namespace Figurebox
        return true;
      }*/
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(MapIconLibrary), "drawLeaders")]
+    [HarmonyPatch(typeof(MapIconLibrary), "drawKings")]
     public static void drawfigure_Postfix(MapIconLibrary __instance, MapIconAsset pAsset)
     {
       Sprite newIcon = SpriteTextureLoader.getSprite("civ/icons/minimap_figure");
@@ -102,7 +102,7 @@ namespace Figurebox
         List<Actor> actorList = k.units.getSimpleList();
         foreach (Actor actor in actorList)
         {
-          if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing()) && actor.hasTrait("first"))
+          if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing()&&!actor.isCityLeader()) && actor.hasTrait("first"))
           {
             Vector3 pPos = actor.currentPosition;
             pPos.y -= 3f;
@@ -150,7 +150,7 @@ namespace Figurebox
           }
           //actorStatus.getName();
           __result.data.setName(text0);
-          actorStatus.set("kingdom_name", "大周");
+          actorStatus.set("kingdom_name", "周");
           actorStatus.set("family_name", "姬");
           actorStatus.set("clan_name", "姬");
           actorStatus.set("name_set", true);
@@ -173,7 +173,7 @@ namespace Figurebox
             return;
           }
           actorStatus.setName(text2);
-          actorStatus.set("kingdom_name", "大秦");
+          actorStatus.set("kingdom_name", "秦");
           actorStatus.set("family_name", "嬴");
           actorStatus.set("clan_name", "赵");
           actorStatus.set("name_set", true);
@@ -194,7 +194,7 @@ namespace Figurebox
             return;
           }
           actorStatus.name = text3;
-          actorStatus.set("kingdom_name", "大汉");
+          actorStatus.set("kingdom_name", "汉");
           actorStatus.set("chinese_family_name", "刘");
           actorStatus.set("family_name", "刘");
           actorStatus.set("clan_name", "刘");
@@ -219,7 +219,7 @@ namespace Figurebox
           SpawnedNames.Add(text5, true);
           actorStatus.favorite = true;
           actorStatus.health = 1500;
-          actorStatus.set("kingdom_name", "大魏");
+          actorStatus.set("kingdom_name", "魏");
           actorStatus.set("chinese_family_name", "曹");
           actorStatus.set("family_name", "曹");
           actorStatus.set("clan_name", "曹");
@@ -244,7 +244,7 @@ namespace Figurebox
           SpawnedNames.Add(text5, true);
           actorStatus.favorite = true;
           actorStatus.health = 1500;
-          actorStatus.set("kingdom_name", "大晋");
+          actorStatus.set("kingdom_name", "晋");
           actorStatus.set("chinese_family_name", "司马");
           actorStatus.set("family_name", "司马");
           actorStatus.set("clan_name", "司马");
