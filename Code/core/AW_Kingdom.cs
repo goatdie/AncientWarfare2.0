@@ -500,21 +500,27 @@ public partial class AW_Kingdom : Kingdom
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
                     kingdomToInherit.setKing(actor);
-                    // 继承头衔等级
-                    kingdomToInherit.policy_data.Title = currentKingdom.policy_data.Title;
+                    // 继承更高的头衔等级
+                    kingdomToInherit.policy_data.Title =
+                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
                 else
                 {
                     MergeKingdoms(currentKingdom, kingdomToInherit);
-                    // 继承头衔等级
-                    currentKingdom.policy_data.Title = kingdomToInherit.policy_data.Title;
+                    currentKingdom.setKing(actor);
+                    // 继承更高的头衔等级
+                    currentKingdom.policy_data.Title =
+                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
             }
         }
     }
-
+    public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1, KingdomPolicyData.KingdomTitle title2)
+    {
+        return (title1 > title2) ? title1 : title2;
+    }
 
     private void MergeKingdoms(AW_Kingdom strongerKingdom, AW_Kingdom weakerKingdom)
     {
