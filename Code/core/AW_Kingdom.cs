@@ -58,7 +58,7 @@ public partial class AW_Kingdom : Kingdom
             return;
         }
         this.heir = pActor;
-        if (heir.city != capital && capital != null)
+        if (heir.city != capital && capital != null&&!heir.isKing())
         {
             heir.ChangeCity(capital);
         }
@@ -291,6 +291,25 @@ public partial class AW_Kingdom : Kingdom
                 return "帝国";
             default:
                 return "未知";
+        }
+    }
+     // 根据爵位等级返回对应的单字
+    public static string GetSingleCharacterTitle(KingdomPolicyData.KingdomTitle title)
+    {
+        switch (title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                return "伯";
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                return "侯";
+            case KingdomPolicyData.KingdomTitle.Duke:
+                return "公";
+            case KingdomPolicyData.KingdomTitle.King:
+                return "王";
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return "帝";
+            default:
+                return ""; // 或者返回一个默认值
         }
     }
     /// <summary>
@@ -591,7 +610,7 @@ public partial class AW_Kingdom : Kingdom
                 }
                 else
                 {
-                    kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国";
+                    kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀");
                 } //之后按爵位来
                 this.data.name = kingdomname;
                 return;

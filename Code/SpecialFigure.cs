@@ -151,7 +151,7 @@ namespace Figurebox
           //actorStatus.getName();
           __result.data.setName(text0);
           actorStatus.set("kingdom_name", "周");
-          actorStatus.set("family_name", "姬");
+          actorStatus.set("family_name", "姬");
           actorStatus.set("clan_name", "姬");
           actorStatus.set("name_set", true);
           actorStatus.health = 1500;
@@ -175,7 +175,7 @@ namespace Figurebox
           actorStatus.setName(text2);
           actorStatus.set("kingdom_name", "秦");
           actorStatus.set("family_name", "嬴");
-          actorStatus.set("clan_name", "赵");
+          actorStatus.set("clan_name", "趙");
           actorStatus.set("name_set", true);
           actorStatus.favorite = true;
           actorStatus.health = 1500;
@@ -194,7 +194,7 @@ namespace Figurebox
             return;
           }
           actorStatus.name = text3;
-          actorStatus.set("kingdom_name", "汉");
+          actorStatus.set("kingdom_name", "漢");
           actorStatus.set("chinese_family_name", "刘");
           actorStatus.set("family_name", "刘");
           actorStatus.set("clan_name", "刘");
