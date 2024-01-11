@@ -70,6 +70,18 @@ namespace Figurebox
                 SetNameForActor(pActor, __instance);
             }
         }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Clan), "addUnit")]
+        public static bool PreventHisFigure(Clan __instance, Actor pActor)
+        {
+            // 不让历史人物变成贵族
+            if (pActor.hasTrait("figure") && pActor.getAge() <= 18)
+            {
+                World.world.clans.removeUnit(pActor.data);
+                return false;
+            }
+            return true;
+        }
 
         public static void SetNameForActor(Actor actor, Clan pClan)
         {
@@ -124,7 +136,7 @@ namespace Figurebox
             AW_Kingdom awKingdom = actor.kingdom as AW_Kingdom;
             if (awKingdom.NameIntegration)
             {
-                return; 
+                return;
             }
             // 根据性别设置名字
             string givenName = actor.getName();

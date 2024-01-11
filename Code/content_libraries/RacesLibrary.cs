@@ -53,7 +53,7 @@ namespace Figurebox
 
             Xia.name_template_city = "Xia_city";
             Xia.name_template_kingdom = "Xia_kingdom";
-            Xia.name_template_culture = "human_culture";
+            Xia.name_template_culture = "Xia_culture";
             Xia.name_template_clan = "human_clan";
             Xia.clan_backgrounds = new List<string>
             {

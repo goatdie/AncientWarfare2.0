@@ -58,7 +58,7 @@ public partial class AW_Kingdom : Kingdom
             return;
         }
         this.heir = pActor;
-        if (heir.city != capital && capital != null&&!heir.isKing())
+        if (heir.city != capital && capital != null && !heir.isKing())
         {
             heir.ChangeCity(capital);
         }
@@ -293,7 +293,7 @@ public partial class AW_Kingdom : Kingdom
                 return "未知";
         }
     }
-     // 根据爵位等级返回对应的单字
+    // 根据爵位等级返回对应的单字
     public static string GetSingleCharacterTitle(KingdomPolicyData.KingdomTitle title)
     {
         switch (title)
@@ -488,9 +488,6 @@ public partial class AW_Kingdom : Kingdom
             // 获取Actor当前的王国
             AW_Kingdom currentKingdom = actor.kingdom as AW_Kingdom;
 
-            // 获取即将继承的王国
-
-
             // 确保即将继承的王国存在且不是当前的王国
             if (kingdomToInherit != null && kingdomToInherit != currentKingdom)
             {
@@ -503,16 +500,21 @@ public partial class AW_Kingdom : Kingdom
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
                     kingdomToInherit.setKing(actor);
-                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);//加一个worldlogmessage
+                    // 继承头衔等级
+                    kingdomToInherit.policy_data.Title = currentKingdom.policy_data.Title;
+                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
                 else
                 {
                     MergeKingdoms(currentKingdom, kingdomToInherit);
+                    // 继承头衔等级
+                    currentKingdom.policy_data.Title = kingdomToInherit.policy_data.Title;
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
             }
         }
     }
+
 
     private void MergeKingdoms(AW_Kingdom strongerKingdom, AW_Kingdom weakerKingdom)
     {

@@ -151,7 +151,7 @@ namespace Figurebox
           //actorStatus.getName();
           __result.data.setName(text0);
           actorStatus.set("kingdom_name", "周");
-          actorStatus.set("family_name", "姬");
+          actorStatus.set("family_name", "姬");
           actorStatus.set("clan_name", "姬");
           actorStatus.set("name_set", true);
           actorStatus.health = 1500;

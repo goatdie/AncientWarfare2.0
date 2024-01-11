@@ -50,6 +50,13 @@ internal static class NameGeneratorInitialzier
             pActor.data.get("clan_name", out clanName, "");
             pActor.data.get("chinese_family_name", out ChineseFamilyName, "");
 
+            if (!string.IsNullOrEmpty(clanName) && clanName.Equals(familyName) && string.IsNullOrEmpty(ChineseFamilyName))
+            {
+                pActor.data.set("family_name", clanName);
+                pActor.data.set("chinese_family_name", clanName);
+                if (pActor.hasClan()) { pActor.getClan().data.set("clan_chinese_family_name", clanName); }
+                pActor.data.set("name_set", true);
+            }
             // 当 clan_name 存在，且与 family_name 不同，同时 chinese_family_name 为空时，使用 clan_name 更新其他名称
             if (!string.IsNullOrEmpty(clanName) && !clanName.Equals(familyName) && string.IsNullOrEmpty(ChineseFamilyName))
             {
@@ -87,6 +94,13 @@ internal static class NameGeneratorInitialzier
             pParameters["family_name"] = "";
         }
     }
+    static void Culture_city_parameter_getter(Culture pCulture, Dictionary<string, string> pParameters)
+    {
+        if (pCulture != null)
+        {
+            pParameters["village_origin"] = pCulture.data.village_origin;
+        }
+    }
 
     public static void init()
     {
@@ -98,6 +112,7 @@ internal static class NameGeneratorInitialzier
         CN_NameGeneratorLibrary.Submit(generator);
 
         ParameterGetters.PutActorParameterGetter("default", NewActorNameGeneratorDefaultParameterGetter);
+        ParameterGetters.PutCultureParameterGetter("default", Culture_city_parameter_getter);
     }
 }
 #else

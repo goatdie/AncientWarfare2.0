@@ -46,7 +46,9 @@ public class KingdomPolicyData : BaseSystemData
     public PolicyStatus p_status;
 
     public double p_timestamp_done;
-    public double p_timestamp_start;
+    public double p_timestamp_start = 0;
+
+    public double p_promotion_done;
 
     /// <summary>
     ///     执行过的所有国策
