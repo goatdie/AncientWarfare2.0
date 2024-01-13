@@ -65,7 +65,7 @@ public class EventsManager
     {
         OperatingDB?.Close();
         OperatingDB = null;
-        OperatingDataBasePath = Path.Combine(Main.mainPath, "tmp.db");
+        OperatingDataBasePath = Path.Combine(Main.mainPath, ".tmp.db");
         if (File.Exists(OperatingDataBasePath)) File.Delete(OperatingDataBasePath);
     }
 }
