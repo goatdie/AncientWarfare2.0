@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.constants;
 
 namespace Figurebox;
 
@@ -8,7 +9,7 @@ public class KingdomPolicyStateAsset : Asset
     /// <summary>
     ///     所有当前状态类型可选的政策
     /// </summary>
-    public HashSet<string> all_optional_policies;
+    public HashSet<string> all_optional_policies = new();
 
     /// <summary>
     ///     国家实力计算方法, 不同政体应当有不同的计算方法
@@ -47,13 +48,16 @@ public class KingdomPolicyStateAsset : Asset
 
     public void AddOptionalPolicy(params KingdomPolicyAsset[] pPolicy)
     {
-        all_optional_policies ??= new HashSet<string>();
         all_optional_policies.UnionWith(pPolicy.Select(p => p.id));
     }
 
     public void AddCityTasks(params BehaviourTaskCity[] pCityTask)
     {
         city_task_list ??= new List<BehaviourTaskCity>();
+        if (DebugConst.LOG_ALL_EXCEPTION)
+            foreach (var task in pCityTask)
+                if (task == null)
+                    Main.LogWarning($"There is null task in {id}", true);
         city_task_list.AddRange(pCityTask);
     }
 }

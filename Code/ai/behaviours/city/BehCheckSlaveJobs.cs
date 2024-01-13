@@ -1,3 +1,5 @@
+using ai.behaviours;
+
 namespace Figurebox.ai.behaviours.city;
 
 /// <summary>
@@ -5,4 +7,8 @@ namespace Figurebox.ai.behaviours.city;
 /// </summary>
 public class BehCheckSlaveJobs : BehaviourActionCity
 {
+    public override BehResult execute(City pObject)
+    {
+        return base.execute(pObject);
+    }
 }

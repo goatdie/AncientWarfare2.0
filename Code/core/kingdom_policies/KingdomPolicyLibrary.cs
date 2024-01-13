@@ -30,7 +30,7 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
 #endif
         add("change_capital", "ui/policy/move_capital", 100, 100, InPeace,
             MajorPolicyExecuteActions.ChangeCapital, true, false);
-        add("title_upgrade", "title_upgrade", "title_upgrade_desc", "ui/policy/change_name", 100, 100, CanBePromoted,
+        add("title_upgrade", "ui/policy/change_name", 100, 100, CanBePromoted,
             MajorPolicyExecuteActions.UpgradeKingdomTitle, true, false);
     }
 
@@ -38,9 +38,12 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
     {
         base.post_init();
         get("start_slaves").AddPreposition(KingdomPolicyStateLibrary.DefaultState);
-        get("start_slaves").SetTargetState(KingdomPolicyStateLibrary.SocialLevel_Slaves);
-        get("control_slaves").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_Slaves);
-        get("slaves_army").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_Slaves);
+        get("start_slaves").SetTargetState(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
+
+        get("control_slaves").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
+
+        get("slaves_army").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
+        get("slaves_army").SetTargetState(KingdomPolicyStateLibrary.MainSoldiers_Slaves);
     }
 
     public override void linkAssets()
@@ -103,6 +106,7 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         // 如果国家没有参与任何战争，则返回 true，表示国家处于和平状态
         return !isAtWar;
     }
+
     public static bool CanBePromoted(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
         int zoneCount = kingdom.countZones();
@@ -133,5 +137,4 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
                 return false;
         }
     }
-
 }

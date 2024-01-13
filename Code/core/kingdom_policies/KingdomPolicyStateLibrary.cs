@@ -10,9 +10,14 @@ namespace Figurebox;
 public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
 {
     /// <summary>
-    ///     社会等级制度: 奴隶制
+    ///     社会统治阶级：奴隶主
     /// </summary>
-    public static KingdomPolicyStateAsset SocialLevel_Slaves;
+    public static KingdomPolicyStateAsset SocialLevel_SlaveOwner;
+
+    /// <summary>
+    ///     军队主体：奴隶
+    /// </summary>
+    public static KingdomPolicyStateAsset MainSoldiers_Slaves;
 
     public static KingdomPolicyStateLibrary Instance { get; } = new();
 
@@ -28,15 +33,17 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         // 原始公平
         DefaultState = add("default", PolicyStateType.social_level);
         // 奴隶制
-        SocialLevel_Slaves = add("slaves", PolicyStateType.social_level);
+        SocialLevel_SlaveOwner = add(PolicyState.slaveowner, PolicyStateType.social_level);
         // 封建贵族
-        add("aristocrat", PolicyStateType.social_level);
+        add(PolicyState.aristocrat, PolicyStateType.social_level);
         // 地主
-        add("landlord", PolicyStateType.social_level);
+        add(PolicyState.landlord, PolicyStateType.social_level);
         // 资本家
-        add("capitalist", PolicyStateType.social_level);
+        add(PolicyState.capitalist, PolicyStateType.social_level);
         // 无产阶级
-        add("proletarian", PolicyStateType.social_level);
+        add(PolicyState.proletarian, PolicyStateType.social_level);
+
+        MainSoldiers_Slaves = add(PolicyState.slave_soldier, PolicyStateType.army_main_soldiers);
     }
 
     public override void post_init()
@@ -44,9 +51,16 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         // 添加可选政策
         DefaultState.AddOptionalPolicy(KingdomPolicyLibrary.Instance.get("start_slaves"));
 
-        SocialLevel_Slaves.AddOptionalPolicy(
+        SocialLevel_SlaveOwner.AddOptionalPolicy(
             KingdomPolicyLibrary.Instance.get("control_slaves"),
             KingdomPolicyLibrary.Instance.get("slaves_army")
+        );
+        SocialLevel_SlaveOwner.AddCityTasks(
+            AssetManager.tasks_city.get("check_slave_job")
+        );
+
+        MainSoldiers_Slaves.AddCityTasks(
+            AssetManager.tasks_city.get("check_slave_army")
         );
     }
 
@@ -89,6 +103,8 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
     [Hotfixable]
     public static KingdomPolicyAsset DefaultPolicyFinder(KingdomPolicyStateAsset pState, AW_Kingdom pKingdom)
     {
-        return KingdomPolicyLibrary.Instance.get(pState.all_optional_policies.GetRandom());
+        return pState.all_optional_policies.Count == 0
+            ? null
+            : KingdomPolicyLibrary.Instance.get(pState.all_optional_policies.GetRandom());
     }
 }

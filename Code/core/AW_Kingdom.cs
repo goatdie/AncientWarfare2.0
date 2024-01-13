@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.patch.MoH;
@@ -8,15 +7,9 @@ using Figurebox.Utils;
 using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
-using UnityEngine;
-using UnityEngine.Tilemaps;
-using System.CodeDom;
-
-
 #if 一米_中文名
 using Chinese_Name;
 #endif
-
 
 
 namespace Figurebox.core;
@@ -57,12 +50,12 @@ public partial class AW_Kingdom : Kingdom
         {
             return;
         }
+
         this.heir = pActor;
         if (heir.city != capital && capital != null && !heir.isKing())
         {
             heir.ChangeCity(capital);
         }
-
     }
 
     public Actor FindHeir()
@@ -106,10 +99,12 @@ public partial class AW_Kingdom : Kingdom
             return null;
         }
     }
+
     public void CheckHeir()
     {
         if (this.heir != null && king != null)
-        {//等老马更新后检测继承人是否为自己的子嗣
+        {
+            //等老马更新后检测继承人是否为自己的子嗣
             if (heir.has_trait_madness || heir == king || heir.getClan() != king.getClan())
             {
                 this.clearHeirData();
@@ -246,13 +241,13 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
+
     // 升级爵位
     public void PromoteTitle()
     {
         if (policy_data.Title < KingdomPolicyData.KingdomTitle.Emperor)
         {
             policy_data.Title++;
-          
         }
     }
 
@@ -262,7 +257,6 @@ public partial class AW_Kingdom : Kingdom
         if (policy_data.Title > KingdomPolicyData.KingdomTitle.Baron)
         {
             policy_data.Title--;
-          
         }
     }
 
@@ -296,6 +290,7 @@ public partial class AW_Kingdom : Kingdom
                 return "未知";
         }
     }
+
     // 根据爵位等级返回对应的单字
     public static string GetSingleCharacterTitle(KingdomPolicyData.KingdomTitle title)
     {
@@ -315,6 +310,7 @@ public partial class AW_Kingdom : Kingdom
                 return ""; // 或者返回一个默认值
         }
     }
+
     /// <summary>
     ///     检查政策是否可用
     /// </summary>
@@ -384,7 +380,7 @@ public partial class AW_Kingdom : Kingdom
     }
 
     /// <summary>
-    ///     更新政治状态
+    ///     更新政治状态, 目前不考虑其他因素, 强制所有城市更新行为
     /// </summary>
     /// <param name="pPolicyStateID">新政治状态的ID</param>
     public void UpdatePolicyStateTo(string pPolicyStateID)
@@ -399,9 +395,10 @@ public partial class AW_Kingdom : Kingdom
     }
 
     /// <summary>
-    ///     更新政治状态
+    ///     更新政治状态, 目前不考虑其他因素, 强制所有城市更新行为
     /// </summary>
     /// <param name="pPolicyState">新政治状态</param>
+    [Hotfixable]
     public void UpdatePolicyStateTo(KingdomPolicyStateAsset pPolicyState)
     {
         if (pPolicyState == null)
@@ -411,6 +408,7 @@ public partial class AW_Kingdom : Kingdom
         }
 
         policy_data.current_states[pPolicyState.type] = pPolicyState.id;
+        foreach (var city in cities) city.ai.clearJob();
     }
 
     /// <summary>
@@ -483,6 +481,7 @@ public partial class AW_Kingdom : Kingdom
 
         return topCities;
     }
+
     public void CheckAndSetPrimaryKingdom(Actor actor, AW_Kingdom kingdomToInherit)
     {
         // 检查Actor是否是国王
@@ -516,12 +515,13 @@ public partial class AW_Kingdom : Kingdom
                     currentKingdom.policy_data.Title =
                         MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
-
                 }
             }
         }
     }
-    public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1, KingdomPolicyData.KingdomTitle title2)
+
+    public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1,
+        KingdomPolicyData.KingdomTitle title2)
     {
         return (title1 > title2) ? title1 : title2;
     }
@@ -561,6 +561,7 @@ public partial class AW_Kingdom : Kingdom
         {
             king.ChangeCity(capital);
         }
+
         king.setProfession(UnitProfession.King);
         data.kingID = king.data.id;
         data.timestamp_king_rule = World.world.getCurWorldTime();
@@ -571,9 +572,8 @@ public partial class AW_Kingdom : Kingdom
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
-
-
     }
+
     //统治家族变更同时换国号
     [MethodReplace(nameof(trySetRoyalClan))]
     public new void trySetRoyalClan()
@@ -624,42 +624,43 @@ public partial class AW_Kingdom : Kingdom
                 {
                     kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀");
                 } //之后按爵位来
+
                 this.data.name = kingdomname;
                 return;
-
-
-
             }
+
             this.data.royal_clan_id = this.king.data.clan;
-
         }
-
-
-
     }
 
     [MethodReplace(nameof(getMaxCities))]
     public new int getMaxCities()
     {
         #region 原版代码
+
         int num = this.race.civ_baseCities;
         if (this.king != null)
         {
             num += (int)this.king.stats[S.cities];
         }
+
         Culture culture = this.getCulture();
         if (culture != null)
         {
             num += (int)culture.stats.bonus_max_cities.value;
         }
+
         if (num < 1)
         {
             num = 1;
         }
+
         #endregion
+
         num += GetCitiesBonus(this.policy_data.Title);
         return num;
     }
+
     public static int GetCitiesBonus(KingdomPolicyData.KingdomTitle title)
     {
         switch (title)

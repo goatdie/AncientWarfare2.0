@@ -57,6 +57,12 @@ namespace Figurebox
 #endif
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             NewUI.PatchResources();
+            KingdomBehLibrary.init();
+            _ = new ActorTaskLibrary();
+            _ = new CityTaskLibrary();
+            _ = new ai.ActorJobLibrary();
+            _ = new ai.CitizenJobs();
+            _ = new ai.CityJobLibrary();
             Traits.init();
             AW_CitiesManager.init();
             AW_KingdomManager.init();
@@ -88,11 +94,6 @@ namespace Figurebox
 
             moreKingdoms.init();
             BuildingLibrary.init();
-            KingdomBehLibrary.init();
-            _ = new ActorTaskLibrary();
-            _ = new ai.ActorJobLibrary();
-            _ = new ai.CitizenJobs();
-            _ = new ai.CityJobLibrary();
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
             instance = this;
@@ -171,6 +172,7 @@ namespace Figurebox
             prefabs_library.SetParent(transform);
             _ = new AWS();
             _ = new AWDataS();
+            _ = new PolicyState();
             _ = new PolicyStateType();
             AutoMethodReplaceTool.ReplaceMethods();
         }
@@ -237,7 +239,7 @@ namespace Figurebox
             _ = new SlavesPatch();
             /*
                         Harmony.CreateAndPatchAll(typeof(FunctionHelper));
-                        
+
                         Harmony.CreateAndPatchAll(typeof(TianmingGroup));
                         Harmony.CreateAndPatchAll(typeof(ClansManager));
                         Harmony.CreateAndPatchAll(typeof(KingdomVassals));
