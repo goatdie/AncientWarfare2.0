@@ -70,7 +70,6 @@ namespace Figurebox
             Traits.init();
             AW_CitiesManager.init();
             AW_KingdomManager.init();
-            _ = KingdomEventsManager.Instance;
             KingdomPolicyLibrary.Instance.init();
             KingdomPolicyStateLibrary.Instance.init();
 
@@ -101,6 +100,7 @@ namespace Figurebox
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
             instance = this;
+            EventsManager.Instance.CreateDataBase();
             print("Translation loaded");
         }
 
@@ -130,6 +130,11 @@ namespace Figurebox
         {
             if (instance == null) return;
             checkRaceAdded();
+        }
+
+        private void OnApplicationQuit()
+        {
+            EventsManager.Instance.CleanTempDataBase();
         }
 
         public string GetLocaleFilesDirectory(ModDeclare pModDeclare)

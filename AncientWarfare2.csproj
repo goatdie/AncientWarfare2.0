@@ -44,6 +44,15 @@
         <Reference Include="NeoModLoader">
             <HintPath>..\..\worldbox_Data\StreamingAssets\mods\NeoModLoader.dll</HintPath>
         </Reference>
+        <Reference Include="System.Data.SQLite">
+            <HintPath>Assemblies\System.Data.SQLite.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Data.SQLite.EF6">
+            <HintPath>Assemblies\System.Data.SQLite.EF6.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Data.SQLite.Linq">
+            <HintPath>Assemblies\System.Data.SQLite.Linq.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
     <Reference Include="0Harmony">
@@ -126,5 +135,9 @@
       <Folder Include="word_libraries\" />
       <Folder Include="name_generators\" />
   </ItemGroup>
+    <ItemGroup>
+        <None Remove="Utilities\IconGenerate.py"/>
+        <None Remove="AncientWarfare2.csproj.DotSettings"/>
+    </ItemGroup>
 
 </Project>
