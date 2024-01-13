@@ -16,6 +16,7 @@ using NeoModLoader.api;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using NeoModLoader.services;
+using NeoModLoader.utils;
 using UnityEngine;
 #if 一米_中文名
 using Chinese_Name;
@@ -38,6 +39,8 @@ namespace Figurebox
         public BuildingLibrary buildingLibrary = new BuildingLibrary();
 
         public MoreBuildings moreBuildings = new MoreBuildings();
+
+        private int race_count = 4;
 
         // public const string mainPath = "worldbox_Data/StreamingAssets/Mods/NCMS/Core/Temp/Mods/AncientWarfare2.0";
         public static string mainPath => Mod.Info.Path; // 这种方式更鲁棒, 可以适配不同的模组文件夹位置
@@ -63,6 +66,7 @@ namespace Figurebox
             _ = new ai.ActorJobLibrary();
             _ = new ai.CitizenJobs();
             _ = new ai.CityJobLibrary();
+            professions = new content.ProfessionLibrary();
             Traits.init();
             AW_CitiesManager.init();
             AW_KingdomManager.init();
@@ -120,6 +124,12 @@ namespace Figurebox
             BannerGenerator.loadTexturesFromResources("Xia");
 
             patchHarmony();
+        }
+
+        private void Update()
+        {
+            if (instance == null) return;
+            checkRaceAdded();
         }
 
         public string GetLocaleFilesDirectory(ModDeclare pModDeclare)
@@ -217,6 +227,35 @@ namespace Figurebox
             }
         }
 
+        /// <summary>
+        ///     检查是否有新的种族，为新的种族补充贴图之类的
+        /// </summary>
+        private void checkRaceAdded()
+        {
+            if (AssetManager.raceLibrary.list.Count == race_count) return;
+
+            race_count = AssetManager.raceLibrary.list.Count;
+
+            foreach (var added_prof in professions.added_assets)
+            {
+                if (string.IsNullOrEmpty(added_prof.special_skin_path)) continue;
+
+                var xia_prof_sprites_path = AssetManager.raceLibrary.get("Xia").main_texture_path +
+                                            added_prof.special_skin_path;
+                var all_sprites = SpriteTextureLoader.getSpriteList(xia_prof_sprites_path);
+
+                foreach (var race in AssetManager.raceLibrary.list)
+                {
+                    var sprites_path = race.main_texture_path + added_prof.special_skin_path;
+                    var sprites = Resources.LoadAll<Sprite>(sprites_path);
+                    if (sprites is { Length: > 0 }) continue;
+
+                    foreach (var sprite in all_sprites)
+                        ResourcesPatch.PatchResource(sprites_path + "/" + sprite.name, sprite);
+                }
+            }
+        }
+
         private void Configure()
         {
             if (Environment.UserName == "Inmny" || Environment.UserName == "1")
@@ -290,6 +329,7 @@ namespace Figurebox
         public MorePlots MorePlots = new MorePlots();
         public MoreKingdoms moreKingdoms = new MoreKingdoms();
         public Traits Traits = new Traits();
+        public content.ProfessionLibrary professions;
 
         #endregion
     }
