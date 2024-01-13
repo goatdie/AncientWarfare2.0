@@ -9,6 +9,10 @@ using Figurebox.Utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
+using UnityEngine.Tilemaps;
+using System.CodeDom;
+
+
 #if 一米_中文名
 using Chinese_Name;
 #endif
@@ -54,7 +58,7 @@ public partial class AW_Kingdom : Kingdom
             return;
         }
         this.heir = pActor;
-        if (heir.city != capital && capital != null)
+        if (heir.city != capital && capital != null && !heir.isKing())
         {
             heir.ChangeCity(capital);
         }
@@ -104,9 +108,9 @@ public partial class AW_Kingdom : Kingdom
     }
     public void CheckHeir()
     {
-        if (this.heir != null)
+        if (this.heir != null && king != null)
         {//等老马更新后检测继承人是否为自己的子嗣
-            if (heir.has_trait_madness || heir == king)
+            if (heir.has_trait_madness || heir == king || heir.getClan() != king.getClan())
             {
                 this.clearHeirData();
             }
@@ -242,7 +246,75 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
+    // 升级爵位
+    public void PromoteTitle()
+    {
+        if (policy_data.Title < KingdomPolicyData.KingdomTitle.Emperor)
+        {
+            policy_data.Title++;
+          
+        }
+    }
 
+    // 降级爵位
+    public void DemoteTitle()
+    {
+        if (policy_data.Title > KingdomPolicyData.KingdomTitle.Baron)
+        {
+            policy_data.Title--;
+          
+        }
+    }
+
+    // 设置特定的爵位等级
+    public void SetTitle(KingdomPolicyData.KingdomTitle newTitle)
+    {
+        policy_data.Title = newTitle;
+    }
+
+    // 根据爵位等级返回中文字符串
+    public string GetTitleString(KingdomPolicyData.KingdomTitle title)
+    {
+        if (title == KingdomPolicyData.KingdomTitle.Emperor && MoHTools.IsMoHKingdom(this))
+        {
+            return "朝";
+        }
+
+        switch (title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                return "伯国";
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                return "侯国";
+            case KingdomPolicyData.KingdomTitle.Duke:
+                return "公国";
+            case KingdomPolicyData.KingdomTitle.King:
+                return "王国";
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return "帝国";
+            default:
+                return "未知";
+        }
+    }
+    // 根据爵位等级返回对应的单字
+    public static string GetSingleCharacterTitle(KingdomPolicyData.KingdomTitle title)
+    {
+        switch (title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                return "伯";
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                return "侯";
+            case KingdomPolicyData.KingdomTitle.Duke:
+                return "公";
+            case KingdomPolicyData.KingdomTitle.King:
+                return "王";
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return "帝";
+            default:
+                return ""; // 或者返回一个默认值
+        }
+    }
     /// <summary>
     ///     检查政策是否可用
     /// </summary>
@@ -371,7 +443,7 @@ public partial class AW_Kingdom : Kingdom
         if (kingdom.capital != null)
         {
             City newCapital = FindNewCapital(kingdom);
-            if (newCapital != null)
+            if (newCapital != null && kingdom.king != null)
             {
                 kingdom.capital = newCapital;
                 kingdom.king.ChangeCity(newCapital);
@@ -419,9 +491,6 @@ public partial class AW_Kingdom : Kingdom
             // 获取Actor当前的王国
             AW_Kingdom currentKingdom = actor.kingdom as AW_Kingdom;
 
-            // 获取即将继承的王国
-
-
             // 确保即将继承的王国存在且不是当前的王国
             if (kingdomToInherit != null && kingdomToInherit != currentKingdom)
             {
@@ -434,15 +503,27 @@ public partial class AW_Kingdom : Kingdom
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
                     kingdomToInherit.setKing(actor);
-                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);//加一个worldlogmessage
+                    // 继承更高的头衔等级
+                    kingdomToInherit.policy_data.Title =
+                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
                 else
                 {
                     MergeKingdoms(currentKingdom, kingdomToInherit);
+                    currentKingdom.setKing(actor);
+                    // 继承更高的头衔等级
+                    currentKingdom.policy_data.Title =
+                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
+
                 }
             }
         }
+    }
+    public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1, KingdomPolicyData.KingdomTitle title2)
+    {
+        return (title1 > title2) ? title1 : title2;
     }
 
     private void MergeKingdoms(AW_Kingdom strongerKingdom, AW_Kingdom weakerKingdom)
@@ -491,6 +572,7 @@ public partial class AW_Kingdom : Kingdom
         clearHeirData();
         KingdomYearName.changeYearname(this);
 
+
     }
     //统治家族变更同时换国号
     [MethodReplace(nameof(trySetRoyalClan))]
@@ -500,7 +582,21 @@ public partial class AW_Kingdom : Kingdom
 
         if (this.king != null && this.king.data.clan != string.Empty)
         {
+            string kingdomname;
+            if (data.royal_clan_id == string.Empty)
+            {
+                if (king.hasTrait("figure"))
+                {
+                    string kingdom_name;
+                    king.data.get("kingdom_name", out kingdom_name, "");
+
+                    kingdomname = kingdom_name;
+                    this.data.name = kingdomname;
+                }
+            }
+
             #endregion
+
             if (this.data.royal_clan_id != this.king.data.clan && data.royal_clan_id != string.Empty)
             {
                 // 更新皇室
@@ -516,7 +612,18 @@ public partial class AW_Kingdom : Kingdom
                 World.world.zoneCalculator.redrawZones();
                 // WLM
                 CityTools.logUsurpation(king, this);
-                string kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀") + "国"; //之后按爵位来
+
+                if (king.hasTrait("figure"))
+                {
+                    string kingdom_name;
+                    king.data.get("kingdom_name", out kingdom_name, "");
+
+                    kingdomname = kingdom_name;
+                }
+                else
+                {
+                    kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀");
+                } //之后按爵位来
                 this.data.name = kingdomname;
                 return;
 
@@ -529,5 +636,46 @@ public partial class AW_Kingdom : Kingdom
 
 
 
+    }
+
+    [MethodReplace(nameof(getMaxCities))]
+    public new int getMaxCities()
+    {
+        #region 原版代码
+        int num = this.race.civ_baseCities;
+        if (this.king != null)
+        {
+            num += (int)this.king.stats[S.cities];
+        }
+        Culture culture = this.getCulture();
+        if (culture != null)
+        {
+            num += (int)culture.stats.bonus_max_cities.value;
+        }
+        if (num < 1)
+        {
+            num = 1;
+        }
+        #endregion
+        num += GetCitiesBonus(this.policy_data.Title);
+        return num;
+    }
+    public static int GetCitiesBonus(KingdomPolicyData.KingdomTitle title)
+    {
+        switch (title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                return 0;
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                return 2;
+            case KingdomPolicyData.KingdomTitle.Duke:
+                return 4;
+            case KingdomPolicyData.KingdomTitle.King:
+                return 8;
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return 16;
+            default:
+                return 0; // 或者返回一个默认值
+        }
     }
 }

@@ -51,7 +51,7 @@ namespace Figurebox
                 );
 
 
-            reclaim.check_launch = delegate(Actor pActor, Kingdom pKingdom)
+            reclaim.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // 检查是否失去了领土
                 if (!DiplomacyHelpers.isWarNeeded(pKingdom))
@@ -96,7 +96,7 @@ namespace Figurebox
             };
 
 
-            reclaim.action = delegate(Plot pPlot)
+            reclaim.action = delegate (Plot pPlot)
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("reclaim"), true);
                 ClansManager.LastReclaimWarYears[pPlot.initiator_kingdom.data.id] = World.world.mapStats.getCurrentYear();
@@ -120,7 +120,7 @@ namespace Figurebox
             usurpation.check_initiator_city = false;
             usurpation.check_initiator_kingdom = true;
             usurpation.check_target_kingdom = false;
-            usurpation.check_other_plots = delegate(Actor pActor, Plot pPlot)
+            usurpation.check_other_plots = delegate (Actor pActor, Plot pPlot)
             {
                 Kingdom kingdom = pActor.kingdom;
                 using (HashSet<Actor>.Enumerator enumerator = pPlot.supporters.GetEnumerator())
@@ -137,7 +137,7 @@ namespace Figurebox
             };
             AssetManager.plots_library.add(usurpation);
             usurpation.plot_power = ((Actor pActor) => (int)pActor.stats[S.diplomacy]);
-            usurpation.check_supporters = delegate(Actor pActor, Plot pPlot)
+            usurpation.check_supporters = delegate (Actor pActor, Plot pPlot)
             {
                 if (checkMembersToRemoveDefault(pActor, pPlot))
                 {
@@ -163,7 +163,7 @@ namespace Figurebox
 
                 return true;
             });
-            usurpation.check_should_continue = delegate(Plot pPlot)
+            usurpation.check_should_continue = delegate (Plot pPlot)
             {
                 if (!pPlot.initiator_actor.isAlive() && pPlot.initiator_actor.kingdom.asset.mad) { return false; }
 
@@ -229,7 +229,7 @@ namespace Figurebox
             vassalWar.check_initiator_city = true;
             vassalWar.check_initiator_kingdom = true;
             vassalWar.check_target_kingdom = true;
-            vassalWar.check_other_plots = delegate(Actor pActor, Plot pPlot)
+            vassalWar.check_other_plots = delegate (Actor pActor, Plot pPlot)
             {
                 Kingdom kingdom = pActor.kingdom;
                 using (HashSet<Actor>.Enumerator enumerator = pPlot.supporters.GetEnumerator())
@@ -261,7 +261,7 @@ namespace Figurebox
 
 
 
-            vassalWar.check_launch = delegate(Actor pActor, Kingdom pKingdom)
+            vassalWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // 检查是否已经是附庸国
                 if (KingdomVassals.IsVassal(pKingdom))
@@ -298,7 +298,7 @@ namespace Figurebox
                 return true;
             };
 
-            vassalWar.action = delegate(Plot pPlot)
+            vassalWar.action = delegate (Plot pPlot)
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("vassal_war"), true);
                 KingdomVassals.LastVassalWarYears[pPlot.initiator_kingdom.data.id] = World.world.mapStats.getCurrentYear();
@@ -338,7 +338,7 @@ namespace Figurebox
             };
 
 
-            absorbvassal.check_launch = delegate(Actor pActor, Kingdom pKingdom)
+            absorbvassal.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // Ensure the target kingdom is a vassal of the initiator kingdom
                 if (KingdomVassals.IsVassal(pKingdom) || !KingdomVassals.IsLord(pKingdom) || pActor.kingdom.hasEnemies())
@@ -355,7 +355,7 @@ namespace Figurebox
             };
 
 
-            absorbvassal.action = delegate(Plot pPlot)
+            absorbvassal.action = delegate (Plot pPlot)
             {
                 Kingdom lordKingdom = pPlot.initiator_kingdom;
                 Kingdom vassalKingdom = pPlot.target_kingdom;
@@ -396,7 +396,7 @@ namespace Figurebox
 
             IndependenceWar.check_supporters = checkMembersToRemoveDefault;
 
-            IndependenceWar.check_launch = delegate(Actor pActor, Kingdom pKingdom)
+            IndependenceWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 Kingdom lord = KingdomVassals.GetSuzerain(pKingdom);
                 if (lord != null && (World.world.diplomacy.getOpinion(pKingdom, lord).total - 1000) >= 0)
@@ -442,7 +442,7 @@ namespace Figurebox
                        && !pPlot.initiator_kingdom.hasEnemies() && pPlot.initiator_kingdom.data.royal_clan_id != pPlot.target_kingdom.data.royal_clan_id;
             };
             // 定义情节发生时要执行的操作
-            IndependenceWar.action = delegate(Plot pPlot)
+            IndependenceWar.action = delegate (Plot pPlot)
             {
                 int yeardata = World.world.mapStats.getCurrentYear();
                 Kingdom vassal = pPlot.initiator_kingdom;
@@ -507,13 +507,13 @@ namespace Figurebox
                 kingdom.king.unit_group.disband();
             }
 
-           // CityTools.logUsurpation(usurper, kingdom);
+            // CityTools.logUsurpation(usurper, kingdom);
             WorldLog.logKingLeft(kingdom, kingdom.king);
 
             kingdom.CallMethod("removeKing");
             kingdom.clearKingData();
             kingdom.setKing(usurper);
-            usurper.city=kingdom.capital;
+
             WorldLog.logNewKing(kingdom);
 
         }

@@ -13,6 +13,14 @@ public class KingdomPolicyData : BaseSystemData
         Completed
     }
 
+    public enum KingdomTitle
+    {
+        Baron,    // 伯国 还有子和男两个等地但是感觉没必要
+        Marquis,  // 侯国
+        Duke,     // 公国
+        King,     // 王国
+        Emperor   // 帝国
+    }
     /// <summary>
     ///     当前执行的国策
     /// </summary>
@@ -38,7 +46,9 @@ public class KingdomPolicyData : BaseSystemData
     public PolicyStatus p_status;
 
     public double p_timestamp_done;
-    public double p_timestamp_start;
+    public double p_timestamp_start = 0;
+
+    public double p_promotion_done;
 
     /// <summary>
     ///     执行过的所有国策
@@ -65,6 +75,9 @@ public class KingdomPolicyData : BaseSystemData
     /// </summary>
     /// <param name="state_type"></param>
     /// <returns></returns>
+    /// 
+    public KingdomTitle Title = KingdomTitle.Baron;
+
     public string GetPolicyStateId(string state_type)
     {
         return string.IsNullOrEmpty(state_type) ? "" : current_states.TryGetValue(state_type, out var ret) ? ret : "";

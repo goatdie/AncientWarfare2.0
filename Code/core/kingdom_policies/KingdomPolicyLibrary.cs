@@ -30,6 +30,8 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
 #endif
         add("change_capital", "ui/policy/move_capital", 100, 100, InPeace,
             MajorPolicyExecuteActions.ChangeCapital, true, false);
+        add("title_upgrade", "title_upgrade", "title_upgrade_desc", "ui/policy/change_name", 100, 100, CanBePromoted,
+            MajorPolicyExecuteActions.UpgradeKingdomTitle, true, false);
     }
 
     public override void post_init()
@@ -101,4 +103,35 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         // 如果国家没有参与任何战争，则返回 true，表示国家处于和平状态
         return !isAtWar;
     }
+    public static bool CanBePromoted(KingdomPolicyAsset policy, AW_Kingdom kingdom)
+    {
+        int zoneCount = kingdom.countZones();
+
+        switch (kingdom.policy_data.Title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                // 伯国升级到侯国的条件
+                return zoneCount > 300;
+
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                // 侯国升级到公国的条件
+                return zoneCount > 800;
+
+            case KingdomPolicyData.KingdomTitle.Duke:
+                // 公国升级到王国的条件
+                return zoneCount > 1300;
+
+            case KingdomPolicyData.KingdomTitle.King:
+                // 王国升级到帝国的条件
+                return zoneCount > 2000;
+
+            // 对于帝国级别，可能没有进一步的升级，或者可以根据需要添加逻辑
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return false;
+
+            default:
+                return false;
+        }
+    }
+
 }

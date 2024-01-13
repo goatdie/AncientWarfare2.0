@@ -3,16 +3,8 @@
         "id": "Xia_kingdom",
         "templates": [
             {
-                "format": "{中文国名前缀}#国#",
+                "format": "{中文国名前缀}",
                 "weight": 5
-            },
-            {
-                "format": "{中文国名前缀}#朝#",
-                "weight": 2
-            },
-            {
-                "format": "{真实城名}#国#",
-                "weight": 1
             }
         ]
     }

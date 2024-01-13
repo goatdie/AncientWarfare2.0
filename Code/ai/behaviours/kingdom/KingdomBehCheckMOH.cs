@@ -20,6 +20,7 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
             {
                 //Debug.Log("天命设置完毕");
                 MoHTools.SetMoHKingdom(awKingdom);
+                KingdomYearName.changeYearname(awKingdom);
 
 
             }
@@ -27,7 +28,7 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
         }
         else
         {
-            
+
         }
         return BehResult.Continue;
 

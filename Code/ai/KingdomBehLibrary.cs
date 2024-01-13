@@ -22,6 +22,7 @@ public class KingdomBehLibrary
         }
          task.addBeh(new KingdomBehCheckHeir());
          task.addBeh(new KingdomBehCheckNewCapital());
+         task.addBeh(new KingdomBehCheckPromotion());
     }
 
     

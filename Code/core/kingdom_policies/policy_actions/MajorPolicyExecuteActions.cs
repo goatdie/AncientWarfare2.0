@@ -47,4 +47,17 @@ internal static class MajorPolicyExecuteActions
             AW_Kingdom.SetNewCapital(kingdom);
         }
     }
+    public static void UpgradeKingdomTitle(KingdomPolicyAsset policy, AW_Kingdom kingdom)
+    {
+        //Main.LogInfo($"{kingdom.name} 正在尝试提升爵位{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+
+        if (kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress &&
+            kingdom.policy_data.p_progress == 0)
+        {
+            kingdom.PromoteTitle();
+            kingdom.policy_data.p_promotion_done = World.world.mapStats.worldTime;
+            KingdomYearName.changeYearname(kingdom);
+
+        }
+    }
 }

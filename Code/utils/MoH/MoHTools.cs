@@ -25,6 +25,7 @@ public class MoHTools
     public static void SetMoHKingdom(AW_Kingdom kingdom)
     {
         MoHKingdom = kingdom;
+        kingdom.SetTitle(KingdomPolicyData.KingdomTitle.Emperor);
         MOH_Value = 30;
         if (kingdom.king != null) { kingdom.king.addTrait("天命"); }
         Debug.Log("天命值" + MOH_Value);

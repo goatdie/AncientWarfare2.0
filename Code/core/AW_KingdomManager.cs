@@ -39,6 +39,7 @@ public partial class AW_KingdomManager : KingdomManager
         UpdateMoHCondition();
     }
 
+
     internal static void init()
     {
         List<KingdomAsset> kingdom_assets_to_created_as_hidden = new();

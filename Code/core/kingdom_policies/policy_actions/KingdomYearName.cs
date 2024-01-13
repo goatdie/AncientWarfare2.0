@@ -1,6 +1,7 @@
 #if 一米_中文名
 using Chinese_Name;
 using Figurebox.core;
+using Figurebox.Utils;
 using HarmonyLib;
 
 namespace Figurebox;
@@ -9,13 +10,46 @@ public class KingdomYearName
 {
     public static void Make_New_YearName(AW_Kingdom kingdom)
     {
-        string KYN_F = WordLibraryManager.GetRandomWord("国号前");
-        string KYN_R = WordLibraryManager.GetRandomWord("国号后");
-        string NYN = KYN_F + KYN_R;
-        kingdom.policy_data.year_name = NYN;
+        string yearName;
+
+        if (kingdom.policy_data.Title == KingdomPolicyData.KingdomTitle.Emperor)
+        {
+            // 帝国级别的命名规则
+            string KYN_F = WordLibraryManager.GetRandomWord("国号前");
+            string KYN_R = WordLibraryManager.GetRandomWord("国号后");
+            yearName = KYN_F + KYN_R;
+        }
+        else
+        {
+            // 其他等级的命名规则
+            string singleCharTitle = AW_Kingdom.GetSingleCharacterTitle(kingdom.policy_data.Title); // 返回 "公"
+
+            yearName = kingdom.name +singleCharTitle+kingdom.king.getNameCharacter();
+        }
+
+        kingdom.policy_data.year_name = yearName;
         kingdom.policy_data.year_start_timestamp = World.world.getCurWorldTime();
     }
 
+
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(MapText), "showTextKingdom")]
+    public static void ShowTextKingdom_Title(MapText __instance, ref Kingdom pKingdom)
+    {
+        AW_Kingdom awKingdom = pKingdom as AW_Kingdom;
+        if (awKingdom != null)
+        {
+            // 获取爵位头衔
+            string titleString = awKingdom.GetTitleString(awKingdom.policy_data.Title);
+            string Text = pKingdom.name + titleString + "  " + pKingdom.getPopulationTotal().ToString();
+
+            // 将爵位头衔添加到王国名称之后
+            __instance.setText(Text, pKingdom.capital.cityCenter);
+        }
+
+
+    }
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MapText), "showTextKingdom")]
     public static void ShowTextKingdom_Postfix(MapText __instance, Kingdom pKingdom)

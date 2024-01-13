@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Chinese_Name;
 #endif
 using Figurebox.core;
+
 namespace Figurebox;
 #if 一米_中文名
 internal static class NameGeneratorInitialzier
@@ -49,6 +50,13 @@ internal static class NameGeneratorInitialzier
             pActor.data.get("clan_name", out clanName, "");
             pActor.data.get("chinese_family_name", out ChineseFamilyName, "");
 
+            if (!string.IsNullOrEmpty(clanName) && clanName.Equals(familyName) && string.IsNullOrEmpty(ChineseFamilyName))
+            {
+                pActor.data.set("family_name", clanName);
+                pActor.data.set("chinese_family_name", clanName);
+                if (pActor.hasClan()) { pActor.getClan().data.set("clan_chinese_family_name", clanName); }
+                pActor.data.set("name_set", true);
+            }
             // 当 clan_name 存在，且与 family_name 不同，同时 chinese_family_name 为空时，使用 clan_name 更新其他名称
             if (!string.IsNullOrEmpty(clanName) && !clanName.Equals(familyName) && string.IsNullOrEmpty(ChineseFamilyName))
             {
@@ -86,6 +94,13 @@ internal static class NameGeneratorInitialzier
             pParameters["family_name"] = "";
         }
     }
+    static void Culture_city_parameter_getter(Culture pCulture, Dictionary<string, string> pParameters)
+    {
+        if (pCulture != null)
+        {
+            pParameters["village_origin"] = pCulture.data.village_origin;
+        }
+    }
 
     public static void init()
     {
@@ -97,6 +112,7 @@ internal static class NameGeneratorInitialzier
         CN_NameGeneratorLibrary.Submit(generator);
 
         ParameterGetters.PutActorParameterGetter("default", NewActorNameGeneratorDefaultParameterGetter);
+        ParameterGetters.PutCultureParameterGetter("default", Culture_city_parameter_getter);
     }
 }
 #else
@@ -104,10 +120,13 @@ internal static class NameGeneratorInitialzier{
 
 
     public static void init(){
-
+          
+      
+       
         // 当中文名不存在时的解决方案, 如果不想给的话, 推荐将中文名设置为硬依赖
         // 设置为硬依赖后, #if 和 #endif 块都可以去除
         // 但当中文名没安装时, 春秋就不会被编译
+
     }
 }
 #endif
