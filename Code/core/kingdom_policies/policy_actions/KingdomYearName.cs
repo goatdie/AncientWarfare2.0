@@ -11,6 +11,10 @@ public class KingdomYearName
     public static void Make_New_YearName(AW_Kingdom kingdom)
     {
         string yearName;
+        if(kingdom.king!=null)
+        {
+            return;
+        }
 
         if (kingdom.policy_data.Title == KingdomPolicyData.KingdomTitle.Emperor)
         {
