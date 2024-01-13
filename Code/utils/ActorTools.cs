@@ -38,9 +38,9 @@ public static class ActorTools
     }
     public static string getNameCharacter(this Actor actor)
     {
+    
         string existingName = actor.getName();
-        if (!string.IsNullOrEmpty(existingName))
-        {
+      
             string familyName;
             string clanName;
             string chineseFamilyName;
@@ -68,8 +68,7 @@ public static class ActorTools
 
             // 返回处理后的名字
             return existingName.Trim(); // 使用 Trim() 移除名字前后可能的空白字符
-        }
-         return "";
+    
 
     }
 
