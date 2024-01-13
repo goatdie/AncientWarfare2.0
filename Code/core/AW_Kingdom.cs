@@ -251,6 +251,7 @@ public partial class AW_Kingdom : Kingdom
         if (policy_data.Title < KingdomPolicyData.KingdomTitle.Emperor)
         {
             policy_data.Title++;
+          
         }
     }
 
@@ -260,6 +261,7 @@ public partial class AW_Kingdom : Kingdom
         if (policy_data.Title > KingdomPolicyData.KingdomTitle.Baron)
         {
             policy_data.Title--;
+          
         }
     }
 
@@ -513,6 +515,7 @@ public partial class AW_Kingdom : Kingdom
                     currentKingdom.policy_data.Title =
                         MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
+
                 }
             }
         }
@@ -632,5 +635,46 @@ public partial class AW_Kingdom : Kingdom
 
 
 
+    }
+
+    [MethodReplace(nameof(getMaxCities))]
+    public new int getMaxCities()
+    {
+        #region 原版代码
+        int num = this.race.civ_baseCities;
+        if (this.king != null)
+        {
+            num += (int)this.king.stats[S.cities];
+        }
+        Culture culture = this.getCulture();
+        if (culture != null)
+        {
+            num += (int)culture.stats.bonus_max_cities.value;
+        }
+        if (num < 1)
+        {
+            num = 1;
+        }
+        #endregion
+        num += GetCitiesBonus(this.policy_data.Title);
+        return num;
+    }
+    public static int GetCitiesBonus(KingdomPolicyData.KingdomTitle title)
+    {
+        switch (title)
+        {
+            case KingdomPolicyData.KingdomTitle.Baron:
+                return 0;
+            case KingdomPolicyData.KingdomTitle.Marquis:
+                return 2;
+            case KingdomPolicyData.KingdomTitle.Duke:
+                return 4;
+            case KingdomPolicyData.KingdomTitle.King:
+                return 8;
+            case KingdomPolicyData.KingdomTitle.Emperor:
+                return 16;
+            default:
+                return 0; // 或者返回一个默认值
+        }
     }
 }

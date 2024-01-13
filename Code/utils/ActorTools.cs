@@ -39,34 +39,38 @@ public static class ActorTools
     public static string getNameCharacter(this Actor actor)
     {
         string existingName = actor.getName();
-
-        string familyName;
-        string clanName;
-        string chineseFamilyName;
-
-        actor.data.get("family_name", out familyName, "");
-        actor.data.get("clan_name", out clanName, "");
-        actor.data.get("chinese_family_name", out chineseFamilyName, "");
-
-        // 移除姓氏
-        if (!string.IsNullOrEmpty(familyName) && existingName.EndsWith(familyName))
+        if (!string.IsNullOrEmpty(existingName))
         {
-            // 计算应去除的姓氏长度
-            int nameLengthToRemove = familyName.Length;
-            // 移除姓氏部分
-            existingName = existingName.Substring(0, existingName.Length - nameLengthToRemove);
-        }
-        else if (!string.IsNullOrEmpty(clanName) && existingName.StartsWith(clanName))
-        {
-            existingName = existingName.Substring(clanName.Length);
-        }
-        else if (!string.IsNullOrEmpty(chineseFamilyName) && existingName.StartsWith(chineseFamilyName))
-        {
-            existingName = existingName.Substring(chineseFamilyName.Length);
-        }
+            string familyName;
+            string clanName;
+            string chineseFamilyName;
 
-        // 返回处理后的名字
-        return existingName.Trim(); // 使用 Trim() 移除名字前后可能的空白字符
+            actor.data.get("family_name", out familyName, "");
+            actor.data.get("clan_name", out clanName, "");
+            actor.data.get("chinese_family_name", out chineseFamilyName, "");
+
+            // 移除姓氏
+            if (!string.IsNullOrEmpty(familyName) && existingName.EndsWith(familyName))
+            {
+                // 计算应去除的姓氏长度
+                int nameLengthToRemove = familyName.Length;
+                // 移除姓氏部分
+                existingName = existingName.Substring(0, existingName.Length - nameLengthToRemove);
+            }
+            else if (!string.IsNullOrEmpty(clanName) && existingName.StartsWith(clanName))
+            {
+                existingName = existingName.Substring(clanName.Length);
+            }
+            else if (!string.IsNullOrEmpty(chineseFamilyName) && existingName.StartsWith(chineseFamilyName))
+            {
+                existingName = existingName.Substring(chineseFamilyName.Length);
+            }
+
+            // 返回处理后的名字
+            return existingName.Trim(); // 使用 Trim() 移除名字前后可能的空白字符
+        }
+         return "";
+
     }
 
 }
