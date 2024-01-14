@@ -1,9 +1,11 @@
 using ai.behaviours;
+using NeoModLoader.api.attributes;
 
 namespace Figurebox.ai.behaviours.actor;
 
 public class BehFindSlaveToCatchAround : BehaviourActionActor
 {
+    [Hotfixable]
     public override BehResult execute(Actor pObject)
     {
         World.world.getObjectsInChunks(pObject.currentTile, 8, MapObjectType.Actor);
@@ -16,8 +18,11 @@ public class BehFindSlaveToCatchAround : BehaviourActionActor
 
             pObject.beh_actor_target = actor;
             pObject.setAttackTarget(actor);
+            Main.LogInfo($"找到奴隶捕捉目标{actor.data.id}");
+            return BehResult.Continue;
         }
 
+        Main.LogInfo("未找到奴隶捕捉目标");
         return BehResult.RestartTask;
     }
 }

@@ -15,17 +15,15 @@ public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
     {
         add(new BehaviourTaskActor
         {
-            id = "slave_catcher_find_slave"
-        });
-        t.addBeh(new BehRandomWait(1f, 2f));
-        t.addBeh(new BehShortRandomMove());
-        t.addBeh(new BehFindSlaveToCatchAround());
-
-        add(new BehaviourTaskActor
-        {
             id = "slave_catcher_catch_slave"
         });
-        t.addTaskVerifier(new BehVerifierCanCatchSlave());
+        //t.addTaskVerifier(new BehVerifierCanCatchSlave());
+        t.addBeh(new BehRandomWait(1f, 2f));
+        t.addBeh(new BehFindTileNearbyGroupLeader());
+        t.addBeh(new BehRawGoToTileTarget());
+        t.addBeh(new BehFindSlaveToCatchAround());
+        t.addBeh(new BehFightCheckEnemyIsOk());
+        t.addBeh(new BehGoToActorTarget("sameTile", true));
         t.addBeh(new BehCatchTargetAsSlave());
 
         add(new BehaviourTaskActor
@@ -34,7 +32,7 @@ public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
         });
         t.addBeh(new BehCityFindBuilding("random_house_building"));
         t.addBeh(new BehFindRandomFrontBuildingTile());
-        t.addBeh(new BehGoToTileTarget());
+        t.addBeh(new BehRawGoToTileTarget());
         t.addBeh(new BehStayInBuildingTarget(1f, 5f));
         t.addBeh(new BehSubmitSlaves());
         t.addBeh(new BehExitBuilding());

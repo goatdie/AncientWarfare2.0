@@ -270,6 +270,13 @@ namespace Figurebox
             {
                 Config.isEditor = true;
                 DebugConst.IS_DEVELOPER = true;
+                if (Environment.UserName == "Inmny") DebugConst.EDITOR_INMNY = true;
+
+                if (DebugConst.EDITOR_INMNY)
+                {
+                    DebugConfig.setOption(DebugOption.DrawCitizenJobIcons, true);
+                    DebugConfig.setOption(DebugOption.CitizenJobAttacker, true);
+                }
             }
         }
 
