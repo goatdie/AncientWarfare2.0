@@ -64,4 +64,10 @@ public class AW_AllianceManager : AllianceManager
         addObject(new_war);
         return new_war;
     }
+
+    public override void removeObject(Alliance pObject)
+    {
+        base.removeObject(pObject);
+        EventsManager.Instance.EndAlliance(pObject);
+    }
 }

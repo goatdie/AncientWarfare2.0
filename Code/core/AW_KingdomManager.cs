@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Figurebox.attributes;
+using Figurebox.core.events;
+
 namespace Figurebox.core;
 
 public partial class AW_KingdomManager : KingdomManager
@@ -28,6 +30,7 @@ public partial class AW_KingdomManager : KingdomManager
             ((AW_Kingdom)civ_kingdom).UpdateForPolicy(pElapsed);
         }
     }
+
     [MethodReplace]
     public new void updateAge()
     {
@@ -35,6 +38,7 @@ public partial class AW_KingdomManager : KingdomManager
         {
             list_civs[i].updateAge();
         }
+
         UpdateMoHValue();
         UpdateMoHCondition();
     }
@@ -75,5 +79,11 @@ public partial class AW_KingdomManager : KingdomManager
 
         addObject(new_kingdom);
         return new_kingdom;
+    }
+
+    public override void removeObject(Kingdom pKingdom)
+    {
+        base.removeObject(pKingdom);
+        EventsManager.Instance.EndKingdom(pKingdom);
     }
 }

@@ -1,3 +1,5 @@
+using Figurebox.core.events;
+
 namespace Figurebox.core;
 
 public class AW_CitiesManager : CitiesManager
@@ -45,5 +47,11 @@ public class AW_CitiesManager : CitiesManager
 
         addObject(new_city);
         return new_city;
+    }
+
+    public override void removeObject(City pObject)
+    {
+        base.removeObject(pObject);
+        EventsManager.Instance.EndCity(pObject);
     }
 }

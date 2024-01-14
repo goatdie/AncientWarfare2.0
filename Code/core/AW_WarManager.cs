@@ -66,4 +66,10 @@ public class AW_WarManager : WarManager
         addObject(new_war);
         return new_war;
     }
+
+    public override void removeObject(War pObject)
+    {
+        base.removeObject(pObject);
+        EventsManager.Instance.EndWar(pObject);
+    }
 }
