@@ -1,5 +1,6 @@
 using ai.behaviours;
 using Figurebox.constants;
+using Figurebox.Utils;
 using Figurebox.Utils.extensions;
 
 namespace Figurebox.ai.behaviours.actor;
@@ -17,6 +18,7 @@ public class BehSubmitSlaves : BehCity
             if (slave == null) continue;
             if (!slave.hasTrait(AWS.slave)) continue;
 
+            slave.setProfession(AWUnitProfession.Slave.C());
             Main.LogInfo($"{pObject.getName()} 提交奴隶 {slave.getName()}");
         }
 

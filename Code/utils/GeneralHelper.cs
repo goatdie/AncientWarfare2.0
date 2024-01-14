@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Figurebox.constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -36,5 +37,11 @@ public static class GeneralHelper
         if (private_members_included) return JsonConvert.DeserializeObject<T>(json, private_members_visit_settings);
 
         return JsonConvert.DeserializeObject<T>(json);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static UnitProfession C(this AWUnitProfession pThis)
+    {
+        return (UnitProfession)pThis;
     }
 }
