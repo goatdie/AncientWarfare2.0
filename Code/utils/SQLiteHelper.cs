@@ -63,5 +63,15 @@ public static class SQLiteHelper
         public bool IsPrimary;
         public bool IsUnique;
         public bool IsNotNull;
+
+        public ColumnDef(string pName, ColumnType pValueType = ColumnType.TEXT, bool pIsPrimary = false,
+            bool pIsUnique = false, bool pIsNotNull = true)
+        {
+            Name = pName;
+            ValueType = pValueType;
+            IsPrimary = pIsPrimary;
+            IsUnique = pIsUnique;
+            IsNotNull = pIsNotNull;
+        }
     }
 }

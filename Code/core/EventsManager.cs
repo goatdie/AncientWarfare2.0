@@ -35,30 +35,79 @@ public class EventsManager
 
     private void InitializeDB()
     {
+        #region 基础对象
+
         OperatingDB.CreateTable("Kingdom", new List<SQLiteHelper.ColumnDef>
         {
-            new()
-            {
-                Name = "ID",
-                IsPrimary = true,
-                ValueType = SQLiteHelper.ColumnType.TEXT
-            },
-            new()
-            {
-                Name = "CURR_NAME",
-                ValueType = SQLiteHelper.ColumnType.TEXT
-            },
-            new()
-            {
-                Name = "BANNER_ICON",
-                ValueType = SQLiteHelper.ColumnType.INTEGER
-            },
-            new()
-            {
-                Name = "BANNER_BG",
-                ValueType = SQLiteHelper.ColumnType.INTEGER
-            }
+            new("ID", SQLiteHelper.ColumnType.TEXT, true),
+            new("CURR_NAME"),
+            new("BANNER_ICON", SQLiteHelper.ColumnType.INTEGER),
+            new("BANNER_BG", SQLiteHelper.ColumnType.INTEGER),
+            new("START_TIME", SQLiteHelper.ColumnType.INTEGER),
+            new("END_TIME", SQLiteHelper.ColumnType.INTEGER)
         });
+        OperatingDB.CreateTable("City", new List<SQLiteHelper.ColumnDef>
+        {
+            new("ID", SQLiteHelper.ColumnType.TEXT, true),
+            new("CURR_NAME"),
+            new("CURR_KINGDOM"),
+            new("START_TIME", SQLiteHelper.ColumnType.INTEGER),
+            new("END_TIME", SQLiteHelper.ColumnType.INTEGER)
+        });
+        OperatingDB.CreateTable("War", new List<SQLiteHelper.ColumnDef>
+        {
+            new("ID", SQLiteHelper.ColumnType.TEXT, true),
+            new("CURR_NAME"),
+            new("START_TIME", SQLiteHelper.ColumnType.INTEGER),
+            new("END_TIME", SQLiteHelper.ColumnType.INTEGER)
+        });
+        OperatingDB.CreateTable("Alliance", new List<SQLiteHelper.ColumnDef>
+        {
+            new("ID", SQLiteHelper.ColumnType.TEXT, true),
+            new("CURR_NAME"),
+            new("START_TIME", SQLiteHelper.ColumnType.INTEGER),
+            new("END_TIME", SQLiteHelper.ColumnType.INTEGER)
+        });
+
+        #endregion
+
+        #region 事件
+
+        OperatingDB.CreateTable("KingdomChangeName", new List<SQLiteHelper.ColumnDef>
+        {
+            new("ID"),
+            new("TIMESTAMP", SQLiteHelper.ColumnType.INTEGER),
+            new("OLD_NAME")
+        });
+        OperatingDB.CreateTable("KingdomChangeYear", new List<SQLiteHelper.ColumnDef>
+        {
+            new("ID"),
+            new("TIMESTAMP", SQLiteHelper.ColumnType.INTEGER),
+            new("OLD_NAME")
+        });
+        OperatingDB.CreateTable("CityChangeName", new List<SQLiteHelper.ColumnDef>
+        {
+            new("ID"),
+            new("TIMESTAMP", SQLiteHelper.ColumnType.INTEGER),
+            new("OLD_NAME")
+        });
+        OperatingDB.CreateTable("KingSet", new List<SQLiteHelper.ColumnDef>
+        {
+            new("KID"),
+            new("TIMESTAMP", SQLiteHelper.ColumnType.INTEGER),
+            new("AID")
+        });
+        OperatingDB.CreateTable("KingdomWar", new List<SQLiteHelper.ColumnDef>
+        {
+            new("KID"),
+            new("TIMESTAMP", SQLiteHelper.ColumnType.INTEGER),
+            new("WID"),
+            new("DEAD", SQLiteHelper.ColumnType.INTEGER),
+            new("KILL", SQLiteHelper.ColumnType.INTEGER),
+            new("EVENT_NAME")
+        });
+
+        #endregion
     }
 
     public void CleanTempDataBase()
