@@ -5,6 +5,7 @@ using System.Reflection;
 using Figurebox.ai;
 using Figurebox.constants;
 using Figurebox.core;
+using Figurebox.patch;
 using Figurebox.patch.MoH;
 using Figurebox.patch.policies;
 using Figurebox.UI.Patches;
@@ -68,8 +69,10 @@ namespace Figurebox
             _ = new ai.CityJobLibrary();
             professions = new content.ProfessionLibrary();
             Traits.init();
+            AW_WarManager.init();
             AW_CitiesManager.init();
             AW_KingdomManager.init();
+            AW_AllianceManager.init();
             KingdomPolicyLibrary.Instance.init();
             KingdomPolicyStateLibrary.Instance.init();
 
@@ -281,6 +284,8 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(WorldLogPatch));
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));
             _ = new SlavesPatch();
+            _ = new CitiesManagerPatch();
+            _ = new KingdomManagerPatch();
             /*
                         Harmony.CreateAndPatchAll(typeof(FunctionHelper));
 
