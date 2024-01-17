@@ -36,4 +36,5 @@ public class AW_War : War
             _list_defenders_city.AddRange(pDefender.cities);
         }
     }
+    
 }
