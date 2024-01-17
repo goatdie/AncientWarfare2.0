@@ -42,4 +42,16 @@ public class AW_City : City
             else
                 professionsDict[actor.data.profession].Add(actor);
     }
+    [MethodReplace(nameof(City.joinAnotherKingdom))]
+    public new void joinAnotherKingdom(Kingdom pKingdom)
+    {
+        #region  原版代码
+        Kingdom pKingdom2 = this.kingdom;
+        this.removeFromCurrentKingdom();
+        this.setKingdom(pKingdom, true);
+        this.switchedKingdom();
+        pKingdom.capturedFrom(pKingdom2);
+        #endregion
+        
+    }
 }
