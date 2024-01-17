@@ -3,7 +3,7 @@ using Figurebox.attributes;
 namespace Figurebox.core.table_items;
 
 [TableDef("KingdomWar")]
-public class KingdomWarTableItem
+public class KingdomWarTableItem : AbstractTableItem<KingdomWarTableItem>
 {
     [TableItemDef(pDefaultValue: "0")] public int dead;
     public string event_name;

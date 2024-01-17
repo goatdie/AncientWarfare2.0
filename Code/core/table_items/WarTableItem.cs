@@ -3,7 +3,7 @@ using Figurebox.attributes;
 namespace Figurebox.core.table_items;
 
 [TableDef("War")]
-public class WarTableItem
+public class WarTableItem : AbstractTableItem<WarTableItem>
 {
     public string curr_name;
     [TableItemDef(pDefaultValue: "-1")] public double end_time;

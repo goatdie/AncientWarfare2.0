@@ -18,11 +18,11 @@ public class BehFindSlaveToCatchAround : BehaviourActionActor
 
             pObject.beh_actor_target = actor;
             pObject.setAttackTarget(actor);
-            Main.LogInfo($"找到奴隶捕捉目标{actor.data.id}");
+            //Main.LogInfo($"找到奴隶捕捉目标{actor.data.id}");
             return BehResult.Continue;
         }
 
-        Main.LogInfo("未找到奴隶捕捉目标");
+        //Main.LogInfo("未找到奴隶捕捉目标");
         return BehResult.RestartTask;
     }
 }

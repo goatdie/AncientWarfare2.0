@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Figurebox.ui.prefabs;
@@ -9,6 +8,7 @@ using ReflectionUtility;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using ResourcesPatch = NeoModLoader.utils.ResourcesPatch;
 
 namespace Figurebox
 {
@@ -17,9 +17,6 @@ namespace Figurebox
         // thanks to Dej
         private static GameObject textRef;
 
-        private static readonly Dictionary<string, Object> _patched_resources =
-            RF.GetStaticField<Dictionary<string, Object>, ResourcesPatch>("modsResources");
-
         /// <summary>
         ///     将资源添加到游戏中
         /// </summary>
@@ -27,8 +24,7 @@ namespace Figurebox
         /// <param name="pObject"></param>
         private static void PatchResourceToGame(string pPath, Object pObject)
         {
-            // TODO: 等待下一版本NML将会使用新的API，这里的代码将会被移除
-            _patched_resources[pPath.ToLower()] = pObject;
+            ResourcesPatch.PatchResource(pPath, pObject);
         }
 
         public static void PatchResources()

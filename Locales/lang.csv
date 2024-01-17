@@ -4,11 +4,22 @@ KingdomPolicy Description,显示一个国家的国策树,Show a kingdom's policy
 KingdomPolicyWindow Title,国策窗口,Kingdom Policy
 KingdomMoHWindow Title,天命国家,Mandate of Heaven
 KingdomPolicyGraphWindow Title,国策图,Kingdom Policy Graph
+KingdomHistoryWindow Title,国家历史,Kingdom History
 Suzerain,宗主国,Suzerain Kingdom
 policy_state,政治状态,Policy State
 policy_queue,国策队列,Policy Queue
 optional_policies,可选国策,Optional Policies
 NoMoHKingdom,无天命国家,No Mandate of Heaven Kingdom
+rule_time,$start_time$~$end_time$,$start_time$~$end_time$
+rule_time_now,至今,Now
+AW_History Population,人口,Population
+AW_History Population Description,人口变化趋势和组成,Demographic trends and population composition
+AW_History Territory,领土,Territory
+AW_History Territory Description,领土变化趋势,Trend of territorial change
+AW_History War,战争,War
+AW_History War Description,统治期间参加的战争,Wars fought during his reign
+AW_History Policy,政策,Policy
+AW_History Policy Description,统治期间推行的政策,Policies was introduced during the reign
 vassal,创建附庸关系,Make a vassal
 vassal Description,依次选择附庸与宗主国以建立关系,Select a vassal and a suzerain to create a vassalage
 vassal_remove,解除附庸关系,Remove a vassal

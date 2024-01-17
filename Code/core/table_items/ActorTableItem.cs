@@ -3,7 +3,7 @@ using Figurebox.attributes;
 namespace Figurebox.core.table_items;
 
 [TableDef("Actor")]
-public class ActorTableItem
+public class ActorTableItem : AbstractTableItem<ActorTableItem>
 {
     public string asset_id;
     public string curr_name;

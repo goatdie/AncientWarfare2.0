@@ -3,7 +3,7 @@ using Figurebox.attributes;
 namespace Figurebox.core.table_items;
 
 [TableDef("Alliance")]
-public class AllianceTableItem
+public class AllianceTableItem : AbstractTableItem<AllianceTableItem>
 {
     public int banner_bg;
     public int banner_icon;

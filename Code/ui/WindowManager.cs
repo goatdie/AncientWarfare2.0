@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Figurebox.ui.windows;
 using NCMS.Utils;
 using UnityEngine;
 
@@ -21,6 +22,7 @@ namespace Figurebox
             KingdomHistoryListWindow.Init();
 
             KingdomPolicyGraphWindow.CreateAndInit(nameof(KingdomPolicyGraphWindow));
+            NewKingdomHistoryWindow.CreateAndInit(nameof(KingdomHistoryWindow));
         }
 
         private static void newWindow(string id, string title)

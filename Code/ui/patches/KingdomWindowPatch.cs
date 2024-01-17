@@ -1,5 +1,7 @@
+using Figurebox.ui.windows;
 using HarmonyLib;
-namespace Figurebox.UI.Patches;
+
+namespace Figurebox.ui.patches;
 
 class KingdomWindowPatch
 {

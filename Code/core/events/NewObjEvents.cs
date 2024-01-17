@@ -11,6 +11,7 @@ public static class NewObjEvents
             ColumnVal.Create("CURR_NAME", pKingdom.data.name),
             ColumnVal.Create("BANNER_ICON", pKingdom.data.banner_icon_id),
             ColumnVal.Create("BANNER_BG", pKingdom.data.banner_background_id),
+            ColumnVal.Create("COLOR_ID", pKingdom.data.colorID),
             ColumnVal.Create("START_TIME", pKingdom.data.created_time),
             ColumnVal.Create("END_TIME", -1)
         );

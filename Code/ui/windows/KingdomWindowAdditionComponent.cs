@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Figurebox;
+namespace Figurebox.ui.windows;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
 {
@@ -192,6 +192,16 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         heir_avatar.tooltip_id = "actor_heir";
         heir_avatar.transform.Find("Kingdom Icon").gameObject.SetActive(false);
 
+
+        NewUI.createBGWindowButton(
+            Window.gameObject,
+            -50,
+            "iconworldlaw",
+            "KingdomHistory",
+            "Kingdom History",
+            "Shows a kingdom's history",
+            () => NewKingdomHistoryWindow.ShowWindow(Config.selectedKingdom.id)
+        );
         base.Init();
         OnEnable();
     }

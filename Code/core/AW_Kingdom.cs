@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Figurebox.attributes;
 using Figurebox.constants;
+using Figurebox.core.events;
 using Figurebox.patch.MoH;
 using Figurebox.Utils;
 using Figurebox.Utils.MoH;
@@ -24,12 +25,12 @@ public partial class AW_Kingdom : Kingdom
 
     public void ToggleNameIntegration(bool b)
     {
-        this.NameIntegration = b;
+        NameIntegration = b;
     }
 
     public void clearHeirData()
     {
-        this.heir = null;
+        heir = null;
     }
 
     public bool hasHeir()
@@ -39,19 +40,19 @@ public partial class AW_Kingdom : Kingdom
 
     public override void Dispose()
     {
-        this.heir = null;
+        heir = null;
         base.Dispose();
     }
 
     public void SetHeir(Actor pActor)
     {
-        this.clearHeirData();
+        clearHeirData();
         if (pActor == null)
         {
             return;
         }
 
-        this.heir = pActor;
+        heir = pActor;
         if (heir.city != capital && capital != null && !heir.isKing())
         {
             heir.ChangeCity(capital);
@@ -63,13 +64,13 @@ public partial class AW_Kingdom : Kingdom
         List<Actor> candidates = new List<Actor>();
 
         // 假设继承人必须来自王室家族
-        Clan royalClan = BehaviourActionBase<Kingdom>.world.clans.get(this.data.royal_clan_id);
+        var royalClan = BehaviourActionBase<Kingdom>.world.clans.get(data.royal_clan_id);
         if (royalClan != null)
         {
             foreach (var member in royalClan.units.Values)
             {
                 // 排除国王本人
-                if (this.king != null && member == this.king && !member.has_trait_madness)
+                if (king != null && member == king && !member.has_trait_madness)
                 {
                     continue;
                 }
@@ -102,12 +103,12 @@ public partial class AW_Kingdom : Kingdom
 
     public void CheckHeir()
     {
-        if (this.heir != null && king != null)
+        if (heir != null && king != null)
         {
             //等老马更新后检测继承人是否为自己的子嗣
             if (heir.has_trait_madness || heir == king || heir.getClan() != king.getClan())
             {
-                this.clearHeirData();
+                clearHeirData();
             }
         }
     }
@@ -549,9 +550,12 @@ public partial class AW_Kingdom : Kingdom
     ///     国王即位相关行为
     /// </summary>
     /// <param name="pKing"></param>
+    [Hotfixable]
     [MethodReplace(nameof(setKing))]
     public new void setKing(Actor pActor) //处理联统 并放出世界消息
     {
+        if (king != null) clearKingData();
+
         #region 原版代码
 
         king = pActor;
@@ -569,9 +573,33 @@ public partial class AW_Kingdom : Kingdom
 
         #endregion
 
+        EventsManager.Instance.NewKingRule(this, king);
+
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
+    }
+
+    [MethodReplace(nameof(Kingdom.clearKingData))]
+    public new void clearKingData()
+    {
+        if (king == null) return;
+        EventsManager.Instance.EndKingRule(this, king);
+        king = null;
+    }
+
+    [MethodReplace(nameof(Kingdom.removeKing))]
+    public new void removeKing()
+    {
+        if (king != null)
+        {
+            king.setProfession(UnitProfession.Unit);
+            EventsManager.Instance.EndKingRule(this, king);
+        }
+
+        king = null;
+        data.kingID = null;
+        data.timer_new_king = Toolbox.randomFloat(5f, 20f);
     }
 
     //统治家族变更同时换国号
@@ -580,7 +608,7 @@ public partial class AW_Kingdom : Kingdom
     {
         #region 原版代码
 
-        if (this.king != null && this.king.data.clan != string.Empty)
+        if (king != null && king.data.clan != string.Empty)
         {
             string kingdomname;
             if (data.royal_clan_id == string.Empty)
@@ -591,22 +619,22 @@ public partial class AW_Kingdom : Kingdom
                     king.data.get("kingdom_name", out kingdom_name, "");
 
                     kingdomname = kingdom_name;
-                    this.data.name = kingdomname;
+                    data.name = kingdomname;
                 }
             }
 
             #endregion
 
-            if (this.data.royal_clan_id != this.king.data.clan && data.royal_clan_id != string.Empty)
+            if (data.royal_clan_id != king.data.clan && data.royal_clan_id != string.Empty)
             {
                 // 更新皇室
-                this.data.royal_clan_id = this.king.data.clan;
+                data.royal_clan_id = king.data.clan;
 
                 // 更新王国名称
                 // 注意：这里您需要根据实际情况决定如何生成新的王国名称
 
-                this.createColors(-1);
-                this.generateBanner(false);
+                createColors();
+                generateBanner();
                 World.world.zoneCalculator.setDrawnZonesDirty();
                 World.world.zoneCalculator.clearCurrentDrawnZones(true);
                 World.world.zoneCalculator.redrawZones();
@@ -625,11 +653,11 @@ public partial class AW_Kingdom : Kingdom
                     kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀");
                 } //之后按爵位来
 
-                this.data.name = kingdomname;
+                data.name = kingdomname;
                 return;
             }
 
-            this.data.royal_clan_id = this.king.data.clan;
+            data.royal_clan_id = king.data.clan;
         }
     }
 
@@ -638,13 +666,13 @@ public partial class AW_Kingdom : Kingdom
     {
         #region 原版代码
 
-        int num = this.race.civ_baseCities;
-        if (this.king != null)
+        var num = race.civ_baseCities;
+        if (king != null)
         {
-            num += (int)this.king.stats[S.cities];
+            num += (int)king.stats[S.cities];
         }
 
-        Culture culture = this.getCulture();
+        var culture = getCulture();
         if (culture != null)
         {
             num += (int)culture.stats.bonus_max_cities.value;
@@ -657,7 +685,7 @@ public partial class AW_Kingdom : Kingdom
 
         #endregion
 
-        num += GetCitiesBonus(this.policy_data.Title);
+        num += GetCitiesBonus(policy_data.Title);
         return num;
     }
 
