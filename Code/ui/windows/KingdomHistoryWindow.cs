@@ -1,20 +1,10 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using NCMS;
+using System.Text;
 using NCMS.Utils;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using ReflectionUtility;
-using Figurebox;
-
-
 
 namespace Figurebox
 {
@@ -35,7 +25,9 @@ namespace Figurebox
 
         public static void init()
         {
-            scrollView = GameObject.Find($"Canvas Container Main/Canvas - Windows/windows/kingdomHistoryWindow/Background/Scroll View");
+            scrollView =
+                GameObject.Find(
+                    $"Canvas Container Main/Canvas - Windows/windows/kingdomHistoryWindow/Background/Scroll View");
             contents = WindowManager.windowContents["kingdomHistoryWindow"];
             instance = new GameObject("KingdomHistoryWindowInstance").AddComponent<KingdomHistoryWindow>();
 
@@ -49,7 +41,7 @@ namespace Figurebox
 
             originalSize = contents.GetComponent<RectTransform>().sizeDelta;
             contents.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 1500);
-
+/*
             KingdomHisotrybutton = NewUI.createBGWindowButton(
                 GameObject.Find($"Canvas Container Main/Canvas - Windows/windows/kingdom"),
                 -50,
@@ -59,6 +51,7 @@ namespace Figurebox
                 "Shows a kingdom's history",
                 openWindow
             );
+            */
         }
 
 
@@ -76,7 +69,7 @@ namespace Figurebox
             // 删除之前的内容
             foreach (Transform child in contents.transform)
             {
-                GameObject.Destroy(child.gameObject);
+                Destroy(child.gameObject);
             }
 
             if (string.IsNullOrEmpty(kingdomId))
@@ -103,9 +96,6 @@ namespace Figurebox
                 FunctionHelper.KingStartYearInKingdom[event1].CompareTo(FunctionHelper.KingStartYearInKingdom[event2]));
 
 
-
-
-
             // 按行显示王国及其历史纪录
             foreach (string rulingEvent in allRulingEvents)
             {
@@ -126,16 +116,17 @@ namespace Figurebox
                 if (!FunctionHelper.KingEndYearInKingdom.TryGetValue(kingAndKingdomKey, out kingEndYear))
                 {
                     kingEndYear = World.world.mapStats.getCurrentYear();
-
                 }
                 else
                 {
                     kingEndYear = FunctionHelper.KingEndYearInKingdom[kingAndKingdomKey];
                 }
+
                 Kingdom kingdom = BehaviourActionBase<Kingdom>.world.kingdoms.get(kingdomId);
 
 
-                Dictionary<string, Tuple<double, List<string>, List<string>, double, bool>> kingdomWarsInfo = new Dictionary<string, Tuple<double, List<string>, List<string>, double, bool>>();
+                Dictionary<string, Tuple<double, List<string>, List<string>, double, bool>> kingdomWarsInfo =
+                    new Dictionary<string, Tuple<double, List<string>, List<string>, double, bool>>();
 
                 foreach (var warId in FunctionHelper.WarStartDate.Keys)
                 {
@@ -146,7 +137,6 @@ namespace Figurebox
 
 
                     // 尝试获取字典中的值，如果键不存在，则返回当前年份
-
 
 
                     // Try to get the value from the dictionary, if the key does not exist, return the current year
@@ -160,9 +150,9 @@ namespace Figurebox
                     }
 
 
-
-                    if ((FunctionHelper.Attackers[warId].Contains(kingdomId) || FunctionHelper.Defenders[warId].Contains(kingdomId)) &&
-                    (warintstartyear + 10 >= kingStartYear && warEndYear - 10 <= kingEndYear))
+                    if ((FunctionHelper.Attackers[warId].Contains(kingdomId) ||
+                         FunctionHelper.Defenders[warId].Contains(kingdomId)) &&
+                        (warintstartyear + 10 >= kingStartYear && warEndYear - 10 <= kingEndYear))
                     {
                         double warEndYearFloat;
                         bool isWarOngoing = !FunctionHelper.WarEndDateFloat.TryGetValue(warId, out warEndYearFloat);
@@ -175,6 +165,7 @@ namespace Figurebox
                             isWarOngoing);
                     }
                 }
+
                 //待解决问题 同一个人在同一个王国统治第二次应该当新王一样加进来
                 List<string> allVassalRelationships = new List<string>();
 
@@ -190,7 +181,8 @@ namespace Figurebox
 
                 // 按照附庸关系的建立时间对列表进行排序
                 allVassalRelationships.Sort((relation1, relation2) =>
-                    FunctionHelper.kingdomVassalEstablishmentTime[relation1].CompareTo(FunctionHelper.kingdomVassalEstablishmentTime[relation2]));
+                    FunctionHelper.kingdomVassalEstablishmentTime[relation1]
+                        .CompareTo(FunctionHelper.kingdomVassalEstablishmentTime[relation2]));
 
                 string vassalLordInfo = "";
 
@@ -201,8 +193,12 @@ namespace Figurebox
                     string vassalId = parts1[1];
 
                     // 通过关系ID确定vassal和lord名称
-                    string vassalName = FunctionHelper.kingdomCityNameyData.ContainsKey(vassalId) ? FunctionHelper.kingdomCityNameyData[vassalId] : "Unknown Kingdom";
-                    string lordName = FunctionHelper.kingdomCityNameyData.ContainsKey(lordId) ? FunctionHelper.kingdomCityNameyData[lordId] : "Unknown Kingdom";
+                    string vassalName = FunctionHelper.kingdomCityNameyData.ContainsKey(vassalId)
+                        ? FunctionHelper.kingdomCityNameyData[vassalId]
+                        : "Unknown Kingdom";
+                    string lordName = FunctionHelper.kingdomCityNameyData.ContainsKey(lordId)
+                        ? FunctionHelper.kingdomCityNameyData[lordId]
+                        : "Unknown Kingdom";
 
                     // 获取附庸关系的建立年份
                     int startYear = FunctionHelper.kingdomVassalEstablishmentTime[vassalRelation];
@@ -220,19 +216,24 @@ namespace Figurebox
                         if (kingdomId == lordId)
                         {
                             string endInfo = endYear == currentYear ? "Ongoing" : endYear.ToString();
-                            vassalLordInfo += string.Format("\n<b>Vassal:</b>\n{0}\nYear Established: {1}\nYear Ended: {2}\n", vassalName, startYear, endInfo);
+                            vassalLordInfo +=
+                                string.Format("\n<b>Vassal:</b>\n{0}\nYear Established: {1}\nYear Ended: {2}\n",
+                                    vassalName, startYear, endInfo);
                         }
                         else if (kingdomId == vassalId)
                         {
                             string endInfo = endYear == currentYear ? "Ongoing" : endYear.ToString();
-                            vassalLordInfo += string.Format("\n<b>Lord:</b>\n{0}\nYear Established: {1}\nYear Ended: {2}\n", lordName, startYear, endInfo);
+                            vassalLordInfo +=
+                                string.Format("\n<b>Lord:</b>\n{0}\nYear Established: {1}\nYear Ended: {2}\n", lordName,
+                                    startYear, endInfo);
                         }
                     }
                 }
 
                 Text kingdomAndKingText = new GameObject("KingdomAndKingText").AddComponent<Text>();
                 // 按照战争的创建时间对战争信息进行排序
-                var sortedKingdomWarsInfo = kingdomWarsInfo.OrderBy(warInfo => ExtractYear(warInfo.Value.Item1)).ToList();
+                var sortedKingdomWarsInfo =
+                    kingdomWarsInfo.OrderBy(warInfo => ExtractYear(warInfo.Value.Item1)).ToList();
 
                 StringBuilder warInfo = new StringBuilder();
 
@@ -241,20 +242,25 @@ namespace Figurebox
                     string warStartDate = World.world.mapStats.getDate(warInfoEntry.Value.Item1);
 
 
-                    string warEndYearStr = warInfoEntry.Value.Item5 ? "Ongoing War" : World.world.mapStats.getDate(warInfoEntry.Value.Item4);
+                    string warEndYearStr = warInfoEntry.Value.Item5
+                        ? "Ongoing War"
+                        : World.world.mapStats.getDate(warInfoEntry.Value.Item4);
                     GameObject warBannerContainer = new GameObject("WarBannerContainer");
                     warBannerContainer.transform.SetParent(kingdomAndKingText.transform, false);
 
                     StringBuilder attackerNames = new StringBuilder();
                     foreach (var attackerId in warInfoEntry.Value.Item2)
                     {
-                        string kingdomName = FunctionHelper.kingdomCityNameyData.ContainsKey(attackerId) ? FunctionHelper.kingdomCityNameyData[attackerId] : "Unknown Kingdom";
+                        string kingdomName = FunctionHelper.kingdomCityNameyData.ContainsKey(attackerId)
+                            ? FunctionHelper.kingdomCityNameyData[attackerId]
+                            : "Unknown Kingdom";
                         attackerNames.AppendLine(kingdomName);
 
                         Kingdom dkingdom = BehaviourActionBase<Kingdom>.world.kingdoms.get(attackerId);
                         if (dkingdom != null)
                         {
-                            GameObject banner = NewUI.createKingdomBanner(warBannerContainer, dkingdom, new Vector3(-70, offsetYAttacker, 0));
+                            GameObject banner = NewUI.createKingdomBanner(warBannerContainer, dkingdom,
+                                new Vector3(-70, offsetYAttacker, 0));
                             banner.transform.localScale = new Vector3(0.2f, 0.1f);
                             offsetYAttacker -= 10;
                         }
@@ -264,29 +270,30 @@ namespace Figurebox
                     StringBuilder defenderNames = new StringBuilder();
                     foreach (var defenderId in warInfoEntry.Value.Item3)
                     {
-                        string kingdomName = FunctionHelper.kingdomCityNameyData.ContainsKey(defenderId) ? FunctionHelper.kingdomCityNameyData[defenderId] : "Unknown Kingdom";
+                        string kingdomName = FunctionHelper.kingdomCityNameyData.ContainsKey(defenderId)
+                            ? FunctionHelper.kingdomCityNameyData[defenderId]
+                            : "Unknown Kingdom";
                         defenderNames.AppendLine(kingdomName);
 
                         Kingdom dkingdom = BehaviourActionBase<Kingdom>.world.kingdoms.get(defenderId);
                         if (dkingdom != null)
                         {
-                            GameObject banner = NewUI.createKingdomBanner(warBannerContainer, dkingdom, new Vector3(-70, offsetYDefender, 0));
+                            GameObject banner = NewUI.createKingdomBanner(warBannerContainer, dkingdom,
+                                new Vector3(-70, offsetYDefender, 0));
                             banner.transform.localScale = new Vector2(0.2f, 0.1f);
                             offsetYDefender -= 10;
                         }
                     }
 
-                    offsetYAttacker = offsetYDefender - 45;  // Adjust for next war
-
-
+                    offsetYAttacker = offsetYDefender - 45; // Adjust for next war
 
 
                     string attackersStr = attackerNames.ToString();
                     string defendersStr = defenderNames.ToString();
 
 
-
-                    warInfo.AppendLine($"War Start Year: {warStartDate}\nWar End Year: {warEndYearStr}\nWar Name: {FunctionHelper.warIdNameDict[warInfoEntry.Key]}\nAttackers:\n{attackersStr}\nDefenders:\n{defendersStr}");
+                    warInfo.AppendLine(
+                        $"War Start Year: {warStartDate}\nWar End Year: {warEndYearStr}\nWar Name: {FunctionHelper.warIdNameDict[warInfoEntry.Key]}\nAttackers:\n{attackersStr}\nDefenders:\n{defendersStr}");
                 }
 
 
@@ -310,8 +317,11 @@ namespace Figurebox
                     // Add a newline after each kingdom name
                     string allKingdomNamesStr = string.Join("\n", allKingdomNames);
                     // Now when displaying the text, each kingdom name will be on a new line
-                    string kingEndYearStr = (kingEndYear == World.world.mapStats.getCurrentYear()) ? "Still in Power" : kingEndYear.ToString();
-                    kingdomAndKingText.text = $"<i><b><color=#FFC535>King:</color></b> {FunctionHelper.KingName[kingId]}</i>  Started Rule: {year}\nEnd Rule: {kingEndYearStr}\nKingdoms:\n{allKingdomNamesStr}\nRuled for {FunctionHelper.kingYearData[kingId]} Years\nVassal-Lord Relationships:{vassalLordInfo}\nWars:\n{warInfo.ToString()}";
+                    string kingEndYearStr = (kingEndYear == World.world.mapStats.getCurrentYear())
+                        ? "Still in Power"
+                        : kingEndYear.ToString();
+                    kingdomAndKingText.text =
+                        $"<i><b><color=#FFC535>King:</color></b> {FunctionHelper.KingName[kingId]}</i>  Started Rule: {year}\nEnd Rule: {kingEndYearStr}\nKingdoms:\n{allKingdomNamesStr}\nRuled for {FunctionHelper.kingYearData[kingId]} Years\nVassal-Lord Relationships:{vassalLordInfo}\nWars:\n{warInfo.ToString()}";
                 }
                 else
                 {
@@ -327,7 +337,7 @@ namespace Figurebox
 
                 // 调整文本的位置和大小
                 kingdomAndKingTextRect.anchoredPosition = new Vector2(-0, posY);
-                kingdomAndKingTextRect.sizeDelta = new Vector2(280, 40);  // 更改这个值以调整文本的高度
+                kingdomAndKingTextRect.sizeDelta = new Vector2(280, 40); // 更改这个值以调整文本的高度
 
                 // 添加ContentSizeFitter组件，使文本框的大小自动调整以适应其内容
                 var textContentSizeFitter = kingdomAndKingText.gameObject.AddComponent<ContentSizeFitter>();
@@ -338,7 +348,7 @@ namespace Figurebox
                 float textHeight = kingdomAndKingText.preferredHeight;
 
                 // 更新下一行文本的位置
-                posY -= (int)textHeight + 20;  // 在文本的高度和下一行之间保持10的间隔
+                posY -= (int)textHeight + 20; // 在文本的高度和下一行之间保持10的间隔
             }
         }
 
@@ -349,8 +359,5 @@ namespace Figurebox
             year++; // 这是因为在你的getDate函数中增加了一年
             return year;
         }
-
-
-
     }
 }

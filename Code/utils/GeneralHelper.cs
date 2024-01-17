@@ -44,4 +44,9 @@ public static class GeneralHelper
     {
         return (UnitProfession)pThis;
     }
+
+    public static int getYearsOn(double pTime)
+    {
+        return (int)(pTime / 60.0);
+    }
 }

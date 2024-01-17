@@ -112,6 +112,59 @@ public static class SQLiteHelper
         cmd.ExecuteNonQuery();
     }
 
+    public static bool CheckKeyExist(this SQLiteConnection pThis, string pTableName,
+        params SimpleColumnConstraint[] pConstraints)
+    {
+        if (pThis == null)
+        {
+            if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning("Null SQLite Connection", true);
+            return false;
+        }
+
+        var table = _tableInfos[pTableName];
+        using var cmd = new SQLiteCommand(pThis);
+        StringBuilder cmd_builder = new();
+        cmd_builder.Append($"SELECT COUNT(*) FROM {pTableName} WHERE ");
+        cmd.Prepare();
+
+        var need_and = false;
+        foreach (var value in pConstraints)
+        {
+            if (need_and)
+                cmd_builder.Append(" AND ");
+            else
+                need_and = true;
+            cmd_builder.Append(value.Name);
+            switch (value.Type)
+            {
+                case SimpleColumnConstraint.CheckType.Equal:
+                    cmd_builder.Append('=');
+                    break;
+                case SimpleColumnConstraint.CheckType.LessThan:
+                    cmd_builder.Append('<');
+                    break;
+                case SimpleColumnConstraint.CheckType.GreatThan:
+                    cmd_builder.Append('>');
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            cmd_builder.Append('@');
+            cmd_builder.Append(value.Name);
+        }
+
+        cmd.CommandText = cmd_builder.ToString();
+        cmd.Prepare();
+        foreach (var value in pConstraints)
+        {
+            cmd.Parameters.AddWithValue(table.ColumnNameToParamName[value.Name], value.Value);
+            ObjectPool<SimpleColumnConstraint>.GlobalRecycle(value);
+        }
+
+        return (long)cmd.ExecuteScalar() > 0;
+    }
+
     [Hotfixable]
     public static void UpdateValue(this SQLiteConnection pThis, string pTableName,
         List<SimpleColumnConstraint> pConstraints = null, params ColumnVal[] pValues)
@@ -146,8 +199,7 @@ public static class SQLiteHelper
     {
         StringBuilder cmd_builder = new();
 
-        cmd_builder.Append("CREATE TABLE ");
-        cmd_builder.Append(pTableName);
+        cmd_builder.Append($"CREATE TABLE {pTableName}");
         cmd_builder.Append('(');
 
         var primary_found = false;
@@ -310,8 +362,7 @@ public static class SQLiteHelper
         private void GeneratePrepareCMD(List<ColumnDef> pColumnDefs)
         {
             var prepare_cmd_builder = new StringBuilder();
-            prepare_cmd_builder.Append("INSERT INTO ");
-            prepare_cmd_builder.Append(Name);
+            prepare_cmd_builder.Append($"INSERT INTO {Name}");
 
             prepare_cmd_builder.Append('(');
             var need_comma = false;

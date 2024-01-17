@@ -1,7 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using Figurebox.attributes;
 using Figurebox.Utils;
 using JetBrains.Annotations;
 
@@ -35,81 +37,40 @@ public class EventsManager
 
     private void InitializeDB()
     {
-        #region 基础对象
+        var types = Assembly.GetExecutingAssembly().GetTypes();
+        foreach (var type in types)
+        {
+            var table_def = type.GetCustomAttribute<TableDefAttribute>();
+            if (table_def == null) continue;
 
-        OperatingDB.CreateTable("Kingdom", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID", SQLiteHelper.ColumnType.TEXT, true),
-            new("CURR_NAME"),
-            new("BANNER_ICON", SQLiteHelper.ColumnType.INTEGER),
-            new("BANNER_BG", SQLiteHelper.ColumnType.INTEGER),
-            new("START_TIME", SQLiteHelper.ColumnType.REAL),
-            new("END_TIME", SQLiteHelper.ColumnType.REAL, pDefault: "-1")
-        });
-        OperatingDB.CreateTable("City", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID", SQLiteHelper.ColumnType.TEXT, true),
-            new("CURR_NAME", pDefault: "NO_NAME"),
-            new("CURR_KINGDOM"),
-            new("START_TIME", SQLiteHelper.ColumnType.REAL),
-            new("END_TIME", SQLiteHelper.ColumnType.REAL, pDefault: "-1")
-        });
-        OperatingDB.CreateTable("War", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID", SQLiteHelper.ColumnType.TEXT, true),
-            new("CURR_NAME"),
-            new("START_TIME", SQLiteHelper.ColumnType.REAL),
-            new("END_TIME", SQLiteHelper.ColumnType.REAL, pDefault: "-1")
-        });
-        OperatingDB.CreateTable("Alliance", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID", SQLiteHelper.ColumnType.TEXT, true),
-            new("CURR_NAME"),
-            new("BANNER_ICON", SQLiteHelper.ColumnType.INTEGER),
-            new("BANNER_BG", SQLiteHelper.ColumnType.INTEGER),
-            new("START_TIME", SQLiteHelper.ColumnType.REAL),
-            new("END_TIME", SQLiteHelper.ColumnType.REAL, pDefault: "-1")
-        });
+            var tableName = table_def.Name;
+            var fields = type.GetFields();
+            var tableItems = (
+                from field in fields
+                let attribute = field.GetCustomAttribute<TableItemDefAttribute>() ?? new TableItemDefAttribute()
+                let col_type = field.FieldType.Name.ToLower() switch
+                {
+                    "string" => SQLiteHelper.ColumnType.TEXT,
+                    "boolean" => SQLiteHelper.ColumnType.INTEGER,
+                    "byte" => SQLiteHelper.ColumnType.INTEGER,
+                    "sbyte" => SQLiteHelper.ColumnType.INTEGER,
+                    "int16" => SQLiteHelper.ColumnType.INTEGER,
+                    "uint16" => SQLiteHelper.ColumnType.INTEGER,
+                    "int32" => SQLiteHelper.ColumnType.INTEGER,
+                    "uint32" => SQLiteHelper.ColumnType.INTEGER,
+                    "int64" => SQLiteHelper.ColumnType.INTEGER,
+                    "uint64" => SQLiteHelper.ColumnType.INTEGER,
+                    "single" => SQLiteHelper.ColumnType.REAL,
+                    "double" => SQLiteHelper.ColumnType.REAL,
+                    _ => SQLiteHelper.ColumnType.BLOB
+                }
+                let name = string.IsNullOrEmpty(attribute.Name) ? field.Name.ToUpper() : attribute.Name
+                select new SQLiteHelper.ColumnDef(name, col_type, attribute.IsPrimary, attribute.IsUnique,
+                    attribute.IsNotNull, attribute.DefaultValue, attribute.Check)
+            ).ToList();
 
-        #endregion
-
-        #region 事件
-
-        OperatingDB.CreateTable("KingdomChangeName", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID"),
-            new("TIMESTAMP", SQLiteHelper.ColumnType.REAL),
-            new("OLD_NAME")
-        });
-        OperatingDB.CreateTable("KingdomChangeYear", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID"),
-            new("TIMESTAMP", SQLiteHelper.ColumnType.REAL),
-            new("OLD_NAME")
-        });
-        OperatingDB.CreateTable("CityChangeName", new List<SQLiteHelper.ColumnDef>
-        {
-            new("ID"),
-            new("TIMESTAMP", SQLiteHelper.ColumnType.REAL),
-            new("OLD_NAME")
-        });
-        OperatingDB.CreateTable("KingSet", new List<SQLiteHelper.ColumnDef>
-        {
-            new("KID"),
-            new("TIMESTAMP", SQLiteHelper.ColumnType.REAL),
-            new("AID")
-        });
-        OperatingDB.CreateTable("KingdomWar", new List<SQLiteHelper.ColumnDef>
-        {
-            new("KID"),
-            new("TIMESTAMP", SQLiteHelper.ColumnType.REAL),
-            new("WID"),
-            new("DEAD", SQLiteHelper.ColumnType.INTEGER, pDefault: "0"),
-            new("KILL", SQLiteHelper.ColumnType.INTEGER, pDefault: "0"),
-            new("EVENT_NAME")
-        });
-
-        #endregion
+            OperatingDB.CreateTable(tableName, tableItems);
+        }
     }
 
     public void CleanTempDataBase()

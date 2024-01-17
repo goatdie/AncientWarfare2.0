@@ -1,3 +1,5 @@
+using Figurebox.core.table_items;
+using Figurebox.Utils;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine.UI;
@@ -25,6 +27,11 @@ internal class Tooltips
             id = "actor_heir",
             prefab_id = "tooltips/tooltip_actor",
             callback = showHeir
+        });
+        AssetManager.tooltips.add(new TooltipAsset
+        {
+            id = "history_king",
+            callback = showHistoryKing
         });
     }
 
@@ -102,5 +109,43 @@ internal class Tooltips
         pTooltip.name.text = LM.Get(state.name);
         if (!string.IsNullOrEmpty(state.description) && LocalizedTextManager.stringExists(state.description))
             pTooltip.setDescription(LM.Get(state.description));
+    }
+
+    /// <summary>
+    ///     显示历史君主
+    /// </summary>
+    /// <remarks>
+    ///     对<paramref name="pData" />的参数做如下约定
+    ///     <list type="table">
+    ///         <item>
+    ///             <term>参数</term><description>说明</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>tip_name</term><description><see cref="ActorTableItem" />JSON字符串</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>tip_description</term><description><see cref="KingRuleTableItem" />JSON字符串</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>tip_description_2</term><description><see cref="KingdomTableItem" />JSON字符串</description>
+    ///         </item>
+    ///     </list>
+    /// </remarks>
+    /// <param name="pTooltip"></param>
+    /// <param name="pType"></param>
+    /// <param name="pData"></param>
+    private static void showHistoryKing(Tooltip pTooltip, string pType, TooltipData pData = default)
+    {
+        var king = GeneralHelper.FromJSON<ActorTableItem>(pData.tip_name);
+        var rule = GeneralHelper.FromJSON<KingRuleTableItem>(pData.tip_description);
+        var kingdom = GeneralHelper.FromJSON<KingdomTableItem>(pData.tip_description_2);
+
+        pTooltip.name.text = king.curr_name;
+        pTooltip.addDescription(LM.Get("rule_time")
+            .Replace("$start_time$", GeneralHelper.getYearsOn(rule.start_time).ToString())
+            .Replace("$end_time$",
+                rule.end_time < 0 ? LM.Get("rule_time_now") : GeneralHelper.getYearsOn(rule.end_time).ToString()));
+
+        pTooltip.addStatValues("其他信息", "其他信息值");
     }
 }
