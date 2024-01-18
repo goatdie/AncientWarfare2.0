@@ -12,7 +12,8 @@ public static class EndCommonEvents
         pThis.OperatingDB.UpdateValue("KingRule", new List<SimpleColumnConstraint>
         {
             SimpleColumnConstraint.CreateEq("KID", pKingdom.id),
-            SimpleColumnConstraint.CreateEq("AID", pKing.data.id)
+            SimpleColumnConstraint.CreateEq("AID", pKing.data.id),
+            SimpleColumnConstraint.CreateLt("END_TIME", 0)
         }, ColumnVal.Create("END_TIME", World.world.getCreationTime()));
     }
 }
