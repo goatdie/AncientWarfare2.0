@@ -22,7 +22,7 @@ public class BehSubmitSlaves : BehCity
             if (!slave.hasTrait(AWS.slave)) continue;
 
             slave.setProfession(AWUnitProfession.Slave.C());
-            Main.LogInfo($"{pObject.getName()} 提交奴隶 {slave.getName()}");
+            Main.LogInfo($"{pObject.getName()} 提交奴隶 {slave.getName()} 至 {pObject.city.getCityName()}");
         }
 
         pObject.data.WriteObj<string[]>(AWDataS.caught_slaves, null);
