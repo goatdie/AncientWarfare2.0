@@ -26,5 +26,12 @@ public class CityTaskLibrary : ExtendedLibrary<BehaviourTaskCity>
         });
         t.addBeh(new BehCheckSlaveJobs());
         t.addBeh(new CityBehRandomWait(0.1f));
+
+        add(new BehaviourTaskCity
+        {
+            id = "produce_slaves"
+        });
+        t.addBeh(new BehProduceSlaves());
+        t.addBeh(new CityBehRandomWait(0.1f));
     }
 }
