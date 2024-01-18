@@ -7,6 +7,10 @@ public class AW_War : War
 
     private readonly List<City> _list_attackers_city = new List<City>();
     private readonly List<City> _list_defenders_city = new List<City>();
+    public City _attackerCapital;
+    public City _defenderCapital;
+
+
 
 
 
@@ -30,11 +34,12 @@ public class AW_War : War
         }
         this.prepare();
         #endregion
+
         _list_attackers_city.AddRange(pAttacker.cities);
-        if (pDefender != null)
-        {
-            _list_defenders_city.AddRange(pDefender.cities);
-        }
+        _list_defenders_city.AddRange(pDefender?.cities ?? new List<City>());
+
+        _attackerCapital = pAttacker.capital; 
+        _defenderCapital = pDefender?.capital;
     }
-    
+
 }

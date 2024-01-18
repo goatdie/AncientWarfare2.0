@@ -34,3 +34,5 @@ historical_figure,禁止生成历史人物,Randomly Generate Historical Figures
 historical_figure Description,启用该按钮后将禁止生成历史人物,Disable the generation of historical figures(Enable the button to disable the function)
 AW2 Description,古代战争2,AncientWarfare 2 
 AW2,春秋,AncientWarfare 2 
+pay_tax,中央税赋,Tax for Capital
+tax_income,地方税收,City Tax Income

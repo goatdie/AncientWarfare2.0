@@ -1,0 +1,2567 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NeoModLoader</name>
+    </assembly>
+    <members>
+        <member name="T:NeoModLoader.api.AbstractListWindowItem`1">
+            <summary>
+            Abstract List Window Item
+            </summary>
+            <typeparam name="TItem">The type of the parameter passed into to setup the item</typeparam>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractListWindowItem`1.Setup(`0)">
+            <summary>
+            Configure the item with the given object before added to the list
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.AbstractListWindow`2">
+            <summary>
+            An abstract window that contains a list of items.
+            <para> Items are layout automatically </para>
+            <para> Scroll View size fits to Items automatically </para>
+            </summary>
+            <remarks>
+            You should create a subclass of this class, and call CreateAndInit to create a window.
+            <para>In addition, you need to create a subclass of <see cref="T:NeoModLoader.api.AbstractListWindowItem`1"/> for setup each item of the list </para>
+            </remarks>
+            <example><see cref="T:NeoModLoader.ui.ModListWindow"/></example>
+            <typeparam name="T">The type of the class which inherits this class </typeparam>
+            <typeparam name="TItem">The type of object passed into AbstractListWindowItem.Setup as parameter </typeparam>
+        </member>
+        <member name="F:NeoModLoader.api.AbstractListWindow`2.ItemPrefab">
+            <summary>
+            Prefab of list item
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.AbstractListWindow`2.ItemMap">
+            <summary>
+            A map of item to its corresponding <see cref="T:NeoModLoader.api.AbstractListWindowItem`1"/>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractListWindow`2.AddItemToList(`1)">
+            <summary>
+            Add an item to the list
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractListWindow`2.RemoveItemFromList(`1)">
+            <summary>
+            Remove an item from the list
+            </summary>
+            <param name="item"></param>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractListWindow`2.ClearList">
+            <summary>
+            Clear all items in list
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractListWindow`2.CreateAndInit(System.String)">
+            <summary>
+            Create and initilize a window instance of your subclass window
+            </summary>
+            <param name="pWindowId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractListWindow`2.CreateItemPrefab">
+            <summary>
+            You should override this to make or load your own item prefab.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.api.AbstractWideWindow`1">
+            <summary>
+                This class is used to create a wide window
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractWideWindow`1.CreateAndInit(System.String)">
+            <summary>
+                以 pWindowId 创建并初始化一个 T 类型的窗口
+            </summary>
+            <param name="pWindowId"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.api.AbstractWindow`1">
+            <summary>
+            An abstract window class that should be only one instance.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:NeoModLoader.api.AbstractWindow`1.Instance">
+            <summary>
+            The only instance of this class.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.AbstractWindow`1.ContentTransform">
+            <summary>
+            Transform of Background/Scroll View/Viewport/Content of Instance
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.AbstractWindow`1.BackgroundTransform">
+            <summary>
+            Transform of Background of Instance
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.AbstractWindow`1.Initialized">
+            <summary>
+            It will be set to true after <see cref="M:NeoModLoader.api.AbstractWindow`1.Init"/> is called.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.AbstractWindow`1.IsOpened">
+            <summary>
+            It will be set to true after <see cref="M:NeoModLoader.api.AbstractWindow`1.OnFirstEnable"/> and <see cref="M:NeoModLoader.api.AbstractWindow`1.OnNormalEnable"/> called.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.AbstractWindow`1.IsFirstOpen">
+            <summary>
+            It will be set to false after <see cref="M:NeoModLoader.api.AbstractWindow`1.OnFirstEnable"/> called.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.AbstractWindow`1.WindowId">
+            <summary>
+            WindowId of <see cref="P:NeoModLoader.api.AbstractWindow`1.Instance"/>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractWindow`1.CreateAndInit(System.String)">
+            <summary>
+            以 pWindowId 创建并初始化一个 T 类型的窗口
+            </summary>
+            <param name="pWindowId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractWindow`1.Init">
+            <summary>
+            You should override this method to initialize your window.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractWindow`1.OnNormalDisable">
+            <summary>
+            To replace <see cref="M:NeoModLoader.api.AbstractWindow`1.OnDisable"/>, It is called after <see cref="M:NeoModLoader.api.AbstractWindow`1.Init"/>(same as <see cref="F:NeoModLoader.api.AbstractWindow`1.Initialized"/> = true.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractWindow`1.OnFirstEnable">
+            <summary>
+            Is is called after <see cref="M:NeoModLoader.api.AbstractWindow`1.Init"/> and first open of <see cref="P:NeoModLoader.api.AbstractWindow`1.Instance"/>. After this, <see cref="M:NeoModLoader.api.AbstractWindow`1.OnNormalEnable"/> will be called at same <see cref="M:NeoModLoader.api.AbstractWindow`1.OnEnable"/>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.AbstractWindow`1.OnNormalEnable">
+            <summary>
+            It is called after <see cref="M:NeoModLoader.api.AbstractWindow`1.Init"/> and <see cref="M:NeoModLoader.api.AbstractWindow`1.OnFirstEnable"/>.
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.AttachedModComponent">
+            <summary>
+                This class is made for ncms mod to get <see cref="T:NeoModLoader.api.ModDeclare" /> for themselves
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.attributes.ExperimentalAttribute">
+            <summary>
+            Experimental feature
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.attributes.ExperimentalAttribute.#ctor">
+            <summary>
+            Tag a feature as experimental
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.attributes.ExperimentalAttribute.#ctor(System.String)">
+            <summary>
+            Tag a feature as experimental with tip string
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.attributes.HotfixableAttribute">
+            <summary>
+            If a method has this attribute and its mod main class implements <see cref="T:NeoModLoader.api.IReloadable"/>, the method will be hotfixed when the mod is reloaded.
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.BasicMod`1">
+            <summary>
+            If you want to create a simple mod, you can inherit this class.
+            <para>Then NML will find this class in your compiled mod, then load it into ModLoader provided by WorldBox</para>
+            <para>You can get your mod's information by <see cref="M:NeoModLoader.api.BasicMod`1.GetDeclaration"/></para>
+            <para>You can get your mod's gameObject loaded to ModLoader by <see cref="M:NeoModLoader.api.BasicMod`1.GetGameObject"/></para>
+            <para>You must override <see cref="M:NeoModLoader.api.BasicMod`1.OnModLoad"/> to load your mod or add loading code to Awake and others will called automatically</para>
+            <remarks>
+            The common order of calling is:
+            OnModLoad -> Awake -> OnEnable -> Start -> Update
+            </remarks>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.BasicMod`1.Instance">
+            <summary>
+            Instance of your mod.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.GetGameObject">
+            <summary>
+            Get the gameObject the mod attached to.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.GetUrl">
+            <summary>
+            Get the url set in mod.json or url of WorldBoxOpenMods' organization.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.OnLoad(NeoModLoader.api.ModDeclare,UnityEngine.GameObject)">
+            <summary>
+            Do not call this method manually, it is useless.
+            <remarks>Unless you know what to do, like try loading again after an exception on <see cref="M:NeoModLoader.api.BasicMod`1.OnModLoad"/></remarks>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.OnModLoad">
+            <summary>
+            You should override this method to load your mod.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.LogInfo(System.String)">
+            <summary>
+            Log a message with mod name.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.LogWarning(System.String)">
+            <summary>
+            Log a warning message with mod name.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.LogError(System.String)">
+            <summary>
+            Log an error message with mod name.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.GetDeclaration">
+            <summary>
+            Get the gameObject the mod attached to.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.GetLocaleFilesDirectory(NeoModLoader.api.ModDeclare)">
+            <summary>
+            If you need to add locale files for your mod, create locale files written by JSON under `Locales` directory in your mod 
+            </summary>
+            <returns>The path to the directory of your locale files</returns>
+        </member>
+        <member name="M:NeoModLoader.api.BasicMod`1.GetConfig">
+            <summary>
+            Get the config of your mod.
+            </summary>
+            <returns>Config instance reference</returns>
+        </member>
+        <member name="T:NeoModLoader.api.exceptions.UnrecognizableResourceFileException">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.exceptions.UnrecognizableResourceFileException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path">Path to unrecognized resource file</param>
+        </member>
+        <member name="T:NeoModLoader.api.exceptions.UnsupportedFileTypeException">
+            <inheritdoc />
+        </member>
+        <member name="M:NeoModLoader.api.exceptions.UnsupportedFileTypeException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="filePath"></param>
+        </member>
+        <member name="T:NeoModLoader.api.IConfigurable">
+            <summary>
+            A mod that implements this interface will be configurable in the game and the config user interface will be automatically generated.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.IConfigurable.GetConfig">
+            <summary>
+            Get the config instance of your mod.
+            <remarks>
+            <list type="bullet">
+            <item>The config instance is used to read and write config in user interface.</item>
+            <item>You should manage its save and load manually if you implements <see cref="T:NeoModLoader.api.IConfigurable"/> yourself instead of from <see cref="T:NeoModLoader.api.BasicMod`1"/></item>
+            </list>
+            </remarks>
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.ILocalizable">
+            <summary>
+            If your want your mod's locale files loaded automatically, implement this interface for your main class.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.ILocalizable.GetLocaleFilesDirectory(NeoModLoader.api.ModDeclare)">
+            <param name="pModDeclare">Because your mod have not been loaded, you should use <see href="pModDeclare"/> instead of <see cref="M:NeoModLoader.api.IMod.GetDeclaration"/> to visit your mod's information</param>
+            <returns>The path to the directory of your locale files</returns>
+        </member>
+        <member name="T:NeoModLoader.api.IMod">
+            <summary>
+            This interface is used to represent a mod.
+            <para>NeoModLoader searches all types of your code and find a class implements <see cref="T:NeoModLoader.api.IMod"/> and inherits <see cref="T:UnityEngine.MonoBehaviour"/></para>
+            <para>Then creates component of the class and calls <see cref="M:NeoModLoader.api.IMod.OnLoad(NeoModLoader.api.ModDeclare,UnityEngine.GameObject)"/></para>
+            <para>Finally set the GameObject active</para>
+            </summary>
+            <remarks>
+            For a native mod, methods will be called in this order:
+            OnLoad -> Awake -> OnEnable -> Start -> Update
+            </remarks>
+        </member>
+        <member name="M:NeoModLoader.api.IMod.GetDeclaration">
+            <summary>
+            Get information of your mod.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.IMod.GetGameObject">
+            <summary>
+            Get the GameObject instance of your mod.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.IMod.GetUrl">
+            <summary>
+            Get the url to your mod's repository or community.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.IMod.OnLoad(NeoModLoader.api.ModDeclare,UnityEngine.GameObject)">
+            <summary>
+            This method will be called when the mod is loaded.
+            </summary>
+            <param name="pModDecl">Mod information</param>
+            <param name="pGameObject">The GameObject instance of this mod</param>
+        </member>
+        <member name="T:NeoModLoader.api.IReloadable">
+            <summary>
+            Implement this interface, your mod can reload assets manually.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.IReloadable.Reload">
+            <summary>
+            Reload assets in this method.
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.IUnloadable">
+            <summary>
+            If your mod main class implements this, the method <see cref="M:NeoModLoader.api.IUnloadable.OnUnload"/> will be called when the mod is disabled.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.IUnloadable.OnUnload">
+            <summary>
+            The method will be called when the mod is disabled.
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.ConfigItemType">
+            <summary>
+            Type of <see cref="T:NeoModLoader.api.ModConfigItem"/>
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ConfigItemType.SWITCH">
+            <summary>
+            A <see cref="T:NeoModLoader.api.ModConfigItem"/> with this will be displayed as a switch button. Only <see cref="P:NeoModLoader.api.ModConfigItem.BoolVal"/> is valid
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ConfigItemType.SLIDER">
+            <summary>
+            A <see cref="T:NeoModLoader.api.ModConfigItem"/> with this will be displayed as a slider. Only <see cref="P:NeoModLoader.api.ModConfigItem.FloatVal"/> is valid
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ConfigItemType.TEXT">
+            <summary>
+            A <see cref="T:NeoModLoader.api.ModConfigItem"/> with this will be displayed as a text box. Only <see cref="P:NeoModLoader.api.ModConfigItem.TextVal"/> is valid
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ConfigItemType.SELECT">
+            <summary>
+            A <see cref="T:NeoModLoader.api.ModConfigItem"/> with this will be displayed as a select box. Only <see cref="P:NeoModLoader.api.ModConfigItem.IntVal"/> is valid
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.ModConfigItem">
+            <summary>
+            The item of <see cref="T:NeoModLoader.api.ModConfig"/>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.Type">
+            <summary>
+            Type of this item
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.Id">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.IconPath">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.BoolVal">
+            <summary>
+            It is valid only when <see cref="P:NeoModLoader.api.ModConfigItem.Type"/> is <see cref="F:NeoModLoader.api.ConfigItemType.SWITCH"/>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.TextVal">
+            <summary>
+            It is valid only when <see cref="P:NeoModLoader.api.ModConfigItem.Type"/> is <see cref="F:NeoModLoader.api.ConfigItemType.TEXT"/>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.FloatVal">
+            <summary>
+            It is valid only when <see cref="P:NeoModLoader.api.ModConfigItem.Type"/> is <see cref="F:NeoModLoader.api.ConfigItemType.SLIDER"/>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.MaxFloatVal">
+            <summary>
+            It is valid only when <see cref="P:NeoModLoader.api.ModConfigItem.Type"/> is <see cref="F:NeoModLoader.api.ConfigItemType.SLIDER"/>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.MinFloatVal">
+            <summary>
+            It is valid only when <see cref="P:NeoModLoader.api.ModConfigItem.Type"/> is <see cref="F:NeoModLoader.api.ConfigItemType.SLIDER"/>
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.IntVal">
+            <summary>
+            It is not implemented.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfigItem.CallBack">
+            <summary>
+            Callback "Type:Method", the method must be static and have only one parameter(see <see cref="P:NeoModLoader.api.ModConfigItem.Type"/>)
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfigItem.SetFloatRange(System.Single,System.Single)">
+            <summary>
+            Set float range, it is valid only when <see cref="P:NeoModLoader.api.ModConfigItem.Type"/> is <see cref="F:NeoModLoader.api.ConfigItemType.SLIDER"/>
+            </summary>
+            <param name="pMin"></param>
+            <param name="pMax"></param>
+            <exception cref="T:System.ArgumentException"><paramref name="pMax"/> is smaller than <paramref name="pMin"/></exception>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfigItem.SetValue(System.Object,System.Boolean)">
+            <summary>
+            Set value of this item
+            </summary>
+            <param name="val">It's type should match this item's <see cref="P:NeoModLoader.api.ModConfigItem.Type"/></param>
+            <param name="pSkipCallback">Wheather skip calling callback when value updated</param>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfigItem.GetValue">
+            <summary>
+            Get value of this item
+            </summary>
+            <returns>The actual type of return value matches <see cref="P:NeoModLoader.api.ModConfigItem.Type"/></returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:NeoModLoader.api.ModConfig">
+            <summary>
+            This class is used to represent a mod's config.
+            </summary>
+            <remarks>
+            <list type="bullet">
+            <item>In fact, it can be used to represent any config and displayed by <see cref="M:NeoModLoader.ui.ModConfigureWindow.ShowWindow(NeoModLoader.api.ModConfig)"/></item>
+            </list>
+            </remarks>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfig.#ctor(System.String,System.Boolean)">
+            <summary>
+            Create a new <see cref="T:NeoModLoader.api.ModConfig"/> instance from <paramref name="path"/>
+            </summary>
+            <param name="path">Path to read/save</param>
+            <param name="pIsPersistent">Whether to skip callback of all items</param>
+        </member>
+        <member name="P:NeoModLoader.api.ModConfig.Item(System.String)">
+            <summary>
+            Get a <see cref="T:System.Collections.Generic.Dictionary`2"/> of <see cref="T:NeoModLoader.api.ModConfigItem"/> by <paramref name="pGroupId"/>
+            </summary>
+            <param name="pGroupId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfig.MergeWith(NeoModLoader.api.ModConfig)">
+            <summary>
+                Merge with default config. Keep all items in default config, and remove items not in default config.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfig.Save(System.String)">
+            <summary>
+            Save config
+            </summary>
+            <param name="path">Overwrite save path</param>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfig.CreateGroup(System.String)">
+            <summary>
+            Create a item group with id <paramref name="pId"/>
+            </summary>
+            <param name="pId"></param>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfig.AddConfigItem(System.String,System.String,NeoModLoader.api.ConfigItemType,System.Object,System.String,System.String)">
+            <summary>
+            Add a new Config item to <paramref name="pGroupId"/>.
+            </summary>
+            <param name="pGroupId"></param>
+            <param name="pId"></param>
+            <param name="pType"></param>
+            <param name="pDefaultValue"></param>
+            <param name="pIconPath"></param>
+            <param name="pCallback"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.api.ModConfig.AddConfigSliderItemWithRange(System.String,System.String,System.Single,System.Single,System.Single,System.String,System.String)">
+            <summary>
+            Add a new Config item typed <see cref="F:NeoModLoader.api.ConfigItemType.SLIDER"/> to <paramref name="pGroupId"/>
+            </summary>
+            <param name="pGroupId"></param>
+            <param name="pId"></param>
+            <param name="pDefaultValue"></param>
+            <param name="pMinValue"></param>
+            <param name="pMaxValue"></param>
+            <param name="pIconPath"></param>
+            <param name="pCallback"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.api.ModTypeEnum">
+            <summary>
+            Mod type, determine which mod loader to load it.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ModTypeEnum.NEOMOD">
+            <summary>
+            NeoMod
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ModTypeEnum.COMPILED_NEOMOD">
+            <summary>
+                Compiled NeoMod
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ModTypeEnum.BEPINEX">
+            <summary>
+            BepInEx
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.api.ModTypeEnum.RESOURCE_PACK">
+            <summary>
+                Resource Pack
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.api.ModDeclare">
+            <summary>
+            Declaration of a mod
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.ModDeclare.#ctor(System.String,System.String,System.String,System.String,System.String,System.String,System.String[],System.String[],System.String[])">
+            <summary>
+            Create a ModDeclare object with given parameters
+            </summary>
+            <param name="pName"></param>
+            <param name="pAuthor"></param>
+            <param name="pIconPath"></param>
+            <param name="pVersion"></param>
+            <param name="pDescription"></param>
+            <param name="pFolderPath"></param>
+            <param name="pDependencies"></param>
+            <param name="pOptionalDependencies"></param>
+            <param name="pIncompatibleWith"></param>
+        </member>
+        <member name="M:NeoModLoader.api.ModDeclare.#ctor(System.String)">
+            <summary>
+            Read a mod config file and parse it into a ModDeclare object
+            </summary>
+            <param name="pFilePath"></param>
+            <exception cref="T:System.InvalidOperationException"></exception>
+            <exception cref="T:System.Exception"></exception>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.Name">
+            <summary>
+            Mod Name. Add locale of $"{Name}_{language}" can make it display different name in different language
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.UID">
+            <summary>
+            Unique ID. GUID.ToValid() or $"{Author}_{Name}".ToUpper().ToValid(). ToValid: Replace all characters belong to ASCII but are not letters or numbers with '_'
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.Author">
+            <summary>
+            Mod Author. Add locale of $"{Author}_{language}" can make it display different name in different language
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.Version">
+            <summary>
+            Mod Version
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.Description">
+            <summary>
+            Mod Description. Add locale of $"{Description}_{language}" can make it display different name in different language
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.RepoUrl">
+            <summary>
+            Url to repo or website of this mod.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.Dependencies">
+            <summary>
+            List of hard dependencies' UID
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.OptionalDependencies">
+            <summary>
+            List of soft dependencies' UID
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.IncompatibleWith">
+            <summary>
+            List of incompatible mods' UID. Not implemented yet.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.FolderPath">
+            <summary>
+            The mod's folder path.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.TargetGameBuild">
+            <summary>
+            Target Game Build. Not implemented yet.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.IconPath">
+            <summary>
+            Path to icon file. Relative to mod folder.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.ModType">
+            <summary>
+            Mod type.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.UsePublicizedAssembly">
+            <summary>
+            Wheather use publicized assembly.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.IsNCMSMod">
+            <summary>
+            Wheather this mod be determined as a NCMS mod.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.api.ModDeclare.FailReason">
+            <summary>
+            Reason of failing to compile or load.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.ModDeclare.SetIconPath(System.String)">
+            <summary>
+            This only called for BepInEx mods
+            </summary>
+            <param name="iconPath"></param>
+        </member>
+        <member name="T:NeoModLoader.api.VirtualMod">
+            <summary>
+            This class is used to represent a mod that is not loaded by NeoModLoader.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.api.VirtualMod.GetDeclaration">
+            <inheritdoc />
+        </member>
+        <member name="M:NeoModLoader.api.VirtualMod.GetGameObject">
+            <inheritdoc />
+        </member>
+        <member name="M:NeoModLoader.api.VirtualMod.GetUrl">
+            <inheritdoc />
+        </member>
+        <member name="M:NeoModLoader.api.VirtualMod.OnLoad(NeoModLoader.api.ModDeclare,UnityEngine.GameObject)">
+            <inheritdoc />
+        </member>
+        <member name="T:NeoModLoader.constants.CoreConstants">
+            <summary>
+            Core constants
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.ModName">
+            <summary>
+            Name of this mod loader as a game native mod
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.OrgName">
+            <summary>
+            Organization name for this mod loader on GitHub
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.RepoName">
+            <summary>
+            Repository name for this mod loader on GitHub
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.OrgURL">
+            <summary>
+            Url to the organization page on GitHub
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.RepoURL">
+            <summary>
+            Url to the repository page on GitHub
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.WorkshopFileId">
+            <summary>
+            Id of this mod loader as a steam workshop item
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.GameId">
+            <summary>
+            Id of this game on steam
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.CoreConstants.DefaultLocaleID">
+            <summary>
+                Id of default localization
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.constants.Others">
+            <summary>
+            Some constants that are not related to mod loader itself.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.constants.Others.unity_player_enabled">
+            <summary>
+            Determine whether the game is running on unity player. (Editor included). For unit test.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.constants.Others.is_editor">
+            <summary>
+            Check whether the game is running on unity editor. For NeoModSDK
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.constants.Paths">
+            <summary>
+            Common used paths
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.NMLModPath">
+            <summary>
+            Path to the mod loader file
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.PersistentDataPath">
+            <summary>
+            Path to persistent data
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.StreamingAssetsPath">
+            <summary>
+            Path to folder StreamingAssets
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.NativeModsPath">
+            <summary>
+            Path to game native Mods folder
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ManagedPath">
+            <summary>
+            Path to game native Managed folder
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.NMLPath">
+            <summary>
+            Path to folder contains NML's cache
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.PublicizedAssemblyPath">
+            <summary>
+            Path to the publicized Assembly-CSharp.dll file
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModsConfigPath">
+            <summary>
+            Path to folder mods config under persistent data folder
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.BepInExPluginsPath">
+            <summary>
+            Path to BepInEx plugins folder
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModsPath">
+            <summary>
+            Path to Mods folder provided by NML
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.NMLAssembliesPath">
+            <summary>
+            Path to extracted Assemblies cache
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.CompiledModsPath">
+            <summary>
+            Path to compiled mods cache
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.TabOrderRecordPath">
+            <summary>
+            Path to tab order record file
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModCompileRecordPath">
+            <summary>
+            Path to mod compilation timestamps record file
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModsDisabledRecordPath">
+            <summary>
+            Path to disabled mods record file
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModDeclarationFileName">
+            <summary>
+            File name of a mod declaration
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModDefaultConfigFileName">
+            <summary>
+            File name of a default mod config file for BasicMod
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModResourceFolderName">
+            <summary>
+            Folder name of a mod's resource folder which will be patched to <see cref="T:UnityEngine.Resources"/>
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.NCMSAdditionModResourceFolderName">
+            <summary>
+            Folder name of a NCMS mod's additional resource folder which will also be patched to <see cref="T:UnityEngine.Resources"/>
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.ModAssetBundleFolderName">
+            <summary>
+            Folder name of a mod's assetbundles.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.CommonModsWorkshopPath">
+            <summary>
+            Path to the folder of game's workshop content
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.NCMSModEmbededResourceFolderName">
+            <summary>
+            Folder name of a NCMS mod's EmbeddedResource folder
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.constants.Paths.IgnoreSearchDirectories">
+            <summary>
+            All folders/files that will be ignored when searching for mods' content to upload
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.constants.Paths.GamePath">
+            <summary>
+            Path to game root folder
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.Event.AbstractHandler`1">
+            <summary>
+            Abstract handler for event
+            </summary>
+            <typeparam name="THandler"></typeparam>
+        </member>
+        <member name="P:NeoModLoader.General.Event.AbstractHandler`1.enabled">
+            <summary>
+            Wheather this handler is enabled. It is disabled when error_hit reach 10
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.Event.BaseListener">
+            <summary>
+            Basic Listener for unite all listener in a list
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.Event.AbstractListener`2">
+            <summary>
+            Abstract listener for listening event
+            </summary>
+            <typeparam name="TListener"></typeparam>
+            <typeparam name="THandler">Event handler type</typeparam>
+        </member>
+        <member name="P:NeoModLoader.General.Event.AbstractListener`2.instance">
+            <summary>
+            Instance of this listener
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.Event.AbstractListener`2.handlers">
+            <summary>
+            All handlers
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.AbstractListener`2.#ctor">
+            <summary>
+            Create a listener and register it to Harmony
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.AbstractListener`2.InsertCallHandleCode(System.Collections.Generic.List{HarmonyLib.CodeInstruction},System.Int32)">
+            <summary>
+            Simple insert code to call HandleAll method
+            </summary>
+            <param name="codes"></param>
+            <param name="pos">The position to insert</param>
+        </member>
+        <member name="M:NeoModLoader.General.Event.AbstractListener`2.RegisterHandler(`1)">
+            <summary>
+            Register handler. Do not register handler repeatedly.
+            </summary>
+            <param name="handler"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.AllianceCreateHandler">
+            <summary>
+            This class is used to handle alliance create event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.AllianceCreateHandler.Handle(Alliance,Kingdom,Kingdom)">
+            <summary>
+            This method is called when an alliance is created. Detailedly, at the end of <see cref="M:AllianceManager.newAlliance(Kingdom,Kingdom)"/>
+            </summary>
+            <param name="pAlliance">The alliance created</param>
+            <param name="pKingdom">One kingdom support the alliance</param>
+            <param name="pKingdom2">Another kingdom support the alliance</param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.CityCreateHandler">
+            <summary>
+            This class is used to handle city create event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.CityCreateHandler.Handle(City)">
+            <summary>
+            This method is called when a city is created. Detailedly, at the end of <see cref="M:City.newCityEvent"/>
+            </summary>
+            <param name="pCity">The city just created</param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.ClanCreateHandler">
+            <summary>
+            This class is used to handle clan create event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.ClanCreateHandler.Handle(Clan,Actor)">
+            <summary>
+            This method is called when a clan is created. Detailedly, at the end of <see cref="M:ClanManager.newClan(Actor)"/>
+            </summary>
+            <param name="pClan"></param>
+            <param name="pFounder"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.CultureCreateHandler">
+            <summary>
+            This class is used to handle culture create event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.CultureCreateHandler.Handle(Culture,Race,City)">
+            <summary>
+            This method is called when a culture is created. Detailedly, at the end of <see cref="M:CultureManager.newCulture(Race,City)"/>
+            </summary>
+            <param name="pCulture"></param>
+            <param name="pRace"></param>
+            <param name="pCity"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.KingdomSetupHandler">
+            <summary>
+            This class is used to handle kingdom setup event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.KingdomSetupHandler.Handle(Kingdom,System.Boolean)">
+            <summary>
+            This method is called when a kingdom is setup. Detailedly, at the end of <see cref="M:KingdomManager.setupKingdom(Kingdom,System.Boolean)"/>
+            </summary>
+            <param name="pKingdom"></param>
+            <param name="pCiv"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.PlotStartHandler">
+            <summary>
+            This class is used to handle plot start event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.PlotStartHandler.Handle(Plot,Actor,PlotAsset)">
+            <summary>
+            This method is called when a plot is started. Detailedly, at the end of <see cref="M:PlotManager.newPlot(Actor,PlotAsset)"/>
+            </summary>
+            <param name="pPlot"></param>
+            <param name="pActor"></param>
+            <param name="pAsset"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.WarEndHandler">
+            <summary>
+            This class is used to handle war end event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.WarEndHandler.Handle(WarManager,War)">
+            <summary>
+            This method is called when a war is ended. Detailedly, at the end of <see cref="M:WarManager.endWar(War,System.Boolean)"/>
+            </summary>
+            <param name="pWarManager"></param>
+            <param name="pWar"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.WarStartHandler">
+            <summary>
+            This class is used to handle war start event.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.WarStartHandler.Handle(War,Kingdom,Kingdom,WarTypeAsset)">
+            <summary>
+            This method is called when a war is started. Detailedly, at the end of <see cref="M:WarManager.newWar(Kingdom,Kingdom,WarTypeAsset)"/>
+            </summary>
+            <param name="pWar"></param>
+            <param name="pAttacker"></param>
+            <param name="pDefender"></param>
+            <param name="pWarType"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Handlers.WorldLogMessageHandler">
+            <summary>
+            This handler is made for making your own log message
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Handlers.WorldLogMessageHandler.Handle(WorldLogMessage@,System.String@,UnityEngine.Color@,System.Boolean@,System.Boolean)">
+            <summary>
+            This method is called when a log message is going to show. Detailedly, at the end of <see cref="M:WorldLogMessageExtensions.getFormatedText(WorldLogMessage@,UnityEngine.UI.Text,System.Boolean,System.Boolean)"/>
+            </summary>
+            <param name="pMessage">This includes message data</param>
+            <param name="pText">The text to display</param>
+            <param name="pColor">The color of text to show</param>
+            <param name="pColorField">Whether <paramref name="pColor"/> is available</param>
+            <param name="pColorTags"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Listeners.AllianceCreateListener">
+            <summary>
+                This class is used to listen to <see cref="M:AllianceManager.newAlliance(Kingdom,Kingdom)" /> event. And call all
+                <see cref="M:NeoModLoader.General.Event.Handlers.AllianceCreateHandler.Handle(Alliance,Kingdom,Kingdom)" /> when the event is triggered.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Listeners.AllianceCreateListener.HandleAll(Alliance,Kingdom,Kingdom)">
+            <summary>
+                Call all <see cref="M:NeoModLoader.General.Event.Handlers.AllianceCreateHandler.Handle(Alliance,Kingdom,Kingdom)" /> when the event is triggered.
+            </summary>
+            <inheritdoc cref="M:NeoModLoader.General.Event.Handlers.AllianceCreateHandler.Handle(Alliance,Kingdom,Kingdom)" />
+        </member>
+        <member name="T:NeoModLoader.General.Event.Listeners.CityCreateListener">
+            <summary>
+                This class is used to listen to <see cref="M:City.newCityEvent" /> event. And call all
+                <see cref="M:NeoModLoader.General.Event.Handlers.CityCreateHandler.Handle(City)" /> when the event is triggered.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Listeners.CityCreateListener.HandleAll(City)">
+            <summary>
+                Call all <see cref="M:NeoModLoader.General.Event.Handlers.CityCreateHandler.Handle(City)" /> when the event is triggered.
+            </summary>
+            <inheritdoc cref="M:NeoModLoader.General.Event.Handlers.CityCreateHandler.Handle(City)" />
+        </member>
+        <member name="T:NeoModLoader.General.Event.Listeners.ClanCreateListener">
+            <summary>
+            A listener at the end of <see cref="M:ClanManager.newClan(Actor)"/> method.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Listeners.ClanCreateListener.HandleAll(Clan,Actor)">
+            <summary>
+            
+            </summary>
+            <param name="pClan"></param>
+            <param name="pActor"></param>
+        </member>
+        <member name="T:NeoModLoader.General.Event.Listeners.WorldLogMessageListener">
+            <summary>
+            This listener is made for adding your own log message.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Event.Listeners.WorldLogMessageListener.HandleAll(WorldLogMessage@,System.String,UnityEngine.Color,UnityEngine.UI.Text,System.Boolean,System.Boolean)">
+            <summary>
+                This method is called when a log message is about to be displayed. And call all
+                <see cref="M:NeoModLoader.General.Event.Handlers.WorldLogMessageHandler.Handle(WorldLogMessage@,System.String@,UnityEngine.Color@,System.Boolean@,System.Boolean)" /> when the event is triggered.
+            </summary>
+            <inheritdoc cref="M:NeoModLoader.General.Event.Handlers.WorldLogMessageHandler.Handle(WorldLogMessage@,System.String@,UnityEngine.Color@,System.Boolean@,System.Boolean)" />
+        </member>
+        <member name="T:NeoModLoader.General.Game.ItemAssetCreator">
+            <summary>
+            This class is used to create item assets to avoid useless coding and avoid necessary code to be forgotten.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.Game.ItemAssetCreator.CreateWeaponMaterial(System.String,BaseStats,System.Int32,System.Collections.Generic.KeyValuePair{System.String,System.Int32}[],System.Int32,System.Boolean,System.Int32,System.Int32,ItemQuality,System.String)">
+            <summary>
+            Create material for weapon
+            </summary>
+            <remarks>You should add it to <see cref="F:AssetManager.items_material_weapon"/> manually</remarks>
+            <param name="id"></param>
+            <param name="base_stats"></param>
+            <param name="cost_gold"></param>
+            <param name="cost_resources"></param>
+            <param name="equipment_value"></param>
+            <param name="metallic"></param>
+            <param name="minimum_city_storage_resource_1"></param>
+            <param name="mod_rank"></param>
+            <param name="quality"></param>
+            <param name="tech_needed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.Game.ItemAssetCreator.CreateAccessoryOrArmorMaterial(System.String,BaseStats,System.Int32,System.Collections.Generic.KeyValuePair{System.String,System.Int32}[],System.Int32,System.Int32,System.Int32,ItemQuality,System.String)">
+            <summary>
+            Create material for accessory or armor.
+            </summary>
+            <remarks>You should add it to <see cref="F:AssetManager.items_material_accessory"/> or <see cref="F:AssetManager.items_material_armor"/> manually</remarks>
+            <param name="id"></param>
+            <param name="base_stats"></param>
+            <param name="cost_gold"></param>
+            <param name="cost_resources"></param>
+            <param name="equipment_value"></param>
+            <param name="minimum_city_storage_resource_1"></param>
+            <param name="mod_rank"></param>
+            <param name="quality"></param>
+            <param name="tech_needed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.Game.ItemAssetCreator.CreateAndAddModifier(System.String,System.String,System.Int32,System.String,System.String[],System.Int32,System.Int32,ItemQuality,BaseStats,AttackAction,WorldAction,System.Single)">
+            <summary>
+            Create and add an item modifier
+            </summary>
+            <param name="id"></param>
+            <param name="mod_type"></param>
+            <param name="mod_rank"></param>
+            <param name="translation_key"></param>
+            <param name="pools"></param>
+            <param name="rarity"></param>
+            <param name="equipment_value"></param>
+            <param name="quality"></param>
+            <param name="base_stats"></param>
+            <param name="action_attack_target"></param>
+            <param name="action_special_effect"></param>
+            <param name="special_effect_interval"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.Game.ItemAssetCreator.CreateMeleeWeapon(System.String,BaseStats,System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.Collections.Generic.List{System.String},System.String,AttackAction,WorldAction,System.Single,System.Int32,System.String)">
+            <summary>
+            Create and add a melee weapon
+            </summary>
+            <param name="id"></param>
+            <param name="base_stats"></param>
+            <param name="materials"></param>
+            <param name="item_modifiers"></param>
+            <param name="name_class"></param>
+            <param name="name_templates"></param>
+            <param name="tech_needed"></param>
+            <param name="action_attack_target"></param>
+            <param name="action_special_effect"></param>
+            <param name="special_effect_interval"></param>
+            <param name="equipment_value"></param>
+            <param name="path_slash_animation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.Game.ItemAssetCreator.CreateRangeWeapon(System.String,System.String,BaseStats,System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.Collections.Generic.List{System.String},System.String,AttackAction,WorldAction,System.Single,System.Int32,System.String)">
+            <summary>
+            Create and add a range weapon
+            </summary>
+            <param name="id"></param>
+            <param name="projectile"></param>
+            <param name="base_stats"></param>
+            <param name="materials"></param>
+            <param name="item_modifiers"></param>
+            <param name="name_class"></param>
+            <param name="name_templates"></param>
+            <param name="tech_needed"></param>
+            <param name="action_attack_target"></param>
+            <param name="action_special_effect"></param>
+            <param name="special_effect_interval"></param>
+            <param name="equipment_value"></param>
+            <param name="path_slash_animation"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.Game.ItemAssetCreator.CreateArmorOrAccessory(System.String,EquipmentType,BaseStats,System.Collections.Generic.List{System.String},System.Collections.Generic.List{System.String},System.String,System.Collections.Generic.List{System.String},System.String,AttackAction,WorldAction,System.Single,System.Int32)">
+            <summary>
+            Create and add an armor or accessory item.
+            </summary>
+            <param name="id"></param>
+            <param name="equipmentType"></param>
+            <param name="base_stats"></param>
+            <param name="materials"></param>
+            <param name="item_modifiers"></param>
+            <param name="name_class"></param>
+            <param name="name_templates"></param>
+            <param name="tech_needed"></param>
+            <param name="action_attack_target"></param>
+            <param name="action_special_effect"></param>
+            <param name="special_effect_interval"></param>
+            <param name="equipment_value"></param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="T:NeoModLoader.General.LM">
+            <summary>
+            LM is short for Localization Manager
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.LM.locales">
+            <summary>
+            Store all locales loaded by NML.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.LM.Get(System.String)">
+            <summary>
+            Get localized text from key for current language
+            </summary>
+            <returns>Same with <see cref="M:LocalizedTextManager.getText(System.String,UnityEngine.UI.Text)"/></returns>
+        </member>
+        <member name="M:NeoModLoader.General.LM.LoadLocales(System.String)">
+            <summary>
+                Load locales from a file(Only support csv file)
+            </summary>
+            <param name="pFilePath">Path to csv file</param>
+            <exception cref="T:System.FormatException">Invalid csv file</exception>
+        </member>
+        <member name="M:NeoModLoader.General.LM.LoadLocales(System.IO.Stream)">
+            <summary>
+                Load locales from a text stream(Only support csv text)
+            </summary>
+            <param name="pStream">Stream of a csv text</param>
+            <exception cref="T:System.FormatException">Invalid csv text</exception>
+        </member>
+        <member name="M:NeoModLoader.General.LM.LoadLocale(System.String,System.IO.Stream)">
+            <summary>
+            Load locale from a stream (It must be a json file)
+            </summary>
+            <param name="pLanguage">Target save language</param>
+            <param name="pStream">Stream of locale file</param>
+            <exception cref="T:System.FormatException">Text in <see name="pStream"/> is not in correct format to its file name extension</exception>
+        </member>
+        <member name="M:NeoModLoader.General.LM.LoadLocale(System.String,System.String)">
+            <summary>
+            Load locale from a file
+            </summary>
+            <param name="pLanguage">Target save language</param>
+            <param name="pFilePath">Path to locale file</param>
+            <exception cref="T:NeoModLoader.api.exceptions.UnsupportedFileTypeException">Only support <see name="pFilePath"/> ends with ".json"</exception>
+            <exception cref="T:System.FormatException">File at <see name="pFilePath"/> is not in correct format to its file name extension</exception>
+        </member>
+        <member name="M:NeoModLoader.General.LM.AddToCurrentLocale(System.String,System.String)">
+            <summary>
+            Add a key-value pair to current locale
+            <remarks>Overwrite if key exists</remarks>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.LM.Add(System.String,System.String,System.String)">
+            <summary>
+            Add a key-value pair to language locale
+            <param name="language">Target language</param>
+            <param name="key"></param>
+            <param name="value"></param>
+            <remarks>Overwrite if key exists</remarks>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.LM.ApplyLocale(System.String,System.Boolean)">
+            <summary>
+            Apply all locales loaded by this mod to target locale.
+            <remarks>It will be called automatically by NML when language is changed.</remarks>
+            </summary>
+            <param name="language">Language to apply</param>
+            <param name="pUpdateTexts"></param>
+        </member>
+        <member name="M:NeoModLoader.General.LM.ApplyLocale(System.Boolean)">
+            <summary>
+            Apply all locales loaded by this mod to current locale.
+            <remarks>It will be called automatically by NML when language is changed.</remarks>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.LM.setLanguagePostfix(System.String)">
+            <summary>
+            Patch to <see cref="M:LocalizedTextManager.setLanguage(System.String)"/>
+            <remarks>Listen language change event</remarks>
+            </summary>
+            <param name="pLanguage">Parameter of <see cref="M:LocalizedTextManager.setLanguage(System.String)"/></param>
+        </member>
+        <member name="T:NeoModLoader.General.OT">
+            <summary>
+            OT is short for "Object Tools", "Object" is short for "UnityEngine.Object"
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.OT.InitializeCommonText(UnityEngine.UI.Text)">
+            <summary>
+            Initialize common text(with font and rich text support)
+            </summary>
+            <param name="text">The text component to initialize</param>
+        </member>
+        <member name="T:NeoModLoader.General.PowerButtonCreator">
+            <summary>
+            This class is used to create power buttons easily
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.PowerButtonCreator.CreateWindowButton(System.String,System.String,UnityEngine.Sprite,UnityEngine.Transform,UnityEngine.Vector2)">
+            <summary>
+            Create a button used to open window
+            </summary>
+            <remarks>
+                Please set "{pId}"[Necessary] and "{pId} Description"[Optional] in locale file and load it.
+            <para>Prototype comes from NCMS</para>
+            </remarks>
+            <param name="pId">PowerButton's name, determines title and desc key of tooltip</param>
+            <param name="pWindowId">Id of the window to open</param>
+            <param name="pIcon">The icon of the button</param>
+            <param name="pParent">Which transform the button attached to</param>
+            <param name="pLocalPosition">The button position in <paramref name="pParent"/></param>
+            <returns>The PowerButton created</returns>
+        </member>
+        <member name="M:NeoModLoader.General.PowerButtonCreator.CreateSimpleButton(System.String,UnityEngine.Events.UnityAction,UnityEngine.Sprite,UnityEngine.Transform,UnityEngine.Vector2)">
+            <summary>
+            Create a simple power button with click action
+            </summary>
+            <remarks>
+                Please set "{pId}"[Necessary] and "{pId} Description"[Optional] in locale file and load it.
+            <para>Prototype comes from NCMS</para>
+            </remarks>
+            <param name="pId">PowerButton's name, determines title and desc key of tooltip</param>
+            <param name="pAction">The action of the button</param>
+            <param name="pIcon">The icon of the button</param>
+            <param name="pParent">Which transform the button attached to</param>
+            <param name="pLocalPosition">The button position in <paramref name="pParent"/></param>
+            <returns>The PowerButton created</returns>
+        </member>
+        <member name="M:NeoModLoader.General.PowerButtonCreator.CreateGodPowerButton(System.String,UnityEngine.Sprite,UnityEngine.Transform,UnityEngine.Vector2)">
+            <summary>
+            Create a button to use common god power
+            </summary>
+            <remarks>
+            <list type="bullet">
+            <item>Please set "{pGodPowerId}"[Necessary] and "{pGodPowerId} Description"[Optional] in locale file and load it. </item>
+            <item>You should create and add the god power to <see cref="F:AssetManager.powers"/> before call this method</item>
+            </list>
+            </remarks>
+            <param name="pGodPowerId">The god power's id bind to the button</param>
+            <param name="pIcon">The icon of the button</param>
+            <param name="pParent">Which transform the button attached to</param>
+            <param name="pLocalPosition">The button position in <paramref name="pParent"/></param>
+            <returns>The PowerButton created</returns>
+        </member>
+        <member name="M:NeoModLoader.General.PowerButtonCreator.CreateToggleButton(System.String,UnityEngine.Sprite,UnityEngine.Transform,UnityEngine.Vector2,System.Boolean)">
+            <summary>
+            Create a button to use toggle god power
+            </summary>
+            <remarks>
+            <list type="bullet">
+            <item>Please set "{pGodPowerId}"[Necessary] and "{pGodPowerId} Description"[Optional] in locale file and load it. </item>
+            <item>You should create and add the god power to <see cref="F:AssetManager.powers"/> before call this method</item>
+            <item>You should not set <see cref="F:GodPower.toggle_action"/> = <see cref="M:PowerLibrary.toggleOption(System.String)"/> of the god power</item>
+            </list>
+            </remarks>
+            <param name="pGodPowerId">The god power's id bind to the button</param>
+            <param name="pIcon">The icon of the button</param>
+            <param name="pParent">Which transform the button attached to</param>
+            <param name="pLocalPosition">The button position in <paramref name="pParent"/></param>
+            <param name="pNoAutoSetToggleAction">Not set god power's toggle_action automatically if it's not null</param>
+            <returns>The PowerButton created</returns>
+        </member>
+        <member name="M:NeoModLoader.General.PowerButtonCreator.GetTab(System.String)">
+            <summary>
+            Get a tab by its Object Name
+            </summary>
+            <param name="pId">The Name of the tab to find</param>
+            <returns>Tab found, null if not find</returns>
+        </member>
+        <member name="M:NeoModLoader.General.PowerButtonCreator.AddButtonToTab(PowerButton,PowersTab,UnityEngine.Vector2)">
+            <summary>
+            Add a button to a tab
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.PowerTabNames">
+            <summary>
+            Object Names of tabs in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Main">
+            <summary>
+            Object Name of the default tab in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Drawing">
+            <summary>
+            Object Name of the first tab in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Kingdoms">
+            <summary>
+            Object Name of the second tab in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Creatures">
+            <summary>
+            Object Name of the third tab in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Nature">
+            <summary>
+            Object Name of the forth tab in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Bombs">
+            <summary>
+            Object Name of the fifth tab in vanilla game
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.PowerTabNames.Other">
+            <summary>
+            Object Name of the sixth tab in vanilla game
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.PowerTabNames.GetNames">
+            <summary>
+            Return a list of all tab names
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.ResourcesFinder">
+            <summary>
+            This class is used to find resources and inactive GameObject easily.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.ResourcesFinder.FindResources``1(System.String)">
+            <summary>
+            Find all UnityEngine.Object named <paramref name="name"/> as type <typeparamref name="T"/>
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.ResourcesFinder.FindResource``1(System.String)">
+            <summary>
+            Find a UnityEngine.Object named <paramref name="name"/> as type <typeparamref name="T"/>
+            </summary>
+            <returns>null if not find</returns>
+        </member>
+        <member name="T:NeoModLoader.General.RF">
+            <summary>
+            Reflection helper class.
+            </summary>
+            <remarks>
+            <list type="table">
+            <item>
+            <term> TI </term>
+            <description> Instance type </description>
+            </item>
+            <item>
+            <term> TO </term>
+            <description> Output type </description>
+            </item>
+            <item>
+            <term> TF </term>
+            <description> Field type </description>
+            </item>
+            </list>
+            </remarks>
+        </member>
+        <member name="M:NeoModLoader.General.RF.GetMethodDelegate(System.Type,System.String,System.Boolean)">
+            <summary>
+            Get a method delegate
+            </summary>
+            <param name="type"></param>
+            <param name="name">Name of the method to get</param>
+            <param name="is_static"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.RF.GetField``2(``1,System.String)">
+            <summary>
+            Get field value typed <typeparamref name="TF"/> of an object instance typed <typeparamref name="TI"/>
+            </summary>
+            <typeparam name="TF"></typeparam>
+            <typeparam name="TI"></typeparam>
+            <param name="obj"></param>
+            <param name="name">Name of the field to get</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.RF.GetField``1(System.Object,System.String)">
+            <summary>
+            Get field value typed <typeparamref name="TF"/> of <paramref name="obj"/>
+            </summary>
+            <remarks>It has lower performance than the one with TI and field_type. Though it is a little</remarks>
+            <typeparam name="TF"></typeparam>
+            <param name="obj"></param>
+            <param name="name">Name of the field to get</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.RF.GetField(System.Object,System.String,System.Type)">
+            <summary>
+            Get field value typed <paramref name="field_type"/> of <paramref name="obj"/>
+            </summary>
+            <remarks>It has lower performance than the one with TI. Though it is a little</remarks>
+            <param name="obj"></param>
+            <param name="name">Name of the field to get</param>
+            <param name="field_type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.RF.GetStaticField``2(System.String)">
+            <summary>
+            Get static field value typed <typeparamref name="TF"/> of <typeparamref name="TI"/>
+            </summary>
+            <typeparam name="TF"></typeparam>
+            <typeparam name="TI"></typeparam>
+            <param name="name">Name of the field to get</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.RF.GetStaticField``1(System.String,System.Type)">
+            <summary>
+            Get static field value typed <typeparamref name="TF"/> of <paramref name="type"/>
+            </summary>
+            <typeparam name="TF"></typeparam>
+            <param name="name">Name of the field to get</param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.RF.SetField``2(``1,System.String,``0)">
+            <summary>
+            Set field value typed <typeparamref name="TF"/> of <paramref name="obj"/>
+            </summary>
+            <typeparam name="TF"></typeparam>
+            <typeparam name="TI"></typeparam>
+            <param name="obj"></param>
+            <param name="name">Name of the field to set</param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NeoModLoader.General.RF.SetStaticField``2(System.String,``0)">
+            <summary>
+            Set static field value typed <typeparamref name="TF"/> of <typeparamref name="TI"/>
+            </summary>
+            <typeparam name="TF"></typeparam>
+            <typeparam name="TI"></typeparam>
+            <param name="name">Name of the field to set</param>
+            <param name="value"></param>
+        </member>
+        <member name="M:NeoModLoader.General.RF.SetStaticField``1(System.String,``0,System.Type)">
+            <summary>
+            Set static field value typed <typeparamref name="TF"/> of <paramref name="TI"/>
+            </summary>
+            <typeparam name="TF"></typeparam>
+            <param name="name">Name of the field to set</param>
+            <param name="value"></param>
+            <param name="TI"></param>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Prefabs.APrefab`1">
+            <summary>
+            Abstract class for prefabs. If you implement 'void _init(void)', it will be called when the prefab is used for the first time. Otherwise, you need to initialize the prefab manually.
+            </summary>
+            <remarks>
+            To standard the prefab. You would be better to initialize prefab in '_init' and call 'Setup' for setup an object <see cref="M:UnityEngine.Object.Instantiate``1(``0)"/> from prefab.
+            </remarks>
+            <typeparam name="T">Type of the actual prefab</typeparam>
+        </member>
+        <member name="F:NeoModLoader.General.UI.Prefabs.APrefab`1.Initialized">
+            <summary>
+                If the prefab is initialized
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.APrefab`1.Prefab">
+            <summary>
+            The prefab instance
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.APrefab`1.SetSize(UnityEngine.Vector2)">
+            <summary>
+                Set size of the instance
+            </summary>
+            <param name="pSize">The size of the root game object</param>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.APrefab`1.Init">
+            <summary>
+                Used to initialize the prefab. It should be called everywhere if the prefab might be not initialized.
+            </summary>
+            <remarks>
+                An instance of prefab might not call Awake() before it is used. So Init() should be called everywhere if the prefab
+                might be not initialized.
+            </remarks>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Prefabs.SimpleButton">
+            <summary>
+                This class is used to create a simple button with prefab.
+            </summary>
+            <inheritdoc cref="T:NeoModLoader.General.UI.Prefabs.APrefab`1" />
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.SimpleButton.Button">
+            <summary>
+                The <see cref="P:NeoModLoader.General.UI.Prefabs.SimpleButton.Button" /> component
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.SimpleButton.TipButton">
+            <summary>
+                The <see cref="P:NeoModLoader.General.UI.Prefabs.SimpleButton.TipButton" /> component
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.SimpleButton.Background">
+            <summary>
+                The <see cref="T:UnityEngine.UI.Image" /> component of the background
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.SimpleButton.Icon">
+            <summary>
+                The <see cref="T:UnityEngine.UI.Image" /> component of the button icon
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.SimpleButton.Text">
+            <summary>
+                The <see cref="P:NeoModLoader.General.UI.Prefabs.SimpleButton.Text" /> component of the button text
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SimpleButton.Init">
+            <summary>
+                Initialize the instance after it is created.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SimpleButton.Setup(UnityEngine.Events.UnityAction,UnityEngine.Sprite,System.String,UnityEngine.Vector2,System.String,TooltipData)">
+            <summary>
+                Setup the button
+            </summary>
+            <param name="pClickAction">Action on button clicked</param>
+            <param name="pIcon">The icon of button</param>
+            <param name="pText">The text of button(When it is not null, <paramref name="pIcon" /> will be disabled)</param>
+            <param name="pSize">The size of button rect</param>
+            <param name="pTipType">When it is empty, <see cref="P:NeoModLoader.General.UI.Prefabs.SimpleButton.TipButton" /> will be disabled</param>
+            <param name="pTipData">TooltipData, it is available only when <paramref name="pTipType" /> is not null or empty</param>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SimpleButton.SetSize(UnityEngine.Vector2)">
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.SetSize(UnityEngine.Vector2)" />
+        </member>
+        <member name="T:NeoModLoader.General.UI.Prefabs.SimpleStatBar">
+            <summary>
+                This class is used to create a simple stat bar(like health bar) with prefab.
+            </summary>
+            <inheritdoc cref="T:NeoModLoader.General.UI.Prefabs.APrefab`1" />
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SimpleStatBar.Init">
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.Init" />
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SimpleStatBar.Setup(System.Single,System.Single,System.String,UnityEngine.Sprite,UnityEngine.Sprite,UnityEngine.Color,UnityEngine.Vector2,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            </summary>
+            <param name="value">Bar's value and displayed text</param>
+            <param name="max_value">Bar's max value, not displayed</param>
+            <param name="pEndText">
+                The text append to the end of <paramref name="value" />. If you want to display max value,
+                append it here
+            </param>
+            <param name="pIcon">The icon at the left</param>
+            <param name="pBackground">The background of bar</param>
+            <param name="pBarColor">The color of bar</param>
+            <param name="pSize">Size of background, bar's size will be changed automatically</param>
+            <param name="pReset"></param>
+            <param name="pFloat"></param>
+            <param name="pUpdateText"></param>
+            <param name="pWithoutTween"></param>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SimpleStatBar.UpdateBar(System.Single,System.Single,System.String,UnityEngine.Color,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+                Update Bar and Bar Text
+            </summary>
+            <param name="value"></param>
+            <param name="max_value"></param>
+            <param name="pEndText"></param>
+            <param name="pBarColor"></param>
+            <param name="pReset"></param>
+            <param name="pFloat"></param>
+            <param name="pUpdateText"></param>
+            <param name="pWithoutTween"></param>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Prefabs.SliderBar">
+            <summary>
+            A slider bar
+            </summary>
+            <example>
+            <code>
+            var slider_bar = Instantiate(SliderBar.Prefab, slider_area.transform); // Necessary
+            slider_bar.transform.localScale = Vector3.one;
+            slider_bar.name = "Slider";
+            slider_bar.SetSize(new Vector2(170f, 20)); // Necessary
+            ...
+            slider_bar.Setup(pItem.FloatVal, 0, 1, pFloatVal =>
+            {
+                pItem.SetValue(pFloatVal);
+                value.text = $"{pItem.FloatVal:F2}";
+            }); // Necessary
+            slider_bar.tip_button.textOnClick = pItem.Id;
+            slider_bar.tip_button.text_description_2 = pItem.Id + " Description";
+            </code>
+            </example>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.SliderBar.tip_button">
+            <summary>
+            The tip button of the slider bar, used to show tooltip
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SliderBar.Init">
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.Init" />
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SliderBar.Setup(System.Single,System.Single,System.Single,UnityEngine.Events.UnityAction{System.Single},UnityEngine.Vector2)">
+            <summary>
+            Setup the slider bar
+            </summary>
+            <param name="value">Current value</param>
+            <param name="min">Min</param>
+            <param name="max">Max</param>
+            <param name="value_update">Action when slider value updated</param>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.SliderBar.SetSize(UnityEngine.Vector2)">
+            <summary>
+            Set the size of the slider bar, other components will be resized automatically
+            </summary>
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.SetSize(UnityEngine.Vector2)"/>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Prefabs.TextInput">
+            <summary>
+                This class is used to create a text input with prefab.
+            </summary>
+            <inheritdoc cref="T:NeoModLoader.General.UI.Prefabs.APrefab`1" />
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.TextInput.text">
+            <summary>
+                The <see cref="T:UnityEngine.UI.Text" /> component
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Prefabs.TextInput.tip_button">
+            <summary>
+                The <see cref="T:TipButton" /> component
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.TextInput.Init">
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.Init" />
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.TextInput.Setup(System.String,UnityEngine.Events.UnityAction{System.String},UnityEngine.Sprite,UnityEngine.Sprite)">
+            <summary>
+                Setup a TextInput with initial text <paramref name="value" />
+            </summary>
+            <param name="value">Initial text value</param>
+            <param name="value_update">Callback when value updated</param>
+            <param name="pIcon">icon at the right</param>
+            <param name="pBackground"></param>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Prefabs.TextInput.SetSize(UnityEngine.Vector2)">
+            <summary>
+                Set the size of the text input, other components will be resized automatically
+            </summary>
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.SetSize(UnityEngine.Vector2)" />
+        </member>
+        <member name="T:NeoModLoader.General.UI.Tab.ReconstructedVanillaTab">
+            <summary>
+                Reconstructed vanilla tab, used to add button to vanilla tabs and make them looks like a vanilla button
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Tab.ReconstructedVanillaTab.Init">
+            <summary>
+                Reconstruct a vanilla tab and group its buttons with groups
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Tab.TabManager.CreateTab(System.String,System.String,System.String,UnityEngine.Sprite)">
+            <summary>
+            Create a tab which can act as vanilla tabs
+            </summary>
+            <param name="name">The name of the tab, "Tab_" prefix will be added automatically</param>
+            <param name="pTitleKey">The title key of the tooltip when hover on the tab</param>
+            <param name="pDescKey">The description key of the tooltip when hover on the tab</param>
+            <param name="pIcon">The icon sprite of the tab</param>
+            <returns>The tab created</returns>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Window.AutoLayoutElement`1">
+            <summary>
+                Abstract class of auto layout element
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Window.AutoLayoutGroup`2.SetSize(UnityEngine.Vector2)">
+            <inheritdoc cref="M:NeoModLoader.General.UI.Prefabs.APrefab`1.SetSize(UnityEngine.Vector2)" />
+        </member>
+        <member name="F:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.Initialized">
+            <summary>
+            It will be set to true after <see cref="M:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.Init"/> is called.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.IsFirstOpen">
+            <summary>
+            It will be set to false after <see cref="M:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.OnFirstEnable"/> called.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.IsOpened">
+            <summary>
+            It will be set to true after <see cref="M:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.OnFirstEnable"/> and <see cref="M:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.OnNormalEnable"/> called.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.ScrollWindowComponent">
+            <summary>
+            Component ScrollWindow of Instance for easy click show/hide/back
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.ContentTransform">
+            <summary>
+            Transform of Background/Scroll View/Viewport/Content of Instance
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.BackgroundTransform">
+            <summary>
+            Transform of Background of Instance
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.General.UI.Window.AutoLayoutWindow`1.WindowID">
+            <summary>
+            WindowID of Instance
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Window.MultiTabWindow`1">
+            <summary>
+                A window with multiple tabs.
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.General.UI.Window.Utils.Extensions.AutoLayoutGroupExtension">
+            <summary>
+                This class is used to extend AutoLayoutGroup with different given layout groups
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Window.Utils.Extensions.AutoLayoutGroupExtension.BeginHoriGroup``2(NeoModLoader.General.UI.Window.AutoLayoutGroup{``0,``1},UnityEngine.Vector2,UnityEngine.TextAnchor,System.Single,UnityEngine.RectOffset)">
+            <summary>
+                Begin a horizontal layout group
+            </summary>
+            <param name="pThis"></param>
+            <param name="pSize"></param>
+            <param name="pAlignment"></param>
+            <param name="pSpacing"></param>
+            <param name="pPadding"></param>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TElement"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Window.Utils.Extensions.AutoLayoutGroupExtension.BeginVertGroup``2(NeoModLoader.General.UI.Window.AutoLayoutGroup{``0,``1},UnityEngine.Vector2,UnityEngine.TextAnchor,System.Single,UnityEngine.RectOffset)">
+            <summary>
+                Begin a vertical layout group
+            </summary>
+            <param name="pThis"></param>
+            <param name="pSize"></param>
+            <param name="pAlignment"></param>
+            <param name="pSpacing"></param>
+            <param name="pPadding"></param>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TElement"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Window.Utils.Extensions.AutoLayoutGroupExtension.BeginGridGroup``2(NeoModLoader.General.UI.Window.AutoLayoutGroup{``0,``1},System.Int32,UnityEngine.UI.GridLayoutGroup.Constraint,UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.Vector2,UnityEngine.UI.GridLayoutGroup.Axis,UnityEngine.UI.GridLayoutGroup.Corner)">
+            <summary>
+                Begin a grid layout group
+            </summary>
+            <param name="pThis"></param>
+            <param name="pConstraintCount"></param>
+            <param name="pConstraint"></param>
+            <param name="pSize"></param>
+            <param name="pCellSize"></param>
+            <param name="pSpacing"></param>
+            <param name="pStartAxis"></param>
+            <param name="pStartCorner"></param>
+            <typeparam name="T"></typeparam>
+            <typeparam name="TElement"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.General.UI.Window.Utils.Extensions.AutoLayoutWindowExtension.SetWideWindow``1(NeoModLoader.General.UI.Window.AutoLayoutWindow{``0})">
+            <summary>
+            Set window with wide mode
+            </summary>
+            <param name="pThis"></param>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.General.WindowCreator">
+            <summary>
+                This class is used to create different windows
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.General.WindowCreator.CreateEmptyWindow(System.String,System.String)">
+            <summary>
+            Create an empty window with a title auto localized
+            </summary>
+            <param name="pWindowID">It should be unique, suggest start with your own mod's UUID</param>
+            <param name="pWindowTitleKey">It should be unique, suggest start with your own mod's UUID</param>
+            <remarks>
+            Prototype comes from [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="F:NeoModLoader.ncms_compatible_layer.NCMSCompatibleLayer.modGlobalObject">
+            <summary>
+                An improved variant of mod global object in [NCMS](https://denq04.github.io/ncms/)
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.services.LogService">
+            <summary>
+            It is a service to log message to console or Unity Console
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.PullAllConcurrentLogToCurrentThread">
+            <summary>
+            Pull all concurrent log to current thread. Often used in unit test.
+            </summary>
+            <exception cref="T:System.ArgumentOutOfRangeException"></exception>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogInfoConcurrent(System.String)">
+            <summary>
+            Log Info message with [NML] prefix for sub thread
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogWarningConcurrent(System.String)">
+            <summary>
+            Log Warning message with [NML] prefix for sub thread
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogErrorConcurrent(System.String)">
+            <summary>
+            Log Error message with [NML] prefix for sub thread
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogError(System.String)">
+            <summary>
+            Log Error message with [NML] prefix
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogWarning(System.String)">
+            <summary>
+            Log Warning message with [NML] prefix
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogInfo(System.String)">
+            <summary>
+            Log message with [NML] prefix
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogStackTraceAsInfo">
+            <summary>
+            Log StackTrace from where call this method with [NML] prefix as Info
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogStackTraceAsWarning">
+            <summary>
+            Log StackTrace from where call this method with [NML] prefix as Warning
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.LogService.LogStackTraceAsError">
+            <summary>
+            Log StackTrace from where call this method with [NML] prefix as Error
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.services.ModCompileLoadService">
+            <summary>
+            Service of mod compiling and loading. 
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.prepareCompile(System.Collections.Generic.List{NeoModLoader.utils.ModDependencyNode})">
+            <summary>
+            Prepare references for mod nodes
+            </summary>
+            <param name="pModNodes"></param>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.prepareCompileRuntime(NeoModLoader.utils.ModDependencyNode)">
+            <summary>
+            Prepare references for a single mod node
+            </summary>
+            <param name="pModNode"></param>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.compileMod(NeoModLoader.utils.ModDependencyNode,System.Boolean)">
+            <summary>
+            Public mod compiling method
+            </summary>
+            <param name="pModNode">The mod to compile</param>
+            <param name="pForce">Wheather recompile when the mod does not need to recompile</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.loadMods(System.Collections.Generic.List{NeoModLoader.api.ModDeclare})">
+            <summary>
+            Load a list of mods
+            </summary>
+            <param name="mods_to_load"></param>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.LoadMod(NeoModLoader.api.ModDeclare)">
+            <summary>
+            Load a single mod
+            </summary>
+            <param name="pMod"></param>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.IsModLoaded(System.String)">
+            <summary>
+            Check whether a mod loaded with mod's UID
+            </summary>
+            <param name="uid"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.TryCompileModAtRuntime(NeoModLoader.api.ModDeclare,System.Boolean)">
+            <summary>
+            Compile mod at runtime.
+            </summary>
+            <param name="pModDeclare">Info of to be compiled mod</param>
+            <param name="pForce">Wheather recompile mod if the mod has been compiled</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.TryCompileAndLoadModAtRuntime(NeoModLoader.api.ModDeclare)">
+            <summary>
+            Compile and load mod at runtime
+            </summary>
+            <param name="mod_declare">Info of to be compiled mo</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.services.ModCompileLoadService.loadInfoOfBepInExPlugins">
+            <summary>
+            Load information of all BepInEx plugins which is made only for Worldbox
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.ModDepenSolveService.SolveModDependencyRuntime(NeoModLoader.api.ModDeclare)">
+            <summary>
+            Get a mod's dependency node at runtime.
+            </summary>
+            <param name="mod"></param>
+            <returns>The dependency node</returns>
+        </member>
+        <member name="T:NeoModLoader.services.ModUploadAuthenticationService">
+            <summary>
+                Authentication service for mod upload.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.services.ModUploadAuthenticationService.Authed">
+            <summary>
+                Whether the user has authenticated.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.ModUploadAuthenticationService.AutoAuth">
+            <summary>
+                Start auto authenticating task
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.services.ModUploadAuthenticationService.Authenticate">
+            <summary>
+                Start authentication window and watch for the result.
+            </summary>
+            <returns>The Promise, Resolve: successfully authenticate/skip, Reject: Cancel authentication</returns>
+        </member>
+        <member name="M:NeoModLoader.services.ModWorkshopService.UploadMod(NeoModLoader.api.IMod,System.String,System.Boolean)">
+            <summary>
+            Try to Upload a mod to Steam Workshop
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.ui.InformationWindow">
+            <summary>
+                A window that shows simple text.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.ui.InformationWindow.Init">
+            <inheritdoc cref="M:NeoModLoader.ui.InformationWindow.Init" />
+        </member>
+        <member name="M:NeoModLoader.ui.InformationWindow.ShowWindow(System.String)">
+            <summary>
+                Show the window with the given text.
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="T:NeoModLoader.ui.ModConfigureWindow">
+            <summary>
+                Configuration window for <see cref="T:NeoModLoader.api.ModConfig" />
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.ui.ModConfigureWindow.Init">
+            <inheritdoc cref="M:NeoModLoader.api.AbstractWindow`1.Init" />
+        </member>
+        <member name="M:NeoModLoader.ui.ModConfigureWindow.ShowWindow(NeoModLoader.api.ModConfig)">
+            <summary>
+                Display window for given mod config.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.ui.ModConfigureWindow.OnNormalEnable">
+            <inheritdoc cref="M:NeoModLoader.api.AbstractWindow`1.OnNormalEnable" />
+        </member>
+        <member name="M:NeoModLoader.ui.ModConfigureWindow.OnNormalDisable">
+            <summary>
+                Apply and save changes.
+            </summary>
+            <inheritdoc cref="M:NeoModLoader.api.AbstractWindow`1.OnNormalDisable" />
+        </member>
+        <member name="T:NeoModLoader.ui.ModListWindow">
+            <summary>
+                List window of all mods recognized by NeoModLoader.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.ui.ModListWindow.Init">
+            <inheritdoc cref="!:AbstractListWindow&lt;T,TItem&gt;.Init" />
+        </member>
+        <member name="M:NeoModLoader.ui.ModListWindow.OnNormalEnable">
+            <inheritdoc cref="!:AbstractListWindow&lt;T,TItem&gt;.OnNormalEnable" />
+        </member>
+        <member name="M:NeoModLoader.ui.ModListWindow.CreateItemPrefab">
+            <inheritdoc cref="M:NeoModLoader.api.AbstractListWindow`2.CreateItemPrefab" />
+        </member>
+        <member name="T:NeoModLoader.ui.ModListWindow.ModListItem">
+            <summary>
+                A single list item for <see cref="T:NeoModLoader.ui.ModListWindow" />.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.ui.ModListWindow.ModListItem.Setup(NeoModLoader.api.IMod)">
+            <inheritdoc cref="M:NeoModLoader.api.AbstractListWindowItem`1.Setup(`0)" />
+            <param name="mod">The mod to display</param>
+        </member>
+        <member name="F:NeoModLoader.ui.ModUploadAuthenticationWindow.AuthFunc">
+            <summary>
+            The function to be called when the button is clicked. Methods in it might throw an AuthenticationException if something goes wrong with the authentication process.
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.utils.WrappedAssetBundle">
+            <summary>
+                The class provides a wrapped asset bundle for easier use.
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.utils.WrappedAssetBundle.Name">
+            <summary>
+                Name of the asset bundle.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetAllAssetNames">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.GetAllAssetNames" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetAllScenePaths">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.GetAllScenePaths" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetObject(System.String)">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.LoadAsset(System.String)" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetObject(System.String,System.Type)">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.LoadAsset(System.String,System.Type)" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetObject``1(System.String)">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.LoadAsset``1(System.String)" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetAllObjects(System.Type)">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.LoadAllAssets(System.Type)" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetAllObjects``1">
+            <summary>
+                Same with <see cref="M:UnityEngine.AssetBundle.LoadAllAssets``1" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetAllObjects(System.String,System.Type)">
+            <summary>
+                Get all objects typed <paramref name="pType" /> under path <paramref name="pPath" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.WrappedAssetBundle.GetAllObjects``1(System.String)">
+            <summary>
+                Get all objects typed <typeparamref name="T" /> under path <paramref name="pPath" />
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.utils.AssetBundleUtils">
+            <summary>
+            The class provides some useful methods for loading non-hidden AssetBundles to ResourceTree.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.AssetBundleUtils.GetAssetBundle(System.String)">
+            <summary>
+                Get asset bundle by name.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.AssetBundleUtils.LoadFromFile(System.String,System.Boolean)">
+            <summary>
+                Load asset bundle from file manually.
+            </summary>
+            <param name="pPath"></param>
+            <param name="pForceReload"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.AssetBundleUtils.LoadFromFolder(System.String)">
+            <summary>
+                Load all asset bundles in a folder manually.
+            </summary>
+            <param name="pFolder"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.utils.authentication.GithubOrgAuthUtils">
+            <summary>
+                This class is used to authenticate user by Github organization.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.authentication.GithubOrgAuthUtils.Authenticate">
+            <summary>
+                Get authentication result.
+            </summary>
+            <remarks>It will block thread</remarks>
+        </member>
+        <member name="T:NeoModLoader.utils.BenchUtils">
+            <summary>
+            It is a simple benchmark tool only enabled when compiled in Debug mode
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.BenchUtils.Start(System.String)">
+            <summary>
+            Start a benchmark with <see cref="!:key"/> tag
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.BenchUtils.End(System.String)">
+            <summary>
+            End a benchmark with <see cref="!:key"/> tag and return the time elapsed
+            </summary>
+            <returns>-1 when key not found or compiled not in DEBUG mode. Otherwise, return the time elapsed</returns>
+        </member>
+        <member name="T:NeoModLoader.utils.HttpUtils">
+            <summary>
+            This class is made as utility to make http request easier. Maybe not, just for myself --inmny.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.HttpUtils.Get(System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            
+            </summary>
+            <param name="url"></param>
+            <param name="headers"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.HttpUtils.Post(System.String,System.Collections.Generic.Dictionary{System.String,System.String},System.Collections.Generic.Dictionary{System.String,System.String})">
+            <summary>
+            
+            </summary>
+            <param name="url"></param>
+            <param name="params"></param>
+            <param name="headers"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.HttpUtils.Request(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="url"></param>
+            <param name="param"></param>
+            <param name="method"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.utils.ModDependencyNode">
+            <summary>
+                Dependency node for mod dependency graph.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.utils.ModDependencyNode.depend_by">
+            <summary>
+                Mods that depend on this mod.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.utils.ModDependencyNode.depend_on">
+            <summary>
+                Mods that this mod depends on.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.utils.ModDependencyNode.necessary_depend_on">
+            <summary>
+                Necessary mods that this mod depends on.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.ModDependencyNode.#ctor(NeoModLoader.api.ModDeclare)">
+            <summary>
+                Create a new mod dependency node for a mod declaration
+            </summary>
+            <param name="pModDecl"></param>
+        </member>
+        <member name="P:NeoModLoader.utils.ModDependencyNode.mod_decl">
+            <summary>
+                Related mod declaration
+            </summary>
+        </member>
+        <member name="T:NeoModLoader.utils.ModDependencyGraph">
+            <summary>
+                This class is used to solve mod dependency. And generate mod loading order.
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.utils.ModDependencyGraph.nodes">
+            <summary>
+                All nodes in the graph.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.ModDependencyGraph.#ctor(System.Collections.Generic.ICollection{NeoModLoader.api.ModDeclare})">
+            <summary>
+                Create a new mod dependency graph from a collection of mod declarations.
+            </summary>
+            <param name="mods"></param>
+        </member>
+        <member name="M:NeoModLoader.utils.ModInfoUtils.toggleMod(System.String)">
+            <summary>
+            Toggle Mod Disabled Status
+            </summary>
+            <param name="pModUID"></param>
+            <returns>Enable mod and return true; or disable mod and return false</returns>
+        </member>
+        <member name="T:NeoModLoader.utils.OtherUtils">
+            <summary>
+            It provides some uncommon methods
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.OtherUtils.GetStackTrace(System.Int32,System.String)">
+            <summary>
+            Get StackTrace from this method, and skip the first <paramref name="skip_frames"/> frames
+            </summary>
+            <param name="skip_frames">The frame number to skip</param>
+            <param name="indent">Each line start with several indent character</param>
+        </member>
+        <member name="M:NeoModLoader.utils.OtherUtils.CalledBy(System.String,System.Type,System.Boolean)">
+            <summary>
+            Search the stack trace to see if the method is called by <paramref name="pMethodName"/> in <paramref name="pTypeConstraint"/>
+            </summary>
+            <param name="pMethodName"></param>
+            <param name="pTypeConstraint"></param>
+            <param name="pSearchAll">Wheather search the entire stack trace</param>
+        </member>
+        <member name="T:NeoModLoader.utils.PriorityQueue`1">
+            <summary>
+            A simple PriorityQueue implementation with binary heap, not thread-safe
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:NeoModLoader.utils.PriorityQueue`1.#ctor(System.Int32,System.Collections.Generic.IComparer{`0})">
+            <summary>
+            
+            </summary>
+            <param name="capacity"></param>
+            <param name="comparer"></param>
+        </member>
+        <member name="P:NeoModLoader.utils.PriorityQueue`1.Count">
+            <summary>
+            Current size of the PriorityQueue
+            </summary>
+        </member>
+        <member name="P:NeoModLoader.utils.PriorityQueue`1.Item(System.Int32)">
+            <summary>
+                Get value
+            </summary>
+            <param name="index"></param>
+            <exception cref="T:System.IndexOutOfRangeException"></exception>
+        </member>
+        <member name="M:NeoModLoader.utils.PriorityQueue`1.Peek">
+            <summary>
+            View the top element of the PriorityQueue
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:NeoModLoader.utils.PriorityQueue`1.Enqueue(`0)">
+            <summary>
+            Enqueue an element into the PriorityQueue
+            </summary>
+            <param name="x"></param>
+        </member>
+        <member name="M:NeoModLoader.utils.PriorityQueue`1.Dequeue">
+            <summary>
+            Dequeue an element from the PriorityQueue
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="T:NeoModLoader.utils.ResourcesPatch">
+            <summary>
+                This class is used to patch resources.
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.ResourcesPatch.GetAllPatchedResources">
+            <summary>
+                Get all patched resources.
+            </summary>
+            <remarks>
+                Not suggested to use this method.
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.ResourcesPatch.PatchResource(System.String,UnityEngine.Object)">
+            <summary>
+                Patch a resource to the tree at runtime.
+            </summary>
+            <param name="pPath"></param>
+            <param name="pObject"></param>
+        </member>
+        <member name="M:NeoModLoader.utils.ResourcesPatch.LoadResourceFile(System.String@,System.String@)">
+            <summary>
+            Load a resource file from path, and named by pLowerPath.
+            </summary>
+            <remarks>
+            It can recognize jpg, png, jpeg by postfix now.
+            <para>All others will be loaded as text</para>
+            </remarks>
+            <param name="path">the path to the resource file to load</param>
+            <param name="pLowerPath">the lower of path with <see cref="P:System.Globalization.CultureInfo.CurrentCulture"/></param>
+            <returns>The Objects loaded, if single Object, an array with single one; if no Objects, an empty array</returns>
+            It can recognize jpg, png, jpeg by postfix now
+        </member>
+        <member name="M:NeoModLoader.utils.ResourcesPatch.ResourceTree.Find(System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Find a ResourceTreeNode by path.
+            </summary>
+            <param name="path">The path of node path</param>
+            <param name="createNodeAlong">Whether create node along the path if node does not exist</param>
+            <param name="visitLast">Whether check the last node</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.ResourcesPatch.ResourceTree.AddFromFile(System.String,System.String)">
+            <summary>
+            Load resources under absPath, and patch them to the tree under the folder of path.
+            </summary>
+            <param name="path">Path to resource in tree</param>
+            <param name="absPath">Path to resource in actual filesystem</param>
+        </member>
+        <member name="T:NeoModLoader.utils.SpriteLoadUtils">
+            <summary>
+            A utility class for loading sprites.
+            </summary>
+            <remarks>
+            All parameter path should be path in actual file system.
+            </remarks>
+        </member>
+        <member name="M:NeoModLoader.utils.SpriteLoadUtils.LoadSingleSprite(System.String)">
+            <summary>
+            Load a single sprite from file path
+            </summary>
+            <remarks>It will not check sprite setting file. Load the raw file as a sprite</remarks>
+            <param name="path">Path to the file</param>
+            <returns></returns>
+        </member>
+        <member name="M:NeoModLoader.utils.SpriteLoadUtils.LoadSprites(System.String)">
+            <summary>
+            Load a single/sheet sprites from a path.
+            </summary>
+            <remarks>If there is a file named "{path}.meta" and it describes a SpriteSheet, all sprites under the sprite sheet will be loaded together. Otherwise, the return array contains only one sprite</remarks>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="T:NeoModLoader.utils.SpriteLoadUtils.NCMSSpritesSettings">
+            <remarks>
+                Prototype comes from [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NeoModLoader.utils.SpriteLoadUtils.NCMSSpritesSettings.SpecificSetting">
+            <remarks>
+                Prototype comes from [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NeoModLoader.utils.SystemUtils">
+            <summary>
+            It contains methods which act outside Game and Loader
+            </summary>
+        </member>
+        <member name="M:NeoModLoader.utils.SystemUtils.CmdRunAs(System.String[])">
+            <summary>
+            Run cmd.exe as admin, only works in Windows
+            </summary>
+            <param name="parameters">parameters passed into cmd</param>
+        </member>
+        <member name="M:NeoModLoader.utils.SystemUtils.BashRun(System.String[])">
+            <summary>
+            Run bash with parameters
+            </summary>
+            <param name="parameters"></param>
+        </member>
+        <member name="M:NeoModLoader.utils.SystemUtils.SearchFileRecursive(System.String,System.Func{System.String,System.Boolean},System.Func{System.String,System.Boolean})">
+            <summary>
+            Search all directories dirname filtered for files' fullpath with filename filtered 
+            </summary>
+            <param name="path">The root path to directory to search</param>
+            <param name="fileNameJudge">File name filter</param>
+            <param name="dirNameJudge">Directory name filter</param>
+            <returns>All found files' fullpath(Path root reset to '/' or 'C:')</returns>
+        </member>
+        <member name="T:NeoModLoader.WorldBoxMod">
+            <summary>
+            Main class
+            </summary>
+        </member>
+        <member name="F:NeoModLoader.WorldBoxMod.LoadedMods">
+            <summary>
+            All successfully loaded mods.
+            </summary>
+        </member>
+        <member name="T:BepInEx.BaseUnityPlugin">
+            <remarks>
+                There is a NCMS mod using this attribute
+            </remarks>
+        </member>
+        <member name="T:BepInEx.BepInPlugin">
+            <remarks>
+                There is a NCMS mod using this attribute
+            </remarks>
+        </member>
+        <member name="T:ModDeclaration.Info">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NCMS.Core">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NCMS.Extensions.DictionaryRange">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NCMS.NCMod">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="M:NCMS.Utils.GameObjects.FindEvenInactive(System.String)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="M:NCMS.Utils.PowerButtons.CreateButton(System.String,UnityEngine.Sprite,System.String,System.String,UnityEngine.Vector2,NCMS.Utils.ButtonType,UnityEngine.Transform,UnityEngine.Events.UnityAction)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="M:NCMS.Utils.PowerButtons.CreateTextButton(System.String,System.String,UnityEngine.Vector2,UnityEngine.Color,UnityEngine.Transform,UnityEngine.Events.UnityAction)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/).
+                <para>ATTENTION! button background color is modified to RED</para>
+            </remarks>
+        </member>
+        <member name="M:NCMS.Utils.PowerButtons.GetToggleValue(System.String)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="M:NCMS.Utils.PowerButtons.ToggleButton(System.String)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NCMS.Utils.ResourcesPatch">
+            <summary>
+                There are mods use reflection to patch resources manually. So keep it.
+            </summary>
+        </member>
+        <member name="M:NCMS.Utils.Sprites.LoadSprite(System.String,System.Single,System.Single)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/)
+            </remarks>
+        </member>
+        <member name="T:NCMS.WorldBoxMod">
+            <summary>
+            Used for compatibility with MapMakers.
+            </summary>
+        </member>
+        <member name="M:ReflectionUtility.Reflection.CallMethod(System.Object,System.String,System.Object[])">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/) and Cody
+            </remarks>
+        </member>
+        <member name="M:ReflectionUtility.Reflection.CallStaticMethod(System.Type,System.String,System.Object[])">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/) and Cody
+            </remarks>
+        </member>
+        <member name="M:ReflectionUtility.Reflection.GetField(System.Type,System.Object,System.String)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/) and Cody
+            </remarks>
+        </member>
+        <member name="M:ReflectionUtility.Reflection.SetField``1(System.Object,System.String,``0)">
+            <remarks>
+                From [NCMS](https://denq04.github.io/ncms/) and Cody
+            </remarks>
+        </member>
+    </members>
+</doc>

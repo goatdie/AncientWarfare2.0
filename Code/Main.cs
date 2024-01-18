@@ -106,6 +106,9 @@ namespace Figurebox
             instance = this;
             EventsManager.Instance.CreateDataBase();
             print("Translation loaded");
+            ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
+            resourceAsset.maximum = 99999999;
+			
         }
 
 

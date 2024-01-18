@@ -3,6 +3,8 @@ using Figurebox.Utils;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine.UI;
+using Figurebox.core;
+using System;
 
 namespace Figurebox;
 
@@ -33,6 +35,10 @@ internal class Tooltips
             id = "history_king",
             callback = showHistoryKing
         });
+        var resource_tooltip = AssetManager.tooltips.get(pID: "resource");
+        resource_tooltip.callback = (TooltipShowAction)Delegate.Combine(
+            a: resource_tooltip.callback,
+            b: new TooltipShowAction(showTax));
     }
 
     private static void showHeir(Tooltip pTooltip, string pType, TooltipData pData)
@@ -147,5 +153,30 @@ internal class Tooltips
                 rule.end_time < 0 ? LM.Get("rule_time_now") : GeneralHelper.getYearsOn(rule.end_time).ToString()));
 
         pTooltip.addStatValues("其他信息", "其他信息值");
+    }
+
+    [Hotfixable]
+    private static void showTax(Tooltip pTooltip, string pType, TooltipData pData = default)
+    {
+
+
+        AW_City city = Config.selectedCity as AW_City;
+
+        // 添加税收相关的信息
+        ResourceAsset resource = pData.resource;
+        pTooltip.name.text = LocalizedTextManager.getText(resource.id, null);
+        if (resource.id == SR.gold)
+        {
+            pTooltip.addLineBreak("----");
+            pTooltip.addItemText("pay_tax", (float)city.gold_pay_tax, false, true, true, "#FB2C21", false);
+
+            if (city.isCapitalCity() && city.GetTaxToltal() != 0)
+            {
+                pTooltip.addItemText("tax_income", (float)city.GetTaxToltal(), false, true, true, "#43FF43", false);
+
+            }
+
+        }
+
     }
 }

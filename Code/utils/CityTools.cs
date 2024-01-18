@@ -1,4 +1,5 @@
 using System.Linq;
+using System;
 
 namespace Figurebox.Utils
 {
@@ -33,6 +34,9 @@ namespace Figurebox.Utils
 
             // 这里可以添加任何其他需要在移除单位时进行的操作
         }
+
+       
+
 
         public static void logUnite(Kingdom pKingdom)
         {
