@@ -168,7 +168,10 @@ internal class Tooltips
         if (resource.id == SR.gold)
         {
             pTooltip.addLineBreak("----");
-            pTooltip.addItemText("pay_tax", (float)city.gold_pay_tax, false, true, true, "#FB2C21", false);
+            if (!city.isCapitalCity() && city.gold_pay_tax != 0)
+            {
+                pTooltip.addItemText("pay_tax", (float)city.gold_pay_tax, false, true, true, "#FB2C21", false);
+            }
 
             if (city.isCapitalCity() && city.GetTaxToltal() != 0)
             {

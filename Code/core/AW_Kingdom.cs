@@ -19,6 +19,7 @@ public partial class AW_Kingdom : Kingdom
 {
     public Actor heir;
     public bool NameIntegration = false; //控制国家命名是否姓氏合流
+    public bool FomerMoh = false; //控制是否为前天命国家
 
 
     public KingdomPolicyData policy_data = new();
@@ -274,6 +275,10 @@ public partial class AW_Kingdom : Kingdom
         {
             return "朝";
         }
+        if (title == KingdomPolicyData.KingdomTitle.Emperor && FomerMoh)
+        {
+            return "残部";
+        }
 
         switch (title)
         {
@@ -444,9 +449,19 @@ public partial class AW_Kingdom : Kingdom
             City newCapital = FindNewCapital(kingdom);
             if (newCapital != null && kingdom.king != null)
             {
+
+                //Debug.Log("New capital set to " + newCapital.data.name);
+
+                // 将原首都的 70% 的金币转移到新首都
+                var goldToTransfer = (int)(kingdom.capital.data.storage.get("gold") * 0.7);
+
+                // 从原首都减去相应金币
+                kingdom.capital.data.storage.change("gold", -goldToTransfer);
+
+                // 向新首都增加相应金币
+                newCapital.data.storage.change("gold", goldToTransfer);
                 kingdom.capital = newCapital;
                 kingdom.king.ChangeCity(newCapital);
-                //Debug.Log("New capital set to " + newCapital.data.name);
             }
         }
     }
@@ -502,17 +517,16 @@ public partial class AW_Kingdom : Kingdom
                 if (newValue > currentValue)
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
-                    kingdomToInherit.setKing(actor);
-                    // 继承更高的头衔等级
+
                     kingdomToInherit.policy_data.Title =
                         MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
                 else
                 {
+                    // 如果当前国家比继承国更强，则不再设置角色为新国家的国王
                     MergeKingdoms(currentKingdom, kingdomToInherit);
-                    currentKingdom.setKing(actor);
-                    // 继承更高的头衔等级
+                    // 注意：这里没有调用 currentKingdom.setKing(actor)，因为actor已经是当前王国的国王
                     currentKingdom.policy_data.Title =
                         MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
@@ -520,6 +534,7 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
+
 
     public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1,
         KingdomPolicyData.KingdomTitle title2)
@@ -546,6 +561,8 @@ public partial class AW_Kingdom : Kingdom
     }
 
 
+    //public static Dictionary<string, bool> kingsSetThisFrame = new Dictionary<string, bool>();
+
     /// <summary>
     ///     国王即位相关行为
     /// </summary>
@@ -554,6 +571,13 @@ public partial class AW_Kingdom : Kingdom
     [MethodReplace(nameof(setKing))]
     public new void setKing(Actor pActor) //处理联统 并放出世界消息
     {
+        /* if (kingsSetThisFrame.ContainsKey(pActor.data.id))
+         {
+             // 记录重复设置的日志信息，包括调用堆栈
+             Main.LogInfo("重复设置国王: " + pActor.data.id + pActor.getName(), true);
+             return;
+         }
+         kingsSetThisFrame[pActor.data.id] = true;*/
         if (king != null) clearKingData();
 
         #region 原版代码
@@ -578,6 +602,8 @@ public partial class AW_Kingdom : Kingdom
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
+
+
     }
 
     [MethodReplace(nameof(Kingdom.clearKingData))]

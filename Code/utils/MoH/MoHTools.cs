@@ -32,6 +32,10 @@ public class MoHTools
     }
     public static void Clear_MoHKingdom()
     {
+        if (MoHKingdom != null)
+        {
+            MoHKingdom.FomerMoh = true;
+        }
         MoHKingdom = null;
         MOH_Value = 0;
     }

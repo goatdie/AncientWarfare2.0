@@ -137,11 +137,12 @@ namespace Figurebox
         {
             if (instance == null) return;
             checkRaceAdded();
+            // AW_Kingdom.kingsSetThisFrame.Clear();
         }
 
         private void OnApplicationQuit()
         {
-            EventsManager.Instance.CleanTempDataBase();
+          // EventsManager.Instance.CleanTempDataBase();
         }
 
         public string GetLocaleFilesDirectory(ModDeclare pModDeclare)
