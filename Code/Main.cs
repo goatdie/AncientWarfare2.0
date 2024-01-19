@@ -31,12 +31,12 @@ namespace Figurebox
     {
         public static GameObject backgroundAvatar;
         public static GameObject citybg;
-        public static Transform prefabs_library;
+        public static Transform  prefabs_library;
 
         public List<string> addRaces = new List<string>()
-        {
-            "Xia"
-        };
+                                       {
+                                           "Xia"
+                                       };
 
         public BuildingLibrary buildingLibrary = new BuildingLibrary();
 
@@ -53,12 +53,12 @@ namespace Figurebox
         {
             LM.AddToCurrentLocale("", "");
 #if 一米_中文名
-            print("词库加载!" + mainPath + "/name_generators/Xia");
+            print("词库加载!"                                          + mainPath + "/name_generators/Xia");
             CN_NameGeneratorLibrary.SubmitDirectoryToLoad(mainPath + "/name_generators/Xia");
-            WordLibraryManager.SubmitDirectoryToLoad(mainPath + "/name_generators/lib");
+            WordLibraryManager.SubmitDirectoryToLoad(mainPath      + "/name_generators/lib");
             NameGeneratorInitialzier.init();
             LM.AddToCurrentLocale("familyname", "姓");
-            LM.AddToCurrentLocale("clanname", "氏");
+            LM.AddToCurrentLocale("clanname",   "氏");
 #endif
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             NewUI.PatchResources();
@@ -104,7 +104,6 @@ namespace Figurebox
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
             instance = this;
-            EventsManager.Instance.CreateDataBase();
             print("Translation loaded");
             ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
             resourceAsset.maximum = 99999999;
@@ -122,7 +121,7 @@ namespace Figurebox
             allWindows["kingdom"].gameObject.SetActive(false);
             backgroundAvatar =
                 GameObject.Find(
-                    $"Canvas Container Main/Canvas - Windows/windows/inspect_unit/Background/Scroll View/Viewport/Content/Part 1/BackgroundAvatar");
+                                $"Canvas Container Main/Canvas - Windows/windows/inspect_unit/Background/Scroll View/Viewport/Content/Part 1/BackgroundAvatar");
             CityHistoryWindow.init();
             KingdomHistoryWindow.init();
             KingdomPolicyWindow.init();
@@ -168,24 +167,24 @@ namespace Figurebox
             mod_declare = pModDecl;
 
             Mod.Info = typeof(Info)
-                .GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
-                    {
-                        typeof(NCMod)
-                    },
-                    null)
-                ?.Invoke(new object[]
-                {
-                    new NCMod
-                    {
-                        name = pModDecl.Name,
-                        author = pModDecl.Author,
-                        description = pModDecl.Description,
-                        path = pModDecl.FolderPath,
-                        version = pModDecl.Version,
-                        iconPath = pModDecl.IconPath,
-                        targetGameBuild = pModDecl.TargetGameBuild
-                    }
-                }) as Info;
+                       .GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
+                                           {
+                                               typeof(NCMod)
+                                           },
+                                       null)
+                       ?.Invoke(new object[]
+                                {
+                                    new NCMod
+                                    {
+                                        name = pModDecl.Name,
+                                        author = pModDecl.Author,
+                                        description = pModDecl.Description,
+                                        path = pModDecl.FolderPath,
+                                        version = pModDecl.Version,
+                                        iconPath = pModDecl.IconPath,
+                                        targetGameBuild = pModDecl.TargetGameBuild
+                                    }
+                                }) as Info;
 
             Configure();
 
@@ -228,7 +227,7 @@ namespace Figurebox
                         if ((collision_k1.id != kingdom1.id || collision_k2.id != kingdom2.id) &&
                             (collision_k1.id != kingdom2.id || collision_k2.id != kingdom1.id))
                             LogInfo(
-                                $"Hash collision: ({kingdom1.id} {kingdom2.id}) with ({collision_k1.id} {collision_k2.id})");
+                                    $"Hash collision: ({kingdom1.id} {kingdom2.id}) with ({collision_k1.id} {collision_k2.id})");
                     }
                     else
                     {
@@ -280,7 +279,7 @@ namespace Figurebox
                 if (DebugConst.EDITOR_INMNY)
                 {
                     DebugConfig.setOption(DebugOption.DrawCitizenJobIcons, true);
-                    DebugConfig.setOption(DebugOption.CitizenJobAttacker, true);
+                    DebugConfig.setOption(DebugOption.CitizenJobAttacker,  true);
                 }
             }
         }
@@ -343,15 +342,15 @@ namespace Figurebox
 
         #region
 
-        public static Main instance;
-        public FunctionHelper functionHelper = new FunctionHelper();
-        public MoreItems moreWeapons = new MoreItems();
-        public MoreActors moreActors = new MoreActors();
-        public RacesLibrary RacesLibrary = new RacesLibrary();
-        public MorePlots MorePlots = new MorePlots();
-        public MoreKingdoms moreKingdoms = new MoreKingdoms();
-        public Traits Traits = new Traits();
-        public content.ProfessionLibrary professions;
+        public static Main                      instance;
+        public        FunctionHelper            functionHelper = new FunctionHelper();
+        public        MoreItems                 moreWeapons    = new MoreItems();
+        public        MoreActors                moreActors     = new MoreActors();
+        public        RacesLibrary              RacesLibrary   = new RacesLibrary();
+        public        MorePlots                 MorePlots      = new MorePlots();
+        public        MoreKingdoms              moreKingdoms   = new MoreKingdoms();
+        public        Traits                    Traits         = new Traits();
+        public        content.ProfessionLibrary professions;
 
         #endregion
     }
