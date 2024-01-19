@@ -492,7 +492,8 @@ namespace Figurebox
     if (MoHTools.IsMoHKingdom(target))
     {
         // 如果目标国家是天命国家，设置战争类型为 "tianming"
-        World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("tianming"), true);
+        World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("tianming"), false);
+        CityTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
     }
     else
     {

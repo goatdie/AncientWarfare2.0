@@ -473,8 +473,13 @@ public partial class AW_Kingdom : Kingdom
             return null;
         }
 
-        // 获取得分最高的城市，数量取决于实际的城市数目，但不超过5个
-        var topCities = kingdom.cities
+        // 初始筛选：仅考虑至少有一个邻近城市属于本国的城市
+        var candidateCities = kingdom.cities
+            .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
+            .ToList();
+
+        // 计算得分
+        var scoredCities = candidateCities
             .Select(city =>
             {
                 double score = (city.getAge() - kingdom.capital.getAge()) +
@@ -482,21 +487,25 @@ public partial class AW_Kingdom : Kingdom
                                (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
                                (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
 
-                // 计算该城市与其他城市的总距离，并将其反转作为额外得分
                 double distanceScore = kingdom.cities
                     .Where(c => c != city)
                     .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
-                // 通过一个因子调整距离得分的影响力，可以根据需要调整
                 distanceScore = 1 / (1 + distanceScore);
 
                 return new { City = city, Score = score + distanceScore };
             })
             .OrderByDescending(cityScore => cityScore.Score)
-            .Select(cityScore => cityScore.City)
-            .FirstOrDefault();
+            .ToList();
 
-        return topCities;
+        // 选择得分最高且邻近城市最多属于本国的城市
+        var newCapital = scoredCities
+            .Where(sc => sc.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc)) ==
+                         scoredCities.Max(s => s.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc))))
+            .FirstOrDefault()?.City;
+
+        return newCapital;
     }
+
 
     public void CheckAndSetPrimaryKingdom(Actor actor, AW_Kingdom kingdomToInherit)
     {
@@ -666,6 +675,7 @@ public partial class AW_Kingdom : Kingdom
                 World.world.zoneCalculator.redrawZones();
                 // WLM
                 CityTools.logUsurpation(king, this);
+                if (FomerMoh) { FomerMoh = false; }
 
                 if (king.hasTrait("figure"))
                 {

@@ -35,6 +35,8 @@ public class MoHTools
         if (MoHKingdom != null)
         {
             MoHKingdom.FomerMoh = true;
+            CityTools.loglosekingdom(MoHKingdom);
+            
         }
         MoHKingdom = null;
         MOH_Value = 0;
