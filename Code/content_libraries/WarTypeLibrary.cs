@@ -14,7 +14,7 @@ namespace Figurebox
             tianming.kingdom_for_name_attacker = true;
             tianming.forced_war = false;
             tianming.total_war = false;
-            tianming.alliance_join = false;
+            tianming.alliance_join = true;
             AssetManager.war_types_library.add(tianming);
             WarTypeAsset tianmingrebel = new WarTypeAsset();
             tianmingrebel.id = "tianmingrebel";

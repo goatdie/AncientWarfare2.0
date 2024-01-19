@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Figurebox.Utils;
 using ReflectionUtility;
 using UnityEngine;
+using Figurebox.Utils.MoH;
+using Figurebox.core;
 namespace Figurebox
 {
     public class MorePlots : PlotsLibrary
@@ -479,6 +481,28 @@ namespace Figurebox
 
                 return true;
             };
+
+            #endregion
+            #region 改变对天命国的战争类型
+            var new_war = AssetManager.plots_library.get("new_war");
+            new_war.action = delegate (Plot pPlot)
+{
+    // 判断目标国家是否是天命国家
+    AW_Kingdom target = pPlot.target_kingdom as AW_Kingdom;
+    if (MoHTools.IsMoHKingdom(target))
+    {
+        // 如果目标国家是天命国家，设置战争类型为 "tianming"
+        World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("tianming"), false);
+        CityTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
+    }
+    else
+    {
+        // 否则使用普通战争类型
+        World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, WarTypeLibrary.normal, true);
+    }
+
+    return true;
+};
 
             #endregion
         }

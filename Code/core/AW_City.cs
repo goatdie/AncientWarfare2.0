@@ -84,7 +84,6 @@ public class AW_City : City
 
         return num;
     }
-
     [MethodReplace(nameof(City.updateCitizens))]
     private new void updateCitizens()
     {
@@ -104,19 +103,46 @@ public class AW_City : City
             else
                 professionsDict[actor.data.profession].Add(actor);
     }
-
-    [MethodReplace(nameof(City.joinAnotherKingdom))]
-    public new void joinAnotherKingdom(Kingdom pKingdom)
+    [MethodReplace(nameof(City.finishCapture))]
+    public new void finishCapture(Kingdom pKingdom)
     {
         #region 原版代码
+        this.clearCapture();
+        this.recalculateNeighbourCities();
+        using (ListPool<War> pWars = pKingdom.getWars())
+        {
+            Kingdom kingdom = this.findKingdomToJoinAfterCapture(pKingdom, pWars);
+            if (!this.checkRebelWar(kingdom, pWars))
+            {
+                kingdom.data.timestamp_new_conquest = World.world.getCurWorldTime();
+            }
+            this.joinAnotherKingdom(kingdom);
+            this.removeSoldiers();
+            // 新增代码
+            AW_War mohWar = null;
+            foreach (War war in pWars)
+            {
+                if (war._asset == AssetManager.war_types_library.get("tianming"))
+                {
+                    mohWar = war as AW_War;
+                    break; // 找到天命战争后，跳出循环
+                }
+            }
 
-        Kingdom pKingdom2 = this.kingdom;
-        this.removeFromCurrentKingdom();
-        this.setKingdom(pKingdom, true);
-        this.switchedKingdom();
-        pKingdom.capturedFrom(pKingdom2);
-
+            // 使用 mohWar 变量来进行后续操作
+            if (mohWar != null)
+            {
+                if (this == mohWar._attackerCapital || this == mohWar._defenderCapital)
+                {
+                    // 如果当前城市是攻击方或防守方的首都
+                    mohWar.ResolveTianmingWar();
+                    
+                }
+            }
+        }
         #endregion
+
+
     }
 
     [MethodReplace(nameof(City.updateAge))]
@@ -128,16 +154,14 @@ public class AW_City : City
         {
             this.gold_out_homeless = 0;
         }
-
         this.gold_out_army = this.countProfession(UnitProfession.Warrior) / 2;
-        this.gold_out_buildings = this.buildings.Count                    / 2;
+        this.gold_out_buildings = this.buildings.Count / 2;
         this.gold_change = this.gold_in_tax - this.gold_out_army - this.gold_out_buildings - this.gold_out_homeless;
         int num = this.gold_change;
         if (num < 0)
         {
             num = 0;
         }
-
         this.data.storage.change("gold", num);
         this.updatePopPoints();
         PayTax();                                               //交税
