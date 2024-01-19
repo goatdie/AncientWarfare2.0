@@ -108,7 +108,6 @@ namespace Figurebox
             print("Translation loaded");
             ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
             resourceAsset.maximum = 99999999;
-			
         }
 
 
@@ -243,6 +242,7 @@ namespace Figurebox
         /// <summary>
         ///     检查是否有新的种族，为新的种族补充贴图之类的
         /// </summary>
+        [Hotfixable]
         private void checkRaceAdded()
         {
             if (AssetManager.raceLibrary.list.Count == race_count) return;
@@ -253,13 +253,14 @@ namespace Figurebox
             {
                 if (string.IsNullOrEmpty(added_prof.special_skin_path)) continue;
 
-                var xia_prof_sprites_path = AssetManager.raceLibrary.get("Xia").main_texture_path +
+                var xia_prof_sprites_path = "actors/" + AssetManager.raceLibrary.get("Xia").main_texture_path +
                                             added_prof.special_skin_path;
                 var all_sprites = SpriteTextureLoader.getSpriteList(xia_prof_sprites_path);
 
                 foreach (var race in AssetManager.raceLibrary.list)
                 {
-                    var sprites_path = race.main_texture_path + added_prof.special_skin_path;
+                    if (!race.civilization) continue;
+                    var sprites_path = "actors/" + race.main_texture_path + added_prof.special_skin_path;
                     var sprites = Resources.LoadAll<Sprite>(sprites_path);
                     if (sprites is { Length: > 0 }) continue;
 

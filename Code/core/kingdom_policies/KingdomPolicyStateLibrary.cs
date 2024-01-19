@@ -56,7 +56,8 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
             KingdomPolicyLibrary.Instance.get("slaves_army")
         );
         SocialLevel_SlaveOwner.AddCityTasks(
-            AssetManager.tasks_city.get("check_slave_job")
+            AssetManager.tasks_city.get("check_slave_job"),
+            AssetManager.tasks_city.get("produce_slaves")
         );
 
         MainSoldiers_Slaves.AddCityTasks(

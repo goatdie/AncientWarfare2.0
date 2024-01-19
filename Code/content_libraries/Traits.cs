@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.constants;
 using Figurebox.core;
+using Figurebox.Utils;
 using Figurebox.Utils.MoH;
 
 namespace Figurebox
@@ -143,6 +145,12 @@ namespace Figurebox
             slave.path_icon = "ui/policy/start_slaves";
             slave.birth = 0;
             slave.inherit = 100;
+            slave.special_effect_interval = 3;
+            slave.action_special_effect = (pTarget, pTile) =>
+            {
+                pTarget.a.setProfession(AWUnitProfession.Slave.C());
+                return true;
+            };
             add_social_identity_trait(slave);
         }
 

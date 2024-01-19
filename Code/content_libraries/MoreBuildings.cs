@@ -1,20 +1,17 @@
 using System.Collections.Generic;
-using UnityEngine;
-using ReflectionUtility;
-using System;
 using System.Linq;
+using UnityEngine;
+
 namespace Figurebox
 {
     class MoreBuildings
     {
-
-
         public void init()
         {
             tower_init();
             add_Xia();
-
         }
+
         private static void add_Xia()
         {
             clone_human_buildings("Xia");
@@ -34,6 +31,7 @@ namespace Figurebox
             AssetManager.buildings.get("windmill_Xia_1").fundament = new BuildingFundament(2, 2, 2, 0);
             AssetManager.buildings.get("watch_tower_Xia").fundament = new BuildingFundament(2, 2, 3, 0);
         }
+
         private void tower_init()
         {
             BuildingAsset XiaTower = AssetManager.buildings.clone("XiaTower", "!city_colored_building");
@@ -70,9 +68,8 @@ namespace Figurebox
 
             //XiaTower.setShadow(0.5f, 0.23f, 0.27f);
             // AssetManager.race_build_orders.get("Tian").addBuilding("Barrack1_Tian", 0, 2, 50, 10, false, false, 0);
-
-
         }
+
         private static void clone_human_buildings(string race)
         {
             List<BuildingAsset> human_buildings = AssetManager.buildings.list
@@ -80,6 +77,11 @@ namespace Figurebox
 
             foreach (BuildingAsset building in human_buildings)
             {
+                var test_path = building.sprite_path;
+                if (string.IsNullOrEmpty(test_path))
+                    test_path = "buildings/" + building.id.Replace(SK.human, race);
+                if (Resources.LoadAll<Sprite>(test_path) is not { Length: > 0 }) continue;
+
                 BuildingAsset new_building =
                     AssetManager.buildings.clone(building.id.Replace(SK.human, race),
                         building.id);
@@ -95,11 +97,6 @@ namespace Figurebox
 
                 AssetManager.buildings.loadSprites(new_building);
             }
-
-
-
-
-
         }
     }
 }

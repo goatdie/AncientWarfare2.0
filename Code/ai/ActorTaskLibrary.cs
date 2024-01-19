@@ -22,8 +22,7 @@ public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
         t.addBeh(new BehFindTileNearbyGroupLeader());
         t.addBeh(new BehRawGoToTileTarget());
         t.addBeh(new BehFindSlaveToCatchAround());
-        t.addBeh(new BehFightCheckEnemyIsOk());
-        t.addBeh(new BehGoToActorTarget("sameTile", true));
+        //t.addBeh(new BehRawGoToActorTarget("sameTile", true));
         t.addBeh(new BehCatchTargetAsSlave());
 
         add(new BehaviourTaskActor

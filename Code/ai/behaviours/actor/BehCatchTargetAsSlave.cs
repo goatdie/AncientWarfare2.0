@@ -3,25 +3,34 @@ using ai.behaviours;
 using Figurebox.constants;
 using Figurebox.Utils;
 using Figurebox.Utils.extensions;
+using NeoModLoader.api.attributes;
 
 namespace Figurebox.ai.behaviours.actor;
 
 public class BehCatchTargetAsSlave : BehaviourActionActor
 {
+    [Hotfixable]
     public override BehResult execute(Actor pObject)
     {
         if (pObject.beh_actor_target == null || !pObject.beh_actor_target.isAlive() ||
-            pObject.beh_actor_target.a == null) return BehResult.RestartTask;
-
-        var pTarget = pObject.beh_actor_target.a;
-        Main.LogInfo($"存在奴隶捕捉目标 {pTarget.data.id}({pTarget.getName()})");
-        if (pTarget.data.health > pTarget.stats[S.health] * 0.4f)
+            !pObject.beh_actor_target.isActor())
         {
-            pObject.setAttackTarget(pTarget);
+            Main.LogInfo(
+                $"奴隶捕捉目标不存在或已死亡 null: {pObject.beh_actor_target == null}, alive: {pObject.beh_actor_target?.isAlive() ?? false}, actor: {pObject.beh_actor_target?.isActor() ?? false}");
             return BehResult.RestartTask;
         }
 
-        pObject.clearAttackTarget();
+        var pTarget = pObject.beh_actor_target.a;
+
+
+        Main.LogInfo(
+            $"存在奴隶捕捉目标 {pTarget.data.id}({pTarget.getName()}) 血量: {pTarget.data.health} -> {pTarget.stats[S.health] * 0.4f}/{pTarget.stats[S.health]}");
+
+        if (pTarget.data.health > pTarget.stats[S.health] * BehaviourConst.SlaveCaptureHealthThreshold)
+        {
+            return BehResult.RestartTask;
+        }
+
         pObject.beh_actor_target = null;
 
         pTarget.addTrait(AWS.slave);
@@ -29,7 +38,6 @@ public class BehCatchTargetAsSlave : BehaviourActionActor
         pTarget.city?.removeUnit(pTarget);
         pObject.city?.addNewUnit(pTarget);
         pTarget.setProfession(AWUnitProfession.Slave.C());
-        Main.LogInfo($"捕获奴隶{pTarget.data.id}({pTarget.getName()})");
         pTarget.data.favorite = true;
 
         var slaves = pObject.data.ReadObj<List<string>>(AWDataS.caught_slaves);
