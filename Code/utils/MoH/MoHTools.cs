@@ -30,13 +30,18 @@ public class MoHTools
         if (kingdom.king != null) { kingdom.king.addTrait("天命"); }
         Debug.Log("天命值" + MOH_Value);
     }
+    public static AW_Kingdom ConvertKtoAW(Kingdom kingdom)
+    {
+        AW_Kingdom awk = kingdom as AW_Kingdom;
+        return awk;
+    }
     public static void Clear_MoHKingdom()
     {
         if (MoHKingdom != null)
         {
             MoHKingdom.FomerMoh = true;
             CityTools.loglosekingdom(MoHKingdom);
-            
+
         }
         MoHKingdom = null;
         MOH_Value = 0;

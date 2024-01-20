@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Figurebox.attributes;
 using Figurebox.constants;
+using Figurebox.Utils.MoH;
 
 namespace Figurebox.core;
 
@@ -113,8 +114,7 @@ public class AW_City : City
             {
                 kingdom.data.timestamp_new_conquest = World.world.getCurWorldTime();
             }
-            this.joinAnotherKingdom(kingdom);
-            this.removeSoldiers();
+
             // 新增代码
             AW_War mohWar = null;
             foreach (War war in pWars)
@@ -124,23 +124,38 @@ public class AW_City : City
                     mohWar = war as AW_War;
                     break; // 找到天命战争后，跳出循环
                 }
+                if (war._asset == AssetManager.war_types_library.get("conquest"))
+                {
+
+                    if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(war.main_attacker)) && this == mohWar._attackerCapital)
+                    {
+                        // 天命国被反推丢失天命
+                        MoHTools.Clear_MoHKingdom();
+                        MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(war.main_defender));
+                    }
+                }
+
             }
 
-            // 使用 mohWar 变量来进行后续操作
+            // 特定情况的操作
+
+            // 继续原版逻辑
+            this.joinAnotherKingdom(kingdom);
+            this.removeSoldiers();
+
+            // 天命战争的解决
             if (mohWar != null)
             {
                 if (this == mohWar._attackerCapital || this == mohWar._defenderCapital)
                 {
                     // 如果当前城市是攻击方或防守方的首都
                     mohWar.ResolveTianmingWar();
-                    
                 }
             }
         }
         #endregion
-
-
     }
+
 
     [MethodReplace(nameof(City.updateAge))]
     internal new void updateAge()

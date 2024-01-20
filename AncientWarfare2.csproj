@@ -131,13 +131,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-      <Folder Include="Code\core\kingdom_vassals\"/>
+      <Folder Include="Code\core\kingdom_vassals\" />
       <Folder Include="word_libraries\" />
       <Folder Include="name_generators\" />
   </ItemGroup>
     <ItemGroup>
-        <None Remove="Utilities\IconGenerate.py"/>
-        <None Remove="AncientWarfare2.csproj.DotSettings"/>
+        <None Remove="Utilities\IconGenerate.py" />
+        <None Remove="AncientWarfare2.csproj.DotSettings" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="C5" Version="2.5.3" />
     </ItemGroup>
 
 </Project>

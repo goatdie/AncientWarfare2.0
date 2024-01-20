@@ -108,6 +108,7 @@ namespace Figurebox
             print("Translation loaded");
             ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
             resourceAsset.maximum = 99999999;
+
         }
 
 
@@ -141,7 +142,7 @@ namespace Figurebox
 
         private void OnApplicationQuit()
         {
-          // EventsManager.Instance.CleanTempDataBase();
+            // EventsManager.Instance.CleanTempDataBase();
         }
 
         public string GetLocaleFilesDirectory(ModDeclare pModDeclare)
@@ -299,6 +300,7 @@ namespace Figurebox
             _ = new SlavesPatch();
             _ = new CitiesManagerPatch();
             _ = new KingdomManagerPatch();
+            Harmony.CreateAndPatchAll(typeof(PathFinderPatch));
             /*
                         Harmony.CreateAndPatchAll(typeof(FunctionHelper));
 
