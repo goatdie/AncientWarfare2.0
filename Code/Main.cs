@@ -34,9 +34,9 @@ namespace Figurebox
         public static Transform  prefabs_library;
 
         public List<string> addRaces = new List<string>()
-                                       {
-                                           "Xia"
-                                       };
+        {
+            "Xia"
+        };
 
         public BuildingLibrary buildingLibrary = new BuildingLibrary();
 
@@ -140,7 +140,7 @@ namespace Figurebox
 
         private void OnApplicationQuit()
         {
-          // EventsManager.Instance.CleanTempDataBase();
+            // EventsManager.Instance.CleanTempDataBase();
         }
 
         public string GetLocaleFilesDirectory(ModDeclare pModDeclare)
@@ -169,23 +169,23 @@ namespace Figurebox
 
             Mod.Info = typeof(Info)
                        .GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
-                                           {
-                                               typeof(NCMod)
-                                           },
+                                       {
+                                           typeof(NCMod)
+                                       },
                                        null)
                        ?.Invoke(new object[]
-                                {
-                                    new NCMod
-                                    {
-                                        name = pModDecl.Name,
-                                        author = pModDecl.Author,
-                                        description = pModDecl.Description,
-                                        path = pModDecl.FolderPath,
-                                        version = pModDecl.Version,
-                                        iconPath = pModDecl.IconPath,
-                                        targetGameBuild = pModDecl.TargetGameBuild
-                                    }
-                                }) as Info;
+                       {
+                           new NCMod
+                           {
+                               name = pModDecl.Name,
+                               author = pModDecl.Author,
+                               description = pModDecl.Description,
+                               path = pModDecl.FolderPath,
+                               version = pModDecl.Version,
+                               iconPath = pModDecl.IconPath,
+                               targetGameBuild = pModDecl.TargetGameBuild
+                           }
+                       }) as Info;
 
             Configure();
 
@@ -195,7 +195,7 @@ namespace Figurebox
             _ = new AWDataS();
             _ = new PolicyState();
             _ = new PolicyStateType();
-            AutoMethodReplaceTool.ReplaceMethods();
+            HarmonyTools.ReplaceMethods();
         }
 
         [Hotfixable]
