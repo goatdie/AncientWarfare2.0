@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -8,7 +9,7 @@ using HarmonyLib;
 
 namespace Figurebox.Utils;
 
-internal class AutoMethodReplaceTool
+internal class HarmonyTools
 {
     private static MethodInfo _new_method;
 
@@ -20,7 +21,7 @@ internal class AutoMethodReplaceTool
         foreach (Type type in types)
         {
             MethodInfo[] method_infos = type.GetMethods(BindingFlags.Instance | BindingFlags.Static |
-                                                        BindingFlags.Public | BindingFlags.NonPublic);
+                                                        BindingFlags.Public   | BindingFlags.NonPublic);
             foreach (MethodInfo method_info in method_infos)
             {
                 var attribute = method_info.GetCustomAttribute<MethodReplaceAttribute>();
@@ -77,7 +78,7 @@ internal class AutoMethodReplaceTool
         Harmony harmony =
             new($"Figurebox.AutoMethodReplaceTool.{pTargetMethod.DeclaringType.FullName}.{pTargetMethod.Name}");
         harmony.Patch(pTargetMethod,
-            transpiler: new HarmonyMethod(typeof(AutoMethodReplaceTool), nameof(_method_replace_patch)));
+                      transpiler: new HarmonyMethod(typeof(HarmonyTools), nameof(_method_replace_patch)));
     }
 
     private static IEnumerable<CodeInstruction> _method_replace_patch(IEnumerable<CodeInstruction> instr)
@@ -88,7 +89,7 @@ internal class AutoMethodReplaceTool
         var i = 0;
         if (!local_method.IsStatic)
         {
-            codes.Add(new CodeInstruction(OpCodes.Ldarg, i));
+            codes.Add(new CodeInstruction(OpCodes.Ldarg,     i));
             codes.Add(new CodeInstruction(OpCodes.Castclass, local_method.DeclaringType));
             i++;
         }
@@ -108,5 +109,14 @@ internal class AutoMethodReplaceTool
         }
 
         return codes;
+    }
+
+    public static int FindCodeSnippet(List<CodeInstruction> codes, List<CodeInstruction> snippet)
+    {
+        for (var i = 0; i < codes.Count - snippet.Count; i++)
+            if (!snippet.Where((t, j) => codes[i + j].opcode != t.opcode).Any())
+                return i;
+
+        return -1;
     }
 }

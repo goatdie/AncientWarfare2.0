@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.Utils.MoH;
+using Figurebox.core.dbs;
+using Figurebox.Utils;
 
 namespace Figurebox.core;
 
@@ -14,6 +17,12 @@ public class AW_City : City
     private static readonly AWUnitProfession[] ExtendUnitProfessions =
         (AWUnitProfession[])Enum.GetValues(typeof(AWUnitProfession));
 
+    public int capital_tax_income;
+
+    public int food_count_for_slaves_this_year;
+
+    public int gold_pay_tax;
+
     public AW_City()
     {
         status = new AW_CityStatus();
@@ -24,8 +33,6 @@ public class AW_City : City
     /// </summary>
     public AW_CityStatus aw_status => (AW_CityStatus)status;
 
-    public int gold_pay_tax;
-    public int capital_tax_income;
     public void PayTax()
     {
         AW_City Capital = kingdom.capital as AW_City;
@@ -82,6 +89,7 @@ public class AW_City : City
 
         return num;
     }
+
     [MethodReplace(nameof(City.updateCitizens))]
     private new void updateCitizens()
     {
@@ -101,10 +109,12 @@ public class AW_City : City
             else
                 professionsDict[actor.data.profession].Add(actor);
     }
+
     [MethodReplace(nameof(City.finishCapture))]
     public new void finishCapture(Kingdom pKingdom)
     {
         #region 原版代码
+
         this.clearCapture();
         this.recalculateNeighbourCities();
         using (ListPool<War> pWars = pKingdom.getWars())
@@ -114,6 +124,7 @@ public class AW_City : City
             {
                 kingdom.data.timestamp_new_conquest = World.world.getCurWorldTime();
             }
+
 
             // 新增代码
             AW_War mohWar = null;
@@ -153,6 +164,7 @@ public class AW_City : City
                 }
             }
         }
+
         #endregion
     }
 
@@ -166,16 +178,28 @@ public class AW_City : City
         {
             this.gold_out_homeless = 0;
         }
+
         this.gold_out_army = this.countProfession(UnitProfession.Warrior) / 2;
-        this.gold_out_buildings = this.buildings.Count / 2;
+        this.gold_out_buildings = this.buildings.Count                    / 2;
         this.gold_change = this.gold_in_tax - this.gold_out_army - this.gold_out_buildings - this.gold_out_homeless;
         int num = this.gold_change;
         if (num < 0)
         {
             num = 0;
         }
+
         this.data.storage.change("gold", num);
         this.updatePopPoints();
-        PayTax();//交税
+        PayTax();                                               //交税
+        CityPopRecordManager.NewCityPopCompositionRecord(this); //记录人口构成
+
+        // 奴隶食物供给
+        food_count_for_slaves_this_year = 0;
+        if (professionsDict != null && professionsDict[AWUnitProfession.Slave.C()].Count > 0)
+        {
+            var total_food = data.storage.listFood.Sum(food => food.amount);
+
+            food_count_for_slaves_this_year = (int)(total_food * 0.1f);
+        }
     }
 }
