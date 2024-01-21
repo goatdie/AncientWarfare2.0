@@ -58,6 +58,9 @@
     <Reference Include="0Harmony">
       <HintPath>..\..\worldbox_Data\StreamingAssets\mods\NML\Assemblies\0Harmony.dll</HintPath>
     </Reference>
+        <Reference Include="C5">
+            <HintPath>..\..\worldbox_Data\Managed\C5.dll</HintPath>
+        </Reference>
     <Reference Include="DOTween">
       <HintPath>..\..\worldbox_Data\Managed\DOTween.dll</HintPath>
     </Reference>
