@@ -179,9 +179,12 @@ internal class PathFinderPatch
                                     goto IL_445;
                                 }
                             }
-                            else if ((!worldTile.Type.ground && iParam.ground) || (!worldTile.Type.ocean && iParam.ocean && worldTile.Type != TileLibrary.shallow_waters))
+                            else if ((!worldTile.Type.ground && iParam.ground) || (!worldTile.Type.ocean && iParam.ocean))
                             {
-                                goto IL_445;
+                                if (worldTile.Type != TileLibrary.shallow_waters) // 浅水被视为陆地
+                                {
+                                    goto IL_445;
+                                }
                             }
                         }
                     }

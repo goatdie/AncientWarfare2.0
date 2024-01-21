@@ -11,7 +11,7 @@ public class KingdomYearName
     public static void Make_New_YearName(AW_Kingdom kingdom)
     {
         string yearName;
-        if(kingdom.king!=null)
+        if (kingdom.king == null)
         {
             return;
         }
@@ -28,7 +28,7 @@ public class KingdomYearName
             // 其他等级的命名规则
             string singleCharTitle = AW_Kingdom.GetSingleCharacterTitle(kingdom.policy_data.Title); // 返回 "公"
 
-            yearName = kingdom.name +singleCharTitle+kingdom.king.getNameCharacter();
+            yearName = kingdom.name + singleCharTitle + kingdom.king.getNameCharacter();
         }
 
         kingdom.policy_data.year_name = yearName;

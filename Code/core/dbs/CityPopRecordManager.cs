@@ -35,5 +35,6 @@ public class CityPopRecordManager : AMultiTableDBManager<CityPopRecordManager>
                                                                   .Create(AssetManager.professions.dict_profession_id[pair.Key].id + "_Count",
                                                                           pair.Value.Count)));
         Instance.OperatingDB.Insert(pCity.data.id, column_vals.ToArray());
+        
     }
 }
