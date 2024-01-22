@@ -1,12 +1,22 @@
+using Figurebox.core;
+using Figurebox.Utils;
+using HarmonyLib;
 #if 一米_中文名
 using Chinese_Name;
 #endif
-using Figurebox.core;
 
 namespace Figurebox;
 
 public class KingdomYearName
 {
+    public static void changeYearname(AW_Kingdom __instance)
+    {
+#if 一米_中文名
+        KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("kingdom_yearname");
+
+        __instance.StartPolicy(policy, true);
+#endif
+    }
 #if 一米_中文名
     public static void Make_New_YearName(AW_Kingdom kingdom)
     {
@@ -36,7 +46,6 @@ public class KingdomYearName
     }
 
 
-
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MapText), "showTextKingdom")]
     public static void ShowTextKingdom_Title(MapText __instance, ref Kingdom pKingdom)
@@ -51,9 +60,8 @@ public class KingdomYearName
             // 将爵位头衔添加到王国名称之后
             __instance.setText(Text, pKingdom.capital.cityCenter);
         }
-
-
     }
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MapText), "showTextKingdom")]
     public static void ShowTextKingdom_Postfix(MapText __instance, Kingdom pKingdom)
@@ -95,12 +103,4 @@ public class KingdomYearName
         __instance.setText(final_text, pKingdom.capital.cityCenter);
     }
 #endif
-    public static void changeYearname(AW_Kingdom __instance)
-    {
-#if 一米_中文名
-        KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("kingdom_yearname");
-
-        __instance.StartPolicy(policy, true);
-#endif
-    }
 }
