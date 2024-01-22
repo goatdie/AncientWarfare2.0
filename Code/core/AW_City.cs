@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Figurebox.attributes;
 using Figurebox.constants;
-using Figurebox.Utils.MoH;
 using Figurebox.core.dbs;
 using Figurebox.Utils;
+using Figurebox.Utils.MoH;
 
 namespace Figurebox.core;
 
@@ -135,17 +135,17 @@ public class AW_City : City
                     mohWar = war as AW_War;
                     break; // 找到天命战争后，跳出循环
                 }
+
                 if (war._asset == AssetManager.war_types_library.get("conquest"))
                 {
-
-                    if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(war.main_attacker)) && this == mohWar._attackerCapital)
+                    if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(war.main_attacker)) &&
+                        this == mohWar._attackerCapital)
                     {
                         // 天命国被反推丢失天命
                         MoHTools.Clear_MoHKingdom();
                         MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(war.main_defender));
                     }
                 }
-
             }
 
             // 特定情况的操作
@@ -190,6 +190,7 @@ public class AW_City : City
 
         this.data.storage.change("gold", num);
         this.updatePopPoints();
+        if (professionsDict.Count == 0) updateCitizens();
         PayTax();                                               //交税
         CityPopRecordManager.NewCityPopCompositionRecord(this); //记录人口构成
 
