@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using Figurebox.ai;
 using Figurebox.constants;
+using Figurebox.content_libraries;
 using Figurebox.core;
 using Figurebox.patch;
 using Figurebox.patch.MoH;
@@ -43,6 +44,8 @@ namespace Figurebox
         public MoreBuildings moreBuildings = new MoreBuildings();
 
         private int race_count = 4;
+
+        private int skip_frame = 60;
 
         // public const string mainPath = "worldbox_Data/StreamingAssets/Mods/NCMS/Core/Temp/Mods/AncientWarfare2.0";
         public static string mainPath => Mod.Info.Path; // 这种方式更鲁棒, 可以适配不同的模组文件夹位置
@@ -98,7 +101,7 @@ namespace Figurebox
             moreActors.init();
             moreBuildings.init();
             KingdomVassals.init();
-
+            AssetManager.instance.add(new UnitGroupTypeLibrary(), "unit_group_types");
             moreKingdoms.init();
             BuildingLibrary.init();
             MapModeManager.CreateMapLayer();
@@ -107,7 +110,6 @@ namespace Figurebox
             print("Translation loaded");
             ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
             resourceAsset.maximum = 99999999;
-
         }
 
 
@@ -137,6 +139,9 @@ namespace Figurebox
             if (instance == null) return;
             checkRaceAdded();
             // AW_Kingdom.kingsSetThisFrame.Clear();
+            if (skip_frame-- > 0) return;
+
+            _ = EventsManager.Instance;
         }
 
         private void OnApplicationQuit()
