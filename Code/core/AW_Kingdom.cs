@@ -17,9 +17,9 @@ namespace Figurebox.core;
 
 public partial class AW_Kingdom : Kingdom
 {
+    public bool  FomerMoh; //控制是否为前天命国家
     public Actor heir;
-    public bool NameIntegration = false; //控制国家命名是否姓氏合流
-    public bool FomerMoh = false; //控制是否为前天命国家
+    public bool  NameIntegration; //控制国家命名是否姓氏合流
 
 
     public KingdomPolicyData policy_data = new();
@@ -275,6 +275,7 @@ public partial class AW_Kingdom : Kingdom
         {
             return "朝";
         }
+
         if (title == KingdomPolicyData.KingdomTitle.Emperor && FomerMoh)
         {
             return "残部";
@@ -327,9 +328,9 @@ public partial class AW_Kingdom : Kingdom
     {
         return pPolicyAsset != null
                && (pPolicyAsset.can_repeat ||
-                   !policy_data.policy_history.Contains(pPolicyAsset.id)
-                   && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
-                       policy_data.current_policy_id != pPolicyAsset.id))
+                   (!policy_data.policy_history.Contains(pPolicyAsset.id)
+                    && (policy_data.p_status          == KingdomPolicyData.PolicyStatus.Completed ||
+                        policy_data.current_policy_id != pPolicyAsset.id)))
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
                    pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All &&
@@ -434,7 +435,7 @@ public partial class AW_Kingdom : Kingdom
         {
             int num = World.world.mapStats.getYearsSince(policy_data.year_start_timestamp) + 1;
             return LM.Get("year_name_format").Replace("$year_name$", text).Replace("$year_number$",
-                num == 1 ? LM.Get("first_year_number") : num.ToString());
+                     num == 1 ? LM.Get("first_year_number") : num.ToString());
         }
 
         return text;
@@ -449,7 +450,6 @@ public partial class AW_Kingdom : Kingdom
             City newCapital = FindNewCapital(kingdom);
             if (newCapital != null && kingdom.king != null)
             {
-
                 //Debug.Log("New capital set to " + newCapital.data.name);
 
                 // 将原首都的 70% 的金币转移到新首都
@@ -475,33 +475,37 @@ public partial class AW_Kingdom : Kingdom
 
         // 初始筛选：仅考虑至少有一个邻近城市属于本国的城市
         var candidateCities = kingdom.cities
-            .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
-            .ToList();
+                                     .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
+                                     .ToList();
 
         // 计算得分
         var scoredCities = candidateCities
-            .Select(city =>
-            {
-                double score = (city.getAge() - kingdom.capital.getAge()) +
-                               (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
-                               (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
-                               (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom) ? 50 : 0);
+                           .Select(city =>
+                           {
+                               var score = city.getAge() - kingdom.capital.getAge()                                  +
+                                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2    +
+                                           (city.zones.Count          - kingdom.capital.zones.Count)          * 0.35 +
+                                           (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom)
+                                               ? 50
+                                               : 0);
 
-                double distanceScore = kingdom.cities
-                    .Where(c => c != city)
-                    .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
-                distanceScore = 1 / (1 + distanceScore);
+                               double distanceScore = kingdom.cities
+                                                             .Where(c => c != city)
+                                                             .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
+                               distanceScore = 1 / (1 + distanceScore);
 
-                return new { City = city, Score = score + distanceScore };
-            })
-            .OrderByDescending(cityScore => cityScore.Score)
-            .ToList();
+                               return new { City = city, Score = score + distanceScore };
+                           })
+                           .OrderByDescending(cityScore => cityScore.Score)
+                           .ToList();
 
         // 选择得分最高且邻近城市最多属于本国的城市
         var newCapital = scoredCities
-            .Where(sc => sc.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc)) ==
-                         scoredCities.Max(s => s.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc))))
-            .FirstOrDefault()?.City;
+                         .Where(sc => sc.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc)) ==
+                                      scoredCities.Max(s =>
+                                                           s.City.neighbours_cities
+                                                            .Count(nc => kingdom.cities.Contains(nc))))
+                         .FirstOrDefault()?.City;
 
         return newCapital;
     }
@@ -546,7 +550,7 @@ public partial class AW_Kingdom : Kingdom
 
 
     public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1,
-        KingdomPolicyData.KingdomTitle title2)
+                                                   KingdomPolicyData.KingdomTitle title2)
     {
         return (title1 > title2) ? title1 : title2;
     }
@@ -611,8 +615,6 @@ public partial class AW_Kingdom : Kingdom
         MoHCorePatch.check_and_add_moh_trait(this, pActor);
         clearHeirData();
         KingdomYearName.changeYearname(this);
-
-
     }
 
     [MethodReplace(nameof(Kingdom.clearKingData))]
@@ -675,7 +677,7 @@ public partial class AW_Kingdom : Kingdom
                 World.world.zoneCalculator.redrawZones();
                 // WLM
                 CityTools.logUsurpation(king, this);
-                if (FomerMoh) { FomerMoh = false; }
+                if (FomerMoh) FomerMoh = false;
 
                 if (king.hasTrait("figure"))
                 {
@@ -686,7 +688,11 @@ public partial class AW_Kingdom : Kingdom
                 }
                 else
                 {
+#if 一米_中文名
                     kingdomname = WordLibraryManager.GetRandomWord("中文国名前缀");
+#else
+                    kingdomname = NameGenerator.getName(race.name_template_kingdom);
+#endif
                 } //之后按爵位来
 
                 data.name = kingdomname;

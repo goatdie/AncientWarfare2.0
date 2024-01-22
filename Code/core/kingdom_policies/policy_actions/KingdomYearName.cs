@@ -1,13 +1,13 @@
 #if 一米_中文名
 using Chinese_Name;
+#endif
 using Figurebox.core;
-using Figurebox.Utils;
-using HarmonyLib;
 
 namespace Figurebox;
 
 public class KingdomYearName
 {
+#if 一米_中文名
     public static void Make_New_YearName(AW_Kingdom kingdom)
     {
         string yearName;
@@ -94,12 +94,13 @@ public class KingdomYearName
 
         __instance.setText(final_text, pKingdom.capital.cityCenter);
     }
-
+#endif
     public static void changeYearname(AW_Kingdom __instance)
     {
+#if 一米_中文名
         KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("kingdom_yearname");
 
         __instance.StartPolicy(policy, true);
+#endif
     }
 }
-#endif
