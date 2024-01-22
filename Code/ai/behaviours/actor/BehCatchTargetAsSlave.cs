@@ -16,7 +16,8 @@ public class BehCatchTargetAsSlave : BehaviourActionActor
             !pObject.beh_actor_target.isActor())
         {
             Main.LogInfo(
-                $"奴隶捕捉目标不存在或已死亡 null: {pObject.beh_actor_target == null}, alive: {pObject.beh_actor_target?.isAlive() ?? false}, actor: {pObject.beh_actor_target?.isActor() ?? false}");
+                         $"奴隶捕捉目标不存在或已死亡 null: {pObject.beh_actor_target == null}, alive: {pObject.beh_actor_target != null && pObject.beh_actor_target.isAlive()}, actor: {pObject.beh_actor_target != null && pObject.beh_actor_target.isActor()}");
+            pObject.beh_actor_target = null;
             return BehResult.RestartTask;
         }
 
@@ -24,7 +25,7 @@ public class BehCatchTargetAsSlave : BehaviourActionActor
 
 
         Main.LogInfo(
-            $"存在奴隶捕捉目标 {pTarget.data.id}({pTarget.getName()}) 血量: {pTarget.data.health} -> {pTarget.stats[S.health] * 0.4f}/{pTarget.stats[S.health]}");
+                     $"存在奴隶捕捉目标 {pTarget.data.id}({pTarget.getName()}) 血量: {pTarget.data.health} -> {pTarget.stats[S.health] * 0.4f}/{pTarget.stats[S.health]}");
 
         if (pTarget.data.health > pTarget.stats[S.health] * BehaviourConst.SlaveCaptureHealthThreshold)
         {
