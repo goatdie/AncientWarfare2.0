@@ -486,25 +486,102 @@ namespace Figurebox
             #region 改变对天命国的战争类型
             var new_war = AssetManager.plots_library.get("new_war");
             new_war.action = delegate (Plot pPlot)
-{
-    // 判断目标国家是否是天命国家
-    AW_Kingdom target = pPlot.target_kingdom as AW_Kingdom;
-    if (MoHTools.IsMoHKingdom(target))
-    {
-        // 如果目标国家是天命国家，设置战争类型为 "tianming"
-        World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("tianming"), false);
-        CityTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
-    }
-    else
-    {
-        // 否则使用普通战争类型
-        World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, WarTypeLibrary.normal, true);
-    }
+             {
+                 // 判断目标国家是否是天命国家
+                 AW_Kingdom target = pPlot.target_kingdom as AW_Kingdom;
+                 if (MoHTools.IsMoHKingdom(target))
+                 {
+                     // 如果目标国家是天命国家，设置战争类型为 "tianming"
+                     World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("tianming"), false);
+                     CityTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
+                 }
+                 else
+                 {
+                     // 否则使用普通战争类型
+                     World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, WarTypeLibrary.normal, true);
+                 }
 
-    return true;
-};
+                 return true;
+             };
 
             #endregion
+            #region 改变rebel
+            var rebellion = AssetManager.plots_library.get("rebellion");
+            rebellion.action = delegate (Plot pPlot)
+            {
+                if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom)) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).Rebel))
+                {
+                    startTianmingRebellion(pPlot.initiator_city, pPlot.getLeader(), pPlot);
+                }
+                else
+                {
+                    DiplomacyHelpers.startRebellion(pPlot.initiator_city, pPlot.getLeader(), pPlot);
+                }
+                return true;
+            };
+            #endregion
+        }
+
+        public static void startTianmingRebellion(City pCity, Actor pActor, Plot pPlot)
+        {
+            Kingdom originalKingdom = pCity.kingdom;
+            Kingdom newKingdom = pCity.makeOwnKingdom();
+
+            // 设置新王国为义军
+            MoHTools.ConvertKtoAW(newKingdom).Rebel = true;
+
+            pCity.removeLeader();
+            pCity.addNewUnit(pActor);
+            City.makeLeader(pActor, pCity);
+            War war = null;
+
+            using ListPool<War> listPool = World.world.wars.getWars(originalKingdom);
+            foreach (ref War item in listPool)
+            {
+                War current = item;
+                if (current.main_attacker == originalKingdom && current.getAsset() == AssetManager.war_types_library.get("tianmingrebel"))
+                {
+                    war = current;
+                    war.joinDefenders(newKingdom);
+                    break;
+                }
+            }
+
+            if (war == null)
+            {
+                war = World.world.diplomacy.startWar(originalKingdom, newKingdom, AssetManager.war_types_library.get("tianmingrebel"));
+                if (originalKingdom.hasAlliance())
+                {
+                    foreach (Kingdom ally in originalKingdom.getAlliance().kingdoms_hashset)
+                    {
+                        if (ally != originalKingdom && ally.isOpinionTowardsKingdomGood(originalKingdom))
+                        {
+                            war.joinAttackers(ally);
+                        }
+                    }
+                }
+            }
+
+            foreach (Actor supporter in pPlot.supporters)
+            {
+                City supporterCity = supporter.city;
+                if (supporterCity != null && supporterCity.kingdom != newKingdom && supporterCity.kingdom == originalKingdom)
+                {
+                    supporterCity.joinAnotherKingdom(newKingdom);
+                }
+            }
+
+            int totalCities = originalKingdom.cities.Count;
+            int maxCitiesToJoin = newKingdom.getMaxCities() - newKingdom.cities.Count;
+            maxCitiesToJoin = maxCitiesToJoin < 0 ? 0 : (maxCitiesToJoin > totalCities / 3 ? totalCities / 3 : maxCitiesToJoin);
+
+            for (int i = 0; i < maxCitiesToJoin; i++)
+            {
+                if (!DiplomacyHelpers.checkMoreAlignedCities(newKingdom, originalKingdom))
+                {
+                    break;
+                }
+            }
         }
 
 

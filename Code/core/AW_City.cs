@@ -180,7 +180,7 @@ public class AW_City : City
         }
 
         this.gold_out_army = this.countProfession(UnitProfession.Warrior) / 2;
-        this.gold_out_buildings = this.buildings.Count                    / 2;
+        this.gold_out_buildings = this.buildings.Count / 2;
         this.gold_change = this.gold_in_tax - this.gold_out_army - this.gold_out_buildings - this.gold_out_homeless;
         int num = this.gold_change;
         if (num < 0)
@@ -203,4 +203,17 @@ public class AW_City : City
             food_count_for_slaves_this_year = (int)(total_food * 0.1f);
         }
     }
+
+    public override void Dispose()
+    {
+
+        if (MoHTools._moh_cities.Contains(this))
+        {
+            MoHTools._moh_cities.Remove(this);
+        }
+
+
+        base.Dispose();
+    }
+
 }

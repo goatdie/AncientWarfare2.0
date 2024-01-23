@@ -16,7 +16,7 @@ public partial class AW_KingdomManager
         }
         if (MoHTools.MOH_Value <= MoHTools.MOH_UnderLimit)
         {
-            MoHTools.Clear_MoHKingdom(); //天命去除
+            MoHTools.MoHKingdomBoom(); //天命爆炸
         }
     }
     /// <summary>
@@ -32,6 +32,19 @@ public partial class AW_KingdomManager
             // 如果没有敌国, 天命累加值+1
             value_change++;
         }
+        if (MoHTools.MoHKingdom.hasEnemies())
+        {
+            // 如果有敌国, 天命累加值-1
+            value_change--;
+        }
+        if (!MoHTools.MoHKingdom.isSupreme())
+        {
+            value_change -= 3;
+        }
+        if (World.world_era == AssetManager.era_library.get(S.age_despair) || World.world_era == AssetManager.era_library.get(S.age_ash) || World.world_era == AssetManager.era_library.get(S.age_chaos))
+        {
+            value_change -= 20; //负面纪元
+        }
 
         if (MoHTools.MoHKingdom.king != null)
         {
@@ -46,6 +59,11 @@ public partial class AW_KingdomManager
                 // 国王过于年轻, 天命累加值-1
                 value_change--;
             }
+            if (MoHTools.MoHKingdom.king.data.intelligence <= 10)
+            {
+                // 国王愚蠢, 天命累加值-1
+                value_change--;
+            }
 
         }
         Clan kclan = BehaviourActionBase<Kingdom>.world.clans.get(MoHTools.MoHKingdom.data.royal_clan_id);
@@ -56,11 +74,49 @@ public partial class AW_KingdomManager
         }
         MoHTools.ChangeMOH_Value(value_change);
 
-        LIMIT_MOH_VALUE:
+    LIMIT_MOH_VALUE:
 
         if (MoHTools.MOH_Value >= MoHTools.MOH_UpperLimit)
         {
             MoHTools.SetMOH_Value(MoHTools.MOH_UpperLimit);
         }
+    }
+    public void CheckDeclareEmpire()
+    {
+        foreach (Kingdom k in this.list_civs)
+        {
+            if (MoHTools.ConvertKtoAW(k).Rebel)
+            {
+                if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)))
+                {
+                    MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
+                    if (k.king != null)
+                    {
+                        k.king.addTrait("first");
+                    }
+                }
+            }
+        }
+
+    }
+    public bool CanDeclareEmpire(AW_Kingdom kingodm)
+    {
+        int totalOriginalCities = MoHTools._moh_cities.Count;
+        int rebelControlledCities = 0;
+
+        // 计算起义军控制的城市数量
+        foreach (City city in kingodm.cities)
+        {
+            if (MoHTools._moh_cities.Contains(city))
+            {
+                rebelControlledCities++;
+            }
+        }
+
+        // 计算控制的城市百分比
+        float controlPercentage = (float)rebelControlledCities / totalOriginalCities;
+
+        // 如果控制的城市百分比 >= 70%，则可以称帝
+        return controlPercentage >= 0.7;
     }
 }

@@ -17,9 +17,10 @@ namespace Figurebox.core;
 
 public partial class AW_Kingdom : Kingdom
 {
-    public bool  FomerMoh; //控制是否为前天命国家
+    public bool FomerMoh; //控制是否为前天命国家
+    public bool Rebel = false; //控制是否为起义军
     public Actor heir;
-    public bool  NameIntegration; //控制国家命名是否姓氏合流
+    public bool NameIntegration; //控制国家命名是否姓氏合流
 
 
     public KingdomPolicyData policy_data = new();
@@ -280,6 +281,10 @@ public partial class AW_Kingdom : Kingdom
         {
             return "残部";
         }
+        if (Rebel)
+        {
+            return "义军";
+        }
 
         switch (title)
         {
@@ -329,7 +334,7 @@ public partial class AW_Kingdom : Kingdom
         return pPolicyAsset != null
                && (pPolicyAsset.can_repeat ||
                    (!policy_data.policy_history.Contains(pPolicyAsset.id)
-                    && (policy_data.p_status          == KingdomPolicyData.PolicyStatus.Completed ||
+                    && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
                         policy_data.current_policy_id != pPolicyAsset.id)))
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
@@ -482,9 +487,9 @@ public partial class AW_Kingdom : Kingdom
         var scoredCities = candidateCities
                            .Select(city =>
                            {
-                               var score = city.getAge() - kingdom.capital.getAge()                                  +
-                                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2    +
-                                           (city.zones.Count          - kingdom.capital.zones.Count)          * 0.35 +
+                               var score = city.getAge() - kingdom.capital.getAge() +
+                                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
+                                           (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
                                            (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom)
                                                ? 50
                                                : 0);
@@ -749,4 +754,5 @@ public partial class AW_Kingdom : Kingdom
                 return 0; // 或者返回一个默认值
         }
     }
+    
 }
