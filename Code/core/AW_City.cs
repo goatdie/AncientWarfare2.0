@@ -207,6 +207,142 @@ public class AW_City : City
             food_count_for_slaves_this_year = (int)(total_food * 0.1f);
         }
     }
+    [MethodReplace(nameof(City.updateCapture))]
+    private void updateCapture(float pElapsed)
+    {
+        if (this.last_ticks == 0 && !this.isGettingCaptured())
+        {
+            return;
+        }
+        if ((int)this._capture_ticks == this.last_ticks)
+        {
+            if (this.last_ticks > 100)
+            {
+                this.last_ticks = 100;
+            }
+            if (this.last_ticks < 0)
+            {
+                this.last_ticks = 0;
+            }
+        }
+        else if ((int)this._capture_ticks > this.last_ticks)
+        {
+            this.last_ticks++;
+            if (this.last_ticks > 100)
+            {
+                this.last_ticks = 100;
+            }
+        }
+        else
+        {
+            this.last_ticks--;
+            if (this.last_ticks < 0)
+            {
+                this.last_ticks = 0;
+            }
+        }
+        if (this.captureTimer > 0f)
+        {
+            this.captureTimer -= pElapsed;
+            return;
+        }
+        this.captureTimer = 0.1f;
+        Kingdom kingdom = null;
+        foreach (Kingdom key in this._capturing_units.Keys)
+        {
+            if (kingdom == null)
+            {
+                kingdom = key;
+            }
+            else if (this._capturing_units[key] > this._capturing_units[kingdom])
+            {
+                kingdom = key;
+            }
+        }
+        if (kingdom == null)
+        {
+            this._capture_ticks -= 0.5f;
+            if (this._capture_ticks <= 0f)
+            {
+                this.clearCapture();
+            }
+            return;
+        }
+        bool flag = false;
+        if (this._capturing_units.ContainsKey(this.kingdom) && this._capturing_units[this.kingdom] > 0 && this.getArmy() > 0)
+        {
+            flag = true;
+        }
+        if (this.being_captured_by != null && !this.being_captured_by.isAlive())
+        {
+            this.being_captured_by = null;
+        }
+        bool flag2 = false;
+        if (this.kingdom == kingdom)
+        {
+            flag2 = true;
+        }
+        if (flag && this._capturing_units.Count == 1)
+        {
+            flag2 = true;
+        }
+
+        // 新增逻辑：判断内战情况下的加速占领
+        bool isRebelCivilWar = IsRebelCivilWar(MoHTools.ConvertKtoAW(kingdom));
+        float captureIncrement = isRebelCivilWar ? 5.0f : 1.0f;
+
+        if (flag2)
+        {
+            this._capture_ticks -= captureIncrement;
+            if (this._capture_ticks <= 0f)
+            {
+                this.clearCapture();
+            }
+            return;
+        }
+        if (kingdom.isEnemy(this.kingdom) && (!flag || this._capture_ticks < 5f))
+        {
+            if (this.being_captured_by == null || this.being_captured_by == kingdom)
+            {
+                this._capture_ticks += captureIncrement + pElapsed;
+                this.being_captured_by = kingdom;
+                if (this._capture_ticks >= 100f)
+                {
+                    this.finishCapture(kingdom);
+                    return;
+                }
+            }
+            else if (kingdom.isEnemy(this.being_captured_by))
+            {
+                this._capture_ticks -= 0.5f * captureIncrement;
+                if (this._capture_ticks <= 0f)
+                {
+                    this.clearCapture();
+                    return;
+                }
+            }
+            else
+            {
+                this._capture_ticks += captureIncrement + pElapsed;
+                if (this._capture_ticks >= 100f)
+                {
+                    this.finishCapture(this.being_captured_by);
+                }
+            }
+        }
+    }
+
+    private bool IsRebelCivilWar(AW_Kingdom attacker)
+    {
+
+        return kingdom != null && MoHTools.ConvertKtoAW(kingdom).Rebel && attacker.Rebel;
+    }
+
+    private void updateCaptureForRebelCivilWar(float pElapsed)
+    {
+        // 特定于Rebel之间内战情况下的占领逻辑
+        // 比如加速占领速度
+    }
 
     public override void Dispose()
     {
