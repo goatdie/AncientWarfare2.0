@@ -162,7 +162,7 @@ public class MoHTools
     public static void MoHKingdomBoom()
     {
         if (!ExistMoHKingdom) return;
-
+        if (MoHKingdom.king != null && MoHKingdom.king.hasTrait("first")) return;
         if (MoHKingdom.king != null)
         {
             MoHKingdom.king.removeTrait("天命");
@@ -259,6 +259,6 @@ public class MoHTools
         }
         return kingdom;
     }
-   
+
 
 }

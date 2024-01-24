@@ -117,6 +117,7 @@ public partial class AW_KingdomManager
         float controlPercentage = (float)rebelControlledCities / totalOriginalCities;
 
         // 如果控制的城市百分比 >= 70%，则可以称帝
+        Main.LogInfo(kingodm.name + rebelControlledCities + "city数值" + controlPercentage);
         return controlPercentage >= 0.7;
     }
 }

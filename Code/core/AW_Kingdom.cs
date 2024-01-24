@@ -535,23 +535,38 @@ public partial class AW_Kingdom : Kingdom
                 if (newValue > currentValue)
                 {
                     MergeKingdoms(kingdomToInherit, currentKingdom);
+                    InheritWars(kingdomToInherit, currentKingdom);
 
-                    kingdomToInherit.policy_data.Title =
-                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    kingdomToInherit.policy_data.Title = MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
                 else
                 {
-                    // 如果当前国家比继承国更强，则不再设置角色为新国家的国王
                     MergeKingdoms(currentKingdom, kingdomToInherit);
-                    // 注意：这里没有调用 currentKingdom.setKing(actor)，因为actor已经是当前王国的国王
-                    currentKingdom.policy_data.Title =
-                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    InheritWars(currentKingdom, kingdomToInherit);
+
+                    currentKingdom.policy_data.Title = MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
             }
         }
     }
+
+    private void InheritWars(AW_Kingdom inheritingKingdom, AW_Kingdom losingKingdom)
+    {
+        foreach (War war in losingKingdom.getWars())
+        {
+            if (war.data.list_attackers.Contains(losingKingdom.id))
+            {
+                war.joinAttackers(inheritingKingdom);
+            }
+            else if (war.data.list_defenders.Contains(losingKingdom.id))
+            {
+                war.joinDefenders(inheritingKingdom);
+            }
+        }
+    }
+
 
 
     public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1,
@@ -754,5 +769,5 @@ public partial class AW_Kingdom : Kingdom
                 return 0; // 或者返回一个默认值
         }
     }
-    
+
 }

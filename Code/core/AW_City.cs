@@ -144,6 +144,10 @@ public class AW_City : City
                         // 天命国被反推丢失天命
                         MoHTools.Clear_MoHKingdom();
                         MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(war.main_defender));
+                        if (war.main_defender.king != null)
+                        {
+                            war.main_defender.king.addTrait("first");
+                        }
                     }
                 }
             }
