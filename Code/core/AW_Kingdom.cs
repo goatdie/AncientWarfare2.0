@@ -659,6 +659,12 @@ public partial class AW_Kingdom : Kingdom
         data.timer_new_king = Toolbox.randomFloat(5f, 20f);
     }
 
+    public void InheritPolicyFrom(AW_Kingdom pFrom)
+    {
+        if (pFrom == null) return;
+        foreach (var state in pFrom.policy_data.current_states.Values) UpdatePolicyStateTo(state);
+    }
+
     //统治家族变更同时换国号
     [MethodReplace(nameof(trySetRoyalClan))]
     public new void trySetRoyalClan()
