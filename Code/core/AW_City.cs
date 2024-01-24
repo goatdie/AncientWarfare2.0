@@ -110,6 +110,17 @@ public class AW_City : City
                 professionsDict[actor.data.profession].Add(actor);
     }
 
+    [MethodReplace(nameof(City.makeOwnKingdom))]
+    public new Kingdom makeOwnKingdom()
+    {
+        Kingdom old_kingdom = kingdom;
+        removeFromCurrentKingdom();
+        Kingdom new_kingdom = World.world.kingdoms.makeNewCivKingdom(this);
+        switchedKingdom();
+        ((AW_Kingdom)kingdom).InheritPolicyFrom(old_kingdom as AW_Kingdom);
+        return new_kingdom;
+    }
+
     [MethodReplace(nameof(City.finishCapture))]
     public new void finishCapture(Kingdom pKingdom)
     {
