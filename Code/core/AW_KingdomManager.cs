@@ -41,6 +41,7 @@ public partial class AW_KingdomManager : KingdomManager
 
         UpdateMoHValue();
         UpdateMoHCondition();
+        CheckDeclareEmpire();
     }
 
 

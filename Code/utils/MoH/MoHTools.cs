@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using Figurebox.constants;
+using Figurebox.attributes;
+using NeoModLoader.api.attributes;
 using Figurebox.core;
 namespace Figurebox.Utils.MoH;
 
@@ -9,6 +11,9 @@ public class MoHTools
 {
     public const int MOH_UnderLimit = -30;
     public const int MOH_UpperLimit = 100;
+    public static readonly List<City> _moh_cities = new List<City>();
+    public static double timestamp_moh_collapse;
+
     /// <summary>
     ///     当前天命国家
     /// </summary>
@@ -45,6 +50,7 @@ public class MoHTools
         }
         MoHKingdom = null;
         MOH_Value = 0;
+        timestamp_moh_collapse = World.world.getCurWorldTime();
     }
     public static void SetMOH_Value(int value)
     {
@@ -149,4 +155,110 @@ public class MoHTools
                 return "moh_desc_good";
         }
     }
+    /// <summary>
+    ///     超低天命，天命大爆炸 遍地义军
+    /// </summary>
+    /// <returns>天命国家不存在时返回失败</returns>
+    public static void MoHKingdomBoom()
+    {
+        if (!ExistMoHKingdom) return;
+        if (MoHKingdom.king != null && MoHKingdom.king.hasTrait("first")) return;
+        if (MoHKingdom.king != null)
+        {
+            MoHKingdom.king.removeTrait("天命");
+            MoHKingdom.king.addTrait("formerking");
+        }
+        _moh_cities.AddRange(MoHKingdom.cities);
+
+        List<City> cityListCopy = new List<City>(MoHKingdom.cities);
+        foreach (City city in cityListCopy)
+        {
+            PlotAsset rebellionPlot = AssetManager.plots_library.get("rebellion");
+            if (city != MoHKingdom.capital && city.leader != null &&
+                !city.neighbours_cities.Contains(MoHKingdom.capital))
+            {
+                Plot pPlot = World.world.plots.newPlot(city.leader, rebellionPlot);
+
+                pPlot.initiator_city = city;
+                pPlot._leader = city.leader;
+                pPlot.initiator_actor = city.leader;
+                pPlot.initiator_kingdom = MoHKingdom;
+                pPlot.target_city = city;
+
+                rebellionPlot.action(pPlot);
+                WorldLog.logCityRevolt(city);
+            }
+        }
+
+        Clear_MoHKingdom();
+
+    }
+    [Hotfixable]
+    [MethodReplace(typeof(DiplomacyHelpers), nameof(DiplomacyHelpers.getWarTarget))]
+    public static Kingdom getWarTarget(Kingdom pInitiatorKingdom)
+    {
+        // 当Rebel标志为true时，更改战争目标的选择逻辑
+        if (ConvertKtoAW(pInitiatorKingdom).Rebel && World.world.mapStats.getYearsSince(timestamp_moh_collapse) <= 250)
+        {
+            // 遍历 _moh_cities 中的城市
+            foreach (City mohCity in _moh_cities)
+            {
+                // 获取当前城市的邻近国家
+                HashSet<Kingdom> neighbourKingdoms = mohCity.neighbours_kingdoms;
+
+                // 检查邻近国家的城市列表是否包含 _moh_cities 中的城市
+                foreach (Kingdom pkingdom in neighbourKingdoms)
+                {
+                    if (pkingdom.cities.Contains(mohCity))
+                    {
+                        // 如果找到交集，返回这个国家作为战争目标
+                        return pkingdom;
+                    }
+                }
+            }
+            return null;
+        }
+
+
+        // 原有的选择逻辑
+        Kingdom kingdom = null;
+        float num = 0f;
+        List<Kingdom> neutralKingdoms = DiplomacyHelpers.wars.getNeutralKingdoms(pInitiatorKingdom, false, false);
+        int num2 = pInitiatorKingdom.getArmy();
+        if (pInitiatorKingdom.hasAlliance())
+        {
+            num2 = pInitiatorKingdom.getAlliance().countWarriors();
+        }
+        foreach (Kingdom item in neutralKingdoms)
+        {
+            if (item.cities.Count != 0 && item.capital != null && item.getAge() >= SimGlobals.m.minimum_kingdom_age_for_attack)
+            {
+                int num3;
+                if (item.hasAlliance())
+                {
+                    num3 = item.getAlliance().countWarriors();
+                }
+                else
+                {
+                    num3 = item.getArmy();
+                }
+                if (num2 >= num3 && pInitiatorKingdom.capital.reachableFrom(item.capital))
+                {
+                    DiplomacyRelation relation = DiplomacyHelpers.diplomacy.getRelation(pInitiatorKingdom, item);
+                    if ((float)World.world.getYearsSince(relation.data.timestamp_last_war_ended) >= (float)SimGlobals.m.minimum_years_between_wars && !pInitiatorKingdom.isOpinionTowardsKingdomGood(item))
+                    {
+                        float num4 = Kingdom.distanceBetweenKingdom(pInitiatorKingdom, item);
+                        if (kingdom == null || num4 < num)
+                        {
+                            num = num4;
+                            kingdom = item;
+                        }
+                    }
+                }
+            }
+        }
+        return kingdom;
+    }
+
+
 }

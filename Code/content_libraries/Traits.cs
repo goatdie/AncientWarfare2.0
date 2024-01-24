@@ -244,7 +244,11 @@ namespace Figurebox
             var Units = actorContainer.getSimpleList();
             AW_Kingdom awKingdom = a.kingdom as AW_Kingdom;
 
-
+            if (awKingdom.FomerMoh)
+            {
+                a.removeTrait("first");
+                return false;
+            }
             //Debug.Log("已经有天命了");
             if (MoHTools.IsMoHKingdom(awKingdom))
             {
