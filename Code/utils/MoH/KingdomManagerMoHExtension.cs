@@ -81,13 +81,30 @@ public partial class AW_KingdomManager
             MoHTools.SetMOH_Value(MoHTools.MOH_UpperLimit);
         }
     }
-    public void CheckDeclareEmpire()
+    public bool CheckNoMoreRebels()
     {
         foreach (Kingdom k in this.list_civs)
         {
-            if (MoHTools.ConvertKtoAW(k).Rebel)
+            AW_Kingdom awKingdom = MoHTools.ConvertKtoAW(k);
+            if (awKingdom.Rebel)
             {
-                if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)))
+                return false; // 存在反叛国家
+            }
+        }
+        return true; // 没有反叛国家
+    }
+
+    public void CheckDeclareEmpire()
+    {
+        // 首先检查是否有任何国家是Rebel
+        bool noRebels = CheckNoMoreRebels();
+
+        // 如果没有Rebels，处理formerMOH国家
+        if (noRebels)
+        {
+            foreach (Kingdom k in this.list_civs)
+            {
+                if (MoHTools.ConvertKtoAW(k).FomerMoh)
                 {
                     MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
                     if (k.king != null)
@@ -97,8 +114,27 @@ public partial class AW_KingdomManager
                 }
             }
         }
-
+        // 如果有Rebels，处理Rebel国家
+        else
+        {
+            foreach (Kingdom k in this.list_civs)
+            {
+                if (MoHTools.ConvertKtoAW(k).Rebel)
+                {
+                    if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)))
+                    {
+                        MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
+                        if (k.king != null)
+                        {
+                            k.king.addTrait("first");
+                        }
+                    }
+                }
+            }
+        }
     }
+
+
     public bool CanDeclareEmpire(AW_Kingdom kingodm)
     {
         int totalOriginalCities = MoHTools._moh_cities.Count;
