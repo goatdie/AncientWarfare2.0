@@ -16,4 +16,8 @@ public class PolicyStateType : StringLibrary
     ///     城市组织形式, 如分封, 郡县
     /// </summary>
     public static readonly string city_organization;
+    /// <summary>
+    ///    社会名制
+    /// </summary>
+    public static readonly string name_organization;
 }

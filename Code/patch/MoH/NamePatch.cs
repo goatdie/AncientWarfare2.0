@@ -68,6 +68,7 @@ namespace Figurebox
             {
                 // 为新成员设置姓和氏
                 SetNameForActor(pActor, __instance);
+                pActor.addTrait("guizu");
             }
         }
         [HarmonyPrefix]

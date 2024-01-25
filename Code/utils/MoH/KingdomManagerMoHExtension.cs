@@ -167,6 +167,6 @@ public partial class AW_KingdomManager
 
         // 如果控制的城市百分比 >= 70%，则可以称帝
         Main.LogInfo(kingodm.name + rebelControlledCities + "total:" + totalOriginalCities + "city数值" + controlPercentage);
-        return controlPercentage >= 0.7;
+        return controlPercentage >= 0.65;
     }
 }

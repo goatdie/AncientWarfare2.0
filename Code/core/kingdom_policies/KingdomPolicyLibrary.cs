@@ -32,6 +32,9 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
             MajorPolicyExecuteActions.ChangeCapital, true, false);
         add("title_upgrade", "ui/policy/change_name", 100, 100, CanBePromoted,
             MajorPolicyExecuteActions.UpgradeKingdomTitle, true, false);
+        // 开启半奴隶制半封建制
+        add("start_halfaristocrat", "ui/policy/start_halfaristocrat", 100, 100, null,
+            MajorPolicyExecuteActions.StartHalfAristocrat, false, false);
     }
 
     public override void post_init()
@@ -44,6 +47,16 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
 
         get("slaves_army").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
         get("slaves_army").SetTargetState(KingdomPolicyStateLibrary.MainSoldiers_Slaves);
+
+        get("start_halfaristocrat").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
+        get("start_halfaristocrat").AddPreposition(KingdomPolicyStateLibrary.MainSoldiers_Slaves);
+        get("start_halfaristocrat").SetTargetState(KingdomPolicyStateLibrary.SocialLevel_HalfAristocrat);
+
+        get("name_integration").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_HalfAristocrat);
+        get("name_integration").SetTargetState(KingdomPolicyStateLibrary.Name_Integration);
+
+
+
     }
 
     public override void linkAssets()

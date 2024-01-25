@@ -1,7 +1,10 @@
 key,cz,en
 default,原始公平,Original Fairness
 default_desc,原始公平是指人们在进入社会之前，处于一个公平的状态，没有任何人能够掌握比其他人更多的资源，也没有任何人能够掌握比其他人更多的权力。,Original fairness refers to the state of fairness before people enter society， where no one can control more resources than others， and no one can control more power than others.
-slaves,奴隶制,Slavery
+slaveowner,奴隶制,Slavery
+slaveowner_desc,奴隶制,Slavery
+halfaristocrat,半奴隶制半封建制,Half Slavery half aristocrat
+halfaristocrat_desc,这是一个从奴隶制过渡到封建制的过度时期,Half Slavery half aristocrat
 aristocrat,封建贵族,Aristocrat
 landlord,地主,Landlord
 capitalist,资本主义,Capitalist

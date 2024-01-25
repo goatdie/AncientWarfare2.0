@@ -13,11 +13,16 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
     ///     社会统治阶级：奴隶主
     /// </summary>
     public static KingdomPolicyStateAsset SocialLevel_SlaveOwner;
+    /// <summary>
+    ///     社会统治阶级：半奴隶主半封建贵族
+    /// </summary>
+    public static KingdomPolicyStateAsset SocialLevel_HalfAristocrat;
 
     /// <summary>
     ///     军队主体：奴隶
     /// </summary>
     public static KingdomPolicyStateAsset MainSoldiers_Slaves;
+    public static KingdomPolicyStateAsset Name_Integration;
 
     public static KingdomPolicyStateLibrary Instance { get; } = new();
 
@@ -34,6 +39,8 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         DefaultState = add("default", PolicyStateType.social_level);
         // 奴隶制
         SocialLevel_SlaveOwner = add(PolicyState.slaveowner, PolicyStateType.social_level);
+        // 半奴隶制半封建
+        SocialLevel_HalfAristocrat = add(PolicyState.halfaristocrat, PolicyStateType.social_level);
         // 封建贵族
         add(PolicyState.aristocrat, PolicyStateType.social_level);
         // 地主
@@ -44,6 +51,7 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
         add(PolicyState.proletarian, PolicyStateType.social_level);
 
         MainSoldiers_Slaves = add(PolicyState.slave_soldier, PolicyStateType.army_main_soldiers);
+        Name_Integration = add(PolicyState.name_integration, PolicyStateType.name_organization);
     }
 
     public override void post_init()
@@ -53,16 +61,24 @@ public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
 
         SocialLevel_SlaveOwner.AddOptionalPolicy(
             KingdomPolicyLibrary.Instance.get("control_slaves"),
-            KingdomPolicyLibrary.Instance.get("slaves_army")
+            KingdomPolicyLibrary.Instance.get("slaves_army"),
+           KingdomPolicyLibrary.Instance.get("start_halfaristocrat")
         );
         SocialLevel_SlaveOwner.AddCityTasks(
             AssetManager.tasks_city.get("check_slave_job"),
             AssetManager.tasks_city.get("produce_slaves")
         );
+        SocialLevel_HalfAristocrat.AddOptionalPolicy(
+            KingdomPolicyLibrary.Instance.get("name_integration")
+        );
 
         MainSoldiers_Slaves.AddCityTasks(
             AssetManager.tasks_city.get("check_slave_army")
         );
+        SocialLevel_HalfAristocrat.AddCityTasks(
+           AssetManager.tasks_city.get("check_slave_job"),
+           AssetManager.tasks_city.get("produce_slaves")
+       );
     }
 
     public override void linkAssets()
