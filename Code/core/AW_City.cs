@@ -300,7 +300,7 @@ public class AW_City : City
 
         // 新增逻辑：判断内战情况下的加速占领
         bool isRebelCivilWar = IsRebelCivilWar(MoHTools.ConvertKtoAW(kingdom));
-        float captureIncrement = isRebelCivilWar ? 5.0f : 1.0f;
+        float captureIncrement = isRebelCivilWar ? 8.0f : 1.0f;
 
         if (flag2)
         {

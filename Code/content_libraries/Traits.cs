@@ -257,15 +257,7 @@ namespace Figurebox
 
             if (a.getAge() > 17 && a.kingdom != null && a.city != null)
             {
-                //Debug.Log("执行");
-                if (a.kingdom.king == null && a.getAge() > 15)
-                {
-                    awKingdom.clearKingData();
-                    awKingdom.setKing(a);
-                    WorldLog.logNewKing(awKingdom);
-
-                    return false;
-                }
+              
 
                 if (a.kingdom.king != null && a.kingdom.king != a && a.hasTrait("zhuhou"))
                 {

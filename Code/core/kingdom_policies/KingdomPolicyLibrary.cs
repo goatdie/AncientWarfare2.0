@@ -99,7 +99,10 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
         {
             return false;
         }
-
+        if (kingdom.Rebel)
+        {
+            return true;//起义军可以无视和平直接迁都
+        }
         // 检查国家是否有任何正在进行的战争
         var isAtWar = kingdom.getWars().Any();
 

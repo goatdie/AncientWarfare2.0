@@ -508,27 +508,7 @@ namespace Figurebox
                 // 直接允许Rebel发动行动，无视其他限制
                 if (MoHTools.ConvertKtoAW(pKingdom).Rebel)
                 {
-                    if (pKingdom.hasAlliance())
-                    {
-                        foreach (Kingdom item3 in pKingdom.getAlliance().kingdoms_hashset)
-                        {
-                            if (item3 != pKingdom && !(item3.king == null))
-                            {
-                                List<Plot> plotsFor = World.world.plots.getPlotsFor(item3.king, true);
-                                if (plotsFor != null)
-                                {
-                                    foreach (var plot in plotsFor)
-                                    {
-                                        if (plot.isSameType(PlotsLibrary.new_war))
-                                        {
-                                            return false;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        return true;
-                    }
+                   
                     return true;
                 }
 
