@@ -6,6 +6,6 @@ namespace Figurebox.core.table_items;
 public class KingdomChangeYearTableItem : AbstractTableItem<KingdomChangeYearTableItem>
 {
     public string id;
-    public string old_name;
+    public string new_name;
     public double timestamp;
 }

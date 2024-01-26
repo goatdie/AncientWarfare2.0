@@ -1,4 +1,5 @@
 using Figurebox.core;
+using Figurebox.core.events;
 using Figurebox.Utils;
 using HarmonyLib;
 #if 一米_中文名
@@ -43,6 +44,8 @@ public class KingdomYearName
 
         kingdom.policy_data.year_name = yearName;
         kingdom.policy_data.year_start_timestamp = World.world.getCurWorldTime();
+
+        EventsManager.Instance.ChangeYearName(kingdom, yearName);
     }
 
 
