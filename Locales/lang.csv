@@ -20,6 +20,8 @@ AW_History War,战争,War
 AW_History War Description,统治期间参加的战争,Wars fought during his reign
 AW_History Policy,政策,Policy
 AW_History Policy Description,统治期间推行的政策,Policies was introduced during the reign
+AW_History Review,综述,Review
+AW_History Review Description,统治期间概览,Review during the reign
 vassal,创建附庸关系,Make a vassal
 vassal Description,依次选择附庸与宗主国以建立关系,Select a vassal and a suzerain to create a vassalage
 vassal_remove,解除附庸关系,Remove a vassal

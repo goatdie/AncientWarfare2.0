@@ -13,8 +13,13 @@ using UnityEngine.UI;
 
 namespace Figurebox.ui.windows;
 
-public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindow>
+public partial class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindow>
 {
+    /// <summary>
+    ///     临时的按照时间顺序排列的君主统治列表
+    /// </summary>
+    private readonly Queue<KingRuleTableItem> _tmp_ruleQueue = new();
+
     private readonly Dictionary<HistoryType, RectTransform> HistoryTabs = new();
 
     /// <summary>
@@ -33,18 +38,18 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
 
     private ObjectPoolGenericMono<KingRuleHistoryItem> _rule_historyItemPool;
 
-    private string _selectedKing = "";
-    private string _selectedKingdom = "";
+    private string            _selectedKing    = "";
+    private string            _selectedKingdom = "";
     private KingRuleTableItem _selectedRule;
-    private RectTransform HistorySelectContentTransform;
-    private RectTransform KingSelectContentTransform;
+    private RectTransform     HistorySelectContentTransform;
+    private RectTransform     KingSelectContentTransform;
 
     private void Update()
     {
         if (!Initialized || !IsOpened) return;
-        if (ruleQueue.Count > 0)
+        if (_tmp_ruleQueue.Count > 0)
         {
-            var rule = ruleQueue.Dequeue();
+            KingRuleTableItem rule = _tmp_ruleQueue.Dequeue();
             var rule_item = _rule_historyItemPool.getNext(0);
             rule_item.Setup(kings[rule.aid], rule, _kingdom);
         }
@@ -100,24 +105,28 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
                 UpdatePage();
             }, SpriteTextureLoader.getSprite(pIcon), pTipType: "normal", pTipData: new TooltipData
             {
-                tip_name = "AW_History " + pType,
+                tip_name = "AW_History "        + pType,
                 tip_description = "AW_History " + pType + " Description"
             });
             tab_entry.Background.enabled = false;
 
-            var tab = new GameObject(pType.ToString(), typeof(RectTransform));
+            GameObject tab = Instantiate(king_select_view, BackgroundTransform);
+            tab.name = pType.ToString();
             tab.transform.SetParent(BackgroundTransform);
             tab.transform.localScale = Vector3.one;
             tab.transform.localPosition = new Vector3(30, 0, 0);
             tab.GetComponent<RectTransform>().sizeDelta = new Vector2(400, 255);
-            HistoryTabs[pType] = tab.transform as RectTransform;
+            HistoryTabs[pType] = tab.transform.Find("Viewport/Content") as RectTransform;
         }
 
         CreateHistoryTab(HistoryType.Population, "ui/icons/iconPopulation");
-        CreateHistoryTab(HistoryType.Territory, "ui/icons/iconKingdomZones");
-        CreateHistoryTab(HistoryType.War, "ui/icons/iconWarsList");
-        CreateHistoryTab(HistoryType.Policy, "ui/icons/iconPlotsList");
+        CreateHistoryTab(HistoryType.Territory,  "ui/icons/iconKingdomZones");
+        CreateHistoryTab(HistoryType.War,        "ui/icons/iconWarsList");
+        CreateHistoryTab(HistoryType.Policy,     "ui/icons/iconPlotsList");
+        CreateHistoryTab(HistoryType.Review,     "ui/icons/iconDocument");
 
+
+        InitReviewTab();
 
         _rule_historyItemPool =
             new ObjectPoolGenericMono<KingRuleHistoryItem>(KingRuleHistoryItem.Prefab, KingSelectContentTransform);
@@ -129,6 +138,7 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
 
         kings.Clear();
         ruleQueue.Clear();
+        _tmp_ruleQueue.Clear();
 
         RequestKings();
     }
@@ -139,6 +149,7 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
 
         kings.Clear();
         ruleQueue.Clear();
+        _tmp_ruleQueue.Clear();
 
         _rule_historyItemPool.clear();
     }
@@ -156,6 +167,7 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
                 var king_rule = new KingRuleTableItem();
                 king_rule.ReadFromReader(king_rule_reader);
                 ruleQueue.Enqueue(king_rule);
+                _tmp_ruleQueue.Enqueue(king_rule);
             }
         }
 
@@ -208,6 +220,9 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
                 break;
             case HistoryType.Policy:
                 break;
+            case HistoryType.Review:
+                ShowReviewTab();
+                break;
         }
     }
 
@@ -225,6 +240,7 @@ public class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHistoryWindo
         Population,
         Territory,
         War,
-        Policy
+        Policy,
+        Review
     }
 }

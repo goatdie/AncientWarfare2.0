@@ -49,4 +49,9 @@ public static class GeneralHelper
     {
         return (int)(pTime / 60.0);
     }
+
+    public static string getDateOn(double pTime)
+    {
+        return World.world.mapStats.getDate(pTime);
+    }
 }
