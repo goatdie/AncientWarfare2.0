@@ -77,6 +77,7 @@ namespace Figurebox
             AW_CitiesManager.init();
             AW_KingdomManager.init();
             AW_AllianceManager.init();
+            AW_UnitGroupManager.init();
             KingdomPolicyLibrary.Instance.init();
             KingdomPolicyStateLibrary.Instance.init();
 

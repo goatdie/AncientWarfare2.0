@@ -17,13 +17,13 @@ namespace Figurebox.core;
 
 public partial class AW_Kingdom : Kingdom
 {
-    public bool FomerMoh; //控制是否为前天命国家
-    public bool Rebel = false; //控制是否为起义军
+    public bool  FomerMoh; //控制是否为前天命国家
     public Actor heir;
-    public bool NameIntegration; //控制国家命名是否姓氏合流
+    public bool  NameIntegration; //控制国家命名是否姓氏合流
 
 
     public KingdomPolicyData policy_data = new();
+    public bool              Rebel       = false; //控制是否为起义军
 
     public void ToggleNameIntegration(bool b)
     {
@@ -281,6 +281,7 @@ public partial class AW_Kingdom : Kingdom
         {
             return "残部";
         }
+
         if (Rebel)
         {
             return "义军";
@@ -334,7 +335,7 @@ public partial class AW_Kingdom : Kingdom
         return pPolicyAsset != null
                && (pPolicyAsset.can_repeat ||
                    (!policy_data.policy_history.Contains(pPolicyAsset.id)
-                    && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
+                    && (policy_data.p_status          == KingdomPolicyData.PolicyStatus.Completed ||
                         policy_data.current_policy_id != pPolicyAsset.id)))
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
@@ -440,7 +441,7 @@ public partial class AW_Kingdom : Kingdom
         {
             int num = World.world.mapStats.getYearsSince(policy_data.year_start_timestamp) + 1;
             return LM.Get("year_name_format").Replace("$year_name$", text).Replace("$year_number$",
-                     num == 1 ? LM.Get("first_year_number") : num.ToString());
+                num == 1 ? LM.Get("first_year_number") : num.ToString());
         }
 
         return text;
@@ -487,9 +488,9 @@ public partial class AW_Kingdom : Kingdom
         var scoredCities = candidateCities
                            .Select(city =>
                            {
-                               var score = city.getAge() - kingdom.capital.getAge() +
-                                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
-                                           (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
+                               var score = city.getAge() - kingdom.capital.getAge()                                  +
+                                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2    +
+                                           (city.zones.Count          - kingdom.capital.zones.Count)          * 0.35 +
                                            (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom)
                                                ? 50
                                                : 0);
@@ -537,7 +538,8 @@ public partial class AW_Kingdom : Kingdom
                     MergeKingdoms(kingdomToInherit, currentKingdom);
                     InheritWars(kingdomToInherit, currentKingdom);
 
-                    kingdomToInherit.policy_data.Title = MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    kingdomToInherit.policy_data.Title =
+                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
                 else
@@ -545,7 +547,8 @@ public partial class AW_Kingdom : Kingdom
                     MergeKingdoms(currentKingdom, kingdomToInherit);
                     InheritWars(currentKingdom, kingdomToInherit);
 
-                    currentKingdom.policy_data.Title = MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    currentKingdom.policy_data.Title =
+                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                 }
             }
@@ -566,7 +569,6 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
-
 
 
     public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1,
@@ -627,7 +629,6 @@ public partial class AW_Kingdom : Kingdom
         data.kingID = king.data.id;
         data.timestamp_king_rule = World.world.getCurWorldTime();
 
-
         #endregion
 
         EventsManager.Instance.NewKingRule(this, king);
@@ -659,6 +660,10 @@ public partial class AW_Kingdom : Kingdom
         data.timer_new_king = Toolbox.randomFloat(5f, 20f);
     }
 
+    /// <summary>
+    ///     继承政治状态
+    /// </summary>
+    /// <param name="pFrom"></param>
     public void InheritPolicyFrom(AW_Kingdom pFrom)
     {
         if (pFrom == null) return;
@@ -775,5 +780,4 @@ public partial class AW_Kingdom : Kingdom
                 return 0; // 或者返回一个默认值
         }
     }
-
 }

@@ -9,7 +9,7 @@ using Figurebox.Utils.MoH;
 
 namespace Figurebox.core;
 
-public class AW_City : City
+public partial class AW_City : City
 {
     /// <summary>
     ///     拓展后的单位身份
@@ -195,7 +195,7 @@ public class AW_City : City
         }
 
         this.gold_out_army = this.countProfession(UnitProfession.Warrior) / 2;
-        this.gold_out_buildings = this.buildings.Count / 2;
+        this.gold_out_buildings = this.buildings.Count                    / 2;
         this.gold_change = this.gold_in_tax - this.gold_out_army - this.gold_out_buildings - this.gold_out_homeless;
         int num = this.gold_change;
         if (num < 0)
@@ -218,6 +218,7 @@ public class AW_City : City
             food_count_for_slaves_this_year = (int)(total_food * 0.1f);
         }
     }
+
     [MethodReplace(nameof(City.updateCapture))]
     private void updateCapture(float pElapsed)
     {
@@ -225,12 +226,14 @@ public class AW_City : City
         {
             return;
         }
+
         if ((int)this._capture_ticks == this.last_ticks)
         {
             if (this.last_ticks > 100)
             {
                 this.last_ticks = 100;
             }
+
             if (this.last_ticks < 0)
             {
                 this.last_ticks = 0;
@@ -252,11 +255,13 @@ public class AW_City : City
                 this.last_ticks = 0;
             }
         }
+
         if (this.captureTimer > 0f)
         {
             this.captureTimer -= pElapsed;
             return;
         }
+
         this.captureTimer = 0.1f;
         Kingdom kingdom = null;
         foreach (Kingdom key in this._capturing_units.Keys)
@@ -270,6 +275,7 @@ public class AW_City : City
                 kingdom = key;
             }
         }
+
         if (kingdom == null)
         {
             this._capture_ticks -= 0.5f;
@@ -277,22 +283,28 @@ public class AW_City : City
             {
                 this.clearCapture();
             }
+
             return;
         }
+
         bool flag = false;
-        if (this._capturing_units.ContainsKey(this.kingdom) && this._capturing_units[this.kingdom] > 0 && this.getArmy() > 0)
+        if (this._capturing_units.ContainsKey(this.kingdom) && this._capturing_units[this.kingdom] > 0 &&
+            this.getArmy()                                                                         > 0)
         {
             flag = true;
         }
+
         if (this.being_captured_by != null && !this.being_captured_by.isAlive())
         {
             this.being_captured_by = null;
         }
+
         bool flag2 = false;
         if (this.kingdom == kingdom)
         {
             flag2 = true;
         }
+
         if (flag && this._capturing_units.Count == 1)
         {
             flag2 = true;
@@ -309,8 +321,10 @@ public class AW_City : City
             {
                 this.clearCapture();
             }
+
             return;
         }
+
         if (kingdom.isEnemy(this.kingdom) && (!flag || this._capture_ticks < 5f))
         {
             if (this.being_captured_by == null || this.being_captured_by == kingdom)
@@ -345,7 +359,6 @@ public class AW_City : City
 
     private bool IsRebelCivilWar(AW_Kingdom attacker)
     {
-
         return kingdom != null && MoHTools.ConvertKtoAW(kingdom).Rebel && attacker.Rebel;
     }
 
@@ -357,7 +370,6 @@ public class AW_City : City
 
     public override void Dispose()
     {
-
         if (MoHTools._moh_cities.Contains(this))
         {
             MoHTools._moh_cities.Remove(this);
@@ -366,5 +378,4 @@ public class AW_City : City
 
         base.Dispose();
     }
-
 }
