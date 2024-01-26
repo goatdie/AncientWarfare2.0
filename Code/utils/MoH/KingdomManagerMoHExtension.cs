@@ -39,8 +39,13 @@ public partial class AW_KingdomManager
         }
         if (!MoHTools.MoHKingdom.isSupreme())
         {
-            value_change -= 3;
+            value_change -= 2;
         }
+        if (World.world_era == AssetManager.era_library.get(S.age_hope) || World.world_era == AssetManager.era_library.get(S.age_wonders))
+        {
+            value_change += 2; //正面纪元
+        }
+
         if (World.world_era == AssetManager.era_library.get(S.age_despair) || World.world_era == AssetManager.era_library.get(S.age_ash) || World.world_era == AssetManager.era_library.get(S.age_chaos))
         {
             value_change -= 20; //负面纪元
@@ -52,7 +57,7 @@ public partial class AW_KingdomManager
             if (MoHTools.MoHKingdom.king.hasTrait("first"))
             {
                 // 如果国王有"天子"特质, 天命累加值+3
-                value_change += 3;
+                value_change += 5;
             }
             if (MoHTools.MoHKingdom.king.getAge() <= 24)
             {
@@ -106,10 +111,15 @@ public partial class AW_KingdomManager
             {
                 if (MoHTools.ConvertKtoAW(k).FomerMoh)
                 {
-                    MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
-                    if (k.king != null)
+                    if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)) && MoHTools.Ismostpowerfulkingdom(MoHTools.ConvertKtoAW(k)))
                     {
-                        k.king.addTrait("first");
+                        MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
+                        MoHTools.ConvertKtoAW(k).FomerMoh = false;
+                        if (k.king != null)
+                        {
+                            k.king.addTrait("first");
+                        }
+
                     }
                 }
             }
@@ -121,13 +131,16 @@ public partial class AW_KingdomManager
             {
                 if (MoHTools.ConvertKtoAW(k).Rebel)
                 {
-                    if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)))
+                    if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)) && MoHTools.Ismostpowerfulkingdom(MoHTools.ConvertKtoAW(k)))
                     {
                         MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
                         if (k.king != null)
                         {
                             k.king.addTrait("first");
+                            KingdomYearName.changeYearname(MoHTools.ConvertKtoAW(k));
                         }
+                        MoHTools.ConvertKtoAW(k).Rebel=false;
+
                     }
                 }
             }
@@ -153,7 +166,7 @@ public partial class AW_KingdomManager
         float controlPercentage = (float)rebelControlledCities / totalOriginalCities;
 
         // 如果控制的城市百分比 >= 70%，则可以称帝
-        Main.LogInfo(kingodm.name + rebelControlledCities + "city数值" + controlPercentage);
-        return controlPercentage >= 0.7;
+        Main.LogInfo(kingodm.name + rebelControlledCities + "total:" + totalOriginalCities + "city数值" + controlPercentage);
+        return controlPercentage >= 0.65;
     }
 }

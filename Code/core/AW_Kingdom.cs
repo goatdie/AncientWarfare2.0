@@ -617,7 +617,7 @@ public partial class AW_Kingdom : Kingdom
 
         king = pActor;
         CheckAndSetPrimaryKingdom(king, this);
-
+        trySetRoyalClan();
         if (king.city != capital && capital != null)
         {
             king.ChangeCity(capital);
@@ -626,7 +626,7 @@ public partial class AW_Kingdom : Kingdom
         king.setProfession(UnitProfession.King);
         data.kingID = king.data.id;
         data.timestamp_king_rule = World.world.getCurWorldTime();
-        trySetRoyalClan();
+
 
         #endregion
 

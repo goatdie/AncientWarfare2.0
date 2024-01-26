@@ -199,7 +199,7 @@ namespace Figurebox
                     // Usurp the kingdom
                     oldTarget = pKingdom.king;
                     PerformKingdomUsurpation(pActor, pKingdom);
-                    pActor.setProfession(UnitProfession.King, true);
+
                 }
                 else
                 {
@@ -503,6 +503,57 @@ namespace Figurebox
 
                  return true;
              };
+            new_war.check_launch = delegate (Actor pActor, Kingdom pKingdom)
+            {
+                // 直接允许Rebel发动行动，无视其他限制
+                if (MoHTools.ConvertKtoAW(pKingdom).Rebel)
+                {
+                   
+                    return true;
+                }
+
+                if (!DiplomacyHelpers.isWarNeeded(pKingdom))
+                {
+                    return false;
+                }
+                if (pKingdom.hasAlliance())
+                {
+                    foreach (Kingdom item3 in pKingdom.getAlliance().kingdoms_hashset)
+                    {
+                        if (item3 != pKingdom && !(item3.king == null))
+                        {
+                            List<Plot> plotsFor = World.world.plots.getPlotsFor(item3.king, true);
+                            if (plotsFor != null)
+                            {
+                                foreach (var plot in plotsFor)
+                                {
+                                    if (plot.isSameType(PlotsLibrary.new_war))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                }
+                return true;
+            };
+
+            new_war.check_should_continue = ((Plot pPlot) =>
+            {
+                // 如果是Rebel，直接继续行动，无视其他限制
+                if (MoHTools.ConvertKtoAW(pPlot.initiator_kingdom).Rebel && pPlot.initiator_kingdom.getAlliance() != pPlot.target_kingdom.getAlliance())
+                {
+                    return true;
+                }
+
+                return pPlot.initiator_actor.isUnitOk() &&
+                       (!pPlot.initiator_kingdom.hasAlliance() ||
+                        pPlot.initiator_kingdom.getAlliance() != pPlot.target_kingdom.getAlliance()) &&
+                       DiplomacyHelpers.isWarNeeded(pPlot.initiator_kingdom);
+            });
+
 
             #endregion
             #region 改变rebel
@@ -598,9 +649,7 @@ namespace Figurebox
 
             if (kingdom.capital != null && usurper.city != kingdom.capital)
             {
-                if (usurper.city != null)
-                    usurper.city.removeCitizen(usurper);
-                kingdom.capital.addNewUnit(usurper);
+                usurper.ChangeCity(kingdom.capital);
             }
 
             if (kingdom.king.unit_group != null)
@@ -613,8 +662,10 @@ namespace Figurebox
 
             kingdom.CallMethod("removeKing");
             kingdom.clearKingData();
-            kingdom.setKing(usurper);
 
+            kingdom.trySetRoyalClan();
+
+            kingdom.setKing(usurper);
             WorldLog.logNewKing(kingdom);
 
         }

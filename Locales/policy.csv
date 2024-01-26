@@ -14,3 +14,5 @@ change_capital,迁都,Change Capital
 change_capital_desc,迁改都城\n换一个新国都,It's time to change it
 title_upgrade,提升爵位,Title Promotion
 title_upgrade_desc,上表请奏\n提升爵位,It's time to change it
+start_halfaristocrat,开使从奴隶制向封建制过度,Change Slavery to Semi-Aristocrat
+start_halfaristocrat_desc,奴隶制已经不能满足我们了\n我们需要更高的生产力，更多的人口,Higher productivity， more population

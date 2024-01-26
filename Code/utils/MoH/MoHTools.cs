@@ -5,6 +5,7 @@ using Figurebox.constants;
 using Figurebox.attributes;
 using NeoModLoader.api.attributes;
 using Figurebox.core;
+using System.Linq;
 namespace Figurebox.Utils.MoH;
 
 public class MoHTools
@@ -32,7 +33,11 @@ public class MoHTools
         MoHKingdom = kingdom;
         kingdom.SetTitle(KingdomPolicyData.KingdomTitle.Emperor);
         MOH_Value = 30;
-        if (kingdom.king != null) { kingdom.king.addTrait("天命"); }
+        if (kingdom.king != null)
+        {
+            kingdom.king.addTrait("天命");
+            kingdom.king.addTrait("first");
+        }
         Debug.Log("天命值" + MOH_Value);
     }
     public static AW_Kingdom ConvertKtoAW(Kingdom kingdom)
@@ -86,6 +91,14 @@ public class MoHTools
         }
 
         return mostPowerfulKingdom;
+    }
+    public static bool Ismostpowerfulkingdom(AW_Kingdom kingdom)
+    {
+        List<Kingdom> kingdomList = World.world.kingdoms.list_civs;
+
+        // 将 Kingdom 类型的列表转换为 AW_Kingdom 类型的列表
+        List<AW_Kingdom> awKingdomList = kingdomList.Select(k => k as AW_Kingdom).ToList();
+        return kingdom == FindMostPowerfulKingdom(awKingdomList);
     }
 
     public static int CalculateKingdomValue(AW_Kingdom k)
@@ -168,6 +181,7 @@ public class MoHTools
             MoHKingdom.king.removeTrait("天命");
             MoHKingdom.king.addTrait("formerking");
         }
+        _moh_cities.Clear();
         _moh_cities.AddRange(MoHKingdom.cities);
 
         List<City> cityListCopy = new List<City>(MoHKingdom.cities);
@@ -197,28 +211,38 @@ public class MoHTools
     [MethodReplace(typeof(DiplomacyHelpers), nameof(DiplomacyHelpers.getWarTarget))]
     public static Kingdom getWarTarget(Kingdom pInitiatorKingdom)
     {
-        // 当Rebel标志为true时，更改战争目标的选择逻辑
-        if (ConvertKtoAW(pInitiatorKingdom).Rebel && World.world.mapStats.getYearsSince(timestamp_moh_collapse) <= 250)
+        // 当 pInitiatorKingdom 是 Rebel 类型时，只关注周边的 Rebel 国家
+        if (ConvertKtoAW(pInitiatorKingdom).Rebel)
         {
-            // 遍历 _moh_cities 中的城市
-            foreach (City mohCity in _moh_cities)
+            // 遍历 pInitiatorKingdom 的所有城市
+            foreach (City city in pInitiatorKingdom.cities)
             {
                 // 获取当前城市的邻近国家
-                HashSet<Kingdom> neighbourKingdoms = mohCity.neighbours_kingdoms;
+                HashSet<Kingdom> neighbourKingdoms = city.neighbours_kingdoms;
 
-                // 检查邻近国家的城市列表是否包含 _moh_cities 中的城市
-                foreach (Kingdom pkingdom in neighbourKingdoms)
+                // 在邻近国家中寻找 Rebel 国家
+                foreach (Kingdom neighbour in neighbourKingdoms)
                 {
-                    if (pkingdom.cities.Contains(mohCity))
+                    if (ConvertKtoAW(neighbour).Rebel && neighbour != pInitiatorKingdom)
                     {
-                        // 如果找到交集，返回这个国家作为战争目标
-                        return pkingdom;
+                        // 返回第一个找到的 Rebel 邻近国家作为战争目标
+                        return neighbour;
                     }
                 }
             }
+            // 如果没有找到 Rebel 邻近国家，返回 null
             return null;
         }
-
+        else if (IsMoHKingdom(ConvertKtoAW(pInitiatorKingdom)))
+        {
+            foreach (Kingdom k in World.world.kingdoms.list_civs)
+            {
+                if (ConvertKtoAW(k).Rebel)
+                {
+                    return k;
+                }
+            }
+        }
 
         // 原有的选择逻辑
         Kingdom kingdom = null;

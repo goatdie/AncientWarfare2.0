@@ -23,6 +23,12 @@ internal static class MajorPolicyExecuteActions
     public static void EnableSlavesArmy(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
     }
+    [Hotfixable]
+    public static void StartHalfAristocrat(KingdomPolicyAsset policy, AW_Kingdom kingdom)
+    {
+        if (kingdom.policy_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试推行半奴隶制半封建 {kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+    }
 
     [Hotfixable]
     public static void NameIntegration(KingdomPolicyAsset policy, AW_Kingdom kingdom)

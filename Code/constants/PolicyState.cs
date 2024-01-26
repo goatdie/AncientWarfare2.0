@@ -8,6 +8,11 @@ public class PolicyState : StringLibrary
     public static readonly string slaveowner;
 
     /// <summary>
+    ///     半奴隶半封建贵族
+    /// </summary>
+    public static readonly string halfaristocrat;
+
+    /// <summary>
     ///     贵族
     /// </summary>
     public static readonly string aristocrat;
@@ -31,4 +36,8 @@ public class PolicyState : StringLibrary
     ///     奴隶士兵
     /// </summary>
     public static readonly string slave_soldier;
+    /// <summary>
+    ///     姓氏合流
+    /// </summary>
+    public static readonly string name_integration;
 }

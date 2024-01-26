@@ -136,6 +136,18 @@ namespace Figurebox
             rebel.base_stats[S.warfare] += 4;
             rebel.action_special_effect =
                 (WorldAction)Delegate.Combine(rebel.action_special_effect, new WorldAction(Actionlib.rebelkingdom));
+            ActorTrait guizu = new ActorTrait
+            {
+                id = "guizu",
+                path_icon = "ui/Icons/traits/iconguizu",
+                birth = 0f,
+                inherit = 0f,
+                group_id = TraitGroups.social_identity_group
+            };
+            add_and_unlock_trait(guizu);
+            guizu.base_stats[S.fertility] += 35f;
+
+
         }
 
         private void add_social_identities()
@@ -257,15 +269,7 @@ namespace Figurebox
 
             if (a.getAge() > 17 && a.kingdom != null && a.city != null)
             {
-                //Debug.Log("执行");
-                if (a.kingdom.king == null && a.getAge() > 15)
-                {
-                    awKingdom.clearKingData();
-                    awKingdom.setKing(a);
-                    WorldLog.logNewKing(awKingdom);
 
-                    return false;
-                }
 
                 if (a.kingdom.king != null && a.kingdom.king != a && a.hasTrait("zhuhou"))
                 {
