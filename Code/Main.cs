@@ -111,6 +111,7 @@ namespace Figurebox
             print("Translation loaded");
             ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
             resourceAsset.maximum = 99999999;
+            AssetManager.clan_level_bonus_library.t.base_stats[S.clan_members] = 200f;
         }
 
 

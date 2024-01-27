@@ -101,6 +101,7 @@ public partial class AW_KingdomManager
 
     public void CheckDeclareEmpire()
     {
+        if (MoHTools.ExistMoHKingdom) { return; }
         // 首先检查是否有任何国家是Rebel
         bool noRebels = CheckNoMoreRebels();
 
@@ -119,10 +120,9 @@ public partial class AW_KingdomManager
                     if (k.king != null)
                     {
                         k.king.addTrait("first");
-                        if (awKingdom.Rebel)
-                        {
-                            KingdomYearName.changeYearname(awKingdom);
-                        }
+
+                        KingdomYearName.changeYearname(awKingdom);
+
                     }
                 }
             }

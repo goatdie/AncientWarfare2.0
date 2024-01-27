@@ -53,20 +53,29 @@ public class BehProduceNobles : CityBehProduceUnit
     [MethodReplace(nameof(CityBehProduceUnit.checkGreatClan))]
     private new static Clan checkGreatClan(Actor pParent1, Actor pParent2)
     {
-        // 首先检查第一个父母是否属于家族
+        Clan clan = null;
+
+        // 检查第一个父母是否属于家族
         if (!string.IsNullOrEmpty(pParent1.data.clan))
         {
-            return BehaviourActionBase<City>.world.clans.get(pParent1.data.clan);
+            clan = BehaviourActionBase<City>.world.clans.get(pParent1.data.clan);
         }
 
-        // 然后检查第二个父母是否属于家族
-        if (pParent2 != null && !string.IsNullOrEmpty(pParent2.data.clan))
+        // 如果第一个父母不属于家族，检查第二个父母
+        if (clan == null && pParent2 != null && !string.IsNullOrEmpty(pParent2.data.clan))
         {
-            return BehaviourActionBase<City>.world.clans.get(pParent2.data.clan);
+            clan = BehaviourActionBase<City>.world.clans.get(pParent2.data.clan);
         }
 
-        // 如果两个父母都不属于家族，返回 null
+        // 检查家族的当前成员数是否小于最大成员数
+        if (clan != null && clan.units.Count < clan.getMaxMembers())
+        {
+            return clan;
+        }
+
+        // 如果两个父母都不属于家族或家族成员已满，返回 null
         return null;
     }
+
 
 }

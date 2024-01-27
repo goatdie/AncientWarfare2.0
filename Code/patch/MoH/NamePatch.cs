@@ -83,6 +83,12 @@ namespace Figurebox
             }
             return true;
         }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Clan), "getMaxMembers")]
+        public static void GetMax_postfix(Clan __instance, ref int __result)
+        {
+            __result = 20;
+        }
 
         public static void SetNameForActor(Actor actor, Clan pClan)
         {
