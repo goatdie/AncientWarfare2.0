@@ -561,7 +561,7 @@ namespace Figurebox
             var rebellion = AssetManager.plots_library.get("rebellion");
             rebellion.action = delegate (Plot pPlot)
             {
-                if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom)) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).Rebel))
+                if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom)) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).Rebel) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).FomerMoh))
                 {
                     startTianmingRebellion(pPlot.initiator_city, pPlot.getLeader(), pPlot);
                 }

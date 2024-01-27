@@ -2,6 +2,7 @@ using System.Linq;
 using ai.behaviours;
 using Figurebox.constants;
 using Figurebox.Utils;
+using Figurebox.attributes;
 using NeoModLoader.api.attributes;
 using System.Collections.Generic;
 
@@ -48,6 +49,24 @@ public class BehProduceNobles : CityBehProduceUnit
         }
 
         _possibleParents.Shuffle();
+    }
+    [MethodReplace(nameof(CityBehProduceUnit.checkGreatClan))]
+    private new static Clan checkGreatClan(Actor pParent1, Actor pParent2)
+    {
+        // 首先检查第一个父母是否属于家族
+        if (!string.IsNullOrEmpty(pParent1.data.clan))
+        {
+            return BehaviourActionBase<City>.world.clans.get(pParent1.data.clan);
+        }
+
+        // 然后检查第二个父母是否属于家族
+        if (pParent2 != null && !string.IsNullOrEmpty(pParent2.data.clan))
+        {
+            return BehaviourActionBase<City>.world.clans.get(pParent2.data.clan);
+        }
+
+        // 如果两个父母都不属于家族，返回 null
+        return null;
     }
 
 }
