@@ -156,6 +156,7 @@ namespace Figurebox
                     //Debug.Log("不是老资历之不乱");
                     return false;
                 }
+                if (pKingdom.king != null && pActor.isCityLeader() && pKingdom.king.getInfluence() > pActor.getInfluence()) { return false; }
 
 
                 if (pActor.getAge() <= 17 && pKingdom == null && pActor.city == null)
@@ -169,7 +170,6 @@ namespace Figurebox
             usurpation.check_should_continue = delegate (Plot pPlot)
             {
                 if (!pPlot.initiator_actor.isAlive() && pPlot.initiator_actor.kingdom.asset.mad) { return false; }
-
                 foreach (Actor actor in pPlot.supporters)
                 {
                     Kingdom kingdom = actor.kingdom;
@@ -509,7 +509,7 @@ namespace Figurebox
                 // 直接允许Rebel发动行动，无视其他限制
                 if (MoHTools.ConvertKtoAW(pKingdom).Rebel)
                 {
-                   
+
                     return true;
                 }
 
@@ -668,7 +668,7 @@ namespace Figurebox
 
             kingdom.setKing(usurper);
             WorldLog.logNewKing(kingdom);
-           
+
 
         }
 

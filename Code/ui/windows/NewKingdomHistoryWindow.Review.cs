@@ -100,7 +100,7 @@ public partial class NewKingdomHistoryWindow
     {
         using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
         {
-           
+
             _usurpation = new UsurpationTableItem();
 
             cmd.CommandText = "SELECT * FROM USURPATION WHERE aid=@king_id";
@@ -112,7 +112,44 @@ public partial class NewKingdomHistoryWindow
             }
         }
     }
+    private List<IntegrationTableItem> _integration = new();
+    public void RequestIntegration()
+    {
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
 
+            cmd.CommandText = "SELECT * FROM INTEGRATION WHERE aid=@king_id";
+            cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+            using var result_reader = cmd.ExecuteReader();
+            _integration.Clear();
+            while (result_reader.Read())
+            {
+                var IntegrationItem = new IntegrationTableItem();
+                IntegrationItem.ReadFromReader(result_reader);
+                _integration.Add(IntegrationItem);
+            }
+        }
+    }
+    private List<KingdomCapitalChangeTableItem> _capitalchange = new();
+    public void RequestCapitalChange()
+    {
+
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
+            cmd.CommandText = "SELECT * FROM CAPITALCHANGE WHERE aid=@king_id";
+            cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+            using var result_reader = cmd.ExecuteReader();
+            _capitalchange.Clear();
+            while (result_reader.Read())
+            {
+                var CapitalItem = new KingdomCapitalChangeTableItem();
+                CapitalItem.ReadFromReader(result_reader);
+                _capitalchange.Add(CapitalItem);
+            }
+        }
+
+
+    }
     private void PrepareRuleReview(List<ReviewItem> pItems)
     {
         pItems.Add(new ReviewItem(_selectedRule.start_time, LM.Get("review_rule_start"),
@@ -141,6 +178,17 @@ public partial class NewKingdomHistoryWindow
         RequestUsurpation();
         if (_usurpation.timestamp > 0)
             pItems.Add(new ReviewItem(_usurpation.timestamp, LM.Get("review_start_usurpation"), kings[_usurpation.aid].curr_name, _usurpation.kingdom_name));
+        RequestIntegration();
+        foreach (var integration_event in _integration)
+        {
+            pItems.Add(new ReviewItem(integration_event.timestamp, LM.Get("review_start_integration"), kings[integration_event.aid].curr_name, integration_event.old_kingdom_name, integration_event.new_kingdom_name));
+        }
+        RequestCapitalChange();
+        foreach (var capital_event in _capitalchange)
+        {
+            pItems.Add(new ReviewItem(capital_event.timestamp, LM.Get("review_capitalchange"), capital_event.old_capital_name, capital_event.new_capital_name));
+        }
+
     }
 
     [Hotfixable]

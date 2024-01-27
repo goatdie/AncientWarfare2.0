@@ -466,6 +466,7 @@ public partial class AW_Kingdom : Kingdom
 
                 // 向新首都增加相应金币
                 newCapital.data.storage.change("gold", goldToTransfer);
+                EventsManager.Instance.ChangeCapital(kingdom.king, kingdom.capital.getCityName(), newCapital.getCityName());
                 kingdom.capital = newCapital;
                 kingdom.king.ChangeCity(newCapital);
             }
@@ -541,6 +542,7 @@ public partial class AW_Kingdom : Kingdom
                     kingdomToInherit.policy_data.Title =
                         MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
+                    EventsManager.Instance.Integration(actor, currentKingdom.data.name, kingdomToInherit.data.name);
                 }
                 else
                 {
@@ -550,6 +552,7 @@ public partial class AW_Kingdom : Kingdom
                     currentKingdom.policy_data.Title =
                         MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
+                    EventsManager.Instance.Integration(actor, currentKingdom.data.name, kingdomToInherit.data.name);
                 }
             }
         }
@@ -700,6 +703,10 @@ public partial class AW_Kingdom : Kingdom
 
                 // 更新王国名称
                 // 注意：这里您需要根据实际情况决定如何生成新的王国名称
+                if (MoHTools.IsMoHKingdom(this))
+                {
+                    EventsManager.Instance.ENDMOH(this);
+                }
 
                 createColors();
                 generateBanner();

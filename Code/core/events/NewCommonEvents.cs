@@ -63,7 +63,29 @@ public static class NewCommonEvents
                                     ColumnVal.Create("AID", Usuperer.data.id),
                                     ColumnVal.Create("KID", Usuperer.kingdom.id),
                                     ColumnVal.Create("TIMESTAMP", World.world.getCreationTime()),
-                                    ColumnVal.Create("KINGDOM_NAME",KName)
+                                    ColumnVal.Create("KINGDOM_NAME", KName)
+
+                                    );
+
+    }
+    public static void Integration(this EventsManager pManager, Actor pKing, string originalKingdomName, string inheritingKingdomName)
+    {
+        pManager.OperatingDB.Insert(IntegrationTableItem.GetTableName(),
+                                    ColumnVal.Create("AID", pKing.data.id),
+                                    ColumnVal.Create("NEW_KINGDOM_NAME", inheritingKingdomName),
+                                    ColumnVal.Create("TIMESTAMP", World.world.getCreationTime()),
+                                    ColumnVal.Create("OLD_KINGDOM_NAME", originalKingdomName)
+
+                                    );
+
+    }
+    public static void ChangeCapital(this EventsManager pManager, Actor pKing, string old_capital_name, string new_capital_name)
+    {
+        pManager.OperatingDB.Insert(KingdomCapitalChangeTableItem.GetTableName(),
+                                    ColumnVal.Create("AID", pKing.data.id),
+                                    ColumnVal.Create("NEW_CAPITAL_NAME", old_capital_name),
+                                    ColumnVal.Create("TIMESTAMP", World.world.getCreationTime()),
+                                    ColumnVal.Create("OLD_CAPITAL_NAME", new_capital_name)
 
                                     );
 

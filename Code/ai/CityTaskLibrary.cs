@@ -9,6 +9,7 @@ public class CityTaskLibrary : ExtendedLibrary<BehaviourTaskCity>
     protected override void init()
     {
         add_slave_city_tasks();
+        add_noble_city_tasks();
     }
 
     private void add_slave_city_tasks()
@@ -32,6 +33,17 @@ public class CityTaskLibrary : ExtendedLibrary<BehaviourTaskCity>
             id = "produce_slaves"
         });
         t.addBeh(new BehProduceSlaves());
+        t.addBeh(new CityBehRandomWait(0.1f));
+
+
+    }
+    private void add_noble_city_tasks()
+    {
+        add(new BehaviourTaskCity
+        {
+            id = "produce_noble"
+        });
+        t.addBeh(new BehProduceNobles());
         t.addBeh(new CityBehRandomWait(0.1f));
     }
 }
