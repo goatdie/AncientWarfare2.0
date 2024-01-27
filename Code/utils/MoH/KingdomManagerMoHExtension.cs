@@ -104,43 +104,25 @@ public partial class AW_KingdomManager
         // 首先检查是否有任何国家是Rebel
         bool noRebels = CheckNoMoreRebels();
 
-        // 如果没有Rebels，处理formerMOH国家
-        if (noRebels)
+        foreach (Kingdom k in this.list_civs)
         {
-            foreach (Kingdom k in this.list_civs)
-            {
-                if (MoHTools.ConvertKtoAW(k).FomerMoh)
-                {
-                    if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)) && MoHTools.Ismostpowerfulkingdom(MoHTools.ConvertKtoAW(k)))
-                    {
-                        MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
-                        MoHTools.ConvertKtoAW(k).FomerMoh = false;
-                        if (k.king != null)
-                        {
-                            k.king.addTrait("first");
-                        }
+            AW_Kingdom awKingdom = MoHTools.ConvertKtoAW(k);
 
-                    }
-                }
-            }
-        }
-        // 如果有Rebels，处理Rebel国家
-        else
-        {
-            foreach (Kingdom k in this.list_civs)
+            // 如果国家是前MOH或Rebel或既不是前MOH也不是Rebel
+            if ((awKingdom.FomerMoh && noRebels) || awKingdom.Rebel || (!awKingdom.FomerMoh && !awKingdom.Rebel))
             {
-                if (MoHTools.ConvertKtoAW(k).Rebel)
+                if (CanDeclareEmpire(awKingdom) && MoHTools.Ismostpowerfulkingdom(awKingdom))
                 {
-                    if (CanDeclareEmpire(MoHTools.ConvertKtoAW(k)) && MoHTools.Ismostpowerfulkingdom(MoHTools.ConvertKtoAW(k)))
+                    MoHTools.SetMoHKingdom(awKingdom);
+                    awKingdom.FomerMoh = false;
+                    awKingdom.Rebel = false;
+                    if (k.king != null)
                     {
-                        MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(k));
-                        if (k.king != null)
+                        k.king.addTrait("first");
+                        if (awKingdom.Rebel)
                         {
-                            k.king.addTrait("first");
-                            KingdomYearName.changeYearname(MoHTools.ConvertKtoAW(k));
+                            KingdomYearName.changeYearname(awKingdom);
                         }
-                        MoHTools.ConvertKtoAW(k).Rebel=false;
-
                     }
                 }
             }

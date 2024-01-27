@@ -7,4 +7,4 @@ review_start_moh,建立{0}朝,empty
 review_end_moh,{0}朝灭亡,empty
 review_start_usurpation,{0}篡位，建立{1},empty
 review_start_integration,来自{1}的{0}继承{2}的爵位,empty
-review_capitalchange,自{0}迁都到{1},empty
+review_capitalchange,自 {1} 迁都到 {0} ,empty

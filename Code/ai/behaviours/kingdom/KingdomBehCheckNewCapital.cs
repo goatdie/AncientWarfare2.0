@@ -10,17 +10,17 @@ public class KingdomBehCheckNewCapital : BehaviourActionKingdom
         AW_Kingdom awKingdom = pKingdom as AW_Kingdom;
 
         City newCapital = AW_Kingdom.FindNewCapital(awKingdom);
-        if (newCapital == awKingdom.capital)
+        if (newCapital == awKingdom.capital || newCapital == null)
         {
             return BehResult.Continue;
         }
         else
         {
-            KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("change_capital");
 
+            Main.LogInfo("迁都" + newCapital.getCityName() + "旧都" + awKingdom.capital.getCityName());
+            KingdomPolicyAsset policy = KingdomPolicyLibrary.Instance.get("change_capital");
             awKingdom.StartPolicy(policy, false);
         }
-
 
         return BehResult.Continue;
     }
