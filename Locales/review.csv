@@ -2,3 +2,7 @@ key,cz,en
 review_item,{0}\t{1},{0}\t{1}
 review_rule_start,{0}即位,empty
 review_rule_end,{0}退位，在位{1}年,empty
+review_change_yearname,改元:{0},empty
+review_start_moh,建立{0}朝,empty
+review_end_moh,{0}朝灭亡,empty
+review_start_usurpation,{0}篡位，建立{1},empty

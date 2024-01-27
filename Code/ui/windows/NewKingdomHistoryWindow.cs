@@ -38,11 +38,11 @@ public partial class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHist
 
     private ObjectPoolGenericMono<KingRuleHistoryItem> _rule_historyItemPool;
 
-    private string            _selectedKing    = "";
-    private string            _selectedKingdom = "";
+    private string _selectedKing = "";
+    private string _selectedKingdom = "";
     private KingRuleTableItem _selectedRule;
-    private RectTransform     HistorySelectContentTransform;
-    private RectTransform     KingSelectContentTransform;
+    private RectTransform HistorySelectContentTransform;
+    private RectTransform KingSelectContentTransform;
 
     private void Update()
     {
@@ -105,7 +105,7 @@ public partial class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHist
                 UpdatePage();
             }, SpriteTextureLoader.getSprite(pIcon), pTipType: "normal", pTipData: new TooltipData
             {
-                tip_name = "AW_History "        + pType,
+                tip_name = "AW_History " + pType,
                 tip_description = "AW_History " + pType + " Description"
             });
             tab_entry.Background.enabled = false;
@@ -120,10 +120,10 @@ public partial class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHist
         }
 
         CreateHistoryTab(HistoryType.Population, "ui/icons/iconPopulation");
-        CreateHistoryTab(HistoryType.Territory,  "ui/icons/iconKingdomZones");
-        CreateHistoryTab(HistoryType.War,        "ui/icons/iconWarsList");
-        CreateHistoryTab(HistoryType.Policy,     "ui/icons/iconPlotsList");
-        CreateHistoryTab(HistoryType.Review,     "ui/icons/iconDocument");
+        CreateHistoryTab(HistoryType.Territory, "ui/icons/iconKingdomZones");
+        CreateHistoryTab(HistoryType.War, "ui/icons/iconWarsList");
+        CreateHistoryTab(HistoryType.Policy, "ui/icons/iconPlotsList");
+        CreateHistoryTab(HistoryType.Review, "ui/icons/iconDocument");
 
 
         InitReviewTab();
@@ -140,7 +140,12 @@ public partial class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHist
         ruleQueue.Clear();
         _tmp_ruleQueue.Clear();
 
+        _selectedKing = "";
+        _selectedRule = null;
+
         RequestKings();
+
+        ShowReviewTab();
     }
 
     public override void OnNormalDisable()
@@ -197,6 +202,7 @@ public partial class NewKingdomHistoryWindow : AbstractWideWindow<NewKingdomHist
             }
         }
     }
+
 
     public void SelectKingRule(KingRuleTableItem pRule)
     {

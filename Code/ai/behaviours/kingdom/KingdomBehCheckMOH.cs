@@ -6,6 +6,7 @@ using Figurebox.core;
 using Figurebox.Utils.MoH;
 using UnityEngine;
 using System.Linq;
+using Figurebox.core.events;
 
 namespace Figurebox.ai;
 public class KingdomBehCheckMOH : BehaviourActionKingdom
@@ -19,8 +20,10 @@ public class KingdomBehCheckMOH : BehaviourActionKingdom
             if (checkMOHcondition(awKingdom))
             {
                 //Debug.Log("天命设置完毕");
-                MoHTools.SetMoHKingdom(awKingdom);
+
                 KingdomYearName.changeYearname(awKingdom);
+                MoHTools.SetMoHKingdom(awKingdom);
+
 
 
             }

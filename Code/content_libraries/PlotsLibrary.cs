@@ -4,6 +4,7 @@ using ReflectionUtility;
 using UnityEngine;
 using Figurebox.Utils.MoH;
 using Figurebox.core;
+using Figurebox.core.events;
 namespace Figurebox
 {
     public class MorePlots : PlotsLibrary
@@ -667,6 +668,7 @@ namespace Figurebox
 
             kingdom.setKing(usurper);
             WorldLog.logNewKing(kingdom);
+           
 
         }
 

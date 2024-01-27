@@ -73,6 +73,7 @@ public class KingRuleHistoryItem : APrefab<KingRuleHistoryItem>
                 $"{GeneralHelper.getYearsOn(pRule.start_time)}~{GeneralHelper.getYearsOn(pRule.end_time)}";
 
         Avatar.Show(pKing.asset_id, pKing.skin, pKing.skin_set, pKing.head, pKingdom.color_id, AWUnitProfession.King);
+        MarkSelected(false);
     }
 
     public override void SetSize(Vector2 pSize)

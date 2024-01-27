@@ -6,6 +6,7 @@ using Figurebox.attributes;
 using NeoModLoader.api.attributes;
 using Figurebox.core;
 using System.Linq;
+using Figurebox.core.events;
 namespace Figurebox.Utils.MoH;
 
 public class MoHTools
@@ -37,6 +38,7 @@ public class MoHTools
         {
             kingdom.king.addTrait("天命");
             kingdom.king.addTrait("first");
+            EventsManager.Instance.StartMOH(kingdom);
         }
         Debug.Log("天命值" + MOH_Value);
     }
@@ -51,6 +53,10 @@ public class MoHTools
         {
             MoHKingdom.FomerMoh = true;
             CityTools.loglosekingdom(MoHKingdom);
+            if (MoHKingdom.king != null)
+            {
+                EventsManager.Instance.ENDMOH(MoHKingdom);
+            }
 
         }
         MoHKingdom = null;

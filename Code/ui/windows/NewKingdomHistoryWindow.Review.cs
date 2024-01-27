@@ -5,7 +5,9 @@ using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Figurebox.core.table_items;
+using System.Data.SQLite;
+using Figurebox.core;
 namespace Figurebox.ui.windows;
 
 public partial class NewKingdomHistoryWindow
@@ -42,6 +44,7 @@ public partial class NewKingdomHistoryWindow
     private void ShowReviewTab()
     {
         List<ReviewItem> items = new();
+
         if (_selectedRule == null)
             PrepareGeneralReview(items);
         else
@@ -54,6 +57,60 @@ public partial class NewKingdomHistoryWindow
         foreach (ReviewItem item in items) sb.AppendLine(item.ToString());
 
         _review_text.text = sb.ToString();
+    }
+    private List<KingdomChangeYearTableItem> _changeyears = new();
+
+    private void RequestChangeYearForCurrentRule()
+    {
+        using var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB);
+        cmd.CommandText = "SELECT * FROM KingdomChangeYear WHERE id=@king_id";
+        cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+
+        using var result_reader = cmd.ExecuteReader();
+        _changeyears.Clear();
+        while (result_reader.Read())
+        {
+            var change_year_item = new KingdomChangeYearTableItem();
+            change_year_item.ReadFromReader(result_reader);
+            _changeyears.Add(change_year_item);
+        }
+    }
+    private List<MOHTableItem> _moh = new();
+    public void RequestMOH()
+    {
+
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
+            cmd.CommandText = "SELECT * FROM MOH WHERE aid=@king_id";
+            cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+            using var result_reader = cmd.ExecuteReader();
+            _moh.Clear();
+            while (result_reader.Read())
+            {
+                var mohItem = new MOHTableItem();
+                mohItem.ReadFromReader(result_reader);
+                _moh.Add(mohItem);
+            }
+        }
+
+
+    }
+    private UsurpationTableItem _usurpation = new();
+    public void RequestUsurpation()
+    {
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
+           
+            _usurpation = new UsurpationTableItem();
+
+            cmd.CommandText = "SELECT * FROM USURPATION WHERE aid=@king_id";
+            cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+            using var result_reader = cmd.ExecuteReader();
+            if (result_reader.Read())
+            {
+                _usurpation.ReadFromReader(result_reader);
+            }
+        }
     }
 
     private void PrepareRuleReview(List<ReviewItem> pItems)
@@ -68,6 +125,22 @@ public partial class NewKingdomHistoryWindow
                                       kings[_selectedRule.aid].curr_name,
                                       GeneralHelper.getYearsOn(_selectedRule.end_time -
                                                                _selectedRule.start_time)));
+        RequestChangeYearForCurrentRule();
+        foreach (var change_year_event in _changeyears)
+        {
+            pItems.Add(new ReviewItem(change_year_event.timestamp, LM.Get("review_change_yearname"), change_year_event.new_name));
+        }
+        RequestMOH();
+        foreach (var moh_event in _moh)
+        {
+            if (moh_event.start_time > 0)
+                pItems.Add(new ReviewItem(moh_event.start_time, LM.Get("review_start_moh"), moh_event.kingdom_name));
+            if (moh_event.end_time > 0)
+                pItems.Add(new ReviewItem(moh_event.end_time, LM.Get("review_end_moh"), moh_event.kingdom_name));
+        }
+        RequestUsurpation();
+        if (_usurpation.timestamp > 0)
+            pItems.Add(new ReviewItem(_usurpation.timestamp, LM.Get("review_start_usurpation"), kings[_usurpation.aid].curr_name, _usurpation.kingdom_name));
     }
 
     [Hotfixable]
