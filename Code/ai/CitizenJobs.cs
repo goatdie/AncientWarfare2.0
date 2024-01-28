@@ -7,6 +7,7 @@ namespace Figurebox.ai;
 public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
 {
     public static CitizenJobAsset slave_catcher;
+    public static CitizenJobAsset slave_warrior;
 
     protected override void init()
     {
@@ -19,7 +20,16 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
             debug_option = DebugOption.CitizenJobAttacker,
             path_icon = "ui/policy/start_slaves"
         });
-
+        slave_warrior = add(new CitizenJobAsset
+        {
+            id = AWS.slave_warrior,
+            common_job = false,
+            ok_for_king = false,
+            ok_for_leader = false,
+            unit_job_default = "attacker",
+            debug_option = DebugOption.CitizenJobAttacker,
+            path_icon = "ui/policy/start_slaves"
+        });
 
         post_init();
     }

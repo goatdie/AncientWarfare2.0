@@ -11,6 +11,7 @@ public class AW_UnitGroupManager : UnitGroupManager
     {
         World.world.unitGroupManager.clear();
         World.world.unitGroupManager = new AW_UnitGroupManager();
+        instance = (AW_UnitGroupManager)World.world.unitGroupManager;
     }
 
     [MethodReplace(nameof(createNewGroup))]
