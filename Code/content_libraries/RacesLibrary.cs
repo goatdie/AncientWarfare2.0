@@ -27,10 +27,20 @@ namespace Figurebox
             "Xia"
         };
         private static Race tRace;
+        public static void AssignNameTemplateKingdom(string kingdomName)
+        {
+            foreach (var raceName in defaultRaces)
+            {
+                Race race = AssetManager.raceLibrary.get(raceName);
+                if (race != null)
+                {
+                    race.name_template_kingdom = kingdomName;
+                }
+            }
+        }
         internal void init()
         {
-
-
+            AssignNameTemplateKingdom("Xia_kingdom");
             Race Xia = AssetManager.raceLibrary.clone("Xia", "human");
 
             tRace = Xia;
