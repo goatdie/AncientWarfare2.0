@@ -8,6 +8,8 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
 {
     public static CitizenJobAsset slave_catcher;
     public static CitizenJobAsset slave_warrior;
+    public static CitizenJobAsset king_guard;
+
 
     protected override void init()
     {
@@ -23,6 +25,16 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
         slave_warrior = add(new CitizenJobAsset
         {
             id = AWS.slave_warrior,
+            common_job = false,
+            ok_for_king = false,
+            ok_for_leader = false,
+            unit_job_default = "attacker",
+            debug_option = DebugOption.CitizenJobAttacker,
+            path_icon = "ui/policy/start_slaves"
+        });
+        king_guard = add(new CitizenJobAsset
+        {
+            id = AWS.king_guard,
             common_job = false,
             ok_for_king = false,
             ok_for_leader = false,

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ai.behaviours;
 using ai.behaviours.conditions;
+using Figurebox.constants;
+using Figurebox.core;
 using HarmonyLib;
 using NCMS.Utils;
 using ReflectionUtility;
@@ -15,19 +17,13 @@ namespace Figurebox
 
       ActorJob guardJob = AssetManager.job_actor.add(new ActorJob
       {
-        id = "guard"
+        id = AWS.king_guard
       });
       guardJob.addTask("warrior_army_follow_leader");
       guardJob.addCondition(new CondHasUnitGroup(), true);
       guardJob.addCondition(new CondIsGroupLeader(), false);
       // var cityJobsUnit = (List<string>)Reflection.GetField(typeof(CityTaskList), null, "jobsUnit");
-      CitizenJobAsset guard = AssetManager.citizen_job_library.add(new CitizenJobAsset
-      {
-        id = "guard",
-        debug_option = DebugOption.CitizenJobAttacker,
-        path_icon = "ui/Icons/citizen_jobs/iconCitizenJobAttacker",
-        common_job = false
-      });
+
 
 
       ProjectileAsset FireArrow = new ProjectileAsset();

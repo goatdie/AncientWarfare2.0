@@ -1,0 +1,74 @@
+using System.Linq;
+using ai.behaviours;
+using Figurebox.constants;
+using Figurebox.content_libraries;
+using Figurebox.core;
+using Figurebox.Utils;
+
+namespace Figurebox.ai.behaviours.city;
+
+/// <summary>
+///     使用奴隶组织奴隶军
+/// </summary>
+public class BehCheckGuard : BehaviourActionCity
+{
+    public override BehResult execute(City pObject)
+    {
+        var city = (AW_City)pObject;
+        if (city.groups.TryGetValue(UnitGroupTypeLibrary.guards.id, out AW_UnitGroup group))
+        {
+            findWarriorsForGroup(city, group);
+            return BehResult.Continue;
+        }
+
+        if (city.kingdom.king != null && city.kingdom.king.unit_group == null)
+        {
+            city.CreateGroup(UnitGroupTypeLibrary.guards);
+            findWarriorsForGroup(city, city.groups[UnitGroupTypeLibrary.guards.id]);
+            city.groups.TryGetValue(UnitGroupTypeLibrary.guards.id, out AW_UnitGroup kgroup);
+            kgroup.addUnit(city.kingdom.king);
+            kgroup.setGroupLeader(city.kingdom.king);
+
+            return BehResult.Continue;
+        }
+
+        return base.execute(pObject);
+    }
+
+    private void findWarriorsForGroup(AW_City pCity, AW_UnitGroup pGroup)
+    {
+        var left_count = (int)(pGroup.asset.base_max_count * pCity.getArmyMaxTotalPercentage()) - pGroup.units.Count;
+        if (left_count <= 0) return;
+
+        foreach (Actor unit in pCity.professionsDict[AWUnitProfession.Unit.C()]
+                          .Where(unit => unit.unit_group == null)
+                          .Where(unit => unit.citizen_job == null)
+                          .Where(unit => unit.hasClan()))
+        {
+
+
+            pGroup.addUnit(unit);
+            unit.setCitizenJob(CitizenJobs.king_guard);
+            if (!unit.isKing())
+            {
+                unit.addTrait("禁卫军");
+                unit.setProfession(UnitProfession.Warrior, true);
+                ItemAsset wa = AssetManager.items.get("ji");
+                ItemAsset aa = AssetManager.items.get("armor");
+                string wm = "bronze";
+                string am = "bronze";
+                ItemData item = ItemGenerator.generateItem(wa, wm, World.world.mapStats.getCurrentYear(), unit.kingdom, unit.data.name, 1, unit);
+                item.modifiers.Clear();
+                if (unit.equipment.getSlot(wa.equipmentType).data == null || unit.equipment.getSlot(aa.equipmentType).data == null)
+                {
+                    unit.equipment.getSlot(wa.equipmentType).setItem(item);
+                    item = ItemGenerator.generateItem(aa, am, World.world.mapStats.getCurrentYear(), unit.kingdom, unit.data.name, 1, unit);
+                    item.modifiers.Clear();
+                    unit.equipment.getSlot(aa.equipmentType).setItem(item);
+                }
+            }
+            left_count--;
+            if (left_count <= 0) break;
+        }
+    }
+}

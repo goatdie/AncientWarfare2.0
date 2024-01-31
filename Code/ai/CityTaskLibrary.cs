@@ -45,5 +45,11 @@ public class CityTaskLibrary : ExtendedLibrary<BehaviourTaskCity>
         });
         t.addBeh(new BehProduceNobles());
         t.addBeh(new CityBehRandomWait(0.1f));
+        add(new BehaviourTaskCity
+        {
+            id = "check_guard"
+        });
+        t.addBeh(new BehCheckGuard());
+        t.addBeh(new CityBehRandomWait(0.1f));
     }
 }
