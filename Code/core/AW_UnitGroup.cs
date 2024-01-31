@@ -12,6 +12,11 @@ public class AW_UnitGroup : UnitGroup
     {
         asset = pAsset;
         data = pData;
+        data.city_id = pCity.data.id;
+    }
+
+    public void LoadData(AW_UnitGroupData pData)
+    {
     }
 
     [MethodReplace(nameof(UnitGroup.findGroupLeader))]
@@ -50,5 +55,17 @@ public class AW_UnitGroup : UnitGroup
         }
 
         if (new_leader != null) setGroupLeader(new_leader);
+    }
+
+    [MethodReplace(nameof(UnitGroup.setGroupLeader))]
+    public new void setGroupLeader(Actor pActor)
+    {
+        if (pActor == null && groupLeader != null)
+            groupLeader.setGroupLeader(false);
+        groupLeader = pActor;
+        if (groupLeader == null)
+            return;
+        data.group_leader_id = groupLeader.data.id;
+        groupLeader.setGroupLeader(true);
     }
 }
