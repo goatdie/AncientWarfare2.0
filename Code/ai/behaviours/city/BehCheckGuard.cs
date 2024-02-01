@@ -23,7 +23,7 @@ public class BehCheckGuard : BehaviourActionCity
 
         if (city.kingdom.king != null && city.kingdom.king.unit_group == null)
         {
-            Main.LogInfo("创建保镖" + "  " + city.name + "  " + city.kingdom.king.getName());
+            //  Main.LogInfo("创建保镖" + "  " + city.name + "  " + city.kingdom.king.getName());
             city.CreateGroup(UnitGroupTypeLibrary.guards);
             findWarriorsForGroup(city, city.groups[UnitGroupTypeLibrary.guards.id]);
 
@@ -51,12 +51,13 @@ public class BehCheckGuard : BehaviourActionCity
         }
 
         foreach (Actor unit in pCity.professionsDict[AWUnitProfession.Unit.C()]
-                                    .Where(unit => unit.unit_group  == null)
+                                    .Where(unit => unit.unit_group == null)
                                     .Where(unit => unit.citizen_job == null)
                                     .Where(unit => unit.hasClan()))
         {
             pGroup.addUnit(unit);
             unit.addTrait("禁卫军");
+            pCity.status.warriors_current++;
             unit.setProfession(UnitProfession.Warrior, false);
             unit.setCitizenJob(CitizenJobs.king_guard);
             ItemAsset wa = AssetManager.items.get("ji");

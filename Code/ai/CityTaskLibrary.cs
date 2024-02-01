@@ -51,5 +51,11 @@ public class CityTaskLibrary : ExtendedLibrary<BehaviourTaskCity>
         });
         t.addBeh(new BehCheckGuard());
         t.addBeh(new CityBehRandomWait(0.1f));
+        add(new BehaviourTaskCity
+        {
+            id = "check_retirement"
+        });
+        t.addBeh(new BehCheckRetirement());
+        t.addBeh(new CityBehRandomWait(0.1f));
     }
 }

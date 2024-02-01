@@ -20,6 +20,10 @@ public class CityJobLibrary : ExtendedLibrary<JobCityAsset>
         {
             id = "check_guard"
         });
+        base_city_tasks.Add(new TaskContainer<BehaviourCityCondition, City>()
+        {
+            id = "check_retirement"
+        });
     }
 
     internal static string CheckAndGetCityJob(Dictionary<string, string> pPolicyState)
