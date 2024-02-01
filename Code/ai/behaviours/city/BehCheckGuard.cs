@@ -41,39 +41,43 @@ public class BehCheckGuard : BehaviourActionCity
         {
             return;
         }
+
         foreach (Actor unit in pCity.units)
         {
-            if (unit.hasTrait("禁卫军")) { pGroup.addUnit(unit); }
+            if (unit.hasTrait("禁卫军"))
+            {
+                pGroup.addUnit(unit);
+            }
         }
 
         foreach (Actor unit in pCity.professionsDict[AWUnitProfession.Unit.C()]
-                          .Where(unit => unit.unit_group == null)
-                          .Where(unit => unit.citizen_job == null)
-                          .Where(unit => unit.hasClan()))
+                                    .Where(unit => unit.unit_group  == null)
+                                    .Where(unit => unit.citizen_job == null)
+                                    .Where(unit => unit.hasClan()))
         {
-
-
             pGroup.addUnit(unit);
-            unit.setCitizenJob(CitizenJobs.king_guard);
             unit.addTrait("禁卫军");
-            unit.ai.setJob(AWS.king_guard);
-            unit.city.tryToMakeWarrior(unit);
             unit.setProfession(UnitProfession.Warrior, true);
+            unit.setCitizenJob(CitizenJobs.king_guard);
             ItemAsset wa = AssetManager.items.get("ji");
             ItemAsset aa = AssetManager.items.get("armor");
             string wm = "bronze";
             string am = "bronze";
-            ItemData item = ItemGenerator.generateItem(wa, wm, World.world.mapStats.getCurrentYear(), unit.kingdom, unit.getName(), 1, unit);
+            ItemData item = ItemGenerator.generateItem(wa, wm, World.world.mapStats.getCurrentYear(), unit.kingdom,
+                                                       unit.getName(), 1, unit);
             item.modifiers.Clear();
-            unit.dirty_sprite_item = true;
-            if (unit.equipment.getSlot(wa.equipmentType).data == null || unit.equipment.getSlot(aa.equipmentType).data == null)
+            if (unit.equipment.getSlot(wa.equipmentType).data == null ||
+                unit.equipment.getSlot(aa.equipmentType).data == null)
             {
                 unit.equipment.getSlot(wa.equipmentType).setItem(item);
-                item = ItemGenerator.generateItem(aa, am, World.world.mapStats.getCurrentYear(), unit.kingdom, unit.getName(), 1, unit);
+                item = ItemGenerator.generateItem(aa, am, World.world.mapStats.getCurrentYear(), unit.kingdom,
+                                                  unit.getName(), 1, unit);
                 item.modifiers.Clear();
                 unit.equipment.getSlot(aa.equipmentType).setItem(item);
             }
+
             unit.dirty_sprite_item = true;
+            unit.setStatsDirty();
             left_count--;
             if (left_count <= 0) break;
         }

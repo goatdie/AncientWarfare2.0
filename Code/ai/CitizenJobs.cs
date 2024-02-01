@@ -38,6 +38,7 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
             common_job = false,
             ok_for_king = false,
             ok_for_leader = false,
+            unit_job_default = AWS.king_guard,
             debug_option = DebugOption.CitizenJobAttacker,
             path_icon = "ui/policy/start_slaves"
         });
@@ -54,7 +55,7 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
                 AssetManager.citizen_job_library.list_priority_high.Add(item);
             else
                 AssetManager.citizen_job_library.list_priority_normal.Add(item);
-            item.unit_job_default = item.id;
+            if (string.IsNullOrEmpty(item.unit_job_default)) item.unit_job_default = item.id;
         }
     }
 }
