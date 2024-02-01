@@ -57,7 +57,7 @@ public class BehCheckGuard : BehaviourActionCity
         {
             pGroup.addUnit(unit);
             unit.addTrait("禁卫军");
-            unit.setProfession(UnitProfession.Warrior, true);
+            unit.setProfession(UnitProfession.Warrior, false);
             unit.setCitizenJob(CitizenJobs.king_guard);
             ItemAsset wa = AssetManager.items.get("ji");
             ItemAsset aa = AssetManager.items.get("armor");

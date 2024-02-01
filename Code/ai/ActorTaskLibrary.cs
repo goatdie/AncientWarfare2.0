@@ -46,5 +46,6 @@ public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
         });
         t.addBeh(new BehFindTileKing());
         t.addBeh(new BehGoToTileTarget());
+        t.addBeh(new BehRandomWait(1f, 2f));
     }
 }
