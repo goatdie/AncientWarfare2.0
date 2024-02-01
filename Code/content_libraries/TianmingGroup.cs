@@ -15,13 +15,8 @@ namespace Figurebox
     public static void init()
     {
 
-      ActorJob guardJob = AssetManager.job_actor.add(new ActorJob
-      {
-        id = AWS.king_guard
-      });
-      guardJob.addTask("warrior_army_follow_leader");
-      guardJob.addCondition(new CondHasUnitGroup(), true);
-      guardJob.addCondition(new CondIsGroupLeader(), false);
+      
+      //guardJob.addCondition(new CondIsGroupLeader(), false);
       // var cityJobsUnit = (List<string>)Reflection.GetField(typeof(CityTaskList), null, "jobsUnit");
 
 

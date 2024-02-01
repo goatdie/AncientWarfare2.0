@@ -38,7 +38,6 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
             common_job = false,
             ok_for_king = false,
             ok_for_leader = false,
-            unit_job_default = "attacker",
             debug_option = DebugOption.CitizenJobAttacker,
             path_icon = "ui/policy/start_slaves"
         });

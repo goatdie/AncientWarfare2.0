@@ -467,6 +467,14 @@ public partial class AW_Kingdom : Kingdom
                 // 向新首都增加相应金币
                 newCapital.data.storage.change("gold", goldToTransfer);
                 EventsManager.Instance.ChangeCapital(kingdom.king, kingdom.capital.getCityName(), newCapital.getCityName());
+                AW_City awcap = kingdom.capital as AW_City;
+                AW_City awnewcap = newCapital as AW_City;
+                if (kingdom.king.unit_group != null)
+                {
+                    kingdom.king.unit_group.disband();
+
+
+                };
                 kingdom.capital = newCapital;
                 kingdom.king.ChangeCity(newCapital);
             }
@@ -480,12 +488,13 @@ public partial class AW_Kingdom : Kingdom
             return null;
         }
 
-        // 初始筛选：仅考虑至少有一个邻近城市属于本国的城市
+        // 初始筛选：仅考虑至少有一个邻近城市属于本国的城市，并且城市不是当前首都
         var candidateCities = kingdom.cities
+                                     .Where(city => city != kingdom.capital)
                                      .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
                                      .ToList();
 
-        // 计算得分
+        // 计算得分，同时确保城市不是当前首都
         var scoredCities = candidateCities
                            .Select(city =>
                            {
@@ -497,7 +506,7 @@ public partial class AW_Kingdom : Kingdom
                                                : 0);
 
                                double distanceScore = kingdom.cities
-                                                             .Where(c => c != city)
+                                                             .Where(c => c != city && c != kingdom.capital)
                                                              .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
                                distanceScore = 1 / (1 + distanceScore);
 
@@ -507,15 +516,24 @@ public partial class AW_Kingdom : Kingdom
                            .ToList();
 
         // 选择得分最高且邻近城市最多属于本国的城市
-        var newCapital = scoredCities
+        var potentialNewCapital = scoredCities
                          .Where(sc => sc.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc)) ==
                                       scoredCities.Max(s =>
                                                            s.City.neighbours_cities
                                                             .Count(nc => kingdom.cities.Contains(nc))))
                          .FirstOrDefault()?.City;
 
-        return newCapital;
+        double threshold = 1.25; // 新首都得分需要至少比当前首都高25%
+        if (potentialNewCapital != null &&
+            scoredCities.FirstOrDefault(sc => sc.City == potentialNewCapital)?.Score >
+            scoredCities.FirstOrDefault(sc => sc.City == kingdom.capital)?.Score * threshold)
+        {
+            return potentialNewCapital;
+        }
+        return null;
     }
+
+
 
 
     public void CheckAndSetPrimaryKingdom(Actor actor, AW_Kingdom kingdomToInherit)
@@ -616,6 +634,7 @@ public partial class AW_Kingdom : Kingdom
              return;
          }
          kingsSetThisFrame[pActor.data.id] = true;*/
+        if (pActor.hasTrait("禁卫军")) pActor.removeTrait("禁卫军");
         if (king != null) clearKingData();
 
         #region 原版代码

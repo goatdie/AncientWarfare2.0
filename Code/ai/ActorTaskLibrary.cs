@@ -9,6 +9,7 @@ public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
     protected override void init()
     {
         add_slave_catcher_tasks();
+        add_guard_tasks();
     }
 
     private void add_slave_catcher_tasks()
@@ -35,5 +36,15 @@ public class ActorTaskLibrary : ExtendedLibrary<BehaviourTaskActor>
         t.addBeh(new BehStayInBuildingTarget(1f, 5f));
         t.addBeh(new BehSubmitSlaves());
         t.addBeh(new BehExitBuilding());
+
+    }
+    private void add_guard_tasks()
+    {
+        add(new BehaviourTaskActor
+        {
+            id = "guards_follow_king"
+        });
+        t.addBeh(new BehFindTileKing());
+        t.addBeh(new BehGoToTileTarget());
     }
 }

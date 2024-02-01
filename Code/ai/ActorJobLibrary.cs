@@ -27,5 +27,11 @@ public class ActorJobLibrary : ExtendedLibrary<ActorJob>
         t.addTask("slave_catcher_submit_slaves");
         t.addCondition(new CondInCity());
         t.addCondition(new CondHasSlaveCaught());
+        add(new ActorJob
+        {
+            id = AWS.king_guard
+        });
+        t.addTask("guards_follow_king");
+        t.addCondition(new CondHasUnitGroup(), true);
     }
 }

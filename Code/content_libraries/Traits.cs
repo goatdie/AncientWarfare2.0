@@ -115,7 +115,7 @@ namespace Figurebox
             jinwei.base_stats[S.scale] += 0.03f;
             jinwei.base_stats[S.mod_health] = +2f;
             jinwei.base_stats[S.damage] += 25;
-            jinwei.base_stats[S.speed] += 30f;
+            jinwei.base_stats[S.speed] += 15f;
             //jinwei.baseStats.attackSpeed = +5;
             jinwei.base_stats[S.knockback_reduction] += 100f;
             //jinwei.action_special_effect = (WorldAction)Delegate.Combine(jinwei.action_special_effect, new WorldAction(jinweiP));
