@@ -3,12 +3,12 @@ using HarmonyLib;
 using ReflectionUtility;
 using UnityEngine;
 using UnityEngine.UI;
+
 //using sfx;
 
 
 namespace Figurebox
 {
-
     class RacesLibrary
     {
         internal static List<string> defaultRaces = new List<string>()
@@ -18,15 +18,19 @@ namespace Figurebox
             "orc",
             "dwarf"
         };
+
         internal static List<string> human = new List<string>()
         {
             "human"
         };
+
         internal static List<string> additionalRaces = new List<string>()
         {
             "Xia"
         };
+
         private static Race tRace;
+
         public static void AssignNameTemplateKingdom(string kingdomName)
         {
             foreach (var raceName in defaultRaces)
@@ -38,6 +42,7 @@ namespace Figurebox
                 }
             }
         }
+
         internal void init()
         {
             AssignNameTemplateKingdom("Xia_kingdom");
@@ -61,10 +66,12 @@ namespace Figurebox
             //clans/
 
 
+#if 一米_中文名
             Xia.name_template_city = "Xia_city";
             Xia.name_template_kingdom = "Xia_kingdom";
             Xia.name_template_culture = "Xia_culture";
             Xia.name_template_clan = "human_clan";
+#endif
             Xia.clan_backgrounds = new List<string>
             {
                 "actors/races/Xia/clans/backgrounds/clan_background_0",
@@ -120,22 +127,26 @@ namespace Figurebox
             };
             Xia.skin_citizen_male = List.Of<string>(new string[]
             {
-                "unit_male_1", "unit_male_2", "unit_male_3", "unit_male_4", "unit_male_5", "unit_male_6", "unit_male_7", "unit_male_8", "unit_male_9", "unit_male_10"
+                "unit_male_1", "unit_male_2", "unit_male_3", "unit_male_4", "unit_male_5", "unit_male_6", "unit_male_7",
+                "unit_male_8", "unit_male_9", "unit_male_10"
             }); //"unit_male_0",
             Xia.skin_citizen_female = List.Of<string>(new string[]
             {
-                "unit_female_1", "unit_female_2", "unit_female_3", "unit_female_4", "unit_female_5", "unit_female_6", "unit_female_7", "unit_female_8", "unit_female_9", "unit_female_10"
+                "unit_female_1", "unit_female_2", "unit_female_3", "unit_female_4", "unit_female_5", "unit_female_6",
+                "unit_female_7", "unit_female_8", "unit_female_9", "unit_female_10"
             });
             Xia.skin_warrior = List.Of<string>(new string[]
             {
-                "unit_warrior_1", "unit_warrior_2", "unit_warrior_3", "unit_warrior_4", "unit_warrior_5", "unit_warrior_6", "unit_warrior_7", "unit_warrior_8", "unit_warrior_9", "unit_warrior_10"
+                "unit_warrior_1", "unit_warrior_2", "unit_warrior_3", "unit_warrior_4", "unit_warrior_5",
+                "unit_warrior_6", "unit_warrior_7", "unit_warrior_8", "unit_warrior_9", "unit_warrior_10"
             });
             Xia.nomad_kingdom_id = $"nomads_{Xia.id}";
-            AssetManager.raceLibrary.CallMethod("setPreferredStatPool", "diplomacy#1,warfare#1,stewardship#1,intelligence#1");
+            AssetManager.raceLibrary.CallMethod("setPreferredStatPool",
+                                                "diplomacy#1,warfare#1,stewardship#1,intelligence#1");
             AssetManager.raceLibrary.CallMethod("setPreferredFoodPool", "bread#1,fish#1,tea#1");
-            AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "sword", 10);
-            AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "ge", 10);
-            AssetManager.raceLibrary.CallMethod("addPreferredWeapon", "bow", 5);
+            AssetManager.raceLibrary.CallMethod("addPreferredWeapon",   "sword", 10);
+            AssetManager.raceLibrary.CallMethod("addPreferredWeapon",   "ge",    10);
+            AssetManager.raceLibrary.CallMethod("addPreferredWeapon",   "bow",   5);
             AssetManager.raceLibrary.cloneBuildingKeys(SK.human, Xia.id);
             AssetManager.nameGenerator.clone("Xia_name", "human_name");
 
@@ -143,7 +154,7 @@ namespace Figurebox
             var monkname = AssetManager.nameGenerator.get("monkey_name");
             monkname.vowels = new string[]
             {
-                " bibi", " beruk"," longtail", " pigtail", " monyet", " monpai", " monk", " woooo", " oo", " aa"
+                " bibi", " beruk", " longtail", " pigtail", " monyet", " monpai", " monk", " woooo", " oo", " aa"
             };
             // Race monkey = AssetManager.raceLibrary.clone("monkeyrace", "human");
             // monkey.path_icon  = "ui/Icons/iconMonkey";
@@ -153,9 +164,7 @@ namespace Figurebox
             //monkname.templates.Add("monpai");
 
 
-
             //BannerGenerator.loadTexturesFromResources("xia");
-
         }
 
         /* public static void kingdomColorsDataInit()
@@ -180,13 +189,13 @@ namespace Figurebox
                 pTexturePath = pTexturePath + "human";
                 return true;
             }
+
             foreach (string race in Main.instance.addRaces)
             {
                 if (pTexturePath.Contains("Xia"))
                 {
                     pTexturePath = pTexturePath.Replace(race, "Xia");
                     return true;
-
                 }
                 else if (pTexturePath.Contains(race))
                 {
@@ -194,6 +203,7 @@ namespace Figurebox
                     return true;
                 }
             }
+
             return true;
         }
 
@@ -269,7 +279,6 @@ namespace Figurebox
         [HarmonyPatch(typeof(BannerLoaderClans), "create")]
         public static bool Prefix(BannerLoaderClans __instance)
         {
-
             if (__instance._created)
             {
                 return true;
