@@ -1,8 +1,9 @@
+using Figurebox.abstracts;
 using Figurebox.core;
 
 namespace Figurebox.content_libraries;
 
-public class UnitGroupTypeLibrary : AssetLibrary<AW_UnitGroupAsset>
+public class UnitGroupTypeLibrary : AW_AssetLibrary<AW_UnitGroupAsset, UnitGroupTypeLibrary>
 {
     internal static AW_UnitGroupAsset convention;
     internal static AW_UnitGroupAsset guards;
