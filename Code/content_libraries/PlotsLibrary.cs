@@ -102,8 +102,6 @@ namespace Figurebox
             reclaim.action = delegate (Plot pPlot)
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("reclaim"), true);
-                ClansManager.LastReclaimWarYears[pPlot.initiator_kingdom.data.id] = World.world.mapStats.getCurrentYear();
-                ClansManager.LastReclaimWarYears[pPlot.target_kingdom.data.id] = World.world.mapStats.getCurrentYear();
                 return true;
             };
 
