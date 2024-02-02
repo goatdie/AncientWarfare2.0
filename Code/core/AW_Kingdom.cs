@@ -488,52 +488,50 @@ public partial class AW_Kingdom : Kingdom
             return null;
         }
 
-        // 初始筛选：仅考虑至少有一个邻近城市属于本国的城市，并且城市不是当前首都
+        // 计算当前首都得分
+        double currentCapitalScore = CalculateCityScore(kingdom.capital, kingdom.capital, kingdom);
+
         var candidateCities = kingdom.cities
-                                     .Where(city => city != kingdom.capital)
-                                     .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
-                                     .ToList();
+            .Where(city => city != kingdom.capital)
+            .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
+            .ToList();
 
-        // 计算得分，同时确保城市不是当前首都
+        // 为候选城市计算得分
         var scoredCities = candidateCities
-                           .Select(city =>
-                           {
-                               var score = city.getAge() - kingdom.capital.getAge() +
-                                           (city.getPopulationTotal() - kingdom.capital.getPopulationTotal()) * 2 +
-                                           (city.zones.Count - kingdom.capital.zones.Count) * 0.35 +
-                                           (city.neighbours_cities.SetEquals(city.neighbours_cities_kingdom)
-                                               ? 50
-                                               : 0);
+            .Select(city => new { City = city, Score = CalculateCityScore(city, kingdom.capital, kingdom) })
+            .OrderByDescending(cityScore => cityScore.Score)
+            .ToList();
 
-                               double distanceScore = kingdom.cities
-                                                             .Where(c => c != city && c != kingdom.capital)
-                                                             .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
-                               distanceScore = 1 / (1 + distanceScore);
+        var potentialNewCapital = scoredCities.FirstOrDefault()?.City;
+        double threshold = 0.25; // 修改阈值为所需的比例
+        double potentialNewCapitalScore = scoredCities.FirstOrDefault()?.Score ?? 0;
+        double scoreRequired = currentCapitalScore * threshold;
 
-                               return new { City = city, Score = score + distanceScore };
-                           })
-                           .OrderByDescending(cityScore => cityScore.Score)
-                           .ToList();
-
-        // 选择得分最高且邻近城市最多属于本国的城市
-        var potentialNewCapital = scoredCities
-                         .Where(sc => sc.City.neighbours_cities.Count(nc => kingdom.cities.Contains(nc)) ==
-                                      scoredCities.Max(s =>
-                                                           s.City.neighbours_cities
-                                                            .Count(nc => kingdom.cities.Contains(nc))))
-                         .FirstOrDefault()?.City;
-
-        double threshold = 1.25; // 新首都得分需要至少比当前首都高25%
-        if (potentialNewCapital != null &&
-            scoredCities.FirstOrDefault(sc => sc.City == potentialNewCapital)?.Score >
-            scoredCities.FirstOrDefault(sc => sc.City == kingdom.capital)?.Score * threshold)
+        if (potentialNewCapital != null && potentialNewCapitalScore > scoreRequired)
         {
             return potentialNewCapital;
         }
+
         return null;
     }
 
 
+    private static double CalculateCityScore(City city, City capital, AW_Kingdom kingdom)
+    {
+        var score = city.getAge() - (city == capital ? 0 : capital.getAge()) +
+                    (city.getPopulationTotal() - (city == capital ? 0 : capital.getPopulationTotal())) * 2 +
+                    (city.zones.Count - (city == capital ? 0 : capital.zones.Count)) * 0.55;
+
+        int neighbouringCityCount = city.neighbours_cities.Count(nc => kingdom.cities.Contains(nc));
+        score += neighbouringCityCount * 30;
+
+        double distanceScore = kingdom.cities
+            .Where(c => c != city)
+            .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
+        distanceScore = 1 / (1 + distanceScore);
+
+        return score + distanceScore;
+    }
 
 
     public void CheckAndSetPrimaryKingdom(Actor actor, AW_Kingdom kingdomToInherit)

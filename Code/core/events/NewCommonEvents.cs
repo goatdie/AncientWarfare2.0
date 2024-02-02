@@ -1,5 +1,6 @@
 using Figurebox.core.table_items;
 using Figurebox.Utils;
+using System.Data.SQLite;
 
 namespace Figurebox.core.events;
 
@@ -47,16 +48,37 @@ public static class NewCommonEvents
     }
     public static void ENDMOH(this EventsManager pManager, Kingdom pKingdom)
     {
+        string kingId = null;
+
+        if (pKingdom.king != null)
+        {
+            kingId = pKingdom.king.data.id;
+        }
+        else
+        {
+            using (var cmd = new SQLiteCommand(pManager.OperatingDB))
+            {
+                cmd.CommandText = "SELECT AID FROM KingRule WHERE KID = @KID ORDER BY END_TIME DESC LIMIT 1";
+                cmd.Parameters.AddWithValue("@KID", pKingdom.id);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        kingId = reader.GetString(reader.GetOrdinal("AID"));
+                    }
+                }
+            }
+        }
+
         pManager.OperatingDB.Insert(MOHTableItem.GetTableName(),
-                                    ColumnVal.Create("AID", pKingdom.king.data.id),
+                                    ColumnVal.Create("AID", kingId),
                                     ColumnVal.Create("KID", pKingdom.id),
                                     ColumnVal.Create("END_TIME", World.world.getCreationTime()),
                                     ColumnVal.Create("KINGDOM_NAME", pKingdom.data.name),
-                                    ColumnVal.Create("START_TIME", -1)
-
-                                    );
-
+                                    ColumnVal.Create("START_TIME", -1));
     }
+
+
     public static void StartUsurpation(this EventsManager pManager, Actor Usuperer, string KName)
     {
         pManager.OperatingDB.Insert(UsurpationTableItem.GetTableName(),

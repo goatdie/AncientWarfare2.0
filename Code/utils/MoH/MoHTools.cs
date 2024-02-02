@@ -53,10 +53,9 @@ public class MoHTools
         {
             MoHKingdom.FomerMoh = true;
             CityTools.loglosekingdom(MoHKingdom);
-            if (MoHKingdom.king != null)
-            {
-                EventsManager.Instance.ENDMOH(MoHKingdom);
-            }
+
+            EventsManager.Instance.ENDMOH(MoHKingdom);
+
 
         }
         MoHKingdom = null;

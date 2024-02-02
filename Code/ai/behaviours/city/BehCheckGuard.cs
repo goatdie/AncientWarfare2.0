@@ -53,7 +53,7 @@ public class BehCheckGuard : BehaviourActionCity
         foreach (Actor unit in pCity.professionsDict[AWUnitProfession.Unit.C()]
                                     .Where(unit => unit.unit_group == null)
                                     .Where(unit => unit.citizen_job == null)
-                                    .Where(unit => unit.hasClan()))
+                                    .Where(unit => unit.hasClan() && unit.getClan().data.id != pCity.kingdom.data.royal_clan_id))
         {
             pGroup.addUnit(unit);
             unit.addTrait("禁卫军");

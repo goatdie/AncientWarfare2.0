@@ -24,68 +24,77 @@ public partial class AW_KingdomManager
     /// </summary>
     public static void UpdateMoHValue()
     {
+
+
         if (!MoHTools.ExistMoHKingdom) goto LIMIT_MOH_VALUE;
 
         int value_change = 0;
+
+
         if (MoHTools.MoHKingdom.getEnemiesKingdoms().Count == 0)
         {
-            // 如果没有敌国, 天命累加值+1
             value_change++;
+
         }
         if (MoHTools.MoHKingdom.hasEnemies())
         {
-            // 如果有敌国, 天命累加值-1
             value_change--;
+
         }
         if (!MoHTools.MoHKingdom.isSupreme())
         {
             value_change -= 2;
+
         }
         if (World.world_era == AssetManager.era_library.get(S.age_hope) || World.world_era == AssetManager.era_library.get(S.age_wonders))
         {
-            value_change += 2; //正面纪元
+            value_change += 2; // 正面纪元
         }
-
         if (World.world_era == AssetManager.era_library.get(S.age_despair) || World.world_era == AssetManager.era_library.get(S.age_ash) || World.world_era == AssetManager.era_library.get(S.age_chaos))
         {
-            value_change -= 20; //负面纪元
-        }
+            value_change -= 20; // 负面纪元
 
+        }
         if (MoHTools.MoHKingdom.king != null)
         {
-
             if (MoHTools.MoHKingdom.king.hasTrait("first"))
             {
-                // 如果国王有"天子"特质, 天命累加值+3
                 value_change += 5;
+
             }
             if (MoHTools.MoHKingdom.king.getAge() <= 24)
             {
-                // 国王过于年轻, 天命累加值-1
                 value_change--;
-            }
-            if (MoHTools.MoHKingdom.king.data.intelligence <= 10)
-            {
-                // 国王愚蠢, 天命累加值-1
-                value_change--;
-            }
 
+            }
+            if (MoHTools.MoHKingdom.king.data.intelligence <= 5)
+            {
+                value_change--;
+
+            }
         }
+
         Clan kclan = BehaviourActionBase<Kingdom>.world.clans.get(MoHTools.MoHKingdom.data.royal_clan_id);
         if (kclan != null && kclan.units.Count <= 2)
         {
-            //如果王室家族人数小于等于2, 天命累加值-1
             value_change--;
+
         }
+
         MoHTools.ChangeMOH_Value(value_change);
+
 
     LIMIT_MOH_VALUE:
 
         if (MoHTools.MOH_Value >= MoHTools.MOH_UpperLimit)
         {
             MoHTools.SetMOH_Value(MoHTools.MOH_UpperLimit);
+
         }
+
+
     }
+
     public bool CheckNoMoreRebels()
     {
         foreach (Kingdom k in this.list_civs)
