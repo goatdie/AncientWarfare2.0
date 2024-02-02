@@ -23,5 +23,7 @@ internal static class MoHCorePatch
         if (MoHTools.IsMoHKingdom(pKingdom)) pKing.addTrait("天命");
     }
 
-   
+    
+
+
 }

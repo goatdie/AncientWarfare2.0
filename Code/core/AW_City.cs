@@ -22,7 +22,6 @@ public partial class AW_City : City
     public int food_count_for_slaves_this_year;
 
     public int gold_pay_tax;
-    public Dictionary<AW_Kingdom, double> cityOccupationHistory = new Dictionary<AW_Kingdom, double>();
 
     public AW_City()
     {
@@ -147,6 +146,15 @@ public partial class AW_City : City
                     mohWar = war as AW_War;
                     break; // 找到天命战争后，跳出循环
                 }
+                if (war._asset == AssetManager.war_types_library.get("reclaim"))
+                {
+                    AW_War recliamwar = war as AW_War;
+
+                    if (HasKingdomRecoveredAllCities(recliamwar))
+                    {
+                        World.world.wars.endWar(war);
+                    }
+                }
 
                 if (war._asset == AssetManager.war_types_library.get("conquest"))
                 {
@@ -170,6 +178,7 @@ public partial class AW_City : City
             this.joinAnotherKingdom(kingdom);
             this.removeSoldiers();
 
+
             // 天命战争的解决
             if (mohWar != null)
             {
@@ -183,8 +192,16 @@ public partial class AW_City : City
 
         #endregion
     }
-
-
+    [MethodReplace(nameof(City.joinAnotherKingdom))]
+    public new void joinAnotherKingdom(Kingdom pKingdom)
+    {
+        Kingdom pKingdom2 = this.kingdom;
+        RecordOccupation(MoHTools.ConvertKtoAW(pKingdom2));//记录脱离母国统治
+        this.removeFromCurrentKingdom();
+        this.setKingdom(pKingdom, true);
+        this.switchedKingdom();
+        pKingdom.capturedFrom(pKingdom2);
+    }
     [MethodReplace(nameof(City.updateAge))]
     internal new void updateAge()
     {

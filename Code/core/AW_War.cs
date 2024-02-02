@@ -6,8 +6,8 @@ public class AW_War : War
 {
 
 
-    private readonly List<City> _list_attackers_city = new List<City>();
-    private readonly List<City> _list_defenders_city = new List<City>();
+    public readonly List<City> _list_attackers_city = new List<City>();
+    public readonly List<City> _list_defenders_city = new List<City>();
     public City _attackerCapital;
     public City _defenderCapital;
     public List<City> PreCaptureNeighbourCities { get; private set; }

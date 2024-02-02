@@ -32,7 +32,7 @@ namespace Figurebox
     {
         public static GameObject backgroundAvatar;
         public static GameObject citybg;
-        public static Transform  prefabs_library;
+        public static Transform prefabs_library;
 
         public List<string> addRaces = new List<string>()
         {
@@ -56,12 +56,12 @@ namespace Figurebox
         {
             LM.AddToCurrentLocale("", "");
 #if 一米_中文名
-            print("词库加载!"                                          + mainPath + "/name_generators/Xia");
+            print("词库加载!" + mainPath + "/name_generators/Xia");
             CN_NameGeneratorLibrary.SubmitDirectoryToLoad(mainPath + "/name_generators/Xia");
-            WordLibraryManager.SubmitDirectoryToLoad(mainPath      + "/name_generators/lib");
+            WordLibraryManager.SubmitDirectoryToLoad(mainPath + "/name_generators/lib");
             NameGeneratorInitialzier.init();
             LM.AddToCurrentLocale("familyname", "姓");
-            LM.AddToCurrentLocale("clanname",   "氏");
+            LM.AddToCurrentLocale("clanname", "氏");
 #endif
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             NewUI.PatchResources();
@@ -288,7 +288,7 @@ namespace Figurebox
                 if (DebugConst.EDITOR_INMNY)
                 {
                     DebugConfig.setOption(DebugOption.DrawCitizenJobIcons, true);
-                    DebugConfig.setOption(DebugOption.CitizenJobAttacker,  true);
+                    DebugConfig.setOption(DebugOption.CitizenJobAttacker, true);
                 }
             }
         }
@@ -307,6 +307,7 @@ namespace Figurebox
             _ = new CitiesManagerPatch();
             _ = new KingdomManagerPatch();
             Harmony.CreateAndPatchAll(typeof(PathFinderPatch));
+            Harmony.CreateAndPatchAll(typeof(ClanManagerPatch));
             /*
                         Harmony.CreateAndPatchAll(typeof(FunctionHelper));
 
@@ -352,15 +353,15 @@ namespace Figurebox
 
         #region
 
-        public static Main                      instance;
-        public        FunctionHelper            functionHelper = new FunctionHelper();
-        public        MoreItems                 moreWeapons    = new MoreItems();
-        public        MoreActors                moreActors     = new MoreActors();
-        public        RacesLibrary              RacesLibrary   = new RacesLibrary();
-        public        MorePlots                 MorePlots      = new MorePlots();
-        public        MoreKingdoms              moreKingdoms   = new MoreKingdoms();
-        public        Traits                    Traits         = new Traits();
-        public        content.ProfessionLibrary professions;
+        public static Main instance;
+        public FunctionHelper functionHelper = new FunctionHelper();
+        public MoreItems moreWeapons = new MoreItems();
+        public MoreActors moreActors = new MoreActors();
+        public RacesLibrary RacesLibrary = new RacesLibrary();
+        public MorePlots MorePlots = new MorePlots();
+        public MoreKingdoms moreKingdoms = new MoreKingdoms();
+        public Traits Traits = new Traits();
+        public content.ProfessionLibrary professions;
 
         #endregion
     }
