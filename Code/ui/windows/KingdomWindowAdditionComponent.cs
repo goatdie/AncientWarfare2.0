@@ -12,16 +12,16 @@ namespace Figurebox.ui.windows;
 
 internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
 {
-    private AutoVertLayoutGroup AutoLayoutRoot;
-    private RectTransform BackgroundTransform;
-    private RectTransform ContentTransform;
+    private AutoVertLayoutGroup      AutoLayoutRoot;
+    private RectTransform            BackgroundTransform;
+    private RectTransform            ContentTransform;
     private KingdomPolicyStateButton current_state;
-    private KingdomPolicyButton executing_policy;
-    private UiUnitAvatarElement heir_avatar;
-    private UiUnitAvatarElement king_avatar;
-    private KingdomWindow Window;
-    private SimpleText year_name;
-    private AW_Kingdom kingdom => (AW_Kingdom)Config.selectedKingdom;
+    private KingdomPolicyButton      executing_policy;
+    private UiUnitAvatarElement      heir_avatar;
+    private UiUnitAvatarElement      king_avatar;
+    private KingdomWindow            Window;
+    private SimpleText               year_name;
+    private AW_Kingdom               kingdom => (AW_Kingdom)Config.selectedKingdom;
 
     private void OnEnable()
     {
@@ -142,7 +142,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         cities_layout.childForceExpandWidth = false;
 
         var custom_part = AutoLayoutRoot.BeginHoriGroup(new Vector2(200, 36), TextAnchor.MiddleLeft, -4,
-            new RectOffset(-3, 0, 3, 3));
+                                                        new RectOffset(-3, 0, 3, 3));
         custom_part.name = "Middle";
         custom_part.transform.SetSiblingIndex(AutoLayoutRoot.transform.Find("MottoName").GetSiblingIndex());
 
@@ -159,7 +159,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
 
 
         var policy_group = middle_bar_group.BeginHoriGroup(new Vector2(120, 16), TextAnchor.UpperCenter, 2,
-            new RectOffset(0, 0, 0, 0));
+                                                           new RectOffset(0, 0, 0, 0));
 
         current_state = Instantiate(KingdomPolicyStateButton.Prefab, null);
         current_state.Setup(KingdomPolicyStateLibrary.DefaultState, null);
@@ -201,6 +201,16 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
             "Kingdom History",
             "Shows a kingdom's history",
             () => NewKingdomHistoryWindow.ShowWindow(Config.selectedKingdom.id)
+        );
+        // 临时使用的入口
+        NewUI.createBGWindowButton(
+            GameObject.Find("Canvas Container Main/Canvas - Windows/windows/kingdom"),
+            0,
+            "iconworldlaw",
+            "KingdomPolicyGraph",
+            "Kingdom Policy Graph",
+            "Shows a kingdom's policy graph",
+            () => KingdomPolicyGraphWindow.ShowWindow(Config.selectedKingdom)
         );
         base.Init();
         OnEnable();

@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using NeoModLoader.api.attributes;
+using UnityEngine;
 
 namespace Figurebox.Utils.KingdomPolicy;
 
 public class KingdomPolicyGraphTools
 {
     [Hotfixable]
-    public static List<List<Asset>> SortPoliciesWithStates(IEnumerable<string> pPolicies)
+    public static List<List<KingdomPolicyGraphNode>> SortPoliciesWithStates(IEnumerable<string> pPolicies)
     {
         var nodes = new Dictionary<string, SortNode>();
         foreach (var policy_id in pPolicies)
@@ -65,8 +66,24 @@ public class KingdomPolicyGraphTools
         return nodes.Values
                     .GroupBy(x => x.sort_value)
                     .OrderBy(x => x.Key)
-                    .Select(x => x.Select(y => y.asset).ToList())
+                    .Select(x => x.Select(y => new KingdomPolicyGraphNode(y.asset)).ToList())
                     .ToList();
+    }
+
+    public static void CalcNodePositions(List<List<KingdomPolicyGraphNode>> pSortedPolicies)
+    {
+        var x = 40f;
+        foreach (var list in pSortedPolicies)
+        {
+            var j = 0;
+            foreach (KingdomPolicyGraphNode node in list)
+            {
+                node.position = new Vector2(x, (j - list.Count * 0.5f) * 50);
+                j++;
+            }
+
+            x += Mathf.Min(Mathf.Sqrt(list.Count * 0.2f) * 100 + 50, 200);
+        }
     }
 
     private static void CheckNodes(IEnumerable<SortNode> pNodesValues)
