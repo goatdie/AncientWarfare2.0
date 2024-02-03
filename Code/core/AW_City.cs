@@ -17,7 +17,8 @@ public partial class AW_City : City
     private static readonly AWUnitProfession[] ExtendUnitProfessions =
         (AWUnitProfession[])Enum.GetValues(typeof(AWUnitProfession));
 
-    public int capital_tax_income;
+    public AW_CityDataAddition addition_data = new();
+    public int                 capital_tax_income;
 
     public int food_count_for_slaves_this_year;
 
@@ -146,6 +147,7 @@ public partial class AW_City : City
                     mohWar = war as AW_War;
                     break; // 找到天命战争后，跳出循环
                 }
+
                 if (war._asset == AssetManager.war_types_library.get("reclaim"))
                 {
                     AW_War recliamwar = war as AW_War;
@@ -192,16 +194,18 @@ public partial class AW_City : City
 
         #endregion
     }
+
     [MethodReplace(nameof(City.joinAnotherKingdom))]
     public new void joinAnotherKingdom(Kingdom pKingdom)
     {
         Kingdom pKingdom2 = this.kingdom;
-        RecordOccupation(MoHTools.ConvertKtoAW(pKingdom2));//记录脱离母国统治
+        RecordOccupation(MoHTools.ConvertKtoAW(pKingdom2)); //记录脱离母国统治
         this.removeFromCurrentKingdom();
         this.setKingdom(pKingdom, true);
         this.switchedKingdom();
         pKingdom.capturedFrom(pKingdom2);
     }
+
     [MethodReplace(nameof(City.updateAge))]
     internal new void updateAge()
     {
@@ -213,7 +217,7 @@ public partial class AW_City : City
         }
 
         this.gold_out_army = this.countProfession(UnitProfession.Warrior) / 2;
-        this.gold_out_buildings = this.buildings.Count / 2;
+        this.gold_out_buildings = this.buildings.Count                    / 2;
         this.gold_change = this.gold_in_tax - this.gold_out_army - this.gold_out_buildings - this.gold_out_homeless;
         int num = this.gold_change;
         if (num < 0)
@@ -307,7 +311,7 @@ public partial class AW_City : City
 
         bool flag = false;
         if (this._capturing_units.ContainsKey(this.kingdom) && this._capturing_units[this.kingdom] > 0 &&
-            this.getArmy() > 0)
+            this.getArmy()                                                                         > 0)
         {
             flag = true;
         }
