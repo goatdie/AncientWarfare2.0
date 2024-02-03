@@ -150,6 +150,48 @@ public partial class NewKingdomHistoryWindow
 
 
     }
+    private List<VassalTableItem> _vassal = new();
+    private List<VassalTableItem> _lord = new();
+
+    public void RequestVassal()
+    {
+
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
+            cmd.CommandText = "SELECT * FROM VASSAL WHERE vaid=@king_id";
+            cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+            using var result_reader = cmd.ExecuteReader();
+            _vassal.Clear();
+            while (result_reader.Read())
+            {
+                var Vassal = new VassalTableItem();
+                Vassal.ReadFromReader(result_reader);
+                _vassal.Add(Vassal);
+            }
+        }
+
+
+    }
+    public void RequestLord()
+    {
+
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
+            cmd.CommandText = "SELECT * FROM VASSAL WHERE said=@king_id";
+            cmd.Parameters.AddWithValue("@king_id", _selectedRule.aid);
+            using var result_reader = cmd.ExecuteReader();
+            _lord.Clear();
+            while (result_reader.Read())
+            {
+                var Vassal = new VassalTableItem();
+                Vassal.ReadFromReader(result_reader);
+                _lord.Add(Vassal);
+            }
+        }
+
+
+    }
+
     private void PrepareRuleReview(List<ReviewItem> pItems)
     {
         pItems.Add(new ReviewItem(_selectedRule.start_time, LM.Get("review_rule_start"),
@@ -188,7 +230,22 @@ public partial class NewKingdomHistoryWindow
         {
             pItems.Add(new ReviewItem(capital_event.timestamp, LM.Get("review_capitalchange"), capital_event.old_capital_name, capital_event.new_capital_name));
         }
-
+        RequestVassal();
+        foreach (var vassal_event in _vassal)
+        {
+            if (vassal_event.start_time > 0)
+                pItems.Add(new ReviewItem(vassal_event.start_time, LM.Get("review_setvassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            if (vassal_event.end_time > 0)
+                pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_removevassal"), vassal_event.vassal_name, vassal_event.lord_name));
+        }
+        RequestLord();
+        foreach (var vassal_event in _lord)
+        {
+            if (vassal_event.start_time > 0)
+                pItems.Add(new ReviewItem(vassal_event.start_time, LM.Get("review_getvassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            if (vassal_event.end_time > 0)
+                pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_losevassal"), vassal_event.vassal_name, vassal_event.lord_name));
+        }
     }
 
     [Hotfixable]

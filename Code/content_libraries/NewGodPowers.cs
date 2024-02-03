@@ -1,3 +1,5 @@
+using Figurebox.core;
+
 namespace Figurebox
 {
     class NewGodPowers
@@ -91,7 +93,6 @@ namespace Figurebox
         }
         public static bool vassal_click(WorldTile pTile, string pPowerID)
         {
-
             if (pTile.zone.city == null)
             {
                 return false;
@@ -100,14 +101,16 @@ namespace Figurebox
             {
                 return false;
             }
-            if (KingdomVassals.IsVassal(pTile.zone.city.kingdom))
+            AW_Kingdom tilekingdom = pTile.zone.city.kingdom as AW_Kingdom;
+
+            if (tilekingdom.IsVassal())
             {
                 WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is Vassal", pTranslate: false, "top", 6f);
                 return false;
             }
             if (SelectKingdom1 is null)
             {
-                if (KingdomVassals.IsLord(pTile.zone.city.kingdom))
+                if (tilekingdom.IsSuzerain())
                 {
                     WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is Lord", pTranslate: false, "top", 6f);
                     return false;
@@ -125,8 +128,10 @@ namespace Figurebox
                     return false;
                 }
                 SelectKingdom2 = pTile.zone.city.kingdom;
+                AW_Kingdom Select2 = SelectKingdom2 as AW_Kingdom;
+                AW_Kingdom Select1 = SelectKingdom1 as AW_Kingdom;
                 WorldTip.showNow($"{SelectKingdom2.data.name}!", pTranslate: false, "top", 6f);
-                KingdomVassals.SetKingdom(SelectKingdom1, SelectKingdom2);
+                Select2.SetVassal(Select1);
                 SelectKingdom1 = null;
                 SelectKingdom2 = null;
                 return true;
@@ -136,6 +141,8 @@ namespace Figurebox
         }
         public static bool vassal_remove_click(WorldTile pTile, string pPowerID)
         {
+            AW_Kingdom tilekingdom = pTile.zone.city.kingdom as AW_Kingdom;
+
             if (pTile.zone.city == null)
             {
                 return false;
@@ -146,11 +153,10 @@ namespace Figurebox
                 return false;
             }
 
-            if (KingdomVassals.IsVassal(pTile.zone.city.kingdom))
+            if (tilekingdom.IsVassal())
             {
                 // 这个王国是附庸，所以我们可以移除它的附庸状态
-                int yeardata = World.world.mapStats.getCurrentYear();
-                KingdomVassals.RemoveVassalAndBanner(null, pTile.zone.city.kingdom, yeardata, true);
+                tilekingdom.RemoveSuzerain();
                 WorldTip.showNow($"The vassal status of {pTile.zone.city.kingdom.data.name} has been removed", false, "top", 6f);
                 return true;
             }

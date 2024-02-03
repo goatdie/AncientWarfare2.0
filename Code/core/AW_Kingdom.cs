@@ -20,8 +20,6 @@ public partial class AW_Kingdom : Kingdom
     public bool FomerMoh; //控制是否为前天命国家
     public Actor heir;
     public bool NameIntegration; //控制国家命名是否姓氏合流
-
-
     public KingdomPolicyData policy_data = new();
     public bool Rebel = false; //控制是否为起义军
 

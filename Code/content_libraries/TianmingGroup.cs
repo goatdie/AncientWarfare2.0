@@ -280,7 +280,7 @@ namespace Figurebox
                 }
                 else if (chosenCity.getTile() == null)
                 {
-                  KingdomVassals.CheckAndCleanCityList();
+                
 
                   //Debug.LogWarning(chosenCity.data.name+chosenCity.kingdom.name+"chosenCity.getTile() is null");
                   attacker.king.goTo(attacker.capital.getTile());

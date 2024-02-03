@@ -112,4 +112,71 @@ public static class NewCommonEvents
                                     );
 
     }
+    public static void StartVassal(this EventsManager pManager, Kingdom pKingdom, Kingdom Lord)
+    {
+        pManager.OperatingDB.Insert(VassalTableItem.GetTableName(),
+                                    ColumnVal.Create("VAID", pKingdom.king.data.id),
+                                    ColumnVal.Create("SAID", Lord.king.data.id),
+                                    ColumnVal.Create("KID", pKingdom.id),
+                                    ColumnVal.Create("SKID", Lord.id),
+                                    ColumnVal.Create("START_TIME", World.world.getCreationTime()),
+                                    ColumnVal.Create("VASSAL_NAME", pKingdom.data.name),
+                                    ColumnVal.Create("LORD_NAME", Lord.data.name),
+                                    ColumnVal.Create("END_TIME", -1)
+                                    );
+
+    }
+    public static void ENDVassal(this EventsManager pManager, Kingdom pKingdom, Kingdom Lord)
+    {
+        string kingId = null;
+        string LordkingId = null;
+
+        if (pKingdom.king != null)
+        {
+            kingId = pKingdom.king.data.id;
+        }
+        else
+        {
+            using (var cmd = new SQLiteCommand(pManager.OperatingDB))
+            {
+                cmd.CommandText = "SELECT VAID FROM KingRule WHERE KID = @KID ORDER BY END_TIME DESC LIMIT 1";
+                cmd.Parameters.AddWithValue("@KID", pKingdom.id);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        kingId = reader.GetString(reader.GetOrdinal("VAID"));
+                    }
+                }
+            }
+        }
+        if (Lord.king != null)
+        {
+            LordkingId = Lord.king.data.id;
+        }
+        else
+        {
+            using (var cmd = new SQLiteCommand(pManager.OperatingDB))
+            {
+                cmd.CommandText = "SELECT AID FROM KingRule WHERE KID = @SKID ORDER BY END_TIME DESC LIMIT 1";
+                cmd.Parameters.AddWithValue("@SKID", Lord.id);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        LordkingId = reader.GetString(reader.GetOrdinal("SAID"));
+                    }
+                }
+            }
+        }
+        pManager.OperatingDB.Insert(VassalTableItem.GetTableName(),
+                                    ColumnVal.Create("VAID", kingId),
+                                    ColumnVal.Create("SAID", LordkingId),
+                                    ColumnVal.Create("KID", pKingdom.id),
+                                    ColumnVal.Create("SKID", Lord.id),
+                                    ColumnVal.Create("END_TIME", World.world.getCreationTime()),
+                                    ColumnVal.Create("VASSAL_NAME", pKingdom.data.name),
+                                    ColumnVal.Create("LORD_NAME", Lord.data.name),
+                                    ColumnVal.Create("START_TIME", -1));
+    }
 }
