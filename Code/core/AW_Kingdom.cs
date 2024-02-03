@@ -266,7 +266,11 @@ public partial class AW_Kingdom : Kingdom
     {
         policy_data.Title = newTitle;
     }
+    public bool CompareTitle(AW_Kingdom kingdom)
+    {
+        return policy_data.Title > kingdom.policy_data.Title;
 
+    }
     // 根据爵位等级返回中文字符串
     public string GetTitleString(KingdomPolicyData.KingdomTitle title)
     {
@@ -501,7 +505,7 @@ public partial class AW_Kingdom : Kingdom
             .ToList();
 
         var potentialNewCapital = scoredCities.FirstOrDefault()?.City;
-        double threshold = 0.25; // 修改阈值为所需的比例
+        double threshold = 0.30; // 修改阈值为所需的比例
         double potentialNewCapitalScore = scoredCities.FirstOrDefault()?.Score ?? 0;
         double scoreRequired = currentCapitalScore * threshold;
 

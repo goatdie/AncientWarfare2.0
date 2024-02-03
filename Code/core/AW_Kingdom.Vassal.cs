@@ -82,6 +82,10 @@ public partial class AW_Kingdom : Kingdom
             // If it is, it can't become a vassal, so we simply return
             return;
         }
+        if (king == null)
+        {
+            return;
+        }
 
         string kingdomId = lord.data.id;
         data.set("originalColorID", data.colorID);
@@ -93,6 +97,7 @@ public partial class AW_Kingdom : Kingdom
 
         data.set("suzerain", kingdomId);
         suzerain = lord;
+        if (this.Rebel) { Rebel = false; }
         EventsManager.Instance.StartVassal(this, lord);
         data.colorID = lord.data.colorID;
         ColorAsset lordcolor = lord.getColor();

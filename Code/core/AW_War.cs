@@ -49,7 +49,7 @@ public class AW_War : War
     }
 
 
-    private AW_Kingdom DetermineWarWinner()
+    public AW_Kingdom DetermineWarWinner()
     {
         // 检查攻击方和防守方的首都是否属于同一个国家
         if (_attackerCapital != null && _defenderCapital != null)

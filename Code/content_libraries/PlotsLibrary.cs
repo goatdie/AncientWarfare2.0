@@ -255,8 +255,8 @@ namespace Figurebox
                         (pPlot.initiator_kingdom.getAlliance() == null ||
                          !pPlot.initiator_kingdom.getAlliance().kingdoms_hashset.Contains(pPlot.target_kingdom)) &&
                         pPlot.target_kingdom.cities.Count >= 2 &&
-                        !KingdomVassals.IsVassal(pPlot.target_kingdom) &&
-                        !KingdomVassals.IsLord(pPlot.target_kingdom) // Add this line.
+                        !MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal() &&
+                        !MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsSuzerain() && MoHTools.ConvertKtoAW(pPlot.target_kingdom).CompareTitle(MoHTools.ConvertKtoAW(pPlot.initiator_kingdom)) // Add this line.
                 );
 
 
@@ -265,7 +265,11 @@ namespace Figurebox
             vassalWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // 检查是否已经是附庸国
-                if (KingdomVassals.IsVassal(pKingdom))
+                if (MoHTools.ConvertKtoAW(pKingdom).IsVassal())
+                {
+                    return false;
+                }
+                if (MoHTools.ConvertKtoAW(pKingdom).policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
                 {
                     return false;
                 }
@@ -302,8 +306,6 @@ namespace Figurebox
             vassalWar.action = delegate (Plot pPlot)
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, AssetManager.war_types_library.get("vassal_war"), true);
-                KingdomVassals.LastVassalWarYears[pPlot.initiator_kingdom.data.id] = World.world.mapStats.getCurrentYear();
-                KingdomVassals.LastVassalWarYears[pPlot.target_kingdom.data.id] = World.world.mapStats.getCurrentYear();
                 CityTools.LogVassalWarStart(pPlot.target_kingdom, pPlot.initiator_kingdom);
 
                 return true;
@@ -342,14 +344,11 @@ namespace Figurebox
             absorbvassal.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // Ensure the target kingdom is a vassal of the initiator kingdom
-                if (KingdomVassals.IsVassal(pKingdom) || !KingdomVassals.IsLord(pKingdom) || pActor.kingdom.hasEnemies())
+                if (!MoHTools.ConvertKtoAW(pKingdom).IsVassal() || !MoHTools.ConvertKtoAW(pKingdom).IsSuzerain() || pActor.kingdom.hasEnemies())
                 {
                     return false;
                 }
-                if (!KingdomVassals.HasEnoughTimePassedSinceLastAbsorbVassal(pActor.kingdom))
-                {
-                    return false;
-                }
+
                 // Check if the vassal relation has been established for at least 50 years
 
                 return true;
@@ -399,12 +398,12 @@ namespace Figurebox
 
             IndependenceWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
-                Kingdom lord = KingdomVassals.GetSuzerain(pKingdom);
+                AW_Kingdom lord = MoHTools.ConvertKtoAW(pKingdom).suzerain;
                 if (lord != null && (World.world.diplomacy.getOpinion(pKingdom, lord).total - 1000) >= 0)
                 {
                     return false;
                 }
-                if (pActor.kingdom.hasEnemies() || KingdomVassals.IsLord(pKingdom) || !KingdomVassals.IsVassal(pKingdom))
+                if (pActor.kingdom.hasEnemies() || MoHTools.ConvertKtoAW(pKingdom).IsSuzerain() || !MoHTools.ConvertKtoAW(pKingdom).IsVassal())
                 {
                     return false;
                 }
@@ -438,23 +437,20 @@ namespace Figurebox
                 }
 
 
-                return KingdomVassals.IsVassal(pPlot.initiator_kingdom)
-                       && KingdomVassals.IsLord(pPlot.target_kingdom)
+                return MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal()
+                       && MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsSuzerain()
                        && !pPlot.initiator_kingdom.hasEnemies() && pPlot.initiator_kingdom.data.royal_clan_id != pPlot.target_kingdom.data.royal_clan_id;
             };
             // 定义情节发生时要执行的操作
             IndependenceWar.action = delegate (Plot pPlot)
             {
-                int yeardata = World.world.mapStats.getCurrentYear();
-                Kingdom vassal = pPlot.initiator_kingdom;
-                Kingdom lord = pPlot.target_kingdom;
+                AW_Kingdom vassal = pPlot.initiator_kingdom as AW_Kingdom;
+                AW_Kingdom lord = pPlot.target_kingdom as AW_Kingdom;
 
                 // 调用新的函数来移除附庸关系
-                KingdomVassals.RemoveVassalAndBanner(lord, vassal, yeardata, true);
+                vassal.RemoveSuzerain();
 
                 War war = World.world.diplomacy.startWar(vassal, lord, AssetManager.war_types_library.get("independence_war"), true);
-                KingdomVassals.LastIndependenceWarYears[pPlot.initiator_kingdom.data.id] = World.world.mapStats.getCurrentYear();
-                KingdomVassals.LastIndependenceWarYears[pPlot.target_kingdom.data.id] = World.world.mapStats.getCurrentYear();
 
                 foreach (Actor actor in pPlot.supporters)
                 {
@@ -463,11 +459,11 @@ namespace Figurebox
                     if (kingdom.isAlive() && kingdom.countCities() != 0 && !kingdom.hasEnemies() && kingdom.king != null)
                     {
                         // if kingdom is a vassal of the same suzerain as the initiator kingdom
-                        if (KingdomVassals.IsVassal(kingdom) && KingdomVassals.GetSuzerain(kingdom) == pPlot.target_kingdom)
+                        if (MoHTools.ConvertKtoAW(kingdom).IsVassal() && MoHTools.ConvertKtoAW(kingdom).suzerain == MoHTools.ConvertKtoAW(pPlot.target_kingdom))
                         {
                             // make kingdom independent
 
-                            KingdomVassals.RemoveVassalAndBanner(null, kingdom, yeardata, true);
+                            MoHTools.ConvertKtoAW(kingdom).RemoveSuzerain();
 
 
                         }

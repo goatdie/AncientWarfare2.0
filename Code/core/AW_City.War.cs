@@ -74,4 +74,29 @@ public partial class AW_City : City
 
         return true;
     }
+
+
+    private static void TransferCities(Kingdom winner, Kingdom loser, AW_City defenderCapital)
+    {
+        List<City> loserCitiesCopy = new List<City>(loser.cities);
+        foreach (var city in loserCitiesCopy)
+        {
+            if (city != defenderCapital && city.getLoyalty() < 100)
+            {
+                city.joinAnotherKingdom(winner);
+            }
+        }
+    }
+
+
+
+    private static void SetLoserAsVassal(Kingdom loser, Kingdom winner)
+    {
+        // 这里应该实现将loser设置为winner的附庸的逻辑
+        CityTools.LogVassalWarEnd(loser, winner);
+        // 假设SetKingdom方法用于设置附庸关系
+        MoHTools.ConvertKtoAW(loser).SetVassal(MoHTools.ConvertKtoAW(winner));
+    }
+
+
 }

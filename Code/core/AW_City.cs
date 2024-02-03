@@ -18,7 +18,7 @@ public partial class AW_City : City
         (AWUnitProfession[])Enum.GetValues(typeof(AWUnitProfession));
 
     public AW_CityDataAddition addition_data = new();
-    public int                 capital_tax_income;
+    public int capital_tax_income;
 
     public int food_count_for_slaves_this_year;
 
@@ -157,6 +157,29 @@ public partial class AW_City : City
                         World.world.wars.endWar(war);
                     }
                 }
+                if (war._asset == AssetManager.war_types_library.get("vassal_war"))
+                {
+                    AW_War vassalwar = war as AW_War;
+                    if (this == vassalwar._defenderCapital && kingdom == vassalwar.main_attacker)
+                    {
+                        AW_City cap = vassalwar._defenderCapital as AW_City;
+                        TransferCities(vassalwar.main_attacker, vassalwar.main_defender, cap);
+                        SetLoserAsVassal(vassalwar.main_defender, vassalwar.main_attacker);
+                        World.world.wars.endWar(war);
+                        return;
+                    }
+                    else if (this == vassalwar._attackerCapital && kingdom == vassalwar.main_defender)
+                    {
+                        AW_City cap = vassalwar._attackerCapital as AW_City;
+                        TransferCities(vassalwar.main_defender, vassalwar.main_attacker, cap);
+                        SetLoserAsVassal(vassalwar.main_attacker, vassalwar.main_defender);
+                        World.world.wars.endWar(war);
+                        return;
+                    }
+
+
+                }
+
 
                 if (war._asset == AssetManager.war_types_library.get("conquest"))
                 {
@@ -217,7 +240,7 @@ public partial class AW_City : City
         }
 
         this.gold_out_army = this.countProfession(UnitProfession.Warrior) / 2;
-        this.gold_out_buildings = this.buildings.Count                    / 2;
+        this.gold_out_buildings = this.buildings.Count / 2;
         this.gold_change = this.gold_in_tax - this.gold_out_army - this.gold_out_buildings - this.gold_out_homeless;
         int num = this.gold_change;
         if (num < 0)
@@ -311,7 +334,7 @@ public partial class AW_City : City
 
         bool flag = false;
         if (this._capturing_units.ContainsKey(this.kingdom) && this._capturing_units[this.kingdom] > 0 &&
-            this.getArmy()                                                                         > 0)
+            this.getArmy() > 0)
         {
             flag = true;
         }
