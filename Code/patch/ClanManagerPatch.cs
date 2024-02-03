@@ -1,24 +1,41 @@
 using Figurebox.core;
 using Figurebox.Utils.MoH;
 using HarmonyLib;
-using Figurebox.ai;
+using Figurebox.attributes;
 
 namespace Figurebox.patch;
 
-internal static class ClanManagerPatch
+internal class ClanManagerPatch
 {
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(ClanManager), "tryPlotWar")]
-    public static bool reclaimnam_Prefix(Actor pActor, PlotAsset pPlotAsset)
+
+    [MethodReplace(nameof(ClanManager.tryPlotWar))]
+    private new bool tryPlotWar(Actor pActor, PlotAsset pPlotAsset)
     {
+        if (!World.world.clans.basePlotChecks(pActor, pPlotAsset))
+        {
+            return false;
+        }
+        Kingdom warTarget = DiplomacyHelpers.getWarTarget(pActor.kingdom);
+        if (warTarget == null)
+        {
+            return false;
+        }
         Kingdom reclaimTarget = GetReclaimTarget(pActor.kingdom);
-        if (reclaimTarget != null)
+        if (reclaimTarget != null && reclaimTarget == warTarget)
         {
             return false; // 不执行原方法，因为有收复目标
         }
-
-        return true; // 否则执行原方法
+        Plot plot = World.world.plots.newPlot(pActor, pPlotAsset);
+        plot.rememberInitiators(pActor);
+        plot.target_kingdom = warTarget;
+        if (!plot.checkInitiatorAndTargets())
+        {
+            Main.LogInfo("tryPlotWar  is missing start requirements");
+            return true;
+        }
+        return true;
     }
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(ClanManager), "checkActionKing")]
     public static void checkKingAction_post(Actor pActor, ref ClanManager __instance)

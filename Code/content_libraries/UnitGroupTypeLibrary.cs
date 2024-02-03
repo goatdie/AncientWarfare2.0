@@ -19,7 +19,7 @@ public class UnitGroupTypeLibrary : AssetLibrary<AW_UnitGroupAsset>
         guards = add(new AW_UnitGroupAsset());
         t.id = "guards";
         t.path_icon = "ui/icons/traits/iconjinwei";
-        t.base_max_count = 10;
+        t.base_max_count = 5;
 
         slaves = add(new AW_UnitGroupAsset());
         t.id = "slaves";
