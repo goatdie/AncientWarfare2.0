@@ -164,7 +164,7 @@ public static class NewCommonEvents
                 {
                     if (reader.Read())
                     {
-                        LordkingId = reader.GetString(reader.GetOrdinal("SAID"));
+                        LordkingId = reader.GetString(reader.GetOrdinal("AID"));
                     }
                 }
             }

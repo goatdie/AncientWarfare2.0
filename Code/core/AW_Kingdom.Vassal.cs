@@ -97,6 +97,7 @@ public partial class AW_Kingdom : Kingdom
 
         data.set("suzerain", kingdomId);
         suzerain = lord;
+        lord.vassals.Add(this);
         if (this.Rebel) { Rebel = false; }
         EventsManager.Instance.StartVassal(this, lord);
         data.colorID = lord.data.colorID;
@@ -115,6 +116,21 @@ public partial class AW_Kingdom : Kingdom
             }
         }
     }
+    public void UpdateToKingdomColor()
+    {
+
+
+        // 更新王国的颜色ID和颜色资产
+        data.colorID = suzerain.data.colorID;
+        ColorAsset lordcolor = suzerain.getColor();
+        updateColor(lordcolor);
+
+        // 通知世界区域计算器，颜色变更了
+        World.world.zoneCalculator.setDrawnZonesDirty();
+        World.world.zoneCalculator.clearCurrentDrawnZones(true);
+        World.world.zoneCalculator.redrawZones();
+    }
+
 
     public void RemoveSuzerain()
     {
@@ -123,7 +139,9 @@ public partial class AW_Kingdom : Kingdom
         {
 
             EventsManager.Instance.ENDVassal(this, suzerain);
+            suzerain.vassals.Remove(this);
             suzerain = null;
+
             // 更新颜色
             UpdateColor(this);
         }
@@ -131,6 +149,21 @@ public partial class AW_Kingdom : Kingdom
         // 清除旗帜
 
     }
+    public void RemoveVassals()
+    {
+        // 清除附庸的数据
+        if (IsSuzerain())
+        {
+            // 使用ToList()创建一个临时列表的副本进行遍历
+            var tempVassals = GetVassals().ToList();
+            foreach (var vassal in tempVassals)
+            {
+                vassal.RemoveSuzerain();
+            }
+            this.vassals.Clear();
+        }
+    }
+
     public static string Serialize(ColorAsset colorAsset)
     {
         return $"{colorAsset.color_main},{colorAsset.color_main_2},{colorAsset.color_banner},{colorAsset.index_id}";

@@ -40,6 +40,11 @@ public partial class AW_Kingdom : Kingdom
 
     public override void Dispose()
     {
+        if (IsSuzerain())
+        {
+            
+            RemoveVassals();
+        }
         heir = null;
         base.Dispose();
     }
@@ -726,12 +731,23 @@ public partial class AW_Kingdom : Kingdom
                 {
                     EventsManager.Instance.ENDMOH(this);
                 }
+                if (!IsVassal())
+                {
+                    createColors();
+                    generateBanner();
+                    World.world.zoneCalculator.setDrawnZonesDirty();
+                    World.world.zoneCalculator.clearCurrentDrawnZones(true);
+                    World.world.zoneCalculator.redrawZones();
+                    if (IsSuzerain())
+                    {
 
-                createColors();
-                generateBanner();
-                World.world.zoneCalculator.setDrawnZonesDirty();
-                World.world.zoneCalculator.clearCurrentDrawnZones(true);
-                World.world.zoneCalculator.redrawZones();
+                        foreach (var vassal in GetVassals())
+                        {
+                            vassal.UpdateToKingdomColor();
+                        }
+                    }
+                }
+
                 // WLM
                 CityTools.logUsurpation(king, this);
 
