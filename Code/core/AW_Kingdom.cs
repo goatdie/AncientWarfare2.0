@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core.events;
@@ -87,20 +88,18 @@ public partial class AW_Kingdom : Kingdom
             }
         }
 
-        // 根据某些标准排序候选人
-        candidates.Sort((a, b) => CompareCandidates(a, b));
+        //根据年龄与18岁差距的绝对值排序候选人
+        candidates.Sort((a, b) => Math.Abs(a.getAge() - 18).CompareTo(Math.Abs(b.getAge() - 18)));
 
         // 返回最合适的候选人
 
         Actor heir = candidates.FirstOrDefault();
         if (heir != null)
         {
-            // Debug.Log("找到了合适的继承人: " + heir.data.name);
             return heir;
         }
         else
         {
-            // Debug.Log("没找到合适的继承人");
             return null;
         }
     }
