@@ -42,7 +42,6 @@ public partial class AW_Kingdom : Kingdom
     {
         if (IsSuzerain())
         {
-            
             RemoveVassals();
         }
         heir = null;
