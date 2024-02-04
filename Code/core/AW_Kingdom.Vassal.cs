@@ -75,15 +75,18 @@ public partial class AW_Kingdom : Kingdom
         if (IsVassal())
         {
             // 如果是，那么它不能成为宗主国，所以我们直接返回
+
             return;
         }
         if (IsSuzerain())
         {
             // If it is, it can't become a vassal, so we simply return
+
             return;
         }
         if (king == null)
         {
+
             return;
         }
 
@@ -97,7 +100,9 @@ public partial class AW_Kingdom : Kingdom
 
         data.set("suzerain", kingdomId);
         suzerain = lord;
+        Main.LogInfo($"Before adding, lord has {lord.vassals.Count} vassals.");
         lord.vassals.Add(this);
+        Main.LogInfo($"After adding, lord has {lord.vassals.Count} vassals.");
         if (this.Rebel) { Rebel = false; }
         EventsManager.Instance.StartVassal(this, lord);
         data.colorID = lord.data.colorID;
@@ -114,6 +119,10 @@ public partial class AW_Kingdom : Kingdom
             {
                 World.world.wars.endWar(ongoingWar);
             }
+        }
+        if (lord.hasAlliance())
+        {
+            lord.getAlliance().join(this, true);
         }
     }
     public void UpdateToKingdomColor()

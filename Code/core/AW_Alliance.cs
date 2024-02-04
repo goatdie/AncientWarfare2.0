@@ -17,6 +17,7 @@ public class AW_Alliance : Alliance
             foreach (var vassal in MoHTools.ConvertKtoAW(pKingdom).GetVassals())
             {
                 vassal.allianceJoin(this);
+                this.kingdoms_hashset.Add(vassal);
             }
         }
         if (pRecalc)

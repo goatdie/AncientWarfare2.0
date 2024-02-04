@@ -131,7 +131,7 @@ namespace Figurebox
                 AW_Kingdom Select2 = SelectKingdom2 as AW_Kingdom;
                 AW_Kingdom Select1 = SelectKingdom1 as AW_Kingdom;
                 WorldTip.showNow($"{SelectKingdom2.data.name}!", pTranslate: false, "top", 6f);
-                Select2.SetVassal(Select1);
+                Select1.SetVassal(Select2);
                 SelectKingdom1 = null;
                 SelectKingdom2 = null;
                 return true;
