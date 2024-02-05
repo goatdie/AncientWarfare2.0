@@ -208,11 +208,12 @@ internal class ClanManagerPatch
     public static bool tryPlotVassalWar(Actor pActor, PlotAsset pPlotAsset)
     {
         // 基本的情节检查
+       
         if (!basePlotChecks(pActor, pPlotAsset))
         {
             return false;
         }
-
+        
         // 检查自上次附庸战争以来是否已经过了足够的时间
 
 
@@ -224,7 +225,7 @@ internal class ClanManagerPatch
         }
 
         // 检查目标国家的城市数量是否大于或等于2
-        if (vassalTarget.cities.Count < 2 || pActor.kingdom.cities.Count < 2)
+        if (pActor.kingdom.cities.Count < 2)
         {
             return false;
         }
@@ -421,7 +422,7 @@ internal class ClanManagerPatch
             // ...
 
             // If all conditions are satisfied, then otherKingdom is a possible vassal target
-
+            
             return otherKingdom;
         }
 

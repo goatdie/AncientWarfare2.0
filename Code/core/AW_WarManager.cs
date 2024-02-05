@@ -54,7 +54,16 @@ public class AW_WarManager : WarManager
                 {
                     war.joinAttackers(vassal);
                 }
+            }
+        }
 
+        // 如果攻击者是附庸国，则将其宗主国加入攻击方
+        if (pAttacker.AW().IsVassal())
+        {
+            var suzerain = pAttacker.AW().suzerain;
+            if (suzerain != null)
+            {
+                war.joinAttackers(suzerain);
             }
         }
 
@@ -69,6 +78,17 @@ public class AW_WarManager : WarManager
                 }
             }
         }
+
+        // 如果防御者是附庸国，则将其宗主国加入防御方
+        if (pDefender.AW().IsVassal())
+        {
+            var suzerain = pDefender.AW().suzerain;
+            if (suzerain != null)
+            {
+                war.joinDefenders(suzerain);
+            }
+        }
+
         return war;
     }
 

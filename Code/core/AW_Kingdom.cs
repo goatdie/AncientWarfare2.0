@@ -45,6 +45,11 @@ public partial class AW_Kingdom : Kingdom
         {
             RemoveVassals();
         }
+        else if (IsVassal())
+        {
+            suzerain.vassals.Remove(this);
+            RemoveSuzerain();
+        }
         heir = null;
         base.Dispose();
     }

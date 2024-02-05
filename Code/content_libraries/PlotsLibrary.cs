@@ -250,16 +250,16 @@ namespace Figurebox
             AssetManager.plots_library.add(vassalWar);
             vassalWar.check_supporters = checkMembersToRemoveDefault;
             vassalWar.check_should_continue = ((Plot pPlot) =>
-                        pPlot.initiator_actor.isAlive() &&
-                        pPlot.initiator_kingdom.getArmy() >= pPlot.target_kingdom.getArmy() &&
-                        !pPlot.initiator_actor.kingdom.asset.mad &&
-                        !pPlot.initiator_kingdom.hasEnemies() &&
-                        (pPlot.initiator_kingdom.getAlliance() == null ||
-                         !pPlot.initiator_kingdom.getAlliance().kingdoms_hashset.Contains(pPlot.target_kingdom)) &&
-                        pPlot.target_kingdom.cities.Count >= 2 &&
-                        !pPlot.target_kingdom.AW().IsVassal() &&
-                        !pPlot.target_kingdom.AW().IsSuzerain() && pPlot.target_kingdom.AW().CompareTitle(pPlot.initiator_kingdom.AW()) // Add this line.
-                );
+     pPlot.initiator_actor.isAlive() &&
+     !pPlot.initiator_actor.kingdom.asset.mad &&
+     pPlot.initiator_kingdom.getArmy() >= pPlot.target_kingdom.getArmy() &&
+     !pPlot.initiator_kingdom.hasEnemies() &&
+      (!pPlot.initiator_kingdom.hasAlliance() || pPlot.initiator_kingdom.getAlliance() != pPlot.target_kingdom.getAlliance()) &&
+     !pPlot.target_kingdom.AW().IsVassal() &&
+     !pPlot.target_kingdom.AW().IsSuzerain()
+
+ );
+
 
 
 
@@ -269,12 +269,14 @@ namespace Figurebox
                 // 检查是否已经是附庸国
                 if (pKingdom.AW().IsVassal())
                 {
+
                     return false;
                 }
-                if (pKingdom.AW().policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
-                {
-                    return false;
-                }
+                /* if (pKingdom.AW().policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
+                 {
+
+                     return false;
+                 }*/
 
                 // 检查是否已经有正在进行的附庸战
                 if (pKingdom.hasAlliance())
