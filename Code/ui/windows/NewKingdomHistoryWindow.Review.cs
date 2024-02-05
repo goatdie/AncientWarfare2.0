@@ -165,7 +165,8 @@ public partial class NewKingdomHistoryWindow
             while (result_reader.Read())
             {
                 var Vassal = new VassalTableItem();
-                Vassal.ReadFromReader(result_reader);
+
+                ReadFromReader(result_reader, Vassal);
                 _vassal.Add(Vassal);
             }
         }
@@ -184,13 +185,39 @@ public partial class NewKingdomHistoryWindow
             while (result_reader.Read())
             {
                 var Vassal = new VassalTableItem();
-                Vassal.ReadFromReader(result_reader);
+
+
+                ReadFromReader(result_reader, Vassal);
+                // Vassal.absorb = result_reader.GetBoolean(result_reader.GetOrdinal("ABSORB"));
                 _lord.Add(Vassal);
             }
         }
 
 
     }
+    public void ReadFromReader(SQLiteDataReader reader, VassalTableItem bti)
+    {
+
+
+        bti.vaid = reader.GetString(reader.GetOrdinal("VAID"));
+        bti.said = reader.GetString(reader.GetOrdinal("SAID"));
+        bti.kid = reader.GetString(reader.GetOrdinal("KID"));
+        bti.Skid = reader.GetString(reader.GetOrdinal("SKID"));
+        bti.vassal_name = reader.GetString(reader.GetOrdinal("VASSAL_NAME"));
+        bti.lord_name = reader.GetString(reader.GetOrdinal("LORD_NAME"));
+
+
+        bti.start_time = reader.GetDouble(reader.GetOrdinal("START_TIME"));
+        bti.end_time = reader.GetDouble(reader.GetOrdinal("END_TIME"));
+
+
+        bti.absorb = reader.GetInt64(reader.GetOrdinal("ABSORB")) != 0;
+
+
+
+    }
+
+
 
     private void PrepareRuleReview(List<ReviewItem> pItems)
     {
@@ -233,18 +260,33 @@ public partial class NewKingdomHistoryWindow
         RequestVassal();
         foreach (var vassal_event in _vassal)
         {
-            if (vassal_event.start_time > 0)
-                pItems.Add(new ReviewItem(vassal_event.start_time, LM.Get("review_setvassal"), vassal_event.vassal_name, vassal_event.lord_name));
-            if (vassal_event.end_time > 0)
-                pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_removevassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            if (vassal_event.absorb && vassal_event.end_time > 0)
+            {
+                pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_absorbedvassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            }
+            else
+            {
+                if (vassal_event.start_time > 0)
+                    pItems.Add(new ReviewItem(vassal_event.start_time, LM.Get("review_setvassal"), vassal_event.vassal_name, vassal_event.lord_name));
+                if (vassal_event.end_time > 0)
+                    pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_removevassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            }
+
         }
         RequestLord();
         foreach (var vassal_event in _lord)
         {
-            if (vassal_event.start_time > 0)
-                pItems.Add(new ReviewItem(vassal_event.start_time, LM.Get("review_getvassal"), vassal_event.vassal_name, vassal_event.lord_name));
-            if (vassal_event.end_time > 0)
-                pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_losevassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            if (vassal_event.absorb && vassal_event.end_time > 0)
+            {
+                pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_absorbvassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            }
+            else
+            {
+                if (vassal_event.start_time > 0)
+                    pItems.Add(new ReviewItem(vassal_event.start_time, LM.Get("review_getvassal"), vassal_event.vassal_name, vassal_event.lord_name));
+                if (vassal_event.end_time > 0)
+                    pItems.Add(new ReviewItem(vassal_event.end_time, LM.Get("review_losevassal"), vassal_event.vassal_name, vassal_event.lord_name));
+            }
         }
     }
 

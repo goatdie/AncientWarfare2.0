@@ -12,3 +12,5 @@ review_setvassal, {0} 成为 {1} 的附庸 ,empty
 review_removevassal, {0} 脱离 {1} 独立 ,empty
 review_getvassal, {1} 附庸了 {0}  ,empty
 review_losevassal, {1} 失去了附庸 {0}  ,empty
+review_absorbvassal, {1} 吞并了附庸 {0}  ,empty
+review_absorbedvassal, {0} 被 {1} 吞并 ,empty

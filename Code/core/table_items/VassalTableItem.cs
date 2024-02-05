@@ -13,4 +13,5 @@ public class VassalTableItem : AbstractTableItem<VassalTableItem>
     public string Skid;
     public string vassal_name;
     public string lord_name;
+    public bool absorb;
 }

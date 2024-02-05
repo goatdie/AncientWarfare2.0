@@ -3,6 +3,7 @@ using Figurebox.Utils.MoH;
 using HarmonyLib;
 using Figurebox.attributes;
 using System.Collections.Generic;
+using System.Data.SQLite;
 namespace Figurebox.patch;
 
 internal class ClanManagerPatch
@@ -256,14 +257,16 @@ internal class ClanManagerPatch
         {
             return false;
         }
-        Main.LogInfo($"吸收自检目标过:{pActor.kingdom.name}");
         // 确定吞并的附庸目标
         Kingdom vassalTarget = GetVassalTargettoabsorb(pActor.kingdom);
         if (vassalTarget == null)
         {
             return false;
         }
-
+        if (GetYearsSinceVassalageStarted(pActor.kingdom.data.id, vassalTarget.data.id) <= 10)//暂时设置为10
+        {
+            return false;
+        }
         // 检查是否有足够的军事力量来进行吞并
         if (!HasEnoughMilitaryPower(pActor.kingdom, vassalTarget))
         {
@@ -296,18 +299,18 @@ internal class ClanManagerPatch
 
             if (k.getArmy() < vassal.getArmy())
             {
-                Main.LogInfo($"吸收目标军队过多:{vassal.name}");
+
                 continue;
             }
 
             if (vassal.hasEnemies())
             {
-                Main.LogInfo($"吸收目标有敌人:{vassal.name}");
+
                 continue;
             }
 
             // 如果附庸满足所有条件，那么它就是我们的目标
-            Main.LogInfo($"吸收目标过:{vassal.name}");
+
             return vassal;
         }
 
@@ -423,4 +426,44 @@ internal class ClanManagerPatch
         // If no suitable vassal target is found, return null
         return null;
     }
+    public static int GetYearsSinceVassalageStarted(string suzerainKingdomId, string vassalId)
+    {
+        // 初始化变量来存储开始时间
+        double startTime = -1;
+
+        // 查询数据库获取特定宗主国与特定附庸关系的开始时间
+        using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
+        {
+            // 在SQL查询中同时考虑宗主国ID和附庸ID
+            cmd.CommandText = "SELECT START_TIME FROM VASSAL WHERE SKID = @SKID AND KID = @KID AND END_TIME = -1 ORDER BY START_TIME DESC LIMIT 1";
+            cmd.Parameters.AddWithValue("@SKID", suzerainKingdomId);
+            cmd.Parameters.AddWithValue("@KID", vassalId);
+
+            using (var reader = cmd.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    // 获取查询到的开始时间
+                    int startTimeIndex = reader.GetOrdinal("START_TIME");
+                    if (!reader.IsDBNull(startTimeIndex))
+                    {
+                        startTime = reader.GetDouble(startTimeIndex);
+                    }
+                }
+            }
+        }
+
+        // 如果找到了开始时间，计算并返回自那时起经过的年数
+        if (startTime != -1)
+        {
+            int yearsSince = World.world.mapStats.getYearsSince(startTime);
+            Main.LogInfo($"查到了，自附庸关系开始以来经过了 {yearsSince} 年");
+            return yearsSince;
+        }
+
+        // 如果没有找到相关记录，返回-1表示没有找到或没有经过任何年数
+        Main.LogInfo("未查到宗主国与附庸之间的关系开始时间");
+        return -1;
+    }
+
 }

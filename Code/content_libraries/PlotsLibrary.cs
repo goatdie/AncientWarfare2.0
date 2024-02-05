@@ -5,6 +5,8 @@ using UnityEngine;
 using Figurebox.Utils.MoH;
 using Figurebox.core;
 using Figurebox.core.events;
+
+using System.Data;
 namespace Figurebox
 {
     public class MorePlots : PlotsLibrary
@@ -332,11 +334,12 @@ namespace Figurebox
             absorbvassal.check_supporters = checkMembersToRemoveDefault;
             absorbvassal.check_should_continue = (Plot pPlot) =>
             {
+                
                 // Ensure the target kingdom is a vassal of the initiator kingdom
                 // and the initiator kingdom does not have any enemies
                 // and the initiator kingdom's army size is not smaller than the target kingdom's
                 return pPlot.initiator_kingdom.getArmy() >= pPlot.target_kingdom.getArmy()
-                       && KingdomVassals.IsVassal(pPlot.target_kingdom)
+                       && MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal()
                        && !pPlot.initiator_kingdom.hasEnemies();
             };
 
@@ -344,10 +347,11 @@ namespace Figurebox
             absorbvassal.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // Ensure the target kingdom is a vassal of the initiator kingdom
-                if (!MoHTools.ConvertKtoAW(pKingdom).IsVassal() || !MoHTools.ConvertKtoAW(pKingdom).IsSuzerain() || pActor.kingdom.hasEnemies())
+                if (MoHTools.ConvertKtoAW(pKingdom).IsVassal() || !MoHTools.ConvertKtoAW(pKingdom).IsSuzerain() || pActor.kingdom.hasEnemies())
                 {
                     return false;
                 }
+
 
                 // Check if the vassal relation has been established for at least 50 years
 
@@ -357,12 +361,14 @@ namespace Figurebox
 
             absorbvassal.action = delegate (Plot pPlot)
             {
-                Kingdom lordKingdom = pPlot.initiator_kingdom;
-                Kingdom vassalKingdom = pPlot.target_kingdom;
+                AW_Kingdom lordKingdom = pPlot.initiator_kingdom as AW_Kingdom;
+                AW_Kingdom vassalKingdom = pPlot.target_kingdom as AW_Kingdom;
 
                 // Create a copy of the vassal kingdom's cities list
                 List<City> vassalCities = new List<City>(vassalKingdom.cities);
-
+                EventsManager.Instance.ENDVassal(vassalKingdom, lordKingdom, true);
+                lordKingdom.vassals.Remove(vassalKingdom);
+                vassalKingdom.suzerain = null;
                 // Transfer all the cities of the vassal kingdom to the lord kingdom
                 foreach (City vassalCity in vassalCities)
                 {
@@ -412,32 +418,31 @@ namespace Figurebox
             };
             IndependenceWar.check_should_continue = (Plot pPlot) =>
             {
-                if (!KingdomVassals.HasEnoughMilitaryPower(pPlot.initiator_kingdom, pPlot.target_kingdom))
+
+                if (pPlot.supporters.Count < 2)
                 {
-                    if (pPlot.supporters.Count < 2)
+                    return false;
+                }
+                int army = 0;
+                foreach (Actor actor in pPlot.supporters)
+                {
+                    Kingdom kingdom = actor.kingdom;
+                    if (!kingdom.isAlive())
                     {
                         return false;
                     }
-                    int army = 0;
-                    foreach (Actor actor in pPlot.supporters)
+                    if (kingdom.hasEnemies())
                     {
-                        Kingdom kingdom = actor.kingdom;
-                        if (!kingdom.isAlive())
-                        {
-                            return false;
-                        }
-                        if (kingdom.hasEnemies())
-                        {
-                            return false;
-                        }
-                        army += kingdom.getArmy();
-
+                        return false;
                     }
-                    if (army < pPlot.target_kingdom.getArmy()) { return false; }
+                    army += kingdom.getArmy();
+
                 }
+                if (army < pPlot.target_kingdom.getArmy()) { return false; }
 
 
-                return MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal()
+
+                return !MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal()
                        && MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsSuzerain()
                        && !pPlot.initiator_kingdom.hasEnemies() && pPlot.initiator_kingdom.data.royal_clan_id != pPlot.target_kingdom.data.royal_clan_id;
             };
@@ -671,5 +676,7 @@ namespace Figurebox
             usurper.city.removeLeader();
             City.makeLeader(usurper, usurper.city);
         }
+     
+
     }
 }

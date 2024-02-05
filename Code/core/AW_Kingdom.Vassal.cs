@@ -22,14 +22,9 @@ public partial class AW_Kingdom : Kingdom
     public List<AW_Kingdom> vassals = new List<AW_Kingdom>();
     public bool IsVassal()
     {
-        if (this == null)
-        {
-            return false;
-        }
-
-
         return suzerain != null;
     }
+
     public AW_Kingdom GetSuzerain()
     {
         if (IsVassal())
@@ -147,7 +142,7 @@ public partial class AW_Kingdom : Kingdom
         if (IsVassal())
         {
 
-            EventsManager.Instance.ENDVassal(this, suzerain);
+            EventsManager.Instance.ENDVassal(this, suzerain, false);
             suzerain.vassals.Remove(this);
             suzerain = null;
 

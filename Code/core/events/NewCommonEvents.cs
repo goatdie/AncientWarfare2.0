@@ -122,11 +122,12 @@ public static class NewCommonEvents
                                     ColumnVal.Create("START_TIME", World.world.getCreationTime()),
                                     ColumnVal.Create("VASSAL_NAME", pKingdom.data.name),
                                     ColumnVal.Create("LORD_NAME", Lord.data.name),
+                                    ColumnVal.Create("ABSORB", false),
                                     ColumnVal.Create("END_TIME", -1)
                                     );
 
     }
-    public static void ENDVassal(this EventsManager pManager, Kingdom pKingdom, Kingdom Lord)
+    public static void ENDVassal(this EventsManager pManager, Kingdom pKingdom, Kingdom Lord, bool absorb)
     {
         string kingId = null;
         string LordkingId = null;
@@ -177,6 +178,7 @@ public static class NewCommonEvents
                                     ColumnVal.Create("END_TIME", World.world.getCreationTime()),
                                     ColumnVal.Create("VASSAL_NAME", pKingdom.data.name),
                                     ColumnVal.Create("LORD_NAME", Lord.data.name),
+                                    ColumnVal.Create("ABSORB", absorb),
                                     ColumnVal.Create("START_TIME", -1));
     }
 }
