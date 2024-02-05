@@ -5,8 +5,8 @@ using UnityEngine;
 using Figurebox.Utils.MoH;
 using Figurebox.core;
 using Figurebox.core.events;
+using Figurebox.Utils.extensions;
 
-using System.Data;
 namespace Figurebox
 {
     public class MorePlots : PlotsLibrary
@@ -257,8 +257,8 @@ namespace Figurebox
                         (pPlot.initiator_kingdom.getAlliance() == null ||
                          !pPlot.initiator_kingdom.getAlliance().kingdoms_hashset.Contains(pPlot.target_kingdom)) &&
                         pPlot.target_kingdom.cities.Count >= 2 &&
-                        !MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal() &&
-                        !MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsSuzerain() && MoHTools.ConvertKtoAW(pPlot.target_kingdom).CompareTitle(MoHTools.ConvertKtoAW(pPlot.initiator_kingdom)) // Add this line.
+                        !pPlot.target_kingdom.AW().IsVassal() &&
+                        !pPlot.target_kingdom.AW().IsSuzerain() && pPlot.target_kingdom.AW().CompareTitle(pPlot.initiator_kingdom.AW()) // Add this line.
                 );
 
 
@@ -267,11 +267,11 @@ namespace Figurebox
             vassalWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // 检查是否已经是附庸国
-                if (MoHTools.ConvertKtoAW(pKingdom).IsVassal())
+                if (pKingdom.AW().IsVassal())
                 {
                     return false;
                 }
-                if (MoHTools.ConvertKtoAW(pKingdom).policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
+                if (pKingdom.AW().policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
                 {
                     return false;
                 }
@@ -347,7 +347,7 @@ namespace Figurebox
             absorbvassal.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // Ensure the target kingdom is a vassal of the initiator kingdom
-                if (MoHTools.ConvertKtoAW(pKingdom).IsVassal() || !MoHTools.ConvertKtoAW(pKingdom).IsSuzerain() || pActor.kingdom.hasEnemies())
+                if (!pKingdom.AW().IsVassal() || !pKingdom.AW().IsSuzerain() || pActor.kingdom.hasEnemies())
                 {
                     return false;
                 }
@@ -404,12 +404,12 @@ namespace Figurebox
 
             IndependenceWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
-                AW_Kingdom lord = MoHTools.ConvertKtoAW(pKingdom).suzerain;
+                AW_Kingdom lord = pKingdom.AW().suzerain;
                 if (lord != null && (World.world.diplomacy.getOpinion(pKingdom, lord).total - 1000) >= 0)
                 {
                     return false;
                 }
-                if (pActor.kingdom.hasEnemies() || MoHTools.ConvertKtoAW(pKingdom).IsSuzerain() || !MoHTools.ConvertKtoAW(pKingdom).IsVassal())
+                if (pActor.kingdom.hasEnemies() || pKingdom.AW().IsSuzerain() || !pKingdom.AW().IsVassal())
                 {
                     return false;
                 }
@@ -442,8 +442,8 @@ namespace Figurebox
 
 
 
-                return !MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal()
-                       && MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsSuzerain()
+                return pPlot.target_kingdom.AW().IsVassal()
+                       && pPlot.target_kingdom.AW().IsSuzerain()
                        && !pPlot.initiator_kingdom.hasEnemies() && pPlot.initiator_kingdom.data.royal_clan_id != pPlot.target_kingdom.data.royal_clan_id;
             };
             // 定义情节发生时要执行的操作
@@ -464,11 +464,11 @@ namespace Figurebox
                     if (kingdom.isAlive() && kingdom.countCities() != 0 && !kingdom.hasEnemies() && kingdom.king != null)
                     {
                         // if kingdom is a vassal of the same suzerain as the initiator kingdom
-                        if (MoHTools.ConvertKtoAW(kingdom).IsVassal() && MoHTools.ConvertKtoAW(kingdom).suzerain == MoHTools.ConvertKtoAW(pPlot.target_kingdom))
+                        if (kingdom.AW().IsVassal() && kingdom.AW().suzerain == MoHTools.ConvertKtoAW(pPlot.target_kingdom))
                         {
                             // make kingdom independent
 
-                            MoHTools.ConvertKtoAW(kingdom).RemoveSuzerain();
+                            kingdom.AW().RemoveSuzerain();
 
 
                         }
@@ -506,7 +506,7 @@ namespace Figurebox
             new_war.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // 直接允许Rebel发动行动，无视其他限制
-                if (MoHTools.ConvertKtoAW(pKingdom).Rebel)
+                if (pKingdom.AW().Rebel)
                 {
 
                     return true;
@@ -543,7 +543,7 @@ namespace Figurebox
             new_war.check_should_continue = ((Plot pPlot) =>
             {
                 // 如果是Rebel，直接继续行动，无视其他限制
-                if (MoHTools.ConvertKtoAW(pPlot.initiator_kingdom).Rebel && pPlot.initiator_kingdom.getAlliance() != pPlot.target_kingdom.getAlliance())
+                if (pPlot.initiator_kingdom.AW().Rebel && pPlot.initiator_kingdom.getAlliance() != pPlot.target_kingdom.getAlliance())
                 {
                     return true;
                 }
@@ -560,7 +560,7 @@ namespace Figurebox
             var rebellion = AssetManager.plots_library.get("rebellion");
             rebellion.action = delegate (Plot pPlot)
             {
-                if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom)) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).Rebel) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).FomerMoh))
+                if (MoHTools.IsMoHKingdom(pPlot.initiator_city.kingdom.AW()) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).Rebel) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).FomerMoh))
                 {
                     startTianmingRebellion(pPlot.initiator_city, pPlot.getLeader(), pPlot);
                 }
@@ -579,7 +579,7 @@ namespace Figurebox
             Kingdom newKingdom = pCity.makeOwnKingdom();
 
             // 设置新王国为义军
-            MoHTools.ConvertKtoAW(newKingdom).Rebel = true;
+            newKingdom.AW().Rebel = true;
 
             pCity.removeLeader();
             pCity.addNewUnit(pActor);

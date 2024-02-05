@@ -1,12 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Figurebox.Utils.KingdomPolicy;
 
 public class KingdomPolicyGraphNode
 {
-    public Asset   asset;
-    public bool    is_state;
+    public readonly Asset   asset;
+    public readonly bool    is_state;
     public Vector2 position;
+    public readonly HashSet<KingdomPolicyGraphNode> next = new();
 
     public KingdomPolicyGraphNode(Asset pAsset)
     {

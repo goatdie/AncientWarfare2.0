@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Figurebox.attributes;
 using Figurebox.core.events;
+using Figurebox.Utils.extensions;
 using Figurebox.Utils.MoH;
 
 #if 一米_中文名
@@ -45,9 +46,9 @@ public class AW_WarManager : WarManager
 
         EventsManager.Instance.NewWar(war);
         // 检查攻击者是否是宗主国
-        if (MoHTools.ConvertKtoAW(pAttacker).IsSuzerain())
+        if (pAttacker.AW().IsSuzerain())
         {
-            foreach (var vassal in MoHTools.ConvertKtoAW(pAttacker).GetVassals())
+            foreach (var vassal in pAttacker.AW().GetVassals())
             {
                 if (vassal != null)
                 {
@@ -58,9 +59,9 @@ public class AW_WarManager : WarManager
         }
 
         // 检查防御者是否是宗主国
-        if (MoHTools.ConvertKtoAW(pDefender).IsSuzerain())
+        if (pDefender.AW().IsSuzerain())
         {
-            foreach (var vassal in MoHTools.ConvertKtoAW(pDefender).GetVassals())
+            foreach (var vassal in pDefender.AW().GetVassals())
             {
                 if (vassal != null)
                 {

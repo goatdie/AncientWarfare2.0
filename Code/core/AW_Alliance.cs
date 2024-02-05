@@ -1,3 +1,5 @@
+using Figurebox.Utils.extensions;
+
 namespace Figurebox.core;
 using Figurebox.attributes;
 using Figurebox.Utils.MoH;
@@ -12,9 +14,9 @@ public class AW_Alliance : Alliance
         }
         this.kingdoms_hashset.Add(pKingdom);
         pKingdom.allianceJoin(this);
-        if (MoHTools.ConvertKtoAW(pKingdom).IsSuzerain())
+        if (pKingdom.AW().IsSuzerain())
         {
-            foreach (var vassal in MoHTools.ConvertKtoAW(pKingdom).GetVassals())
+            foreach (var vassal in pKingdom.AW().GetVassals())
             {
                 vassal.allianceJoin(this);
                 this.kingdoms_hashset.Add(vassal);
