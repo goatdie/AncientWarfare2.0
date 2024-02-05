@@ -8,10 +8,12 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Figurebox.core;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 using Figurebox.Utils;
+using Figurebox.Utils.extensions;
 using NCMS.Utils;
 using Figurebox.Utils.MoH;
 
@@ -48,7 +50,7 @@ namespace Figurebox
             {
                 int result = 0;
 
-                if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(pMain)))
+                if (MoHTools.IsMoHKingdom(pMain.AW()))
                 {
                     result = -200;
                 }
@@ -63,10 +65,8 @@ namespace Figurebox
             vassels.calc = delegate (Kingdom pMain, Kingdom pTarget)
             {
                 int result = 0;
-                string vassalId;
-                string vassaltarget;
-                pMain.data.get("suzerain", out vassalId);
-                pTarget.data.get("suzerain", out vassaltarget);
+                string vassalId = pMain.AW().policy_data.suzerain_id;
+                string vassaltarget = pTarget.AW().policy_data.suzerain_id;
 
                 // 如果pMain是pTarget的宗主国
                 if (vassalId == pTarget.data.id)

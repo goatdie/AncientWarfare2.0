@@ -5,6 +5,7 @@ using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core.dbs;
 using Figurebox.Utils;
+using Figurebox.Utils.extensions;
 using Figurebox.Utils.MoH;
 
 namespace Figurebox.core;
@@ -183,12 +184,12 @@ public partial class AW_City : City
 
                 if (war._asset == AssetManager.war_types_library.get("conquest"))
                 {
-                    if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(war.main_attacker)) &&
+                    if (MoHTools.IsMoHKingdom(war.main_attacker.AW()) &&
                         this == mohWar._attackerCapital)
                     {
                         // 天命国被反推丢失天命
                         MoHTools.Clear_MoHKingdom();
-                        MoHTools.SetMoHKingdom(MoHTools.ConvertKtoAW(war.main_defender));
+                        MoHTools.SetMoHKingdom(war.main_defender.AW());
                         if (war.main_defender.king != null)
                         {
                             war.main_defender.king.addTrait("first");
@@ -221,12 +222,11 @@ public partial class AW_City : City
     [MethodReplace(nameof(City.joinAnotherKingdom))]
     public new void joinAnotherKingdom(Kingdom pKingdom)
     {
-        Kingdom pKingdom2 = this.kingdom;
-        RecordOccupation(MoHTools.ConvertKtoAW(pKingdom2)); //记录脱离母国统治
+        RecordOccupation(kingdom.AW()); //记录脱离母国统治
         this.removeFromCurrentKingdom();
         this.setKingdom(pKingdom, true);
         this.switchedKingdom();
-        pKingdom.capturedFrom(pKingdom2);
+        pKingdom.capturedFrom(kingdom.AW());
     }
 
     [MethodReplace(nameof(City.updateAge))]
@@ -356,7 +356,7 @@ public partial class AW_City : City
         }
 
         // 新增逻辑：判断内战情况下的加速占领
-        bool isRebelCivilWar = IsRebelCivilWar(MoHTools.ConvertKtoAW(kingdom));
+        bool isRebelCivilWar = IsRebelCivilWar(kingdom.AW());
         float captureIncrement = isRebelCivilWar ? 8.0f : 1.0f;
 
         if (flag2)
@@ -404,7 +404,7 @@ public partial class AW_City : City
 
     private bool IsRebelCivilWar(AW_Kingdom attacker)
     {
-        return kingdom != null && MoHTools.ConvertKtoAW(kingdom).Rebel && attacker.Rebel;
+        return kingdom != null && kingdom.AW().Rebel && attacker.Rebel;
     }
 
     private void updateCaptureForRebelCivilWar(float pElapsed)

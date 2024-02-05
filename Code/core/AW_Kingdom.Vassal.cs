@@ -10,46 +10,32 @@ using Figurebox.Utils.MoH;
 
 namespace Figurebox.core;
 
-public partial class AW_Kingdom : Kingdom
+public partial class AW_Kingdom
 {
     /// <summary>
     ///   宗主国
     /// </summary>
-    public AW_Kingdom suzerain;
+    public AW_Kingdom suzerain { get; private set; }
+
     /// <summary>
     ///   附庸
     /// </summary>
-    public List<AW_Kingdom> vassals = new List<AW_Kingdom>();
+    public List<AW_Kingdom> vassals { get; private set; } = new List<AW_Kingdom>();
+
     public bool IsVassal()
     {
-        if (this == null)
-        {
-            return false;
-        }
-
-
         return suzerain != null;
     }
     public AW_Kingdom GetSuzerain()
     {
-        if (IsVassal())
-        {
-            return suzerain;
-        }
-        return null;
+        return IsVassal() ? suzerain : null;
     }
     public List<AW_Kingdom> GetVassals()
     {
-        if (IsSuzerain())
-        {
-            return vassals;
-        }
-
-        return null;
+        return IsSuzerain() ? vassals : null;
     }
     public bool IsSuzerain()
     {
-
         return vassals.Count > 0;
     }
     public int getSuzerainArmy()
@@ -98,7 +84,7 @@ public partial class AW_Kingdom : Kingdom
         // 将序列化后的字符串存储在kingdom的data字典中
         data.set("originalColor", serializedOriginalColor);
 
-        data.set("suzerain", kingdomId);
+        policy_data.suzerain_id = kingdomId;
         suzerain = lord;
         Main.LogInfo($"Before adding, lord has {lord.vassals.Count} vassals.");
         lord.vassals.Add(this);
@@ -109,8 +95,7 @@ public partial class AW_Kingdom : Kingdom
         ColorAsset lordcolor = lord.getColor();
         updateColor(lordcolor);
         World.world.zoneCalculator.setDrawnZonesDirty();
-        World.world.zoneCalculator.clearCurrentDrawnZones(true);
-        World.world.zoneCalculator.redrawZones();
+        World.world.zoneCalculator.clearCurrentDrawnZones();
         if (World.world.wars.isInWarWith(this, lord))
         {
             // 如果存在，结束它

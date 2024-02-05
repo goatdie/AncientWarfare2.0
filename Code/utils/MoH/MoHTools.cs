@@ -7,6 +7,8 @@ using NeoModLoader.api.attributes;
 using Figurebox.core;
 using System.Linq;
 using Figurebox.core.events;
+using Figurebox.Utils.extensions;
+
 namespace Figurebox.Utils.MoH;
 
 public class MoHTools
@@ -42,6 +44,7 @@ public class MoHTools
         }
         Debug.Log("天命值" + MOH_Value);
     }
+    [Obsolete("使用Kingdom.AW()替代")]
     public static AW_Kingdom ConvertKtoAW(Kingdom kingdom)
     {
         AW_Kingdom awk = kingdom as AW_Kingdom;
@@ -217,7 +220,7 @@ public class MoHTools
     public static Kingdom getWarTarget(Kingdom pInitiatorKingdom)
     {
         // 当 pInitiatorKingdom 是 Rebel 类型时，只关注周边的 Rebel 国家
-        if (ConvertKtoAW(pInitiatorKingdom).Rebel)
+        if (pInitiatorKingdom.AW().Rebel)
         {
             // 遍历 pInitiatorKingdom 的所有城市
             foreach (City city in pInitiatorKingdom.cities)
@@ -228,7 +231,7 @@ public class MoHTools
                 // 在邻近国家中寻找 Rebel 国家
                 foreach (Kingdom neighbour in neighbourKingdoms)
                 {
-                    if (ConvertKtoAW(neighbour).Rebel && neighbour != pInitiatorKingdom)
+                    if (neighbour.AW().Rebel && neighbour != pInitiatorKingdom)
                     {
                         // 返回第一个找到的 Rebel 邻近国家作为战争目标
                         return neighbour;
@@ -238,11 +241,11 @@ public class MoHTools
             // 如果没有找到 Rebel 邻近国家，返回 null
             return null;
         }
-        else if (IsMoHKingdom(ConvertKtoAW(pInitiatorKingdom)))
+        else if (IsMoHKingdom(pInitiatorKingdom.AW()))
         {
             foreach (Kingdom k in World.world.kingdoms.list_civs)
             {
-                if (ConvertKtoAW(k).Rebel)
+                if (k.AW().Rebel)
                 {
                     return k;
                 }

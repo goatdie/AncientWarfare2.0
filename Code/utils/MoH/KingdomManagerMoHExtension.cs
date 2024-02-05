@@ -1,3 +1,4 @@
+using Figurebox.Utils.extensions;
 using Figurebox.Utils.MoH;
 namespace Figurebox.core;
 
@@ -99,7 +100,7 @@ public partial class AW_KingdomManager
     {
         foreach (Kingdom k in this.list_civs)
         {
-            AW_Kingdom awKingdom = MoHTools.ConvertKtoAW(k);
+            AW_Kingdom awKingdom = k.AW();
             if (awKingdom.Rebel)
             {
                 return false; // 存在反叛国家
@@ -116,7 +117,7 @@ public partial class AW_KingdomManager
 
         foreach (Kingdom k in this.list_civs)
         {
-            AW_Kingdom awKingdom = MoHTools.ConvertKtoAW(k);
+            AW_Kingdom awKingdom = k.AW();
 
             // 如果国家是前MOH或Rebel或既不是前MOH也不是Rebel
             if ((awKingdom.FomerMoh && noRebels) || awKingdom.Rebel || (!awKingdom.FomerMoh && !awKingdom.Rebel))

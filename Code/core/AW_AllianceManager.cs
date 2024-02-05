@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Figurebox.attributes;
 using Figurebox.core.events;
+using Figurebox.Utils.extensions;
 using Figurebox.Utils.MoH;
 #if 一米_中文名
 using Chinese_Name;
@@ -73,7 +74,7 @@ public class AW_AllianceManager : AllianceManager
     }
     private void JoinAllianceWithVassals(Kingdom kingdom, Alliance alliance)
     {
-        var awKingdom = MoHTools.ConvertKtoAW(kingdom);
+        var awKingdom = kingdom.AW();
         if (awKingdom.IsSuzerain())
         {
             foreach (var vassal in awKingdom.GetVassals())

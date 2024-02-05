@@ -3,6 +3,8 @@ using Figurebox.Utils.MoH;
 using HarmonyLib;
 using Figurebox.attributes;
 using System.Collections.Generic;
+using Figurebox.Utils.extensions;
+
 namespace Figurebox.patch;
 
 internal class ClanManagerPatch
@@ -119,7 +121,7 @@ internal class ClanManagerPatch
             foreach (var city in otherKingdom.cities)
             {
                 AW_City awc = city as AW_City;
-                int yearsSinceOccupation = awc.GetYearsSinceOccupation(MoHTools.ConvertKtoAW(kingdom));
+                int yearsSinceOccupation = awc.GetYearsSinceOccupation(kingdom.AW());
                 bool isCurrentlyOwned = awc.kingdom == kingdom;
 
                 //Main.LogInfo($"城市 {awc.name} 脱离 {kingdom.data.name} 占领的年数：{yearsSinceOccupation}. 当前所有者是 {awc.kingdom?.data.name ?? "无"}.");
@@ -141,7 +143,7 @@ internal class ClanManagerPatch
         int targetPower = target.getArmy(); // 默认为目标国家自身的军事力量
 
         // 将 target 转换为 AW_Kingdom，以便访问 IsVassal 和 IsSuzerain 方法
-        AW_Kingdom awTarget = MoHTools.ConvertKtoAW(target);
+        AW_Kingdom awTarget = target.AW();
 
         // 检查目标国家是否是附庸或宗主国
         if (awTarget.IsVassal())
@@ -231,7 +233,7 @@ internal class ClanManagerPatch
         {
             return false;
         }
-        if (MoHTools.ConvertKtoAW(vassalTarget).CompareTitle(MoHTools.ConvertKtoAW(pActor.kingdom)))
+        if (vassalTarget.AW().CompareTitle(pActor.kingdom.AW()))
         {
             return false;
         }
@@ -326,7 +328,7 @@ internal class ClanManagerPatch
 
         // 确定战争的目标
         // 获取宗主国
-        AW_Kingdom suzerain = MoHTools.ConvertKtoAW(pActor.kingdom).suzerain;
+        AW_Kingdom suzerain = pActor.kingdom.AW().suzerain;
         if (suzerain == null)
         {
             return false;

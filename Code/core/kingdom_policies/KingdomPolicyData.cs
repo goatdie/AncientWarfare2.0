@@ -70,14 +70,16 @@ public class KingdomPolicyData : BaseSystemData
     /// </summary>
     public double year_start_timestamp = 0;
 
+    public KingdomTitle Title = KingdomTitle.Baron;
+    /// <summary>
+    ///     宗主国id，如果为空则表示没有宗主国
+    /// </summary>
+    public string suzerain_id = "";
     /// <summary>
     ///     获取指定类型的政策状态id
     /// </summary>
     /// <param name="state_type"></param>
     /// <returns></returns>
-    /// 
-    public KingdomTitle Title = KingdomTitle.Baron;
-
     public string GetPolicyStateId(string state_type)
     {
         return string.IsNullOrEmpty(state_type) ? "" : current_states.TryGetValue(state_type, out var ret) ? ret : "";

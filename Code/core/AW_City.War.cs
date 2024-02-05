@@ -5,6 +5,7 @@ using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core.dbs;
 using Figurebox.Utils;
+using Figurebox.Utils.extensions;
 using Figurebox.Utils.MoH;
 
 namespace Figurebox.core;
@@ -95,7 +96,7 @@ public partial class AW_City : City
         // 这里应该实现将loser设置为winner的附庸的逻辑
         CityTools.LogVassalWarEnd(loser, winner);
         // 假设SetKingdom方法用于设置附庸关系
-        MoHTools.ConvertKtoAW(loser).SetVassal(MoHTools.ConvertKtoAW(winner));
+        loser.AW().SetVassal(winner.AW());
     }
 
 
