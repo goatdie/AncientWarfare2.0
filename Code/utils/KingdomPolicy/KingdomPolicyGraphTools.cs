@@ -63,11 +63,22 @@ public class KingdomPolicyGraphTools
 
         CheckNodes(nodes.Values);
 
-        return nodes.Values
-                    .GroupBy(x => x.sort_value)
-                    .OrderBy(x => x.Key)
-                    .Select(x => x.Select(y => new KingdomPolicyGraphNode(y.asset)).ToList())
-                    .ToList();
+        var result = nodes.Values
+            .GroupBy(x => x.sort_value)
+            .OrderBy(x => x.Key)
+            .Select(x => x.Select(y => new KingdomPolicyGraphNode(y.asset)).ToList())
+            .ToList();
+
+        var tmp_dict = result.SelectMany(x => x)
+            .ToDictionary(x => (x.is_state ? "s_" : "p_") + x.asset.id);
+        foreach (var node in nodes.Values)
+        {
+            var graph_node = tmp_dict[(node.is_state ? "s_" : "p_") + node.asset.id];
+            foreach (var next_node in node.next_nodes)
+                graph_node.next.Add(tmp_dict[(next_node.is_state ? "s_" : "p_") + next_node.asset.id]);
+        }
+        
+        return result;
     }
 
     public static void CalcNodePositions(List<List<KingdomPolicyGraphNode>> pSortedPolicies)

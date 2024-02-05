@@ -53,7 +53,7 @@ public class KingdomPolicyGraphWindow : AbstractWideWindow<KingdomPolicyGraphWin
 
     public override void OnNormalEnable()
     {
-        if (_kingdom == null) _kingdom = (AW_Kingdom)Config.selectedKingdom;
+        _kingdom ??= (AW_Kingdom)Config.selectedKingdom;
 
         _sorted_policy_states =
             KingdomPolicyGraphTools.SortPoliciesWithStates(_kingdom.policy_data.policy_history);
@@ -92,6 +92,23 @@ public class KingdomPolicyGraphWindow : AbstractWideWindow<KingdomPolicyGraphWin
             transform.localPosition = node.position;
             transform.localScale = Vector3.one;
         }
+        DrawArrowLines();
+    }
+
+    private void DrawArrowLines()
+    {
+        foreach (var node in _sorted_policy_states.SelectMany(x=>x))
+        {
+            foreach (var next_node in node.next)
+            {
+                DrawArrowLine(node, next_node);
+            }
+        }
+    }
+
+    private void DrawArrowLine(KingdomPolicyGraphNode node, KingdomPolicyGraphNode next_node)
+    {
+        Main.LogInfo($"Draw arrow {node.position} -> {next_node.position}");
     }
 
     public override void OnNormalDisable()
