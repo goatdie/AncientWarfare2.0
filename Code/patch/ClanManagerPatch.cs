@@ -49,9 +49,17 @@ internal class ClanManagerPatch
         if (pActor.isFighting())
             return;
 
-        // 尝试启动夺回失地的情节
-        tryPlotReclaimWar(pActor, AssetManager.plots_library.get("reclaim_war"));
-        tryPlotVassalWar(pActor, AssetManager.plots_library.get("vassal_war"));
+        // 尝试启动
+        bool flag1 = tryPlotReclaimWar(pActor, AssetManager.plots_library.get("reclaim_war"));
+        bool flag2 = tryPlotVassalWar(pActor, AssetManager.plots_library.get("vassal_war"));
+        bool flagAbsorbVassal = tryPlotAbsorbVassal(pActor, AssetManager.plots_library.get("absorb_vassal"));
+        bool flagIndependence = tryPlotIndependence(pActor, AssetManager.plots_library.get("Independence_War"));
+
+        if (flagAbsorbVassal || flagIndependence || flag1 || flag2)
+        {
+            __instance._timestamp_last_plot = World.world.getCurWorldTime();
+        }
+
 
 
     }
@@ -214,6 +222,128 @@ internal class ClanManagerPatch
         if (!plot.checkInitiatorAndTargets())
         {
 
+            return false;
+        }
+
+        return true;
+    }
+    public static bool tryPlotAbsorbVassal(Actor pActor, PlotAsset pPlotAsset)
+    {
+        // 基本的情节检查
+        if (!basePlotChecks(pActor, pPlotAsset))
+        {
+            return false;
+        }
+        //Debug.Log("自检过");
+        // 确定吞并的附庸目标
+        Kingdom vassalTarget = GetVassalTargettoabsorb(pActor.kingdom);
+        if (vassalTarget == null)
+        {
+            return false;
+        }
+        //Debug.Log("目标过");
+        // 检查是否有足够的军事力量来进行吞并
+        if (!HasEnoughMilitaryPower(pActor.kingdom, vassalTarget))
+        {
+            return false;
+        }
+        //Debug.Log("军事过");
+        // 获取最新的附庸关系
+
+        //Debug.Log("过");
+        // 如果所有条件都满足，那么就创建一个新的情节，并设置目标国家
+        Plot plot = World.world.plots.newPlot(pActor, pPlotAsset);
+        plot.rememberInitiators(pActor);
+        plot.target_kingdom = vassalTarget;
+
+        if (!plot.checkInitiatorAndTargets())
+        {
+            // Debug.Log("tryPlotAbsorbVassal is missing start requirements");
+            return false;
+        }
+
+        return true;
+    }
+    public static Kingdom GetVassalTargettoabsorb(Kingdom kingdom)
+    {
+        AW_Kingdom k = kingdom as AW_Kingdom;
+        List<AW_Kingdom> vassals = k.GetVassals();
+
+        foreach (Kingdom vassal in vassals)
+        {
+
+            if (kingdom.getArmy() < vassal.getArmy())
+            { //Debug.Log("vasssss+"+kingdom.getArmy()+" "+vassal.getArmy());
+                continue;
+            }
+
+            if (vassal.hasEnemies())
+            { //Debug.Log("has ene");
+                continue;
+            }
+
+            // 如果附庸满足所有条件，那么它就是我们的目标
+            return vassal;
+        }
+
+        // 如果没有找到满足条件的附庸，那么返回 null
+        return null;
+    }
+    public static bool tryPlotIndependence(Actor pActor, PlotAsset pPlotAsset)
+    {
+        // 基本的情节检查
+        if (!basePlotChecks(pActor, pPlotAsset))
+        {
+            return false;
+        }
+
+
+
+        // 确定战争的目标
+        // 获取宗主国
+        AW_Kingdom suzerain = MoHTools.ConvertKtoAW(pActor.kingdom).suzerain;
+        if (suzerain == null)
+        {
+            return false;
+        }
+
+
+
+
+        // 如果所有条件都满足，那么就创建一个新的情节，并设置目标国家
+        Plot plot = World.world.plots.newPlot(pActor, pPlotAsset);
+        plot.rememberInitiators(pActor);
+        plot.target_kingdom = suzerain;
+        if (pActor.kingdom != null && pActor.kingdom.capital != null)
+        {
+            foreach (Kingdom neighbourKingdom in World.world.kingdoms.list_civs)
+            {
+                AW_Kingdom neighbour = neighbourKingdom as AW_Kingdom;
+                if (neighbour != null)
+                {
+
+
+                    if (suzerain != null)
+                    {
+                        KingdomOpinion opinion;
+                        opinion = BehaviourActionBase<Kingdom>.world.diplomacy.getOpinion(suzerain, neighbourKingdom);
+                        int adjustedTotal = opinion.total;
+                        if (neighbour.IsVassal() && neighbour.suzerain == suzerain)
+                        {
+                            adjustedTotal -= 1000;
+                        }
+                        if ((adjustedTotal <= 0) && neighbourKingdom.king != null && neighbourKingdom != suzerain && neighbourKingdom != pActor.kingdom)
+                        {
+                            plot.addSupporter(neighbourKingdom.king);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!plot.checkInitiatorAndTargets())
+        {
+            // Debug.Log("tryPlotindeWar is missing start requirements");
             return false;
         }
 

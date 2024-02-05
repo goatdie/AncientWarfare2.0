@@ -33,5 +33,6 @@ public class ActorJobLibrary : ExtendedLibrary<ActorJob>
         });
         t.addTask("guards_follow_king");
         t.addCondition(new CondHasUnitGroup(), true);
+        t.addCondition(new CondIsKing(), false);
     }
 }

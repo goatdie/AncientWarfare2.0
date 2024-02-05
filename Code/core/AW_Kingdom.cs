@@ -119,7 +119,7 @@ public partial class AW_Kingdom : Kingdom
     private bool IsSuitableForHeir(Actor member)
     {
         // 检查成员是否活着，年龄是否符合，并且不是当前的国王
-        return member.isAlive() && !member.isKing();
+        return member.isAlive() && !member.isKing() && member.getAge() > 16;
     }
 
 

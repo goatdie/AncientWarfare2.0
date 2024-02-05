@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Figurebox.Utils;
 using NCMS.Utils;
+using Figurebox.Utils.MoH;
 
 
 namespace Figurebox
@@ -46,9 +47,8 @@ namespace Figurebox
             tianminggo.calc = delegate (Kingdom pMain, Kingdom pTarget)
             {
                 int result = 0;
-                bool tianmingBoolValue;
-                pMain.data.get("tianmingbool", out tianmingBoolValue);
-                if (tianmingBoolValue)
+
+                if (MoHTools.IsMoHKingdom(MoHTools.ConvertKtoAW(pMain)))
                 {
                     result = -200;
                 }
@@ -65,22 +65,29 @@ namespace Figurebox
                 int result = 0;
                 string vassalId;
                 string vassaltarget;
-                pMain.data.get("vassels", out vassalId);
-                pTarget.data.get("vassels", out vassaltarget);
-                if (vassalId != pMain.data.id && vassalId == pTarget.data.id)
+                pMain.data.get("suzerain", out vassalId);
+                pTarget.data.get("suzerain", out vassaltarget);
+
+                // 如果pMain是pTarget的宗主国
+                if (vassalId == pTarget.data.id)
                 {
                     result = 1000;
                 }
-                if (vassaltarget == pMain.data.id && String.IsNullOrEmpty(vassalId))
+                // 如果pMain和pTarget有相同的宗主国
+                else if (vassalId == vassaltarget && !string.IsNullOrEmpty(vassalId))
                 {
                     result = 500;
                 }
-                if (vassalId == vassaltarget && !string.IsNullOrEmpty(vassalId))
+                // 如果pTarget是pMain的宗主国
+                else if (vassaltarget == pMain.data.id)
                 {
                     result = 500;
                 }
+
+
                 return result;
             };
+
         }
     }
 }
