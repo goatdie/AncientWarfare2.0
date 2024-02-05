@@ -277,21 +277,7 @@ namespace Figurebox //注意到的问题 附庸关系缺少结束年份 导致�
       // If the list of vassals is not empty, then the kingdom is a lord
       return vassals.Count > 0;
     }
-    public static int getSuzerainArmy(Kingdom suzerain)
-    {
-      int armyCount = suzerain.getArmy();
-
-      // Get all vassals of the suzerain
-      List<Kingdom> vassals = GetVassals(suzerain);
-
-      // Add up the army count of each vassal
-      foreach (Kingdom vassal in vassals)
-      {
-        armyCount += vassal.getArmy();
-      }
-
-      return armyCount;
-    }
+   
 
 
     [HarmonyPrefix]
@@ -1023,7 +1009,21 @@ SetKingdom(__result,kingdom);
       // 如果没有找到满足条件的附庸，那么返回 null
       return null;
     }
+ public static int getSuzerainArmy(Kingdom suzerain)
+    {
+      int armyCount = suzerain.getArmy();
 
+      // Get all vassals of the suzerain
+      List<Kingdom> vassals = GetVassals(suzerain);
+
+      // Add up the army count of each vassal
+      foreach (Kingdom vassal in vassals)
+      {
+        armyCount += vassal.getArmy();
+      }
+
+      return armyCount;
+    }
     public static bool HasEnoughMilitaryPower(Kingdom initiator, Kingdom target)
     {
       int initiatorPower = initiator.getArmy();

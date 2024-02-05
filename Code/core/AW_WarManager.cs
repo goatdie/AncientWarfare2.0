@@ -49,7 +49,11 @@ public class AW_WarManager : WarManager
         {
             foreach (var vassal in MoHTools.ConvertKtoAW(pAttacker).GetVassals())
             {
-                war.joinAttackers(vassal);
+                if (vassal != null)
+                {
+                    war.joinAttackers(vassal);
+                }
+
             }
         }
 
@@ -58,7 +62,10 @@ public class AW_WarManager : WarManager
         {
             foreach (var vassal in MoHTools.ConvertKtoAW(pDefender).GetVassals())
             {
-                war.joinDefenders(vassal);
+                if (vassal != null)
+                {
+                    war.joinDefenders(vassal);
+                }
             }
         }
         return war;

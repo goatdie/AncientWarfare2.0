@@ -138,21 +138,43 @@ internal class ClanManagerPatch
     public static bool HasEnoughMilitaryPower(Kingdom initiator, Kingdom target)
     {
         int initiatorPower = initiator.getArmy();
+        int targetPower = target.getArmy(); // 默认为目标国家自身的军事力量
 
-        int targetPower;
-        if (KingdomVassals.IsVassal(target))
+        // 将 target 转换为 AW_Kingdom，以便访问 IsVassal 和 IsSuzerain 方法
+        AW_Kingdom awTarget = MoHTools.ConvertKtoAW(target);
+
+        // 检查目标国家是否是附庸或宗主国
+        if (awTarget.IsVassal())
         {
-            Kingdom suzerain = KingdomVassals.GetSuzerain(target);
-            targetPower = KingdomVassals.getSuzerainArmy(suzerain);
+            // 如果是附庸或宗主国，计算其整个联盟的军事力量
+            targetPower = getSuzerainArmy(awTarget.suzerain);
         }
-        else
+        else if (awTarget.IsSuzerain())
         {
-            targetPower = target.getArmy();
+            targetPower = getSuzerainArmy(awTarget);
         }
 
+        // 计算发起者和目标国家军事力量的平均值
         int sum = (initiatorPower + targetPower) / 2;
 
+        // 判断发起者的军事力量是否大于或等于这个平均值
         return initiatorPower >= sum;
+    }
+
+    public static int getSuzerainArmy(AW_Kingdom suzerain)
+    {
+        int armyCount = suzerain.getArmy();
+
+        // Get all vassals of the suzerain
+        List<AW_Kingdom> vassals = suzerain.GetVassals();
+
+        // Add up the army count of each vassal
+        foreach (AW_Kingdom vassal in vassals)
+        {
+            armyCount += vassal.getArmy();
+        }
+
+        return armyCount;
     }
     public static bool tryPlotReclaimWar(Actor pActor, PlotAsset pPlotAsset)
     {
@@ -234,14 +256,14 @@ internal class ClanManagerPatch
         {
             return false;
         }
-        //Debug.Log("自检过");
+        Main.LogInfo($"吸收自检目标过:{pActor.kingdom.name}");
         // 确定吞并的附庸目标
         Kingdom vassalTarget = GetVassalTargettoabsorb(pActor.kingdom);
         if (vassalTarget == null)
         {
             return false;
         }
-        //Debug.Log("目标过");
+
         // 检查是否有足够的军事力量来进行吞并
         if (!HasEnoughMilitaryPower(pActor.kingdom, vassalTarget))
         {
@@ -269,20 +291,23 @@ internal class ClanManagerPatch
         AW_Kingdom k = kingdom as AW_Kingdom;
         List<AW_Kingdom> vassals = k.GetVassals();
 
-        foreach (Kingdom vassal in vassals)
+        foreach (AW_Kingdom vassal in vassals)
         {
 
-            if (kingdom.getArmy() < vassal.getArmy())
-            { //Debug.Log("vasssss+"+kingdom.getArmy()+" "+vassal.getArmy());
+            if (k.getArmy() < vassal.getArmy())
+            {
+                Main.LogInfo($"吸收目标军队过多:{vassal.name}");
                 continue;
             }
 
             if (vassal.hasEnemies())
-            { //Debug.Log("has ene");
+            {
+                Main.LogInfo($"吸收目标有敌人:{vassal.name}");
                 continue;
             }
 
             // 如果附庸满足所有条件，那么它就是我们的目标
+            Main.LogInfo($"吸收目标过:{vassal.name}");
             return vassal;
         }
 
