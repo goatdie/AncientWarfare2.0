@@ -26,7 +26,13 @@ public partial class AW_Kingdom
     {
         return suzerain != null;
     }
-
+    /// <summary>
+    ///   应对特殊清空的清空宗主国
+    /// </summary>
+    public void ClearSuzerain()
+    {
+        suzerain = null;
+    }
     public AW_Kingdom GetSuzerain()
     {
         return IsVassal() ? suzerain : null;

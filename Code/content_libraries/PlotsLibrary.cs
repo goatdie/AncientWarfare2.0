@@ -334,7 +334,7 @@ namespace Figurebox
             absorbvassal.check_supporters = checkMembersToRemoveDefault;
             absorbvassal.check_should_continue = (Plot pPlot) =>
             {
-                
+
                 // Ensure the target kingdom is a vassal of the initiator kingdom
                 // and the initiator kingdom does not have any enemies
                 // and the initiator kingdom's army size is not smaller than the target kingdom's
@@ -347,7 +347,7 @@ namespace Figurebox
             absorbvassal.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 // Ensure the target kingdom is a vassal of the initiator kingdom
-                if (!pKingdom.AW().IsVassal() || !pKingdom.AW().IsSuzerain() || pActor.kingdom.hasEnemies())
+                if (pKingdom.AW().IsVassal() || !pKingdom.AW().IsSuzerain() || pActor.kingdom.hasEnemies())
                 {
                     return false;
                 }
@@ -368,7 +368,7 @@ namespace Figurebox
                 List<City> vassalCities = new List<City>(vassalKingdom.cities);
                 EventsManager.Instance.ENDVassal(vassalKingdom, lordKingdom, true);
                 lordKingdom.vassals.Remove(vassalKingdom);
-                vassalKingdom.suzerain = null;
+                vassalKingdom.ClearSuzerain();
                 // Transfer all the cities of the vassal kingdom to the lord kingdom
                 foreach (City vassalCity in vassalCities)
                 {
@@ -676,7 +676,7 @@ namespace Figurebox
             usurper.city.removeLeader();
             City.makeLeader(usurper, usurper.city);
         }
-     
+
 
     }
 }

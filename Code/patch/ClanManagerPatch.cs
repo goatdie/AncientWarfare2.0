@@ -459,7 +459,7 @@ internal class ClanManagerPatch
         if (startTime != -1)
         {
             int yearsSince = World.world.mapStats.getYearsSince(startTime);
-            Main.LogInfo($"查到了，自附庸关系开始以来经过了 {yearsSince} 年");
+            // Main.LogInfo($"查到了，自附庸关系开始以来经过了 {yearsSince} 年");
             return yearsSince;
         }
 
