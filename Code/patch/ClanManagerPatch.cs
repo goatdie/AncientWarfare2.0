@@ -53,10 +53,12 @@ internal class ClanManagerPatch
             return;
 
         // 尝试启动
+
         bool flag1 = tryPlotReclaimWar(pActor, AssetManager.plots_library.get("reclaim_war"));
         bool flag2 = tryPlotVassalWar(pActor, AssetManager.plots_library.get("vassal_war"));
-        bool flagAbsorbVassal = tryPlotAbsorbVassal(pActor, AssetManager.plots_library.get("absorb_vassal"));
         bool flagIndependence = tryPlotIndependence(pActor, AssetManager.plots_library.get("Independence_War"));
+        bool flagAbsorbVassal = tryPlotAbsorbVassal(pActor, AssetManager.plots_library.get("absorb_vassal"));
+
 
         if (flagAbsorbVassal || flagIndependence || flag1 || flag2)
         {
@@ -267,6 +269,11 @@ internal class ClanManagerPatch
             return false;
         }
         if (GetYearsSinceVassalageStarted(pActor.kingdom.data.id, vassalTarget.data.id) <= 10)//暂时设置为10
+        {
+            return false;
+        }
+        double absorbTimestamp = pActor.kingdom.AW().absorb_timestamp;
+        if (absorbTimestamp > 0 && World.world.getYearsSince(absorbTimestamp) <= 10)
         {
             return false;
         }

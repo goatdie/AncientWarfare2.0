@@ -143,6 +143,7 @@ public partial class AW_City : City
             AW_War mohWar = null;
             foreach (War war in pWars)
             {
+                AW_War AW_war = war as AW_War;
                 if (war._asset == AssetManager.war_types_library.get("tianming"))
                 {
                     mohWar = war as AW_War;
@@ -184,7 +185,7 @@ public partial class AW_City : City
 
 
                 if (MoHTools.IsMoHKingdom(war.main_attacker.AW()) &&
-                    this == mohWar?._attackerCapital)
+                    this == AW_war?._attackerCapital)
                 {
                     // 天命国被反推丢失天命
                     MoHTools.Clear_MoHKingdom();
@@ -193,6 +194,12 @@ public partial class AW_City : City
                     {
                         war.main_defender.king.addTrait("first");
                     }
+                }
+                else if (MoHTools.IsMoHKingdom(war.main_defender.AW()) &&
+                     this == AW_war?._defenderCapital)
+                {
+                    MoHTools._moh_cities.Clear();
+                    MoHTools._moh_cities.AddRange(MoHTools.MoHKingdom.cities);
                 }
 
             }

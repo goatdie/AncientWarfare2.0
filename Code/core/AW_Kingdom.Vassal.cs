@@ -16,6 +16,10 @@ public partial class AW_Kingdom
     ///   宗主国
     /// </summary>
     public AW_Kingdom suzerain { get; private set; }
+    /// <summary>
+    ///   吞并的时间戳
+    /// </summary>
+    public double absorb_timestamp;
 
     /// <summary>
     ///   附庸

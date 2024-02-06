@@ -277,6 +277,10 @@ namespace Figurebox
 
                     return false;
                 }
+                if (!DiplomacyHelpers.isWarNeeded(pKingdom))
+                {
+                    return false;
+                }
 
                 // 检查是否已经有正在进行的附庸战
                 if (pKingdom.hasAlliance())
@@ -376,7 +380,7 @@ namespace Figurebox
                 {
                     vassalCity.joinAnotherKingdom(lordKingdom);
                 }
-                KingdomVassals.LastAbsorbVassalYears[pPlot.initiator_kingdom.data.id] = World.world.mapStats.getCurrentYear();
+                lordKingdom.absorb_timestamp = World.world.getCreationTime();
                 return true;
             };
 
