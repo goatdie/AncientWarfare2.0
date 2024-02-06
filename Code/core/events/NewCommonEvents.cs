@@ -140,13 +140,13 @@ public static class NewCommonEvents
         {
             using (var cmd = new SQLiteCommand(pManager.OperatingDB))
             {
-                cmd.CommandText = "SELECT VAID FROM KingRule WHERE KID = @KID ORDER BY END_TIME DESC LIMIT 1";
+                cmd.CommandText = "SELECT AID FROM KingRule WHERE KID = @KID ORDER BY END_TIME DESC LIMIT 1";
                 cmd.Parameters.AddWithValue("@KID", pKingdom.id);
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        kingId = reader.GetString(reader.GetOrdinal("VAID"));
+                        kingId = reader.GetString(reader.GetOrdinal("AID"));
                     }
                 }
             }

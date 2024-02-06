@@ -80,16 +80,17 @@ public class MoHTools
     }
     public static AW_Kingdom FindMostPowerfulKingdom(List<AW_Kingdom> kingdoms)
     {
-        if (kingdoms == null || kingdoms.Count == 0)
-        {
-            return null; // 如果没有王国或王国列表为空，则返回null
-        }
-
         AW_Kingdom mostPowerfulKingdom = null;
         int highestValue = 0;
 
         foreach (var kingdom in kingdoms)
         {
+            // 附庸国不考虑
+            if (kingdom.IsVassal())
+            {
+                continue;
+            }
+
             int kingdomValue = CalculateKingdomValue(kingdom);
             if (kingdomValue > highestValue)
             {
@@ -111,12 +112,21 @@ public class MoHTools
 
     public static int CalculateKingdomValue(AW_Kingdom k)
     {
+
         string social_level_state_id = k.policy_data.GetPolicyStateId(PolicyStateType.social_level);
-        if (string.IsNullOrEmpty(social_level_state_id))
-        {
-            return (int)KingdomPolicyStateLibrary.DefaultState.calc_kingdom_strength(k);
+        int baseValue = string.IsNullOrEmpty(social_level_state_id)
+            ? (int)KingdomPolicyStateLibrary.DefaultState.calc_kingdom_strength(k)
+            : (int)(KingdomPolicyStateLibrary.Instance.get(social_level_state_id)?.calc_kingdom_strength(k) ?? 0);
+
+        if (k.IsSuzerain())
+        {  //将附庸也算本国国力但是0.6的权重
+            foreach (var vassal in k.GetVassals())
+            {
+                baseValue += (int)(CalculateKingdomValue(vassal) * 0.6);
+            }
         }
-        return (int)(KingdomPolicyStateLibrary.Instance.get(social_level_state_id)?.calc_kingdom_strength(k) ?? 0);
+
+        return baseValue;
     }
     /// <summary>
     ///     消耗天命, 返回是否成功

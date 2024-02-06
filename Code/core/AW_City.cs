@@ -182,20 +182,19 @@ public partial class AW_City : City
                 }
 
 
-                if (war._asset == AssetManager.war_types_library.get("conquest"))
+
+                if (MoHTools.IsMoHKingdom(war.main_attacker.AW()) &&
+                    this == mohWar?._attackerCapital)
                 {
-                    if (MoHTools.IsMoHKingdom(war.main_attacker.AW()) &&
-                        this == mohWar._attackerCapital)
+                    // 天命国被反推丢失天命
+                    MoHTools.Clear_MoHKingdom();
+                    MoHTools.SetMoHKingdom(war.main_defender.AW());
+                    if (war.main_defender.king != null)
                     {
-                        // 天命国被反推丢失天命
-                        MoHTools.Clear_MoHKingdom();
-                        MoHTools.SetMoHKingdom(war.main_defender.AW());
-                        if (war.main_defender.king != null)
-                        {
-                            war.main_defender.king.addTrait("first");
-                        }
+                        war.main_defender.king.addTrait("first");
                     }
                 }
+
             }
 
             // 特定情况的操作

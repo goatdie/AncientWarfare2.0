@@ -28,11 +28,11 @@ internal class ClanManagerPatch
         {
             return false; // 不执行原方法，因为有收复目标
         }
-        Kingdom vassaltarget = GetVassalTarget(pActor.kingdom);
-        if (vassaltarget != null && vassaltarget == warTarget)
-        {
-            return false;
-        }
+        /* Kingdom vassaltarget = GetVassalTarget(pActor.kingdom);
+         if (vassaltarget != null && vassaltarget == warTarget)
+         {
+             return false;
+         }*/
         Plot plot = World.world.plots.newPlot(pActor, pPlotAsset);
         plot.rememberInitiators(pActor);
         plot.target_kingdom = warTarget;
@@ -147,12 +147,12 @@ internal class ClanManagerPatch
         AW_Kingdom awTarget = target.AW();
 
         // 检查目标国家是否是附庸或宗主国
-        if (awTarget.IsVassal())
+        if (awTarget.IsVassal() && awTarget.suzerain != initiator)
         {
             // 如果是附庸或宗主国，计算其整个联盟的军事力量
             targetPower = getSuzerainArmy(awTarget.suzerain);
         }
-        else if (awTarget.IsSuzerain())
+        else if (awTarget.IsSuzerain() && awTarget != initiator.AW().suzerain)
         {
             targetPower = getSuzerainArmy(awTarget);
         }
@@ -208,12 +208,12 @@ internal class ClanManagerPatch
     public static bool tryPlotVassalWar(Actor pActor, PlotAsset pPlotAsset)
     {
         // 基本的情节检查
-       
+
         if (!basePlotChecks(pActor, pPlotAsset))
         {
             return false;
         }
-        
+
         // 检查自上次附庸战争以来是否已经过了足够的时间
 
 
@@ -270,6 +270,7 @@ internal class ClanManagerPatch
         {
             return false;
         }
+        Main.LogInfo($"吞并 目标{vassalTarget.name}");
         // 检查是否有足够的军事力量来进行吞并
         if (!HasEnoughMilitaryPower(pActor.kingdom, vassalTarget))
         {
@@ -422,7 +423,7 @@ internal class ClanManagerPatch
             // ...
 
             // If all conditions are satisfied, then otherKingdom is a possible vassal target
-            
+
             return otherKingdom;
         }
 
@@ -460,7 +461,7 @@ internal class ClanManagerPatch
         if (startTime != -1)
         {
             int yearsSince = World.world.mapStats.getYearsSince(startTime);
-            // Main.LogInfo($"查到了，自附庸关系开始以来经过了 {yearsSince} 年");
+            Main.LogInfo($"查到了，自附庸关系开始以来经过了 {yearsSince} 年{vassalId}");
             return yearsSince;
         }
 

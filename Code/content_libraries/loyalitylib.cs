@@ -87,6 +87,32 @@ namespace Figurebox
 
                 return result;
             };
+            OpinionAsset vasselsrebel = new OpinionAsset();
+            vasselsrebel.id = "vasselsrebel";
+            vasselsrebel.translation_key = "vasselsrebel";
+            AssetManager.opinion_library.add(vasselsrebel);
+            vasselsrebel.calc = delegate (Kingdom pMain, Kingdom pTarget)
+            {
+                int result = 0;
+                string mainSuzerainId = pMain.AW().policy_data.suzerain_id;
+                string targetSuzerainId = pTarget.AW().policy_data.suzerain_id;
+
+                // 如果pMain是附庸国并且宗主国是pTarget
+                if (pMain.AW().IsVassal() && pTarget.data.id == mainSuzerainId)
+                {
+                    // 比较领土和军队数量
+                    bool hasMoreTerritoryAndArmy = pMain.AW().countZones() > pTarget.AW().countZones() &&
+                                                    pMain.AW().getArmy() > pTarget.AW().getArmy();
+
+                    // 如果附庸国的领土和军队数量都比宗主国多，则减少好感度
+                    if (hasMoreTerritoryAndArmy)
+                    {
+                        result -= 200;
+                    }
+                }
+
+                return result;
+            };
 
         }
     }

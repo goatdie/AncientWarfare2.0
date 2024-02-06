@@ -58,34 +58,53 @@ public class AW_WarManager : WarManager
         }
 
         // 如果攻击者是附庸国，则将其宗主国加入攻击方
-        if (pAttacker.AW().IsVassal())
+        if (pAttacker.AW().IsVassal() && pDefender != pAttacker.AW().suzerain)
         {
             var suzerain = pAttacker.AW().suzerain;
             if (suzerain != null)
             {
                 war.joinAttackers(suzerain);
+                // 将宗主国的其他附庸也加入攻击方
+                foreach (var otherVassal in suzerain.GetVassals())
+                {
+                    if (otherVassal != pAttacker.AW()) // 避免重复加入当前附庸
+                    {
+                        war.joinAttackers(otherVassal);
+                    }
+                }
             }
         }
 
-        // 检查防御者是否是宗主国
-        if (pDefender.AW().IsSuzerain())
+
+        if (pDefender.AW().IsSuzerain() && pAttacker.AW().suzerain != pDefender.AW())
         {
+
+            // 检查宗主国的所有附庸，确定哪些支持独立的附庸国
             foreach (var vassal in pDefender.AW().GetVassals())
             {
-                if (vassal != null)
+                if (vassal != null) // 假设存在一个标记支持独立的属性
                 {
+                    // 将支持独立的附庸国加入攻击方
                     war.joinDefenders(vassal);
                 }
             }
         }
 
-        // 如果防御者是附庸国，则将其宗主国加入防御方
-        if (pDefender.AW().IsVassal())
+
+        if (pDefender.AW().IsVassal() && pAttacker != pDefender.AW().suzerain)
         {
             var suzerain = pDefender.AW().suzerain;
             if (suzerain != null)
             {
                 war.joinDefenders(suzerain);
+                // 将宗主国的其他附庸也加入防御方
+                foreach (var otherVassal in suzerain.GetVassals())
+                {
+                    if (otherVassal != pDefender.AW()) // 避免重复加入当前附庸
+                    {
+                        war.joinDefenders(otherVassal);
+                    }
+                }
             }
         }
 

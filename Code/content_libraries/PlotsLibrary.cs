@@ -63,7 +63,7 @@ namespace Figurebox
                 {
                     return false;
                 }
-                if (KingdomVassals.IsVassal(pKingdom)) { return false; }
+                if (pKingdom.AW().IsVassal()) { return false; }
                 /*if (!HasLostTerritories(pKingdom))
                 {
                      Debug.Log("没有可收回领土"+pKingdom.data.name);
@@ -272,11 +272,11 @@ namespace Figurebox
 
                     return false;
                 }
-                /* if (pKingdom.AW().policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
-                 {
+                if (pKingdom.AW().policy_data.Title == KingdomPolicyData.KingdomTitle.Baron)
+                {
 
-                     return false;
-                 }*/
+                    return false;
+                }
 
                 // 检查是否已经有正在进行的附庸战
                 if (pKingdom.hasAlliance())
@@ -341,7 +341,7 @@ namespace Figurebox
                 // and the initiator kingdom does not have any enemies
                 // and the initiator kingdom's army size is not smaller than the target kingdom's
                 return pPlot.initiator_kingdom.getArmy() >= pPlot.target_kingdom.getArmy()
-                       && MoHTools.ConvertKtoAW(pPlot.target_kingdom).IsVassal()
+                       && pPlot.target_kingdom.AW().IsVassal()
                        && !pPlot.initiator_kingdom.hasEnemies();
             };
 
@@ -407,7 +407,7 @@ namespace Figurebox
             IndependenceWar.check_launch = delegate (Actor pActor, Kingdom pKingdom)
             {
                 AW_Kingdom lord = pKingdom.AW().suzerain;
-                if (lord != null && (World.world.diplomacy.getOpinion(pKingdom, lord).total - 1000) >= 0)
+                if (lord != null && (World.world.diplomacy.getOpinion(pKingdom, lord).total - 950) >= 0)
                 {
                     return false;
                 }
@@ -444,7 +444,7 @@ namespace Figurebox
 
 
 
-                return pPlot.target_kingdom.AW().IsVassal()
+                return !pPlot.target_kingdom.AW().IsVassal()
                        && pPlot.target_kingdom.AW().IsSuzerain()
                        && !pPlot.initiator_kingdom.hasEnemies() && pPlot.initiator_kingdom.data.royal_clan_id != pPlot.target_kingdom.data.royal_clan_id;
             };
@@ -455,9 +455,9 @@ namespace Figurebox
                 AW_Kingdom lord = pPlot.target_kingdom as AW_Kingdom;
 
                 // 调用新的函数来移除附庸关系
-                vassal.RemoveSuzerain();
 
                 War war = World.world.diplomacy.startWar(vassal, lord, AssetManager.war_types_library.get("independence_war"), true);
+                vassal.RemoveSuzerain();
 
                 foreach (Actor actor in pPlot.supporters)
                 {
@@ -466,17 +466,17 @@ namespace Figurebox
                     if (kingdom.isAlive() && kingdom.countCities() != 0 && !kingdom.hasEnemies() && kingdom.king != null)
                     {
                         // if kingdom is a vassal of the same suzerain as the initiator kingdom
-                        if (kingdom.AW().IsVassal() && kingdom.AW().suzerain == MoHTools.ConvertKtoAW(pPlot.target_kingdom))
+                        if (kingdom.AW().IsVassal() && kingdom.AW().suzerain == pPlot.target_kingdom.AW())
                         {
                             // make kingdom independent
 
                             kingdom.AW().RemoveSuzerain();
-
+                            // join war
+                            war.joinAttackers(kingdom);
 
                         }
 
-                        // join war
-                        war.joinAttackers(kingdom);
+
                     }
                 }
 
@@ -512,6 +512,11 @@ namespace Figurebox
                 {
 
                     return true;
+                }
+                if (pKingdom.AW().IsVassal())
+                {
+
+                    return false;
                 }
 
                 if (!DiplomacyHelpers.isWarNeeded(pKingdom))
@@ -562,7 +567,7 @@ namespace Figurebox
             var rebellion = AssetManager.plots_library.get("rebellion");
             rebellion.action = delegate (Plot pPlot)
             {
-                if (MoHTools.IsMoHKingdom(pPlot.initiator_city.kingdom.AW()) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).Rebel) || (MoHTools.ConvertKtoAW(pPlot.initiator_city.kingdom).FomerMoh))
+                if (MoHTools.IsMoHKingdom(pPlot.initiator_city.kingdom.AW()) || pPlot.initiator_city.kingdom.AW().Rebel || pPlot.initiator_city.kingdom.AW().FomerMoh)
                 {
                     startTianmingRebellion(pPlot.initiator_city, pPlot.getLeader(), pPlot);
                 }

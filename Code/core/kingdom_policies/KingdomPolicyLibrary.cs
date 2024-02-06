@@ -126,6 +126,15 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
     public static bool CanBePromoted(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
         int zoneCount = kingdom.countZones();
+        // 如果是宗主国，将附庸国的疆土也考虑进去，但以较低的权重计算
+        if (kingdom.IsSuzerain())
+        {
+            foreach (var vassal in kingdom.GetVassals())
+            {
+                // 假设附庸国的疆土权重为0.6
+                zoneCount += (int)(vassal.countZones() * 0.65);
+            }
+        }
 
         switch (kingdom.policy_data.Title)
         {
