@@ -22,9 +22,10 @@ namespace Figurebox
     }
     public static void togglefigure()
     {
-      if (PowerButtons.GetToggleValue("historical_figure"))
+      if (!PowerButtons.GetToggleValue("historical_figure"))
       {
         togglefigurevalue = false;
+
         return;
       }
       togglefigurevalue = true;
@@ -102,7 +103,7 @@ namespace Figurebox
         List<Actor> actorList = k.units.getSimpleList();
         foreach (Actor actor in actorList)
         {
-          if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing()&&!actor.isCityLeader()) && actor.hasTrait("first"))
+          if (!(actor == null) && actor.isAlive() && !actor.isInMagnet() && (!actor.isKing() && !actor.isCityLeader()) && actor.hasTrait("first"))
           {
             Vector3 pPos = actor.currentPosition;
             pPos.y -= 3f;
@@ -120,7 +121,7 @@ namespace Figurebox
     [HarmonyPatch(typeof(ActorManager), "spawnPopPoint")]
     public static void Historical_Postfix(ActorManager __instance, ActorData pData, Actor __result)
     {
-      if (togglefigurevalue == false) { return; }
+
       ActorData actorStatus = __result.data;
       Race race = __result.race;
       BaseStats actorStats = __result.stats; //狗马把一堆名字换了
@@ -131,14 +132,14 @@ namespace Figurebox
       Clan clan = BehaviourActionBase<Kingdom>.world.clans.get(pData.clan);
       foreach (Actor actor in actorList)
       {
-        if (actor.hasTrait("figure") || actor.hasTrait("first") || MoHTools.MoHKingdom!=null)
+        if (actor.hasTrait("figure") || actor.hasTrait("first") || MoHTools.MoHKingdom != null)
         { //Debug.Log("有人来"+actor.getName());
           hasFirstTrait = true;
           break;
         }
       }
 
-      if (race.civilization && !hasFirstTrait)
+      if (race.civilization && !hasFirstTrait && togglefigurevalue)
       {
 
         string text0 = "姬发"; // this for the name(The Ricardo is a template for how to make your own figure)
