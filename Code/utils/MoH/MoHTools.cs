@@ -6,6 +6,7 @@ using Figurebox.attributes;
 using NeoModLoader.api.attributes;
 using Figurebox.core;
 using System.Linq;
+using Figurebox.content;
 using Figurebox.core.events;
 using Figurebox.Utils.extensions;
 
@@ -34,7 +35,7 @@ public class MoHTools
     public static void SetMoHKingdom(AW_Kingdom kingdom)
     {
         MoHKingdom = kingdom;
-        kingdom.SetTitle(KingdomPolicyData.KingdomTitle.Emperor);
+        kingdom.SetTitle(AW_KingdomDataAddition.KingdomTitle.Emperor);
         MOH_Value = 30;
         if (kingdom.king != null)
         {
@@ -113,7 +114,7 @@ public class MoHTools
     public static int CalculateKingdomValue(AW_Kingdom k)
     {
 
-        string social_level_state_id = k.policy_data.GetPolicyStateId(PolicyStateType.social_level);
+        string social_level_state_id = k.addition_data.GetPolicyStateId(PolicyStateType.social_level);
         int baseValue = string.IsNullOrEmpty(social_level_state_id)
             ? (int)KingdomPolicyStateLibrary.DefaultState.calc_kingdom_strength(k)
             : (int)(KingdomPolicyStateLibrary.Instance.get(social_level_state_id)?.calc_kingdom_strength(k) ?? 0);

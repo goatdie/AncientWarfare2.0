@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "Ot0ozdLPmO1qrVhoJIbflRA2FJ8ln7Bvs6JzXZPC7N2Sw1boIGN1g9TBc//CV0l7VWi1L7aUpn5/2bPpyOkDew==",
+  "dgSpecHash": "xeKirlRLIEbANYTbH0XipgAJE+NwZcSxz+WOqE806m19DuLzRxqW3PDrmACm96cXk56wA4OHkW1vMIjK7OXKoA==",
   "success": true,
-  "projectFilePath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\AncientWarfare2.csproj",
+  "projectFilePath": "/home/inmny/Games/steam/worldbox/Mods/AncientWarfare2.0/AncientWarfare2.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\1\\.nuget\\packages\\c5\\2.5.3\\c5.2.5.3.nupkg.sha512",
-    "C:\\Users\\1\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.3\\microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
-    "C:\\Users\\1\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net48\\1.0.3\\microsoft.netframework.referenceassemblies.net48.1.0.3.nupkg.sha512"
+    "/home/inmny/.nuget/packages/c5/2.5.3/c5.2.5.3.nupkg.sha512",
+    "/home/inmny/.nuget/packages/microsoft.netframework.referenceassemblies/1.0.3/microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
+    "/home/inmny/.nuget/packages/microsoft.netframework.referenceassemblies.net48/1.0.3/microsoft.netframework.referenceassemblies.net48.1.0.3.nupkg.sha512"
   ],
   "logs": []
 }

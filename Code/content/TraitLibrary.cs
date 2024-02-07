@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.abstracts;
 using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.Utils;
 using Figurebox.Utils.MoH;
 
-namespace Figurebox
+namespace Figurebox.content
 {
-    class Traits
+    class TraitLibrary : ExtendedLibrary<ActorTrait>
     {
         public static Dictionary<string, int> LastUsurpationYears = new Dictionary<string, int>();
 
         private readonly HashSet<ActorTrait> social_identity_traits = new();
 
-        internal void init()
+        protected override void init()
         {
             /*BaseStatAsset mod_health =  AssetManager.base_stats_library.get("mod_health");
               BaseStatAsset stewardship =  AssetManager.base_stats_library.get("stewardship");
@@ -25,7 +26,7 @@ namespace Figurebox
 
             void add_and_unlock_trait(ActorTrait trait)
             {
-                AssetManager.traits.add(trait);
+                add(trait);
                 PlayerConfig.unlockTrait(trait.id);
             }
 
@@ -35,10 +36,8 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconfigure",
                 birth = 0f,
                 inherit = 0f,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroupLibrary.aw2
             };
-            BaseStatAsset mod_health = AssetManager.base_stats_library.get("mod_health");
-            BaseStatAsset stewardship = AssetManager.base_stats_library.get("stewardship");
             add_and_unlock_trait(Figure);
             Figure.base_stats[S.mod_health] = +15f;
             Figure.base_stats[S.stewardship] = +10;
@@ -49,7 +48,7 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconzhuhou",
                 birth = 0f,
                 inherit = 0f,
-                group_id = TraitGroups.social_identity_group
+                group_id = TraitGroupLibrary.social_identity_group
             };
 
             add_and_unlock_trait(zhuhou);
@@ -64,7 +63,7 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconTianming",
                 inherit = 0f,
                 birth = 0f,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroupLibrary.aw2
                 //opposite = "shunming,yuming",
             };
 
@@ -81,7 +80,7 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconfirst",
                 inherit = 0f,
                 birth = 0f,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroupLibrary.aw2
                 //opposite = "shunming,yuming",
             };
             first.action_special_effect =
@@ -96,7 +95,7 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconformerking",
                 birth = 0f,
                 inherit = 0f,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroupLibrary.aw2
             };
             add_and_unlock_trait(formerking);
             formerking.action_special_effect = (WorldAction)Delegate.Combine(formerking.action_special_effect,
@@ -110,7 +109,7 @@ namespace Figurebox
                 // opposite = "将领",
                 inherit = 0f,
                 birth = 0f,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroupLibrary.aw2
             };
             jinwei.base_stats[S.scale] += 0.03f;
             jinwei.base_stats[S.mod_health] = +2f;
@@ -127,7 +126,7 @@ namespace Figurebox
                 birth = 0f,
                 inherit = 0f,
                 sameTraitMod = 20,
-                group_id = TraitGroups.aw2
+                group_id = TraitGroupLibrary.aw2
             };
             add_and_unlock_trait(rebel);
             rebel.base_stats[S.mod_health] = +2f;
@@ -142,7 +141,7 @@ namespace Figurebox
                 path_icon = "ui/Icons/traits/iconguizu",
                 birth = 0f,
                 inherit = 0f,
-                group_id = TraitGroups.social_identity_group
+                group_id = TraitGroupLibrary.social_identity_group
             };
             add_and_unlock_trait(guizu);
             guizu.base_stats[S.fertility] += 35f;
@@ -170,7 +169,7 @@ namespace Figurebox
         {
             pActorTrait.needs_to_be_explored = false;
             pActorTrait.unlocked_with_achievement = false;
-            pActorTrait.group_id = TraitGroups.social_identity_group;
+            pActorTrait.group_id = TraitGroupLibrary.social_identity_group;
             AssetManager.traits.add(pActorTrait);
             var opposite_traits = pActorTrait.oppositeArr == null
                 ? new List<string>()

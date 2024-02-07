@@ -56,7 +56,7 @@ public class KingdomPolicyGraphWindow : AbstractWideWindow<KingdomPolicyGraphWin
         _kingdom ??= (AW_Kingdom)Config.selectedKingdom;
 
         _sorted_policy_states =
-            KingdomPolicyGraphTools.SortPoliciesWithStates(_kingdom.policy_data.policy_history);
+            KingdomPolicyGraphTools.SortPoliciesWithStates(_kingdom.addition_data.policy_history);
 
         KingdomPolicyGraphTools.CalcNodePositions(_sorted_policy_states);
         Main.LogInfo("Sorted Policy (States):");

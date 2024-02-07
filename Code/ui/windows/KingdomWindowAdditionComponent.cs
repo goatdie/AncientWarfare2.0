@@ -1,4 +1,5 @@
 using Figurebox.constants;
+using Figurebox.content;
 using Figurebox.core;
 using Figurebox.prefabs;
 using Figurebox.ui.prefabs;
@@ -56,20 +57,20 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
 
         executing_policy.gameObject.SetActive(true);
         executing_policy.Setup(
-            string.IsNullOrEmpty(kingdom.policy_data.current_policy_id) ||
-            kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed
+            string.IsNullOrEmpty(kingdom.addition_data.current_policy_id) ||
+            kingdom.addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.Completed
                 ? null
-                : KingdomPolicyLibrary.Instance.get(kingdom.policy_data.current_policy_id));
+                : KingdomPolicyLibrary.Instance.get(kingdom.addition_data.current_policy_id));
         executing_policy.SetSize(new Vector2(16, 16));
         RectTransform bgRect = executing_policy.bg.GetComponent<RectTransform>();
         bgRect.sizeDelta = new Vector2(60, 16);
-        executing_policy.tip_data.tip_description = kingdom.policy_data.p_progress.ToString();
-        executing_policy.tip_data.tip_description_2 = kingdom.policy_data.p_status.ToString();
+        executing_policy.tip_data.tip_description = kingdom.addition_data.p_progress.ToString();
+        executing_policy.tip_data.tip_description_2 = kingdom.addition_data.p_status.ToString();
 
         current_state.gameObject.SetActive(true);
         current_state.Setup(
             KingdomPolicyStateLibrary.Instance.get(
-                kingdom.policy_data.GetPolicyStateId(PolicyStateType.social_level)) ??
+                kingdom.addition_data.GetPolicyStateId(PolicyStateType.social_level)) ??
             KingdomPolicyStateLibrary.DefaultState, null);
         current_state.SetSize(new Vector2(16, 16));
         bgRect = current_state.bg.GetComponent<RectTransform>();

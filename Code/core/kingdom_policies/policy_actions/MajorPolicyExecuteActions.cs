@@ -1,4 +1,5 @@
 using Figurebox.core;
+using Figurebox.core.kingdom_policies;
 using NeoModLoader.api.attributes;
 
 namespace Figurebox.policy_actions;
@@ -8,15 +9,15 @@ internal static class MajorPolicyExecuteActions
     [Hotfixable]
     public static void StartSlaves(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_progress == 0)
-            Main.LogInfo($"{kingdom.name} 正在尝试推行奴隶制 {kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.addition_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试推行奴隶制 {kingdom.addition_data.p_progress} / {policy.cost_in_progress}");
     }
 
     [Hotfixable]
     public static void EnforceSlavesControl(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_progress == 0)
-            Main.LogInfo($"{kingdom.name} 正在尝试强化奴隶控制 {kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.addition_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试强化奴隶控制 {kingdom.addition_data.p_progress} / {policy.cost_in_progress}");
     }
 
     [Hotfixable]
@@ -26,17 +27,17 @@ internal static class MajorPolicyExecuteActions
     [Hotfixable]
     public static void StartHalfAristocrat(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_progress == 0)
-            Main.LogInfo($"{kingdom.name} 正在尝试推行半奴隶制半封建 {kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.addition_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试推行半奴隶制半封建 {kingdom.addition_data.p_progress} / {policy.cost_in_progress}");
     }
 
     [Hotfixable]
     public static void NameIntegration(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_progress == 0)
-            Main.LogInfo($"{kingdom.name} 正在尝试推行姓氏合流{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
-        if (kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress &&
-            kingdom.policy_data.p_progress == 0)
+        if (kingdom.addition_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试推行姓氏合流{kingdom.addition_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.InProgress &&
+            kingdom.addition_data.p_progress == 0)
         {
             kingdom.ToggleNameIntegration(true);
         }
@@ -45,10 +46,10 @@ internal static class MajorPolicyExecuteActions
     [Hotfixable]
     public static void MakeNewYearName(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_progress == 0)
-            Main.LogInfo($"{kingdom.name} 正在尝试推行建立新年号{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
-        if (kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress &&
-            kingdom.policy_data.p_progress == 0)
+        if (kingdom.addition_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试推行建立新年号{kingdom.addition_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.InProgress &&
+            kingdom.addition_data.p_progress == 0)
         {
             KingdomYearName.Make_New_YearName(kingdom);
         }
@@ -57,10 +58,10 @@ internal static class MajorPolicyExecuteActions
     [Hotfixable]
     public static void ChangeCapital(KingdomPolicyAsset policy, AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_progress == 0)
-            Main.LogInfo($"{kingdom.name} 正在尝试推行迁都{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
-        if (kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress &&
-            kingdom.policy_data.p_progress == 0)
+        if (kingdom.addition_data.p_progress == 0)
+            Main.LogInfo($"{kingdom.name} 正在尝试推行迁都{kingdom.addition_data.p_progress} / {policy.cost_in_progress}");
+        if (kingdom.addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.InProgress &&
+            kingdom.addition_data.p_progress == 0)
         {
             AW_Kingdom.SetNewCapital(kingdom);
         }
@@ -71,11 +72,11 @@ internal static class MajorPolicyExecuteActions
     {
         //Main.LogInfo($"{kingdom.name} 正在尝试提升爵位{kingdom.policy_data.p_progress} / {policy.cost_in_progress}");
 
-        if (kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.InProgress &&
-            kingdom.policy_data.p_progress == 0)
+        if (kingdom.addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.InProgress &&
+            kingdom.addition_data.p_progress == 0)
         {
             kingdom.PromoteTitle();
-            kingdom.policy_data.p_promotion_done = World.world.mapStats.worldTime;
+            kingdom.addition_data.p_promotion_done = World.world.mapStats.worldTime;
             KingdomYearName.changeYearname(kingdom);
         }
     }

@@ -1,5 +1,7 @@
 using ai.behaviours;
+using Figurebox.content;
 using Figurebox.core;
+using Figurebox.core.kingdom_policies;
 
 namespace Figurebox.ai;
 

@@ -4,7 +4,7 @@ using Figurebox.core;
 
 namespace Figurebox;
 
-public class KingdomPolicyData : BaseSystemData
+public class AW_KingdomDataAddition : BaseSystemData
 {
     public enum PolicyStatus
     {

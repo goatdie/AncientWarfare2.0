@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.abstracts;
 using UnityEngine;
 
-namespace Figurebox
+namespace Figurebox.content
 {
-    class MoreBuildings
+    class BuildingAssetLibrary : ExtendedLibrary<BuildingAsset>
     {
-        public void init()
+        protected override void init()
         {
             tower_init();
             add_Xia();

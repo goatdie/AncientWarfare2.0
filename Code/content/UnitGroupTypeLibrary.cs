@@ -1,7 +1,7 @@
 using Figurebox.abstracts;
 using Figurebox.core;
 
-namespace Figurebox.content_libraries;
+namespace Figurebox.content;
 
 public class UnitGroupTypeLibrary : AW_AssetLibrary<AW_UnitGroupAsset, UnitGroupTypeLibrary>
 {

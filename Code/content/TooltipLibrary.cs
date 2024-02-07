@@ -1,36 +1,38 @@
+using System;
+using Figurebox.abstracts;
+using Figurebox.core;
+using Figurebox.core.kingdom_policies;
 using Figurebox.core.table_items;
 using Figurebox.Utils;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine.UI;
-using Figurebox.core;
-using System;
 
-namespace Figurebox;
+namespace Figurebox.content;
 
-internal class Tooltips
+internal class TooltipLibrary : ExtendedLibrary<TooltipAsset>
 {
-    public static void init()
+    protected override void init()
     {
-        AssetManager.tooltips.add(new TooltipAsset
+        add(new TooltipAsset
         {
             id = "kingdom_policy",
             prefab_id = "tooltips/tooltip_policy",
             callback = showPolicy
         });
-        AssetManager.tooltips.add(new TooltipAsset
+        add(new TooltipAsset
         {
             id = "kingdom_policy_state",
             prefab_id = "tooltips/tooltip_policy_state",
             callback = showPolicyState
         });
-        AssetManager.tooltips.add(new TooltipAsset
+        add(new TooltipAsset
         {
             id = "actor_heir",
             prefab_id = "tooltips/tooltip_actor",
             callback = showHeir
         });
-        AssetManager.tooltips.add(new TooltipAsset
+        add(new TooltipAsset
         {
             id = "history_king",
             callback = showHistoryKing
@@ -82,7 +84,7 @@ internal class Tooltips
         pTooltip.setDescription(LM.Get(policy.description));
         if (!string.IsNullOrEmpty(pData.tip_description))
         {
-            int total = pData.tip_description_2 == KingdomPolicyData.PolicyStatus.InPlanning.ToString()
+            int total = pData.tip_description_2 == AW_KingdomDataAddition.PolicyStatus.InPlanning.ToString()
                 ? policy.cost_in_plan
                 : policy.cost_in_progress;
             pTooltip.addBottomDescription(

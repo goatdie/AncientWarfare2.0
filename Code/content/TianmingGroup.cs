@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using ai.behaviours;
-using ai.behaviours.conditions;
-using Figurebox.constants;
-using Figurebox.core;
 using HarmonyLib;
-using NCMS.Utils;
 using ReflectionUtility;
 using UnityEngine;
-namespace Figurebox
+
+namespace Figurebox.content
 {
   class TianmingGroup
   {

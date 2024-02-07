@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Figurebox.constants;
+using Figurebox.content;
 using Figurebox.core;
+using Figurebox.core.kingdom_policies;
 using Figurebox.prefabs;
 using Figurebox.ui.prefabs;
 using Figurebox.Utils.extensions;
@@ -172,19 +174,19 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
 
         kingdom_name_text.color = Toolbox.makeColor(moh_kingdom.kingdomColor.color_text);
         kingdom_name_text.text = moh_kingdom.name;
-        if (!string.IsNullOrEmpty(moh_kingdom.policy_data.year_name))
+        if (!string.IsNullOrEmpty(moh_kingdom.addition_data.year_name))
         {
-            int year_number = World.world.mapStats.getYearsSince(moh_kingdom.policy_data.year_start_timestamp) + 1;
+            int year_number = World.world.mapStats.getYearsSince(moh_kingdom.addition_data.year_start_timestamp) + 1;
             if (year_number == 1)
             {
                 kingdom_name_text.text += "|" + LM.Get("year_name_format")
-                    .Replace("$year_name$", moh_kingdom.policy_data.year_name)
+                    .Replace("$year_name$", moh_kingdom.addition_data.year_name)
                     .Replace("$year_number$", LM.Get("first_year_number"));
             }
             else
             {
                 kingdom_name_text.text += "|" + LM.Get("year_name_format")
-                    .Replace("$year_name$", moh_kingdom.policy_data.year_name)
+                    .Replace("$year_name$", moh_kingdom.addition_data.year_name)
                     .Replace("$year_number$", year_number.ToString());
             }
         }
@@ -197,7 +199,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
 
         king_avatar.show(moh_kingdom.king);
 
-        foreach (string key in moh_kingdom.policy_data.current_states.Keys)
+        foreach (string key in moh_kingdom.addition_data.current_states.Keys)
         {
             KingdomPolicyStateButton state_button = curr_state_pool.getNext(0);
             state_button.Setup(KingdomPolicyStateLibrary.Instance.get(key), null, false, true);
@@ -205,7 +207,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         }
 
         int queue_idx = 0;
-        foreach (var queue in moh_kingdom.policy_data.policy_queue)
+        foreach (var queue in moh_kingdom.addition_data.policy_queue)
         {
             KingdomPolicyButton policy_button = policy_queue_pool.getNext(queue_idx++);
             policy_button.Setup(KingdomPolicyLibrary.Instance.get(queue.policy_id),
@@ -224,13 +226,13 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
 
         executing_policy.gameObject.SetActive(true);
         executing_policy.Setup(
-            string.IsNullOrEmpty(moh_kingdom.policy_data.current_policy_id) ||
-            moh_kingdom.policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed
+            string.IsNullOrEmpty(moh_kingdom.addition_data.current_policy_id) ||
+            moh_kingdom.addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.Completed
                 ? null
-                : KingdomPolicyLibrary.Instance.get(moh_kingdom.policy_data.current_policy_id), null, false, true);
+                : KingdomPolicyLibrary.Instance.get(moh_kingdom.addition_data.current_policy_id), null, false, true);
         executing_policy.SetSize(new Vector2(24, 24));
-        executing_policy.tip_data.tip_description = moh_kingdom.policy_data.p_progress.ToString();
-        executing_policy.tip_data.tip_description_2 = moh_kingdom.policy_data.p_status.ToString();
+        executing_policy.tip_data.tip_description = moh_kingdom.addition_data.p_progress.ToString();
+        executing_policy.tip_data.tip_description_2 = moh_kingdom.addition_data.p_status.ToString();
     }
 
     [Hotfixable]
@@ -256,14 +258,14 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
     {
         return pPolicyAsset =>
         {
-            if (moh_kingdom.policy_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) return;
+            if (moh_kingdom.addition_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) return;
             if (!moh_kingdom.CheckPolicy(pPolicyAsset)) return;
             if (!pPolicyAsset.can_repeat &&
-                moh_kingdom.policy_data.policy_queue.Any(x => x.policy_id == pPolicyAsset.id)) return;
+                moh_kingdom.addition_data.policy_queue.Any(x => x.policy_id == pPolicyAsset.id)) return;
             if (!MoHTools.CostMoH(10, true)) return;
 
             KingdomPolicyButton policy_button_in_queue =
-                policy_queue_pool.getNext(moh_kingdom.policy_data.policy_queue.Count);
+                policy_queue_pool.getNext(moh_kingdom.addition_data.policy_queue.Count);
             policy_button_in_queue.Setup(pPolicyAsset, GetPolicyQueueButtonAction(moh_kingdom, policy_button_in_queue),
                 false, true);
             policy_button_in_queue.SetSize(new Vector2(28, 28));
@@ -271,7 +273,7 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
             PolicyDataInQueue policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
             policy_data_in_queue.policy_id = pPolicyAsset.id;
             policy_data_in_queue.progress = pPolicyAsset.cost_in_plan;
-            moh_kingdom.policy_data.policy_queue.Enqueue(policy_data_in_queue);
+            moh_kingdom.addition_data.policy_queue.Enqueue(policy_data_in_queue);
             if (!pPolicyAsset.can_repeat)
             {
                 optional_policy_pool.InactiveObj(policy_button);
@@ -286,14 +288,14 @@ public class KingdomMoHWindow : AutoLayoutWindow<KingdomMoHWindow>
         {
             if (!MoHTools.ReturnMoH(10)) return;
 
-            Queue<PolicyDataInQueue> tmp = new(moh_kingdom.policy_data.policy_queue);
-            moh_kingdom.policy_data.policy_queue.Clear();
+            Queue<PolicyDataInQueue> tmp = new(moh_kingdom.addition_data.policy_queue);
+            moh_kingdom.addition_data.policy_queue.Clear();
             while (tmp.Count > 0)
             {
                 var policy = tmp.Dequeue();
                 if (policy.policy_id != pPolicyAsset.id)
                 {
-                    moh_kingdom.policy_data.policy_queue.Enqueue(policy);
+                    moh_kingdom.addition_data.policy_queue.Enqueue(policy);
                 }
 
                 PolicyDataInQueue.Pool.Recycle(policy);

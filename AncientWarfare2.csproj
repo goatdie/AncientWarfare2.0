@@ -134,7 +134,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-      <Folder Include="Code\core\kingdom_vassals\" />
       <Folder Include="word_libraries\" />
       <Folder Include="name_generators\" />
   </ItemGroup>

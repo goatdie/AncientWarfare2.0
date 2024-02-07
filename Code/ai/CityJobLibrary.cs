@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Figurebox.abstracts;
+using Figurebox.content;
 
 namespace Figurebox.ai;
 

@@ -21,7 +21,7 @@ public class AW_CitiesManager : CitiesManager
     private void ReconstructCityAI(City pCity)
     {
         pCity.ai.nextJobDelegate = () =>
-            ai.CityJobLibrary.CheckAndGetCityJob(((AW_Kingdom)pCity.kingdom).policy_data.current_states);
+            ai.CityJobLibrary.CheckAndGetCityJob(((AW_Kingdom)pCity.kingdom).addition_data.current_states);
     }
 
     public override City loadObject(CityData pData)

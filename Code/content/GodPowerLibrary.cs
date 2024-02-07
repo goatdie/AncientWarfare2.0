@@ -1,66 +1,21 @@
+using Figurebox.abstracts;
 using Figurebox.core;
 
-namespace Figurebox
+namespace Figurebox.content
 {
-    class NewGodPowers
+    class GodPowerLibrary : ExtendedLibrary<GodPower>
     {
-        public static Kingdom SelectKingdom1 = null;
-        public static Kingdom SelectKingdom2 = null;
-        public static void init()
-        {
-            initPowers();
-            // initStats();
-        }
+        private static Kingdom SelectKingdom1 = null;
+        private static Kingdom SelectKingdom2 = null;
 
-
-
-        public static Actor spawnUnit(WorldTile pTile, string pPowerID)
-        {
-            GodPower godPower = AssetManager.powers.get(pPowerID);
-            MusicBox.playSound("event:/SFX/UNIQUE/SpawnWhoosh", (float)pTile.pos.x, (float)pTile.pos.y, false, false);
-            if (godPower.id == SA.sheep && pTile.Type.lava)
-            {
-                AchievementLibrary.achievementSacrifice.check(null, null, null);
-            }
-            EffectsLibrary.spawn("fx_spawn", pTile, null, null, 0f, -1f, -1f);
-            string text;
-            if (godPower.actor_asset_ids.Count > 0)
-            {
-                text = godPower.actor_asset_ids.GetRandom<string>();
-            }
-            else
-            {
-                text = godPower.actor_asset_id;
-            }
-            Actor actor = World.world.units.spawnNewUnit(text, pTile, true, godPower.actorSpawnHeight);
-            actor.addTrait("miracle_born", false);
-            actor.data.age_overgrowth = 18;
-            actor.data.had_child_timeout = 8f;
-            return actor;
-        }
-
-
-        public static void initPowers()
+        protected override void init()
         {
 
-
-            GodPower xiapower = AssetManager.powers.clone("spawn_xia", "_spawnActor");
+            GodPower xiapower = clone("spawn_xia", "_spawnActor");
             xiapower.name = "spawn_xia";
             xiapower.actor_asset_id = "unit_Xia";
-            xiapower.click_action = action_spawn_xia;
-            /*xiapower.click_action = new PowerActionWithID((WorldTile pTile, string pPower)
-                                =>
-            {
-                return (bool)AssetManager.powers.CallMethod("spawnUnit", pTile, pPower);
-            });*/
-            AssetManager.powers.add(xiapower);
+            xiapower.click_action = AssetManager.powers.spawnUnit;
 
-            //GodPower power1 = new GodPower();
-            //power1.id = "Toggle";
-            // power1.name = "Toggle";
-            // power1.rank = PowerRank.Rank0_free;
-            //  power1.click_action = new PowerActionWithID((WorldTile pTile, string pPower));
-            //  AssetManager.powers.add(xiapower);
 
             GodPower vassal = new GodPower();
             vassal.id = "vassal";
@@ -69,7 +24,7 @@ namespace Figurebox
             vassal.unselectWhenWindow = true;
             vassal.path_icon = "ui/wars/war_vassal";
             vassal.click_special_action = new PowerActionWithID(vassal_click);
-            AssetManager.powers.add(vassal);
+            add(vassal);
             GodPower vassal_remove = new GodPower();
             vassal_remove.id = "vassal_remove";
             vassal_remove.force_map_text = MapMode.Kingdoms;
@@ -77,21 +32,10 @@ namespace Figurebox
             vassal_remove.unselectWhenWindow = true;
             vassal_remove.path_icon = "ui/wars/war_independent";
             vassal_remove.click_special_action = new PowerActionWithID(vassal_remove_click);
-            AssetManager.powers.add(vassal_remove);
-
-
+            add(vassal_remove);
         }
-        public static bool action_spawn_xia(WorldTile pTile, string pPowerID)
-        {
 
-            Actor actor = spawnUnit(pTile, pPowerID);
-            if (actor == null)
-            {
-                return false;
-            }
-            return true;
-        }
-        public static bool vassal_click(WorldTile pTile, string pPowerID)
+        private static bool vassal_click(WorldTile pTile, string pPowerID)
         {
             if (pTile.zone.city == null)
             {
@@ -139,7 +83,8 @@ namespace Figurebox
 
             return true;
         }
-        public static bool vassal_remove_click(WorldTile pTile, string pPowerID)
+
+        private static bool vassal_remove_click(WorldTile pTile, string pPowerID)
         {
             AW_Kingdom tilekingdom = pTile.zone.city.kingdom as AW_Kingdom;
 

@@ -1,28 +1,12 @@
-using System;
-using System.Threading;
-using System.Reflection;
-using NCMS;
-using Unity;
-using ReflectionUtility;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Figurebox.core;
-using HarmonyLib;
-using UnityEngine;
-using UnityEngine.UI;
-using Figurebox.Utils;
+using Figurebox.abstracts;
 using Figurebox.Utils.extensions;
-using NCMS.Utils;
 using Figurebox.Utils.MoH;
 
-
-namespace Figurebox
+namespace Figurebox.content
 {
-    class LoyaltyLibrary
+    class LoyaltyLibrary : ExtendedLibrary<LoyaltyAsset>
     {
-        public static void init()
+        protected override void init()
         {
             LoyaltyAsset tianming = new LoyaltyAsset();
             tianming.id = "tianming";
@@ -65,8 +49,8 @@ namespace Figurebox
             vassels.calc = delegate (Kingdom pMain, Kingdom pTarget)
             {
                 int result = 0;
-                string vassalId = pMain.AW().policy_data.suzerain_id;
-                string vassaltarget = pTarget.AW().policy_data.suzerain_id;
+                string vassalId = pMain.AW().addition_data.suzerain_id;
+                string vassaltarget = pTarget.AW().addition_data.suzerain_id;
 
                 // 如果pMain是pTarget的宗主国
                 if (vassalId == pTarget.data.id)
@@ -94,8 +78,8 @@ namespace Figurebox
             vasselsrebel.calc = delegate (Kingdom pMain, Kingdom pTarget)
             {
                 int result = 0;
-                string mainSuzerainId = pMain.AW().policy_data.suzerain_id;
-                string targetSuzerainId = pTarget.AW().policy_data.suzerain_id;
+                string mainSuzerainId = pMain.AW().addition_data.suzerain_id;
+                string targetSuzerainId = pTarget.AW().addition_data.suzerain_id;
 
                 // 如果pMain是附庸国并且宗主国是pTarget
                 if (pMain.AW().IsVassal() && pTarget.data.id == mainSuzerainId)
@@ -113,7 +97,6 @@ namespace Figurebox
 
                 return result;
             };
-
         }
     }
 }

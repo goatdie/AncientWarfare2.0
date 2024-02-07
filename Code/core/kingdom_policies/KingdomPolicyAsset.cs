@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using Figurebox.constants;
-using Figurebox.core;
 using Figurebox.exceptions;
 using Newtonsoft.Json;
 
-namespace Figurebox;
+namespace Figurebox.core.kingdom_policies;
 
 /// <summary>
 ///     计算国家实力的方法

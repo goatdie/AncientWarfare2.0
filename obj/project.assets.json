@@ -452,19 +452,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\1\\.nuget\\packages\\": {}
+    "/home/inmny/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\AncientWarfare2.csproj",
+      "projectUniqueName": "/home/inmny/.local/share/Steam/steamapps/common/worldbox/Mods/AncientWarfare2.0/AncientWarfare2.csproj",
       "projectName": "AcientWarfare2",
-      "projectPath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\AncientWarfare2.csproj",
-      "packagesPath": "C:\\Users\\1\\.nuget\\packages\\",
-      "outputPath": "D:\\SteamLibrary\\steamapps\\common\\worldbox\\Mods\\AncientWarfare2\\obj\\",
+      "projectPath": "/home/inmny/.local/share/Steam/steamapps/common/worldbox/Mods/AncientWarfare2.0/AncientWarfare2.csproj",
+      "packagesPath": "/home/inmny/.nuget/packages/",
+      "outputPath": "/home/inmny/.local/share/Steam/steamapps/common/worldbox/Mods/AncientWarfare2.0/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\1\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/inmny/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net48"
@@ -499,7 +499,7 @@
             "autoReferenced": true
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.101/RuntimeIdentifierGraph.json"
       }
     }
   }

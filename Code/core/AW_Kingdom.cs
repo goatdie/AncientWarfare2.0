@@ -3,7 +3,9 @@ using System.Linq;
 using System;
 using Figurebox.attributes;
 using Figurebox.constants;
+using Figurebox.content;
 using Figurebox.core.events;
+using Figurebox.core.kingdom_policies;
 using Figurebox.patch.MoH;
 using Figurebox.Utils;
 using Figurebox.Utils.MoH;
@@ -21,7 +23,7 @@ public partial class AW_Kingdom : Kingdom
     public bool FomerMoh; //控制是否为前天命国家
     public Actor heir;
     public bool NameIntegration; //控制国家命名是否姓氏合流
-    public KingdomPolicyData policy_data = new();
+    public AW_KingdomDataAddition addition_data = new();
     public bool Rebel = false; //控制是否为起义军
 
     public void ToggleNameIntegration(bool b)
@@ -169,13 +171,13 @@ public partial class AW_Kingdom : Kingdom
     public void UpdateForPolicy(float pElapsed)
     {
         // 当目前政策都执行完毕或没有政策时，查找新的政策
-        if (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
-            string.IsNullOrEmpty(policy_data.current_policy_id))
+        if (addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.Completed ||
+            string.IsNullOrEmpty(addition_data.current_policy_id))
         {
             KingdomPolicyAsset next_policy = null;
-            if (policy_data.policy_queue.Count > 0)
+            if (addition_data.policy_queue.Count > 0)
             {
-                var next_policy_in_queue = policy_data.policy_queue.Dequeue();
+                var next_policy_in_queue = addition_data.policy_queue.Dequeue();
                 next_policy = KingdomPolicyLibrary.Instance.get(next_policy_in_queue.policy_id);
 
                 if (next_policy != null)
@@ -187,10 +189,10 @@ public partial class AW_Kingdom : Kingdom
                 return;
             }
 
-            if (policy_data.current_states.Count == 0) UpdatePolicyStateTo(KingdomPolicyStateLibrary.DefaultState);
-            foreach (string state_id in policy_data.current_states.Values)
+            if (addition_data.current_states.Count == 0) UpdatePolicyStateTo(KingdomPolicyStateLibrary.DefaultState);
+            foreach (string state_id in addition_data.current_states.Values)
             {
-                if (policy_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) break;
+                if (addition_data.policy_queue.Count >= PolicyConst.MAX_POLICY_NR_IN_QUEUE) break;
                 var state = KingdomPolicyStateLibrary.Instance.get(state_id) ?? KingdomPolicyStateLibrary.DefaultState;
                 next_policy = state.policy_finder(state, this);
                 if (!CheckPolicy(next_policy)) continue;
@@ -198,7 +200,7 @@ public partial class AW_Kingdom : Kingdom
                 var policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
                 policy_data_in_queue.policy_id = next_policy.id;
                 policy_data_in_queue.progress = next_policy.cost_in_plan;
-                policy_data.policy_queue.Enqueue(policy_data_in_queue);
+                addition_data.policy_queue.Enqueue(policy_data_in_queue);
             }
 
             return;
@@ -207,11 +209,11 @@ public partial class AW_Kingdom : Kingdom
         // 政策随机进展
         if (Toolbox.randomChance(pElapsed))
         {
-            var policy_asset = KingdomPolicyLibrary.Instance.get(policy_data.current_policy_id);
+            var policy_asset = KingdomPolicyLibrary.Instance.get(addition_data.current_policy_id);
             if (policy_asset == null)
             {
                 ForceStopPolicy();
-                if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"政策'{policy_data.current_policy_id}'不存在, 终止", true);
+                if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"政策'{addition_data.current_policy_id}'不存在, 终止", true);
                 return;
             }
 
@@ -222,24 +224,24 @@ public partial class AW_Kingdom : Kingdom
                 return;
             }
 
-            policy_data.p_progress--;
+            addition_data.p_progress--;
             // 每一帧都执行一次(按照概率计算期望是1秒执行一次), 有待调整
             policy_asset.execute_policy(policy_asset, this);
 
-            if (policy_data.p_progress <= 0)
+            if (addition_data.p_progress <= 0)
             {
-                switch (policy_data.p_status)
+                switch (addition_data.p_status)
                 {
                     // 完成计划阶段
-                    case KingdomPolicyData.PolicyStatus.InPlanning:
-                        policy_data.p_progress = policy_asset.cost_in_progress;
-                        policy_data.p_status = KingdomPolicyData.PolicyStatus.InProgress;
+                    case AW_KingdomDataAddition.PolicyStatus.InPlanning:
+                        addition_data.p_progress = policy_asset.cost_in_progress;
+                        addition_data.p_status = AW_KingdomDataAddition.PolicyStatus.InProgress;
                         break;
                     // 实施完成
-                    case KingdomPolicyData.PolicyStatus.InProgress:
-                        policy_data.p_status = KingdomPolicyData.PolicyStatus.Completed;
-                        policy_data.p_timestamp_done = World.world.mapStats.worldTime;
-                        policy_data.policy_history.Add(policy_data.current_policy_id);
+                    case AW_KingdomDataAddition.PolicyStatus.InProgress:
+                        addition_data.p_status = AW_KingdomDataAddition.PolicyStatus.Completed;
+                        addition_data.p_timestamp_done = World.world.mapStats.worldTime;
+                        addition_data.policy_history.Add(addition_data.current_policy_id);
                         if (!string.IsNullOrEmpty(policy_asset.target_state_id))
                         {
                             UpdatePolicyStateTo(policy_asset.target_state_id);
@@ -254,40 +256,40 @@ public partial class AW_Kingdom : Kingdom
     // 升级爵位
     public void PromoteTitle()
     {
-        if (policy_data.Title < KingdomPolicyData.KingdomTitle.Emperor)
+        if (addition_data.Title < AW_KingdomDataAddition.KingdomTitle.Emperor)
         {
-            policy_data.Title++;
+            addition_data.Title++;
         }
     }
 
     // 降级爵位
     public void DemoteTitle()
     {
-        if (policy_data.Title > KingdomPolicyData.KingdomTitle.Baron)
+        if (addition_data.Title > AW_KingdomDataAddition.KingdomTitle.Baron)
         {
-            policy_data.Title--;
+            addition_data.Title--;
         }
     }
 
     // 设置特定的爵位等级
-    public void SetTitle(KingdomPolicyData.KingdomTitle newTitle)
+    public void SetTitle(AW_KingdomDataAddition.KingdomTitle newTitle)
     {
-        policy_data.Title = newTitle;
+        addition_data.Title = newTitle;
     }
     public bool CompareTitle(AW_Kingdom kingdom)
     {
-        return policy_data.Title > kingdom.policy_data.Title;
+        return addition_data.Title > kingdom.addition_data.Title;
 
     }
     // 根据爵位等级返回中文字符串
-    public string GetTitleString(KingdomPolicyData.KingdomTitle title)
+    public string GetTitleString(AW_KingdomDataAddition.KingdomTitle title)
     {
-        if (title == KingdomPolicyData.KingdomTitle.Emperor && MoHTools.IsMoHKingdom(this))
+        if (title == AW_KingdomDataAddition.KingdomTitle.Emperor && MoHTools.IsMoHKingdom(this))
         {
             return "朝";
         }
 
-        if (title == KingdomPolicyData.KingdomTitle.Emperor && FomerMoh)
+        if (title == AW_KingdomDataAddition.KingdomTitle.Emperor && FomerMoh)
         {
             return "残部";
         }
@@ -299,15 +301,15 @@ public partial class AW_Kingdom : Kingdom
 
         switch (title)
         {
-            case KingdomPolicyData.KingdomTitle.Baron:
+            case AW_KingdomDataAddition.KingdomTitle.Baron:
                 return "伯国";
-            case KingdomPolicyData.KingdomTitle.Marquis:
+            case AW_KingdomDataAddition.KingdomTitle.Marquis:
                 return "侯国";
-            case KingdomPolicyData.KingdomTitle.Duke:
+            case AW_KingdomDataAddition.KingdomTitle.Duke:
                 return "公国";
-            case KingdomPolicyData.KingdomTitle.King:
+            case AW_KingdomDataAddition.KingdomTitle.King:
                 return "王国";
-            case KingdomPolicyData.KingdomTitle.Emperor:
+            case AW_KingdomDataAddition.KingdomTitle.Emperor:
                 return "帝国";
             default:
                 return "未知";
@@ -315,19 +317,19 @@ public partial class AW_Kingdom : Kingdom
     }
 
     // 根据爵位等级返回对应的单字
-    public static string GetSingleCharacterTitle(KingdomPolicyData.KingdomTitle title)
+    public static string GetSingleCharacterTitle(AW_KingdomDataAddition.KingdomTitle title)
     {
         switch (title)
         {
-            case KingdomPolicyData.KingdomTitle.Baron:
+            case AW_KingdomDataAddition.KingdomTitle.Baron:
                 return "伯";
-            case KingdomPolicyData.KingdomTitle.Marquis:
+            case AW_KingdomDataAddition.KingdomTitle.Marquis:
                 return "侯";
-            case KingdomPolicyData.KingdomTitle.Duke:
+            case AW_KingdomDataAddition.KingdomTitle.Duke:
                 return "公";
-            case KingdomPolicyData.KingdomTitle.King:
+            case AW_KingdomDataAddition.KingdomTitle.King:
                 return "王";
-            case KingdomPolicyData.KingdomTitle.Emperor:
+            case AW_KingdomDataAddition.KingdomTitle.Emperor:
                 return "帝";
             default:
                 return ""; // 或者返回一个默认值
@@ -344,15 +346,15 @@ public partial class AW_Kingdom : Kingdom
     {
         return pPolicyAsset != null
                && (pPolicyAsset.can_repeat ||
-                   (!policy_data.policy_history.Contains(pPolicyAsset.id)
-                    && (policy_data.p_status == KingdomPolicyData.PolicyStatus.Completed ||
-                        policy_data.current_policy_id != pPolicyAsset.id)))
+                   (!addition_data.policy_history.Contains(pPolicyAsset.id)
+                    && (addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.Completed ||
+                        addition_data.current_policy_id != pPolicyAsset.id)))
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
                    pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All &&
-                   pPolicyAsset.all_prepositions.All(pState => policy_data.current_states.ContainsValue(pState)) ||
+                   pPolicyAsset.all_prepositions.All(pState => addition_data.current_states.ContainsValue(pState)) ||
                    pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.Any &&
-                   pPolicyAsset.all_prepositions.Any(pState => policy_data.current_states.ContainsValue(pState)))
+                   pPolicyAsset.all_prepositions.Any(pState => addition_data.current_states.ContainsValue(pState)))
                && (pPolicyAsset.check_policy == null || pPolicyAsset.check_policy.Invoke(pPolicyAsset, this));
     }
 
@@ -370,36 +372,36 @@ public partial class AW_Kingdom : Kingdom
     {
         if (!CheckPolicy(pAsset)) return false;
         // 正在执行其他政策
-        if (!string.IsNullOrEmpty(policy_data.current_policy_id) &&
-            policy_data.p_status != KingdomPolicyData.PolicyStatus.Completed)
+        if (!string.IsNullOrEmpty(addition_data.current_policy_id) &&
+            addition_data.p_status != AW_KingdomDataAddition.PolicyStatus.Completed)
         {
             if (!pForce) return false;
             PolicyDataInQueue policy_data_in_queue = PolicyDataInQueue.Pool.GetNext();
-            policy_data_in_queue.policy_id = policy_data.current_policy_id;
-            policy_data_in_queue.progress = policy_data.p_progress;
-            policy_data_in_queue.status = policy_data.p_status;
-            policy_data_in_queue.timestamp_start = policy_data.p_timestamp_start;
+            policy_data_in_queue.policy_id = addition_data.current_policy_id;
+            policy_data_in_queue.progress = addition_data.p_progress;
+            policy_data_in_queue.status = addition_data.p_status;
+            policy_data_in_queue.timestamp_start = addition_data.p_timestamp_start;
             Queue<PolicyDataInQueue> policy_queue = new();
             policy_queue.Enqueue(policy_data_in_queue);
-            while (policy_data.policy_queue.Count > 0)
+            while (addition_data.policy_queue.Count > 0)
             {
-                policy_queue.Enqueue(policy_data.policy_queue.Dequeue());
+                policy_queue.Enqueue(addition_data.policy_queue.Dequeue());
             }
 
-            policy_data.policy_queue = policy_queue;
+            addition_data.policy_queue = policy_queue;
         }
 
-        policy_data.current_policy_id = pAsset.id;
-        policy_data.p_progress = pPolicyDataInQueue?.progress ?? pAsset.cost_in_plan;
-        policy_data.p_status = pPolicyDataInQueue?.status ?? KingdomPolicyData.PolicyStatus.InPlanning;
-        policy_data.p_timestamp_start = pPolicyDataInQueue?.timestamp_start ?? World.world.mapStats.worldTime;
+        addition_data.current_policy_id = pAsset.id;
+        addition_data.p_progress = pPolicyDataInQueue?.progress ?? pAsset.cost_in_plan;
+        addition_data.p_status = pPolicyDataInQueue?.status ?? AW_KingdomDataAddition.PolicyStatus.InPlanning;
+        addition_data.p_timestamp_start = pPolicyDataInQueue?.timestamp_start ?? World.world.mapStats.worldTime;
         return true;
     }
     //检查是否有相同政策
 
     public void ForceStopPolicy()
     {
-        policy_data.current_policy_id = "";
+        addition_data.current_policy_id = "";
     }
 
     /// <summary>
@@ -430,7 +432,7 @@ public partial class AW_Kingdom : Kingdom
             return;
         }
 
-        policy_data.current_states[pPolicyState.type] = pPolicyState.id;
+        addition_data.current_states[pPolicyState.type] = pPolicyState.id;
         foreach (var city in cities) city.ai.clearJob();
     }
 
@@ -441,7 +443,7 @@ public partial class AW_Kingdom : Kingdom
     /// <returns></returns>
     public string GetYearName(bool pWithYearNumber)
     {
-        string text = policy_data.year_name;
+        string text = addition_data.year_name;
         if (string.IsNullOrEmpty(text))
         {
             text = LM.Get("public_year_name");
@@ -449,7 +451,7 @@ public partial class AW_Kingdom : Kingdom
 
         if (pWithYearNumber)
         {
-            int num = World.world.mapStats.getYearsSince(policy_data.year_start_timestamp) + 1;
+            int num = World.world.mapStats.getYearsSince(addition_data.year_start_timestamp) + 1;
             return LM.Get("year_name_format").Replace("$year_name$", text).Replace("$year_number$",
                 num == 1 ? LM.Get("first_year_number") : num.ToString());
         }
@@ -565,8 +567,8 @@ public partial class AW_Kingdom : Kingdom
                     MergeKingdoms(kingdomToInherit, currentKingdom);
                     InheritWars(kingdomToInherit, currentKingdom);
 
-                    kingdomToInherit.policy_data.Title =
-                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    kingdomToInherit.addition_data.Title =
+                        MaxTitle(kingdomToInherit.addition_data.Title, currentKingdom.addition_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                     EventsManager.Instance.Integration(actor, currentKingdom.data.name, kingdomToInherit.data.name);
                 }
@@ -575,8 +577,8 @@ public partial class AW_Kingdom : Kingdom
                     MergeKingdoms(currentKingdom, kingdomToInherit);
                     InheritWars(currentKingdom, kingdomToInherit);
 
-                    currentKingdom.policy_data.Title =
-                        MaxTitle(kingdomToInherit.policy_data.Title, currentKingdom.policy_data.Title);
+                    currentKingdom.addition_data.Title =
+                        MaxTitle(kingdomToInherit.addition_data.Title, currentKingdom.addition_data.Title);
                     CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                     EventsManager.Instance.Integration(actor, currentKingdom.data.name, kingdomToInherit.data.name);
                 }
@@ -600,8 +602,8 @@ public partial class AW_Kingdom : Kingdom
     }
 
 
-    public KingdomPolicyData.KingdomTitle MaxTitle(KingdomPolicyData.KingdomTitle title1,
-                                                   KingdomPolicyData.KingdomTitle title2)
+    public AW_KingdomDataAddition.KingdomTitle MaxTitle(AW_KingdomDataAddition.KingdomTitle title1,
+                                                   AW_KingdomDataAddition.KingdomTitle title2)
     {
         return (title1 > title2) ? title1 : title2;
     }
@@ -697,7 +699,7 @@ public partial class AW_Kingdom : Kingdom
     public void InheritPolicyFrom(AW_Kingdom pFrom)
     {
         if (pFrom == null) return;
-        foreach (var state in pFrom.policy_data.current_states.Values) UpdatePolicyStateTo(state);
+        foreach (var state in pFrom.addition_data.current_states.Values) UpdatePolicyStateTo(state);
     }
 
     //统治家族变更同时换国号
@@ -806,23 +808,23 @@ public partial class AW_Kingdom : Kingdom
 
         #endregion
 
-        num += GetCitiesBonus(policy_data.Title);
+        num += GetCitiesBonus(addition_data.Title);
         return num;
     }
 
-    public static int GetCitiesBonus(KingdomPolicyData.KingdomTitle title)
+    public static int GetCitiesBonus(AW_KingdomDataAddition.KingdomTitle title)
     {
         switch (title)
         {
-            case KingdomPolicyData.KingdomTitle.Baron:
+            case AW_KingdomDataAddition.KingdomTitle.Baron:
                 return 0;
-            case KingdomPolicyData.KingdomTitle.Marquis:
+            case AW_KingdomDataAddition.KingdomTitle.Marquis:
                 return 2;
-            case KingdomPolicyData.KingdomTitle.Duke:
+            case AW_KingdomDataAddition.KingdomTitle.Duke:
                 return 4;
-            case KingdomPolicyData.KingdomTitle.King:
+            case AW_KingdomDataAddition.KingdomTitle.King:
                 return 8;
-            case KingdomPolicyData.KingdomTitle.Emperor:
+            case AW_KingdomDataAddition.KingdomTitle.Emperor:
                 return 16;
             default:
                 return 0; // 或者返回一个默认值

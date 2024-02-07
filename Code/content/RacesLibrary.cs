@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Figurebox.abstracts;
 using HarmonyLib;
 using ReflectionUtility;
 using UnityEngine;
@@ -7,9 +8,9 @@ using UnityEngine.UI;
 //using sfx;
 
 
-namespace Figurebox
+namespace Figurebox.content
 {
-    class RacesLibrary
+    class RacesLibrary : ExtendedLibrary<Race>
     {
         internal static List<string> defaultRaces = new List<string>()
         {
@@ -29,7 +30,6 @@ namespace Figurebox
             "Xia"
         };
 
-        private static Race tRace;
 
         public static void AssignNameTemplateKingdom(string kingdomName)
         {
@@ -43,12 +43,11 @@ namespace Figurebox
             }
         }
 
-        internal void init()
+        protected override void init()
         {
             AssignNameTemplateKingdom("Xia_kingdom");
             Race Xia = AssetManager.raceLibrary.clone("Xia", "human");
 
-            tRace = Xia;
             Xia.civ_baseCities = 1;
             Xia.civ_base_army_mod = 0.5f;
             Xia.civ_base_zone_range = 15;
@@ -59,11 +58,6 @@ namespace Figurebox
             Xia.nameLocale = "Xia";
             Xia.banner_id = "Xia";
             Xia.main_texture_path = "races/Xia/";
-
-            // Xia.build_order_id = "Xia";
-            //  Reflection.CallStaticMethod(typeof(BannerGenerator), "loadTexturesFromResources", "xia");
-
-            //clans/
 
 
 #if 一米_中文名
@@ -141,12 +135,12 @@ namespace Figurebox
                 "unit_warrior_6", "unit_warrior_7", "unit_warrior_8", "unit_warrior_9", "unit_warrior_10"
             });
             Xia.nomad_kingdom_id = $"nomads_{Xia.id}";
-            AssetManager.raceLibrary.CallMethod("setPreferredStatPool",
+            AssetManager.raceLibrary.setPreferredStatPool(
                                                 "diplomacy#1,warfare#1,stewardship#1,intelligence#1");
-            AssetManager.raceLibrary.CallMethod("setPreferredFoodPool", "bread#1,fish#1,tea#1");
-            AssetManager.raceLibrary.CallMethod("addPreferredWeapon",   "sword", 10);
-            AssetManager.raceLibrary.CallMethod("addPreferredWeapon",   "ge",    10);
-            AssetManager.raceLibrary.CallMethod("addPreferredWeapon",   "bow",   5);
+            AssetManager.raceLibrary.setPreferredFoodPool("bread#1,fish#1,tea#1");
+            AssetManager.raceLibrary.addPreferredWeapon( "sword", 10);
+            AssetManager.raceLibrary.addPreferredWeapon("ge",    10);
+            AssetManager.raceLibrary.addPreferredWeapon("bow",   5);
             AssetManager.raceLibrary.cloneBuildingKeys(SK.human, Xia.id);
             AssetManager.nameGenerator.clone("Xia_name", "human_name");
 
@@ -156,30 +150,11 @@ namespace Figurebox
             {
                 " bibi", " beruk", " longtail", " pigtail", " monyet", " monpai", " monk", " woooo", " oo", " aa"
             };
-            // Race monkey = AssetManager.raceLibrary.clone("monkeyrace", "human");
-            // monkey.path_icon  = "ui/Icons/iconMonkey";
-            // monk.race ="monkeyrace";
-            // AssetManager.raceLibrary.CallMethod("setPreferredFoodPool", "bananas#1,fish#1");
-
-            //monkname.templates.Add("monpai");
 
 
             //BannerGenerator.loadTexturesFromResources("xia");
         }
 
-        /* public static void kingdomColorsDataInit()
-        {
-            KingdomColorsData kingdomColorsData = JsonUtility.FromJson<KingdomColorsData>(ResourcesHelper.LoadTextAsset("colors/kingdom_colors.json"));
-            Dictionary<string, KingdomColorContainer> dict = (Dictionary<string, KingdomColorContainer>)typeof(KingdomColors).GetField("dict", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-            foreach (KingdomColorContainer kingdomColorContainer in kingdomColorsData.colors)
-            {
-                foreach (KingdomColor kingdomColor in kingdomColorContainer.list)
-                {
-                    kingdomColor.initColor();
-                }
-                dict.Add(kingdomColorContainer.race, kingdomColorContainer);
-            }
-        }*/
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ActorAnimationLoader), "loadAnimationBoat")]
         public static bool loadAnimationBoat_Prefix(ref string pTexturePath, ActorAnimationLoader __instance)
@@ -206,73 +181,6 @@ namespace Figurebox
 
             return true;
         }
-
-
-        /*[HarmonyPrefix]
-        [HarmonyPatch(typeof(CityBehBuild), "upgradeBuilding")]
-        public static bool generateFrameData_post(Building pBuilding, City pCity)
-        {
-            if (pBuilding == null || pBuilding.asset == null || pBuilding.asset.upgradeTo == null)
-            {
-                Debug.LogError("One of the building parameters is null: pBuilding: " + (pBuilding == null ? "null" : "not null") + ", pBuilding.asset: " + (pBuilding.asset == null ? "null" : "not null") + ", pBuilding.asset.upgradeTo: " + (pBuilding.asset.upgradeTo == null ? "null" : "not null"));
-                return false;
-            }
-
-            Debug.Log("Building asset name: " + pBuilding.asset.id + ", upgradeTo: " + pBuilding.asset.upgradeTo);
-
-            BuildingAsset buildingAsset = AssetManager.buildings.get(pBuilding.asset.upgradeTo);
-            if (buildingAsset == null)
-            {
-                Debug.LogError("Asset not found in lib buildings: " + pBuilding.asset.upgradeTo);
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(ActorBase), "checkAnimationContainer")]
-        public static bool PrefixGetSpriteToRender(ActorBase __instance)
-        { Debug.Log("Actor skin id: " + __instance.getUnitTexturePath());
-           /* if (__instance.animationContainer != null && __instance.animationContainer.walking != null)
-            {
-                ActorAnimation actorAnimation = __instance.animationContainer.walking;
-                if (actorAnimation.frames == null || actorAnimation.frames.Length == 0)
-                {
-                    Debug.Log("ActorAnimation walking frames is null or empty(cancer cell)");
-                    Debug.Log("Actor name: " + __instance.data.name);
-                    Debug.Log("Actor gender: " + __instance.data.gender);
-                    Debug.Log("Actor profession: " + __instance.data.profession);
-                    Debug.Log("Actor : " + __instance);
-                    Debug.Log("ActorRace : " + __instance.race.nameLocale);
-
-                    Debug.Log("Actor head: " + __instance.id_sprite_head);
-                    if( __instance.city!=null){
-                        Debug.Log("Actor city: " + __instance.city.data.name);
-                    Debug.Log("Actor city Race : " + __instance.city.race.nameLocale);
-
-                    }
-                    __instance.data.favorite=true;
-
-                    __instance.killHimself(true, AttackType.Other, true, true, true);
-
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(Culture), "createSkins")]
-        public static void PreCreateSkins(Culture __instance)
-        {
-
-
-
-
-                Debug.Log("Race of Actor: " + __instance.data.race);
-
-            // Add more Debug.Log statements as needed
-        }*/
 
 
         [HarmonyPrefix]

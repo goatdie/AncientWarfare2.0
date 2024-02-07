@@ -10,12 +10,12 @@ public class PolicyDataInQueue : IReusable
 
     public string policy_id;
     public int progress;
-    public KingdomPolicyData.PolicyStatus status;
+    public AW_KingdomDataAddition.PolicyStatus status;
     public double timestamp_start;
     public void Setup()
     {
         timestamp_start = World.world.mapStats.worldTime;
-        status = KingdomPolicyData.PolicyStatus.InPlanning;
+        status = AW_KingdomDataAddition.PolicyStatus.InPlanning;
     }
     public void Recycle()
     {

@@ -1,25 +1,10 @@
-using System;
-using System.Threading;
-using System.Reflection;
-using NCMS;
-using Unity;
-using ReflectionUtility;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using HarmonyLib;
-using UnityEngine;
-using UnityEngine.UI;
-using Figurebox.Utils;
-using NCMS.Utils;
+using Figurebox.abstracts;
 
-
-namespace Figurebox
+namespace Figurebox.content
 {
-    class StatusEffectLib
+    class StatusEffectLibrary : ExtendedLibrary<StatusEffect>
     {
-        public static void init()
+        protected override void init()
         {
 
             StatusEffect tianming0 = new StatusEffect();
@@ -35,7 +20,7 @@ namespace Figurebox
             //tianming0.action = new WorldAction(StatusLibrary.ashFeverEffect),
             tianming0.description = "status_description_tianming0";
             tianming0.path_icon = "ui/effects/tianming0/moh";
-            AssetManager.status.add(tianming0);
+            add(tianming0);
             StatusEffect tianmingm1 = new StatusEffect();
             tianmingm1.id = "tianmingm1";
             tianmingm1.texture = "tianmingm1";
@@ -49,15 +34,16 @@ namespace Figurebox
             //tianmingm1.action = new WorldAction(StatusEffectLib.decline),
             tianmingm1.description = "status_description_tianmingm1";
             tianmingm1.path_icon = "ui/effects/tianming0/moh-1";
-            AssetManager.status.add(tianmingm1);
-
-        }
-        public static bool decline(BaseSimObject pTarget, WorldTile pTile = null)
-        {
-            Actor a = (Actor)pTarget;
-
-
-            return true;
+            add(tianmingm1);
+            
+            StatusEffect mozheng = new StatusEffect();
+            mozheng.id = "qing";
+            mozheng.texture = "qing";
+            mozheng.path_icon = "effects/qing/tile002";
+            mozheng.animated = true;
+            mozheng.animation_speed = 0.1f;
+            mozheng.duration = 0.5f;
+            add(mozheng);
         }
 
     }

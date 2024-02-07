@@ -1,7 +1,8 @@
 using Figurebox.core;
+using Figurebox.core.kingdom_policies;
 using Figurebox.policy_actions;
 
-namespace Figurebox;
+namespace Figurebox.content;
 
 class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
 {
@@ -136,26 +137,26 @@ class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
             }
         }
 
-        switch (kingdom.policy_data.Title)
+        switch (kingdom.addition_data.Title)
         {
-            case KingdomPolicyData.KingdomTitle.Baron:
+            case AW_KingdomDataAddition.KingdomTitle.Baron:
                 // 伯国升级到侯国的条件
                 return zoneCount > 300;
 
-            case KingdomPolicyData.KingdomTitle.Marquis:
+            case AW_KingdomDataAddition.KingdomTitle.Marquis:
                 // 侯国升级到公国的条件
                 return zoneCount > 800;
 
-            case KingdomPolicyData.KingdomTitle.Duke:
+            case AW_KingdomDataAddition.KingdomTitle.Duke:
                 // 公国升级到王国的条件
                 return zoneCount > 1300;
 
-            case KingdomPolicyData.KingdomTitle.King:
+            case AW_KingdomDataAddition.KingdomTitle.King:
                 // 王国升级到帝国的条件
                 return zoneCount > 2000;
 
             // 对于帝国级别，可能没有进一步的升级，或者可以根据需要添加逻辑
-            case KingdomPolicyData.KingdomTitle.Emperor:
+            case AW_KingdomDataAddition.KingdomTitle.Emperor:
                 return false;
 
             default:

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Figurebox.content;
+using Figurebox.core.kingdom_policies;
 using NeoModLoader.api.attributes;
 using UnityEngine;
 

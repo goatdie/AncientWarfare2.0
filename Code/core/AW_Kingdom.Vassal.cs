@@ -95,7 +95,7 @@ public partial class AW_Kingdom
         // 将序列化后的字符串存储在kingdom的data字典中
         data.set("originalColor", serializedOriginalColor);
 
-        policy_data.suzerain_id = kingdomId;
+        addition_data.suzerain_id = kingdomId;
         suzerain = lord;
         Main.LogInfo($"Before adding, lord has {lord.vassals.Count} vassals.");
         lord.vassals.Add(this);

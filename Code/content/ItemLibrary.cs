@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
+using Figurebox.abstracts;
 using Figurebox.Utils;
 using HarmonyLib;
 using ReflectionUtility;
 using UnityEngine;
-namespace Figurebox
+
+namespace Figurebox.content
 {
-    class MoreItems
+    class ItemLibrary : ExtendedLibrary<ItemAsset>
     {
-        public List<string> addWeapons = new List<string>();
-        public List<ItemData> itemData = new List<ItemData>();
-        internal void init()
+
+        protected override void init()
         {
             weapon_info();
             let_the_actor_use_weapon();
@@ -18,7 +19,7 @@ namespace Figurebox
         }
         private void weapon_info()
         {
-            ItemAsset ji = AssetManager.items.clone("ji", "sword");
+            ItemAsset ji = clone("ji", "sword");
 
             ji.name_templates = Toolbox.splitStringIntoList(new string[]
             {
@@ -27,8 +28,7 @@ namespace Figurebox
             });
             ji.path_icon = "ui/Icons/items/icon_ji";
             ji.id = "ji";
-            AssetManager.items.add(ji);
-            addWeapons.Add(ji.id);
+            add(ji);
             ji.materials = List.Of<string>(new string[]
             {
                 "bronze", "copper"
@@ -45,7 +45,7 @@ namespace Figurebox
             ji.equipmentType = EquipmentType.Weapon;
             ji.name_class = "item_class_weapon";
             ji.action_attack_target = (AttackAction)Delegate.Combine(ji.action_attack_target, new AttackAction(qingAttack));
-            ItemAsset ge = AssetManager.items.clone("ge", "sword");
+            ItemAsset ge = clone("ge", "sword");
 
             ji.name_templates = Toolbox.splitStringIntoList(new string[]
             {
@@ -54,8 +54,7 @@ namespace Figurebox
             });
             ge.path_icon = "ui/Icons/items/icon_ge";
             ge.id = "ge";
-            AssetManager.items.add(ge);
-            addWeapons.Add(ge.id);
+            add(ge);
             ge.materials = List.Of<string>(new string[]
             {
                 "bronze", "copper"
@@ -71,7 +70,7 @@ namespace Figurebox
             ge.name_class = "item_class_weapon";
             ge.action_attack_target = (AttackAction)Delegate.Combine(ge.action_attack_target, new AttackAction(qingAttack));
 
-            ItemAsset binfa = AssetManager.items.clone("binfa", "_accessory");
+            ItemAsset binfa = clone("binfa", "_accessory");
             binfa.path_icon = "ui/Icons/items/icon_binfa";
             binfa.name_class = "item_class_accessory";
             binfa.id = "binfa";
@@ -88,17 +87,8 @@ namespace Figurebox
             binfa.base_stats[S.warfare] = 20;
             binfa.base_stats[S.critical_chance] += 3f;
             binfa.equipment_value = 2000;
-            AssetManager.items.add(binfa);
-            addWeapons.Add(binfa.id);
+            add(binfa);
 
-            StatusEffect mozheng = new StatusEffect();
-            mozheng.id = "qing";
-            mozheng.texture = "qing";
-            mozheng.path_icon = "effects/qing/tile002";
-            mozheng.animated = true;
-            mozheng.animation_speed = 0.1f;
-            mozheng.duration = 0.5f;
-            AssetManager.status.add(mozheng);
 
         }
         private void let_the_actor_use_weapon()

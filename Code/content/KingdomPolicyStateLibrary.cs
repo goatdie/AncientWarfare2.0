@@ -1,8 +1,9 @@
 using Figurebox.constants;
 using Figurebox.core;
+using Figurebox.core.kingdom_policies;
 using NeoModLoader.api.attributes;
 
-namespace Figurebox;
+namespace Figurebox.content;
 
 /// <summary>
 ///     政治状态（政体）

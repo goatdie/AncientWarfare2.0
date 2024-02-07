@@ -1,4 +1,4 @@
-using Figurebox.content_libraries;
+using Figurebox.content;
 
 namespace Figurebox.core;
 

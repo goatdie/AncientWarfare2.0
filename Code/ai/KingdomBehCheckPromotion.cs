@@ -5,6 +5,8 @@ using ai.behaviours;
 using Figurebox.core;
 using UnityEngine;
 using System.Linq;
+using Figurebox.content;
+using Figurebox.core.kingdom_policies;
 
 
 namespace Figurebox.ai;
@@ -26,11 +28,11 @@ public class KingdomBehCheckPromotion : BehaviourActionKingdom
     }
     public bool CheckPromotionTime(AW_Kingdom kingdom)
     {
-        if (kingdom.policy_data.p_promotion_done == 0)
+        if (kingdom.addition_data.p_promotion_done == 0)
         {
             return true;
         }
-        int num = World.world.mapStats.getYearsSince(kingdom.policy_data.p_promotion_done);
+        int num = World.world.mapStats.getYearsSince(kingdom.addition_data.p_promotion_done);
         return num >= 50;
 
     }

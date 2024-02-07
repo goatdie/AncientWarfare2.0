@@ -1,10 +1,10 @@
-namespace Figurebox
+using Figurebox.abstracts;
+
+namespace Figurebox.content
 {
-    class warTypeLibrary
+    class WarTypeLibrary : ExtendedLibrary<WarTypeAsset>
     {
-
-
-        public static void init()
+        protected override void init()
         {
             WarTypeAsset tianming = new WarTypeAsset();
             tianming.id = "tianming";
@@ -15,7 +15,7 @@ namespace Figurebox
             tianming.forced_war = false;
             tianming.total_war = false;
             tianming.alliance_join = true;
-            AssetManager.war_types_library.add(tianming);
+            add(tianming);
             WarTypeAsset tianmingrebel = new WarTypeAsset();
             tianmingrebel.id = "tianmingrebel";
             tianmingrebel.name_template = "war_rebellion";
@@ -25,7 +25,7 @@ namespace Figurebox
             tianmingrebel.forced_war = false;
             tianmingrebel.total_war = false;
             tianmingrebel.alliance_join = false;
-            AssetManager.war_types_library.add(tianmingrebel);
+            add(tianmingrebel);
 
             WarTypeAsset reclaim = new WarTypeAsset();
             reclaim.id = "reclaim";
@@ -36,7 +36,7 @@ namespace Figurebox
             reclaim.forced_war = false;
             reclaim.total_war = false;
             reclaim.alliance_join = true;
-            AssetManager.war_types_library.add(reclaim);
+            add(reclaim);
             WarTypeAsset vassalWar = new WarTypeAsset();
             vassalWar.id = "vassal_war";
             vassalWar.name_template = "war_conquest";
@@ -46,7 +46,7 @@ namespace Figurebox
             vassalWar.forced_war = false;
             vassalWar.total_war = false;
             vassalWar.alliance_join = false;
-            AssetManager.war_types_library.add(vassalWar);
+            add(vassalWar);
             WarTypeAsset IndependenceWar = new WarTypeAsset();
             IndependenceWar.id = "independence_war";
             IndependenceWar.name_template = "war_conquest";
@@ -56,11 +56,7 @@ namespace Figurebox
             IndependenceWar.forced_war = false;
             IndependenceWar.total_war = false;
             IndependenceWar.alliance_join = false;
-            AssetManager.war_types_library.add(IndependenceWar);
-
-
-
+            add(IndependenceWar);
         }
     }
-
 }
