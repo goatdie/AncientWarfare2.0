@@ -3,7 +3,7 @@ using Figurebox.abstracts;
 using Figurebox.core;
 using Figurebox.core.kingdom_policies;
 using Figurebox.core.table_items;
-using Figurebox.Utils;
+using Figurebox.utils;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine.UI;

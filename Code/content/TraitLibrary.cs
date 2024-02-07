@@ -4,8 +4,8 @@ using System.Linq;
 using Figurebox.abstracts;
 using Figurebox.constants;
 using Figurebox.core;
-using Figurebox.Utils;
-using Figurebox.Utils.MoH;
+using Figurebox.utils;
+using Figurebox.utils.MoH;
 
 namespace Figurebox.content
 {
@@ -54,9 +54,6 @@ namespace Figurebox.content
             add_and_unlock_trait(zhuhou);
             zhuhou.base_stats[S.mod_health] = +5f;
             zhuhou.base_stats[S.stewardship] = +5;
-            //zhuhou.action_special_effect = (WorldAction)Delegate.Combine(zhuhou.action_special_effect, new WorldAction(Actionlib.checktianming));
-            zhuhou.action_special_effect = (WorldAction)Delegate.Combine(zhuhou.action_special_effect,
-                new WorldAction(Actionlib.checkkingleft));
             ActorTrait tianming = new ActorTrait
             {
                 id = "天命",

@@ -4,7 +4,7 @@ using Figurebox.constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 /// <summary>
 ///     仅用于存放一些通用的方法, 别搞成之前FunctionHelper那样了

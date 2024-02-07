@@ -6,7 +6,7 @@ using System.Reflection;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core.dbs;
-using Figurebox.Utils;
+using Figurebox.utils;
 using JetBrains.Annotations;
 
 namespace Figurebox.core;

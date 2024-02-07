@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using NeoModLoader.utils;
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 public interface IHasKey<TKey>
 {

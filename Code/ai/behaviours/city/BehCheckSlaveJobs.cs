@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using ai.behaviours;
 using Figurebox.constants;
 using Figurebox.core;
-using Figurebox.Utils;
+using Figurebox.utils;
 using UnityEngine;
 
 namespace Figurebox.ai.behaviours.city;

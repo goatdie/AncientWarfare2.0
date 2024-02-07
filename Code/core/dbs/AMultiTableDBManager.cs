@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using Figurebox.Utils;
+using Figurebox.utils;
 
 namespace Figurebox.core.dbs;
 

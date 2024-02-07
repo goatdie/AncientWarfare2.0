@@ -2,7 +2,7 @@ using System.Linq;
 using ai.behaviours;
 using Figurebox.attributes;
 using Figurebox.constants;
-using Figurebox.Utils;
+using Figurebox.utils;
 using NeoModLoader.api.attributes;
 using System;
 using System.Collections.Generic;

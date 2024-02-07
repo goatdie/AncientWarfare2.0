@@ -1,5 +1,5 @@
 using Figurebox.constants;
-using Figurebox.Utils.extensions;
+using Figurebox.utils.extensions;
 
 namespace Figurebox.ai.conditions;
 

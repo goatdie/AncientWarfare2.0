@@ -1,6 +1,6 @@
 using Figurebox.constants;
 using UnityEngine;
-namespace Figurebox.Utils.extensions;
+namespace Figurebox.utils.extensions;
 
 public static class ObjectPoolGenericMonoExtension
 {

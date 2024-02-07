@@ -1,3 +1,4 @@
+using Figurebox.abstracts;
 using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.core.kingdom_policies;
@@ -8,7 +9,7 @@ namespace Figurebox.content;
 /// <summary>
 ///     政治状态（政体）
 /// </summary>
-public class KingdomPolicyStateLibrary : AssetLibrary<KingdomPolicyStateAsset>
+public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset, KingdomPolicyStateLibrary>
 {
     /// <summary>
     ///     社会统治阶级：奴隶主

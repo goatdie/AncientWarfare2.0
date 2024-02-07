@@ -1,8 +1,8 @@
-using Figurebox.Utils.extensions;
+using Figurebox.utils.extensions;
 
 namespace Figurebox.core;
 using Figurebox.attributes;
-using Figurebox.Utils.MoH;
+using utils.MoH;
 public class AW_Alliance : Alliance
 {
     [MethodReplace]

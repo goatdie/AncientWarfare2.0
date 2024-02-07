@@ -5,7 +5,7 @@ using Figurebox.core.kingdom_policies;
 using NeoModLoader.api.attributes;
 using UnityEngine;
 
-namespace Figurebox.Utils.KingdomPolicy;
+namespace Figurebox.utils.KingdomPolicy;
 
 public class KingdomPolicyGraphTools
 {

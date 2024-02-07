@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 public interface IReusable
 {

@@ -1,7 +1,7 @@
 using System.Linq;
 using ai.behaviours;
 using Figurebox.constants;
-using Figurebox.Utils;
+using Figurebox.utils;
 using NeoModLoader.api.attributes;
 
 namespace Figurebox.ai.behaviours.city;

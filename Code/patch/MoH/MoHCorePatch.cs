@@ -1,5 +1,5 @@
 using Figurebox.core;
-using Figurebox.Utils.MoH;
+using Figurebox.utils.MoH;
 using HarmonyLib;
 
 namespace Figurebox.patch.MoH;

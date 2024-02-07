@@ -12,17 +12,12 @@ namespace Figurebox.content
 {
     class RacesLibrary : ExtendedLibrary<Race>
     {
-        internal static List<string> defaultRaces = new List<string>()
+        internal static readonly List<string> default_races = new List<string>()
         {
             "human",
             "elf",
             "orc",
             "dwarf"
-        };
-
-        internal static List<string> human = new List<string>()
-        {
-            "human"
         };
 
         internal static List<string> additionalRaces = new List<string>()
@@ -33,7 +28,7 @@ namespace Figurebox.content
 
         public static void AssignNameTemplateKingdom(string kingdomName)
         {
-            foreach (var raceName in defaultRaces)
+            foreach (var raceName in default_races)
             {
                 Race race = AssetManager.raceLibrary.get(raceName);
                 if (race != null)
@@ -165,14 +160,15 @@ namespace Figurebox.content
                 return true;
             }
 
-            foreach (string race in Main.instance.addRaces)
+            foreach (string race in additionalRaces)
             {
                 if (pTexturePath.Contains("Xia"))
                 {
                     pTexturePath = pTexturePath.Replace(race, "Xia");
                     return true;
                 }
-                else if (pTexturePath.Contains(race))
+
+                if (pTexturePath.Contains(race))
                 {
                     pTexturePath = pTexturePath.Replace(race, "human");
                     return true;
@@ -191,21 +187,9 @@ namespace Figurebox.content
             {
                 return true;
             }
-            else
-            {
-                Debug.Log("改变clan框架");
-                GameObject frame = __instance.transform.Find("Frame").gameObject;
 
-
-                Image frameImage = frame.GetComponent<Image>();
-
-
-                Sprite replacementSprite = Resources.Load<Sprite>("ui/Icons/clan_frame");
-                frameImage.sprite = replacementSprite;
-
-
-                return true;
-            }
+            __instance.transform.Find("Frame").gameObject.GetComponent<Image>().sprite = SpriteTextureLoader.getSprite("ui/Icons/clan_frame");
+            return true;
         }
     }
 }

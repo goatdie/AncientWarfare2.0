@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Figurebox.Utils;
+using Figurebox.utils;
 using HarmonyLib;
 using UnityEngine;
 using Figurebox.core;

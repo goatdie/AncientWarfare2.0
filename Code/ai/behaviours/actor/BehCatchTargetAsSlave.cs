@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using ai.behaviours;
 using Figurebox.constants;
-using Figurebox.Utils;
-using Figurebox.Utils.extensions;
+using Figurebox.utils;
+using Figurebox.utils.extensions;
 using NeoModLoader.api.attributes;
 
 namespace Figurebox.ai.behaviours.actor;

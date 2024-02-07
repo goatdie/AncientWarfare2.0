@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Figurebox.core;
 
-namespace Figurebox.Utils.extensions;
+namespace Figurebox.utils.extensions;
 
 public static class KingdomExtension
 {

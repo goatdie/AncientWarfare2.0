@@ -3,9 +3,9 @@ using System.Linq;
 using Figurebox.abstracts;
 using Figurebox.core;
 using Figurebox.core.events;
-using Figurebox.Utils;
-using Figurebox.Utils.extensions;
-using Figurebox.Utils.MoH;
+using Figurebox.utils;
+using Figurebox.utils.extensions;
+using Figurebox.utils.MoH;
 using ReflectionUtility;
 using UnityEngine;
 
@@ -17,11 +17,6 @@ namespace Figurebox.content
 
         private static double last_Timer = 0.0f;
         private static double interval = 1000.0f;
-
-        public static bool HasLostTerritories(Kingdom kingdom)
-        {
-            return kingdom.cities.Any(city => CityTools.WasOccupiedByKingdomInLast5To100Years(city, kingdom));
-        }
 
 
         protected override void init()
@@ -286,7 +281,7 @@ namespace Figurebox.content
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom,
                     AssetManager.war_types_library.get("vassal_war"), true);
-                CityTools.LogVassalWarStart(pPlot.target_kingdom, pPlot.initiator_kingdom);
+                WorldLogTools.LogVassalWarStart(pPlot.target_kingdom, pPlot.initiator_kingdom);
 
                 return true;
             };
@@ -482,7 +477,7 @@ namespace Figurebox.content
                     // 如果目标国家是天命国家，设置战争类型为 "tianming"
                     World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom,
                         AssetManager.war_types_library.get("tianming"), false);
-                    CityTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
+                    WorldLogTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
                 }
                 else
                 {

@@ -1,363 +1,252 @@
-using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SQLite;
 using System.Linq;
-using System.Text;
-using NCMS.Utils;
+using Figurebox.core;
+using Figurebox.core.table_items;
+using Figurebox.ui.prefabs;
+using NeoModLoader.api;
+using NeoModLoader.api.attributes;
+using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Figurebox
+namespace Figurebox.ui.windows;
+
+public partial class KingdomHistoryWindow : AbstractWideWindow<KingdomHistoryWindow>
 {
-    class KingdomHistoryWindow : MonoBehaviour
+    /// <summary>
+    ///     临时的按照时间顺序排列的君主统治列表
+    /// </summary>
+    private readonly Queue<KingRuleTableItem> _tmp_ruleQueue = new();
+
+    private readonly Dictionary<HistoryType, RectTransform> HistoryTabs = new();
+
+    /// <summary>
+    ///     所选国家所有君主
+    /// </summary>
+    private readonly Dictionary<string, ActorTableItem> kings = new();
+
+    /// <summary>
+    ///     按照时间顺序排列的君主统治列表
+    /// </summary>
+    private readonly Queue<KingRuleTableItem> ruleQueue = new();
+
+    private HistoryType _historyType = HistoryType.Population;
+
+    private KingdomTableItem _kingdom;
+
+    private ObjectPoolGenericMono<KingRuleHistoryItem> _rule_historyItemPool;
+
+    private string _selectedKing = "";
+    private string _selectedKingdom = "";
+    private KingRuleTableItem _selectedRule;
+    private RectTransform HistorySelectContentTransform;
+    private RectTransform KingSelectContentTransform;
+
+    private void Update()
     {
-        private static GameObject contents;
-        private static GameObject scrollView;
-        public static GameObject content;
-        private static Vector2 originalSize;
-        public static KingdomHistoryWindow instance;
-        private static bool UIReadyToLoad = false;
-        private static bool loading = false;
-        public static Kingdom currentKingdom;
-        private static Button KingdomHisotrybutton;
-        private static GameObject kingdomAndKingTextObject;
-        private static ContentSizeFitter contentSizeFitter;
-
-
-        public static void init()
+        if (!Initialized || !IsOpened) return;
+        if (_tmp_ruleQueue.Count > 0)
         {
-            scrollView =
-                GameObject.Find(
-                    $"Canvas Container Main/Canvas - Windows/windows/kingdomHistoryWindow/Background/Scroll View");
-            contents = WindowManager.windowContents["kingdomHistoryWindow"];
-            instance = new GameObject("KingdomHistoryWindowInstance").AddComponent<KingdomHistoryWindow>();
+            KingRuleTableItem rule = _tmp_ruleQueue.Dequeue();
+            var rule_item = _rule_historyItemPool.getNext(0);
+            rule_item.Setup(kings[rule.aid], rule, _kingdom);
+        }
+    }
 
-            // 添加 Vertical Layout Group 和 Content Size Fitter 组件
-            VerticalLayoutGroup verticalLayoutGroup = contents.AddComponent<VerticalLayoutGroup>();
-            verticalLayoutGroup.childForceExpandHeight = false;
-            verticalLayoutGroup.spacing = 15;
+    protected override void Init()
+    {
+        var king_select_view = BackgroundTransform.Find("Scroll View").gameObject;
+        king_select_view.name = "King Select Scroll View";
+        var rect_transform = king_select_view.GetComponent<RectTransform>();
+        rect_transform.sizeDelta = new Vector2(108, 255);
+        rect_transform.localPosition = new Vector3(-232, 0, 0);
+        rect_transform.localScale = Vector3.one;
+        var scroll_rect = king_select_view.GetComponent<ScrollRect>();
+        scroll_rect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+        scroll_rect.verticalScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(10, 0);
+        var scroll_area_bg = king_select_view.GetComponent<Image>();
+        scroll_area_bg.sprite = SpriteTextureLoader.getSprite("ui/special/windowEmptyFrame");
+        scroll_area_bg.type = Image.Type.Sliced;
+        scroll_area_bg.color = Color.white;
 
-            ContentSizeFitter contentSizeFitter = contents.AddComponent<ContentSizeFitter>();
-            contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        KingSelectContentTransform = king_select_view.transform.Find("Viewport/Content").GetComponent<RectTransform>();
+        var vert_layout = KingSelectContentTransform.gameObject.AddComponent<VerticalLayoutGroup>();
+        vert_layout.childControlHeight = false;
+        vert_layout.childControlWidth = false;
+        vert_layout.childForceExpandHeight = false;
+        vert_layout.childForceExpandWidth = false;
+        vert_layout.childAlignment = TextAnchor.UpperCenter;
+        vert_layout.spacing = 4;
+        vert_layout.padding = new RectOffset(0, 0, 12, 12);
 
-            originalSize = contents.GetComponent<RectTransform>().sizeDelta;
-            contents.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 1500);
-/*
-            KingdomHisotrybutton = NewUI.createBGWindowButton(
-                GameObject.Find($"Canvas Container Main/Canvas - Windows/windows/kingdom"),
-                -50,
-                "iconworldlaw",
-                "KingdomHistory",
-                "Kingdom History",
-                "Shows a kingdom's history",
-                openWindow
-            );
-            */
+        var fitter = KingSelectContentTransform.gameObject.AddComponent<ContentSizeFitter>();
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        fitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+
+        var history_select_view = Instantiate(king_select_view, BackgroundTransform);
+        history_select_view.name = "History Select Scroll View";
+        rect_transform = history_select_view.GetComponent<RectTransform>();
+        rect_transform.sizeDelta = new Vector2(48, 255);
+        rect_transform.localPosition = new Vector3(263, 0, 0);
+        rect_transform.localScale = Vector3.one;
+
+        HistorySelectContentTransform =
+            history_select_view.transform.Find("Viewport/Content").GetComponent<RectTransform>();
+
+        void CreateHistoryTab(HistoryType pType, string pIcon)
+        {
+            var tab_entry = Instantiate(SimpleButton.Prefab, HistorySelectContentTransform);
+            tab_entry.name = pType.ToString();
+            tab_entry.Setup(() =>
+            {
+                _historyType = pType;
+                UpdatePage();
+            }, SpriteTextureLoader.getSprite(pIcon), pTipType: "normal", pTipData: new TooltipData
+            {
+                tip_name = "AW_History " + pType,
+                tip_description = "AW_History " + pType + " Description"
+            });
+            tab_entry.Background.enabled = false;
+
+            GameObject tab = Instantiate(king_select_view, BackgroundTransform);
+            tab.name = pType.ToString();
+            tab.transform.SetParent(BackgroundTransform);
+            tab.transform.localScale = Vector3.one;
+            tab.transform.localPosition = new Vector3(30, 0, 0);
+            tab.GetComponent<RectTransform>().sizeDelta = new Vector2(400, 255);
+            HistoryTabs[pType] = tab.transform.Find("Viewport/Content") as RectTransform;
         }
 
+        CreateHistoryTab(HistoryType.Population, "ui/icons/iconPopulation");
+        CreateHistoryTab(HistoryType.Territory, "ui/icons/iconKingdomZones");
+        CreateHistoryTab(HistoryType.War, "ui/icons/iconWarsList");
+        CreateHistoryTab(HistoryType.Policy, "ui/icons/iconPlotsList");
+        CreateHistoryTab(HistoryType.Review, "ui/icons/iconDocument");
 
-        public static void openWindow()
+
+        InitReviewTab();
+
+        _rule_historyItemPool =
+            new ObjectPoolGenericMono<KingRuleHistoryItem>(KingRuleHistoryItem.Prefab, KingSelectContentTransform);
+    }
+
+    public override void OnNormalEnable()
+    {
+        base.OnNormalEnable();
+
+        kings.Clear();
+        ruleQueue.Clear();
+        _tmp_ruleQueue.Clear();
+
+        _selectedKing = "";
+        _selectedRule = null;
+
+        RequestKings();
+
+        ShowReviewTab();
+    }
+
+    public override void OnNormalDisable()
+    {
+        base.OnNormalDisable();
+
+        kings.Clear();
+        ruleQueue.Clear();
+        _tmp_ruleQueue.Clear();
+
+        _rule_historyItemPool.clear();
+    }
+
+    [Hotfixable]
+    private void RequestKings()
+    {
+        using var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB);
+        cmd.CommandText = "SELECT * FROM KingRule WHERE KID = @kingdom_id ORDER BY start_time ASC";
+        cmd.Parameters.AddWithValue("@kingdom_id", _selectedKingdom);
+        using (var king_rule_reader = cmd.ExecuteReader())
         {
-            Windows.ShowWindow("kingdomHistoryWindow");
-            AddKingdomAndKingToWindow(currentKingdom.data.id);
-        }
-
-        public static void AddKingdomAndKingToWindow(string kingdomId)
-        {
-            // 设置文本的初始位置
-            int posY = -35;
-
-            // 删除之前的内容
-            foreach (Transform child in contents.transform)
+            while (king_rule_reader.Read())
             {
-                Destroy(child.gameObject);
-            }
-
-            if (string.IsNullOrEmpty(kingdomId))
-            {
-                Debug.LogWarning("No kingdom selected.");
-                return;
-            }
-
-            // 创建一个新的列表来保存所有的统治事件
-            List<string> allRulingEvents = new List<string>();
-
-            // 将每个统治事件添加到列表中
-            foreach (var pair in FunctionHelper.KingStartYearInKingdom)
-            {
-                string[] parts = pair.Key.Split('-');
-                if (parts[1] == kingdomId)
-                {
-                    allRulingEvents.Add(pair.Key);
-                }
-            }
-
-            // 按照统治的开始年份对列表进行排序
-            allRulingEvents.Sort((event1, event2) =>
-                FunctionHelper.KingStartYearInKingdom[event1].CompareTo(FunctionHelper.KingStartYearInKingdom[event2]));
-
-
-            // 按行显示王国及其历史纪录
-            foreach (string rulingEvent in allRulingEvents)
-            {
-                string[] parts = rulingEvent.Split('-');
-                string kingId = parts[0];
-                string kingAndKingdomKey = rulingEvent;
-                int kingEndYear = World.world.mapStats.getCurrentYear();
-                int currentYear = World.world.mapStats.getCurrentYear();
-                int warEndYear = World.world.mapStats.getCurrentYear();
-                int warCount = 0;
-                float yOffset = 1.0f;
-                int offsetYAttacker = 10;
-                int offsetYDefender;
-                int year = FunctionHelper.KingStartYearInKingdom.ContainsKey(kingAndKingdomKey)
-                    ? FunctionHelper.KingStartYearInKingdom[kingAndKingdomKey]
-                    : 0;
-                // 使用kingdomId获取Kingdom实例
-                if (!FunctionHelper.KingEndYearInKingdom.TryGetValue(kingAndKingdomKey, out kingEndYear))
-                {
-                    kingEndYear = World.world.mapStats.getCurrentYear();
-                }
-                else
-                {
-                    kingEndYear = FunctionHelper.KingEndYearInKingdom[kingAndKingdomKey];
-                }
-
-                Kingdom kingdom = BehaviourActionBase<Kingdom>.world.kingdoms.get(kingdomId);
-
-
-                Dictionary<string, Tuple<double, List<string>, List<string>, double, bool>> kingdomWarsInfo =
-                    new Dictionary<string, Tuple<double, List<string>, List<string>, double, bool>>();
-
-                foreach (var warId in FunctionHelper.WarStartDate.Keys)
-                {
-                    double warStartYear = FunctionHelper.WarStartDate[warId];
-
-                    int kingStartYear = FunctionHelper.KingStartYearInKingdom[kingAndKingdomKey];
-                    int warintstartyear = ExtractYear(warStartYear);
-
-
-                    // 尝试获取字典中的值，如果键不存在，则返回当前年份
-
-
-                    // Try to get the value from the dictionary, if the key does not exist, return the current year
-                    if (!FunctionHelper.WarEndDate.TryGetValue(warId, out warEndYear))
-                    {
-                        warEndYear = World.world.mapStats.getCurrentYear();
-                    }
-                    else
-                    {
-                        warEndYear = FunctionHelper.WarEndDate[warId];
-                    }
-
-
-                    if ((FunctionHelper.Attackers[warId].Contains(kingdomId) ||
-                         FunctionHelper.Defenders[warId].Contains(kingdomId)) &&
-                        (warintstartyear + 10 >= kingStartYear && warEndYear - 10 <= kingEndYear))
-                    {
-                        double warEndYearFloat;
-                        bool isWarOngoing = !FunctionHelper.WarEndDateFloat.TryGetValue(warId, out warEndYearFloat);
-
-                        kingdomWarsInfo[warId] = new Tuple<double, List<string>, List<string>, double, bool>(
-                            FunctionHelper.WarStartDate[warId],
-                            FunctionHelper.Attackers[warId],
-                            FunctionHelper.Defenders[warId],
-                            warEndYearFloat,
-                            isWarOngoing);
-                    }
-                }
-
-                //待解决问题 同一个人在同一个王国统治第二次应该当新王一样加进来
-                List<string> allVassalRelationships = new List<string>();
-
-                // 将每个附庸关系添加到列表中
-                foreach (var pair in FunctionHelper.kingdomVassalEstablishmentTime)
-                {
-                    string[] parts1 = pair.Key.Split('-');
-                    if (parts1[0] == kingdomId || parts1[1] == kingdomId)
-                    {
-                        allVassalRelationships.Add(pair.Key);
-                    }
-                }
-
-                // 按照附庸关系的建立时间对列表进行排序
-                allVassalRelationships.Sort((relation1, relation2) =>
-                    FunctionHelper.kingdomVassalEstablishmentTime[relation1]
-                        .CompareTo(FunctionHelper.kingdomVassalEstablishmentTime[relation2]));
-
-                string vassalLordInfo = "";
-
-                foreach (string vassalRelation in allVassalRelationships)
-                {
-                    string[] parts1 = vassalRelation.Split(new char[] { '-' }, 3); // 分割成三个部分：宗主国id，附庸国id和计数器
-                    string lordId = parts1[0];
-                    string vassalId = parts1[1];
-
-                    // 通过关系ID确定vassal和lord名称
-                    string vassalName = FunctionHelper.kingdomCityNameyData.ContainsKey(vassalId)
-                        ? FunctionHelper.kingdomCityNameyData[vassalId]
-                        : "Unknown Kingdom";
-                    string lordName = FunctionHelper.kingdomCityNameyData.ContainsKey(lordId)
-                        ? FunctionHelper.kingdomCityNameyData[lordId]
-                        : "Unknown Kingdom";
-
-                    // 获取附庸关系的建立年份
-                    int startYear = FunctionHelper.kingdomVassalEstablishmentTime[vassalRelation];
-                    int kingStartYear = FunctionHelper.KingStartYearInKingdom[kingAndKingdomKey];
-
-                    // 尝试获取附庸关系的结束年份，如果关系还在继续，就使用当前年份
-                    int endYear = FunctionHelper.kingdomVassalEndTime.ContainsKey(vassalRelation)
-                        ? FunctionHelper.kingdomVassalEndTime[vassalRelation]
-                        : World.world.mapStats.getCurrentYear();
-
-                    // 判断当前kingdom是否为vassal或lord，并将相关信息添加到UI中
-                    if ((startYear <= kingEndYear && endYear >= kingStartYear))
-                    {
-                        // 判断当前kingdom是否为vassal或lord，并将相关信息添加到UI中
-                        if (kingdomId == lordId)
-                        {
-                            string endInfo = endYear == currentYear ? "Ongoing" : endYear.ToString();
-                            vassalLordInfo +=
-                                string.Format("\n<b>Vassal:</b>\n{0}\nYear Established: {1}\nYear Ended: {2}\n",
-                                    vassalName, startYear, endInfo);
-                        }
-                        else if (kingdomId == vassalId)
-                        {
-                            string endInfo = endYear == currentYear ? "Ongoing" : endYear.ToString();
-                            vassalLordInfo +=
-                                string.Format("\n<b>Lord:</b>\n{0}\nYear Established: {1}\nYear Ended: {2}\n", lordName,
-                                    startYear, endInfo);
-                        }
-                    }
-                }
-
-                Text kingdomAndKingText = new GameObject("KingdomAndKingText").AddComponent<Text>();
-                // 按照战争的创建时间对战争信息进行排序
-                var sortedKingdomWarsInfo =
-                    kingdomWarsInfo.OrderBy(warInfo => ExtractYear(warInfo.Value.Item1)).ToList();
-
-                StringBuilder warInfo = new StringBuilder();
-
-                foreach (var warInfoEntry in sortedKingdomWarsInfo)
-                {
-                    string warStartDate = World.world.mapStats.getDate(warInfoEntry.Value.Item1);
-
-
-                    string warEndYearStr = warInfoEntry.Value.Item5
-                        ? "Ongoing War"
-                        : World.world.mapStats.getDate(warInfoEntry.Value.Item4);
-                    GameObject warBannerContainer = new GameObject("WarBannerContainer");
-                    warBannerContainer.transform.SetParent(kingdomAndKingText.transform, false);
-
-                    StringBuilder attackerNames = new StringBuilder();
-                    foreach (var attackerId in warInfoEntry.Value.Item2)
-                    {
-                        string kingdomName = FunctionHelper.kingdomCityNameyData.ContainsKey(attackerId)
-                            ? FunctionHelper.kingdomCityNameyData[attackerId]
-                            : "Unknown Kingdom";
-                        attackerNames.AppendLine(kingdomName);
-
-                        Kingdom dkingdom = BehaviourActionBase<Kingdom>.world.kingdoms.get(attackerId);
-                        if (dkingdom != null)
-                        {
-                            GameObject banner = NewUI.createKingdomBanner(warBannerContainer, dkingdom,
-                                new Vector3(-70, offsetYAttacker, 0));
-                            banner.transform.localScale = new Vector3(0.2f, 0.1f);
-                            offsetYAttacker -= 10;
-                        }
-                    }
-
-                    offsetYDefender = offsetYAttacker - 20;
-                    StringBuilder defenderNames = new StringBuilder();
-                    foreach (var defenderId in warInfoEntry.Value.Item3)
-                    {
-                        string kingdomName = FunctionHelper.kingdomCityNameyData.ContainsKey(defenderId)
-                            ? FunctionHelper.kingdomCityNameyData[defenderId]
-                            : "Unknown Kingdom";
-                        defenderNames.AppendLine(kingdomName);
-
-                        Kingdom dkingdom = BehaviourActionBase<Kingdom>.world.kingdoms.get(defenderId);
-                        if (dkingdom != null)
-                        {
-                            GameObject banner = NewUI.createKingdomBanner(warBannerContainer, dkingdom,
-                                new Vector3(-70, offsetYDefender, 0));
-                            banner.transform.localScale = new Vector2(0.2f, 0.1f);
-                            offsetYDefender -= 10;
-                        }
-                    }
-
-                    offsetYAttacker = offsetYDefender - 45; // Adjust for next war
-
-
-                    string attackersStr = attackerNames.ToString();
-                    string defendersStr = defenderNames.ToString();
-
-
-                    warInfo.AppendLine(
-                        $"War Start Year: {warStartDate}\nWar End Year: {warEndYearStr}\nWar Name: {FunctionHelper.warIdNameDict[warInfoEntry.Key]}\nAttackers:\n{attackersStr}\nDefenders:\n{defendersStr}");
-                }
-
-
-                // 创建一个新的Text组件，用于显示kingdom及其新的king 
-
-
-                // 设置字体，字体大小和颜色
-                kingdomAndKingText.font = (Font)Resources.Load("Fonts/Roboto-Bold", typeof(Font));
-                kingdomAndKingText.fontSize = 8;
-                kingdomAndKingText.color = Color.white;
-
-                Debug.Log($"Creating text for king {kingId} at year {year}");
-
-                // 设置要显示的文本
-                if (FunctionHelper.KingName.ContainsKey(kingId) && FunctionHelper.KingKingdomName.ContainsKey(kingId))
-                {
-                    // 获取所有的王国名
-
-                    List<string> allKingdomNames = FunctionHelper.KingKingdomName[kingId];
-
-                    // Add a newline after each kingdom name
-                    string allKingdomNamesStr = string.Join("\n", allKingdomNames);
-                    // Now when displaying the text, each kingdom name will be on a new line
-                    string kingEndYearStr = (kingEndYear == World.world.mapStats.getCurrentYear())
-                        ? "Still in Power"
-                        : kingEndYear.ToString();
-                    kingdomAndKingText.text =
-                        $"<i><b><color=#FFC535>King:</color></b> {FunctionHelper.KingName[kingId]}</i>  Started Rule: {year}\nEnd Rule: {kingEndYearStr}\nKingdoms:\n{allKingdomNamesStr}\nRuled for {FunctionHelper.kingYearData[kingId]} Years\nVassal-Lord Relationships:{vassalLordInfo}\nWars:\n{warInfo.ToString()}";
-                }
-                else
-                {
-                    Debug.LogWarning($"Kingdom ID {kingId} not found in KingName or KingKingdomName.");
-                    kingdomAndKingText.text = $"Kingdom ID {kingId} not found. Year: {year}";
-                }
-
-                // 创建一个RectTransform组件，用于调整文本的大小和位置
-                RectTransform kingdomAndKingTextRect = kingdomAndKingText.GetComponent<RectTransform>();
-
-                // 将RectTransform组件设为其他GameObject的子对象，例如将其添加到Canvas上
-                kingdomAndKingTextRect.SetParent(contents.transform, false);
-
-                // 调整文本的位置和大小
-                kingdomAndKingTextRect.anchoredPosition = new Vector2(-0, posY);
-                kingdomAndKingTextRect.sizeDelta = new Vector2(280, 40); // 更改这个值以调整文本的高度
-
-                // 添加ContentSizeFitter组件，使文本框的大小自动调整以适应其内容
-                var textContentSizeFitter = kingdomAndKingText.gameObject.AddComponent<ContentSizeFitter>();
-                textContentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                textContentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                // 获取文本的高度
-                float textHeight = kingdomAndKingText.preferredHeight;
-
-                // 更新下一行文本的位置
-                posY -= (int)textHeight + 20; // 在文本的高度和下一行之间保持10的间隔
+                var king_rule = new KingRuleTableItem();
+                king_rule.ReadFromReader(king_rule_reader);
+                ruleQueue.Enqueue(king_rule);
+                _tmp_ruleQueue.Enqueue(king_rule);
             }
         }
 
+        cmd.CommandText = "SELECT * FROM Actor WHERE ID = @king_id";
 
-        public static int ExtractYear(double time)
+        cmd.Parameters.Add("@king_id", DbType.String);
+
+        foreach (var king_rule in ruleQueue.Where(king_rule => !kings.ContainsKey(king_rule.aid)))
         {
-            int year = (int)(time / 5f / 12f);
-            year++; // 这是因为在你的getDate函数中增加了一年
-            return year;
+            cmd.Parameters["@king_id"].Value = king_rule.aid;
+
+            using var king_reader = cmd.ExecuteReader();
+            if (!king_reader.Read()) continue;
+
+            var king = new ActorTableItem();
+            king.ReadFromReader(king_reader);
+            kings[king_rule.aid] = king;
         }
+
+        cmd.CommandText = "SELECT * FROM Kingdom WHERE ID = @kingdom_id";
+        using (var kingdom_reader = cmd.ExecuteReader())
+        {
+            if (kingdom_reader.Read())
+            {
+                _kingdom = new KingdomTableItem();
+                _kingdom.ReadFromReader(kingdom_reader);
+            }
+        }
+    }
+
+
+    public void SelectKingRule(KingRuleTableItem pRule)
+    {
+        _selectedKing = pRule.aid;
+        foreach (var rule_item in _rule_historyItemPool._elements_total) rule_item.MarkSelected(false);
+        _selectedRule = pRule;
+        _selectedKing = pRule.aid;
+        UpdatePage();
+    }
+
+    public void UpdatePage()
+    {
+        foreach (var tab in HistoryTabs) tab.Value.gameObject.SetActive(tab.Key == _historyType);
+        switch (_historyType)
+        {
+            case HistoryType.Population:
+                break;
+            case HistoryType.Territory:
+                break;
+            case HistoryType.War:
+                break;
+            case HistoryType.Policy:
+                break;
+            case HistoryType.Review:
+                ShowReviewTab();
+                break;
+        }
+    }
+
+    public static void ShowWindow(string pKingdomID)
+    {
+        Instance._selectedKingdom = pKingdomID;
+        Instance._selectedKing = "";
+        Instance._historyType = HistoryType.Population;
+
+        ScrollWindow.showWindow(WindowId);
+    }
+
+    private enum HistoryType
+    {
+        Population,
+        Territory,
+        War,
+        Policy,
+        Review
     }
 }

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Figurebox.Utils;
+using Figurebox.utils;
 using NeoModLoader.api.attributes;
 
 namespace Figurebox.core.events;

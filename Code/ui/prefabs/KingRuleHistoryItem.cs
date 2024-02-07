@@ -2,8 +2,8 @@ using System.Text;
 using Figurebox.constants;
 using Figurebox.core.table_items;
 using Figurebox.ui.windows;
-using Figurebox.Utils;
-using Figurebox.Utils.extensions;
+using Figurebox.utils;
+using Figurebox.utils.extensions;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General.UI.Prefabs;
 using UnityEngine;
@@ -48,7 +48,7 @@ public class KingRuleHistoryItem : APrefab<KingRuleHistoryItem>
         });
         button.onClick.AddListener(() =>
         {
-            NewKingdomHistoryWindow.Instance.SelectKingRule(rule);
+            KingdomHistoryWindow.Instance.SelectKingRule(rule);
             MarkSelected(true);
         });
     }

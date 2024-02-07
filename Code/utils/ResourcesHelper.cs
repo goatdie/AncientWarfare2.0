@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace Figurebox.Utils
+namespace Figurebox.utils
 {
     class ResourcesHelper
     {

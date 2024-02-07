@@ -1,6 +1,6 @@
 using Figurebox.core;
 using System.Collections.Generic;
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 public static class ActorTools
 {

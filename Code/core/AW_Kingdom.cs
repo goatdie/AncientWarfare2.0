@@ -7,8 +7,8 @@ using Figurebox.content;
 using Figurebox.core.events;
 using Figurebox.core.kingdom_policies;
 using Figurebox.patch.MoH;
-using Figurebox.Utils;
-using Figurebox.Utils.MoH;
+using Figurebox.utils;
+using Figurebox.utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 #if 一米_中文名
@@ -569,7 +569,7 @@ public partial class AW_Kingdom : Kingdom
 
                     kingdomToInherit.addition_data.Title =
                         MaxTitle(kingdomToInherit.addition_data.Title, currentKingdom.addition_data.Title);
-                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
+                    WorldLogTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                     EventsManager.Instance.Integration(actor, currentKingdom.data.name, kingdomToInherit.data.name);
                 }
                 else
@@ -579,7 +579,7 @@ public partial class AW_Kingdom : Kingdom
 
                     currentKingdom.addition_data.Title =
                         MaxTitle(kingdomToInherit.addition_data.Title, currentKingdom.addition_data.Title);
-                    CityTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
+                    WorldLogTools.LogKingIntegration(actor, currentKingdom, kingdomToInherit);
                     EventsManager.Instance.Integration(actor, currentKingdom.data.name, kingdomToInherit.data.name);
                 }
             }
@@ -754,7 +754,7 @@ public partial class AW_Kingdom : Kingdom
                 }
 
                 // WLM
-                CityTools.logUsurpation(king, this);
+                WorldLogTools.logUsurpation(king, this);
 
 
                 if (FomerMoh) FomerMoh = false;

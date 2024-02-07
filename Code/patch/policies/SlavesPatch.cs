@@ -5,7 +5,7 @@ using ai.behaviours;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core;
-using Figurebox.Utils;
+using Figurebox.utils;
 using HarmonyLib;
 using NeoModLoader.api.attributes;
 

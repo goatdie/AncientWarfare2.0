@@ -1,4 +1,4 @@
-namespace Figurebox.Utils.extensions;
+namespace Figurebox.utils.extensions;
 
 public static class MapBoxExtension
 {

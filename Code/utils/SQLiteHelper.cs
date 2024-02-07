@@ -5,7 +5,7 @@ using System.Text;
 using Figurebox.constants;
 using NeoModLoader.api.attributes;
 
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 public class ColumnVal : IReusable
 {

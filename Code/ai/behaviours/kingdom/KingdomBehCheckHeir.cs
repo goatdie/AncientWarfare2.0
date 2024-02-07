@@ -1,7 +1,7 @@
 using ai.behaviours;
 using Figurebox.core;
 
-namespace Figurebox.ai;
+namespace Figurebox.ai.behaviours.kingdom;
 
 public class KingdomBehCheckHeir : BehaviourActionKingdom
 {

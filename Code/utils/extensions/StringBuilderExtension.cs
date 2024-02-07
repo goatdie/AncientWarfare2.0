@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Figurebox.Utils.extensions;
+namespace Figurebox.utils.extensions;
 
 public static class StringBuilderExtension
 {

@@ -1,6 +1,6 @@
 using Figurebox.abstracts;
 using Figurebox.constants;
-using Figurebox.Utils;
+using Figurebox.utils;
 
 namespace Figurebox.content;
 

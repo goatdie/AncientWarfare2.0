@@ -1,4 +1,4 @@
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 internal static class DeveloperTools
 {

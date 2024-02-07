@@ -1,5 +1,5 @@
 using Figurebox.core.table_items;
-using Figurebox.Utils;
+using Figurebox.utils;
 using System.Data.SQLite;
 
 namespace Figurebox.core.events;

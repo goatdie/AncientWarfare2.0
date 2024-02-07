@@ -1,13 +1,12 @@
+using Figurebox.abstracts;
 using Figurebox.core;
 using Figurebox.core.kingdom_policies;
 using Figurebox.policy_actions;
 
 namespace Figurebox.content;
 
-class KingdomPolicyLibrary : AssetLibrary<KingdomPolicyAsset>
+class KingdomPolicyLibrary : AW_AssetLibrary<KingdomPolicyAsset, KingdomPolicyLibrary>
 {
-    public static KingdomPolicyLibrary Instance { get; } = new();
-
     // 这里可以根据需要添加特定于 KingdomPolicyAsset 的方法
     public override void init()
     {

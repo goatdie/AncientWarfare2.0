@@ -1,10 +1,10 @@
 using Figurebox.core;
-using Figurebox.Utils.MoH;
+using Figurebox.utils.MoH;
 using HarmonyLib;
 using Figurebox.attributes;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using Figurebox.Utils.extensions;
+using Figurebox.utils.extensions;
 
 namespace Figurebox.patch;
 

@@ -2,7 +2,7 @@ using Figurebox.content;
 using Figurebox.core;
 using Figurebox.core.events;
 using Figurebox.core.kingdom_policies;
-using Figurebox.Utils;
+using Figurebox.utils;
 using HarmonyLib;
 #if 一米_中文名
 using Chinese_Name;

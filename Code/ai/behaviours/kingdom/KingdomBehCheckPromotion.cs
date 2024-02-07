@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using ai.behaviours;
-using Figurebox.core;
-using UnityEngine;
-using System.Linq;
 using Figurebox.content;
+using Figurebox.core;
 using Figurebox.core.kingdom_policies;
 
-
-namespace Figurebox.ai;
+namespace Figurebox.ai.behaviours.kingdom;
 public class KingdomBehCheckPromotion : BehaviourActionKingdom
 {
     public override BehResult execute(Kingdom pKingdom)

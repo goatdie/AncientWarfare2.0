@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Figurebox.Utils;
+using Figurebox.utils;
 using HarmonyLib;
 using NCMS.Utils;
 using UnityEngine;
-using Figurebox.Utils.MoH;
+using Figurebox.utils.MoH;
 namespace Figurebox
 {
 
@@ -160,7 +160,7 @@ namespace Figurebox
           SpawnedNames.Add(text0, true);
           __result.addTrait("figure");
           __result.addTrait("first"); // here give the fugure traits
-          CityTools.logFigure(__result); // world message stuff(don't forget to add this if you wanna see your figure message)					
+          WorldLogTools.logFigure(__result); // world message stuff(don't forget to add this if you wanna see your figure message)					
           //actorStatus.set("chinese_family_name", "姬");
 
           return;
@@ -183,7 +183,7 @@ namespace Figurebox
           SpawnedNames.Add(text2, true);
           __result.addTrait("figure");
           __result.addTrait("first");
-          CityTools.logFigure(__result);
+          WorldLogTools.logFigure(__result);
           return;
         }
 
@@ -205,7 +205,7 @@ namespace Figurebox
           actorStatus.favorite = true;
           actorStatus.health = 1500;
           __result.addTrait("first");
-          CityTools.logFigure(__result);
+          WorldLogTools.logFigure(__result);
           return;
         }
 
@@ -228,7 +228,7 @@ namespace Figurebox
           __result.addTrait("figure");
           __result.addTrait("first");
 
-          CityTools.logFigure(__result);
+          WorldLogTools.logFigure(__result);
 
 
 
@@ -253,7 +253,7 @@ namespace Figurebox
           __result.addTrait("figure");
           __result.addTrait("first");
 
-          CityTools.logFigure(__result);
+          WorldLogTools.logFigure(__result);
 
 
           return;

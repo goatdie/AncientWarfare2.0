@@ -3,7 +3,7 @@ using Figurebox.content;
 using Figurebox.core;
 using Figurebox.core.kingdom_policies;
 
-namespace Figurebox.ai;
+namespace Figurebox.ai.behaviours.kingdom;
 
 public class KingdomBehCheckNewCapital : BehaviourActionKingdom
 {

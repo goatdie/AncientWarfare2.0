@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Figurebox.abstracts;
-using Figurebox.Utils;
+using Figurebox.utils;
 using HarmonyLib;
 using ReflectionUtility;
 using UnityEngine;

@@ -3,7 +3,7 @@ using Figurebox.core;
 using HarmonyLib;
 using UnityEngine;
 using System.Collections.Generic;
-using Figurebox.Utils;
+using Figurebox.utils;
 
 
 namespace Figurebox;

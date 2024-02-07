@@ -1,6 +1,6 @@
 using System.Linq;
 using Figurebox.attributes;
-using Figurebox.Utils;
+using Figurebox.utils;
 using JetBrains.Annotations;
 
 namespace Figurebox.core;

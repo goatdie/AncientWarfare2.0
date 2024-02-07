@@ -8,9 +8,9 @@ using Figurebox.core;
 using System.Linq;
 using Figurebox.content;
 using Figurebox.core.events;
-using Figurebox.Utils.extensions;
+using Figurebox.utils.extensions;
 
-namespace Figurebox.Utils.MoH;
+namespace Figurebox.utils.MoH;
 
 public class MoHTools
 {
@@ -56,7 +56,7 @@ public class MoHTools
         if (MoHKingdom != null)
         {
             MoHKingdom.FomerMoh = true;
-            CityTools.loglosekingdom(MoHKingdom);
+            WorldLogTools.loglosekingdom(MoHKingdom);
 
             EventsManager.Instance.ENDMOH(MoHKingdom);
 

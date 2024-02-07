@@ -1,13 +1,7 @@
 namespace Figurebox.abstracts;
 
 public class AW_AssetLibrary<TAsset, TLibrary> : AssetLibrary<TAsset> where TAsset : Asset
-    where TLibrary : AW_AssetLibrary<TAsset, TLibrary>
+    where TLibrary : AW_AssetLibrary<TAsset, TLibrary>, new()
 {
-    public static TLibrary Instance;
-
-    public override void init()
-    {
-        base.init();
-        Instance = (TLibrary)this;
-    }
+    public static TLibrary Instance { get; } = new TLibrary();
 }

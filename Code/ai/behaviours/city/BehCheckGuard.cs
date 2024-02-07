@@ -3,7 +3,7 @@ using ai.behaviours;
 using Figurebox.constants;
 using Figurebox.content;
 using Figurebox.core;
-using Figurebox.Utils;
+using Figurebox.utils;
 
 namespace Figurebox.ai.behaviours.city;
 

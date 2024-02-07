@@ -1,5 +1,5 @@
-using Figurebox.Utils.extensions;
-using Figurebox.Utils.MoH;
+using Figurebox.utils.extensions;
+using Figurebox.utils.MoH;
 namespace Figurebox.core;
 
 public partial class AW_KingdomManager

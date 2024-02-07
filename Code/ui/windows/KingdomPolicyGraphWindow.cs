@@ -3,7 +3,7 @@ using System.Linq;
 using Figurebox.core;
 using Figurebox.prefabs;
 using Figurebox.ui.prefabs;
-using Figurebox.Utils.KingdomPolicy;
+using Figurebox.utils.KingdomPolicy;
 using NeoModLoader.api;
 using UnityEngine;
 using UnityEngine.UI;

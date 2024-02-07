@@ -1,7 +1,7 @@
 using UnityEngine;
 using HarmonyLib;
 using ReflectionUtility;
-using Figurebox.Utils;
+using Figurebox.utils;
 using NCMS.Utils;
 using ai;
 using System.Collections.Generic;

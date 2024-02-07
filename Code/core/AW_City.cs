@@ -4,9 +4,9 @@ using System.Linq;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core.dbs;
-using Figurebox.Utils;
-using Figurebox.Utils.extensions;
-using Figurebox.Utils.MoH;
+using Figurebox.utils;
+using Figurebox.utils.extensions;
+using Figurebox.utils.MoH;
 
 namespace Figurebox.core;
 

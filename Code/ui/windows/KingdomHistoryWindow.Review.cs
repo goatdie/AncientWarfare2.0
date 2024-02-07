@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
-using Figurebox.Utils;
+using Figurebox.utils;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using UnityEngine;
@@ -10,7 +10,7 @@ using System.Data.SQLite;
 using Figurebox.core;
 namespace Figurebox.ui.windows;
 
-public partial class NewKingdomHistoryWindow
+public partial class KingdomHistoryWindow
 {
     private Text _review_text;
 

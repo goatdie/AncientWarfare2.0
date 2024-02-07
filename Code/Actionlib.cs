@@ -59,50 +59,5 @@ namespace Figurebox
 
             return true;
         }
-
-        public static bool checkkingleft(BaseSimObject pTarget, WorldTile pTile = null)
-        {
-            if (pTarget == null || pTarget.a == null) return false;
-            Actor a = (Actor)pTarget;
-            if (a.data.profession == UnitProfession.King && !KingKingdomId.ContainsKey(a.data.id))
-            {
-                KingKingdomId[a.data.id] = a.kingdom.data.id;
-            }
-
-            if (a.data.profession != UnitProfession.King)
-            {
-                string kingId = a.data.id;
-                string kingdomId;
-                if (KingKingdomId.ContainsKey(a.data.id))
-                {
-                    kingdomId = KingKingdomId[a.data.id];
-                }
-                else
-                {
-                    kingdomId = a.kingdom.data.id;
-                }
-
-                int yeardata = World.world.mapStats.getCurrentYear();
-
-                // Find the first available count for this king and kingdom.
-                int count = 1;
-                while (FunctionHelper.KingEndYearInKingdom.ContainsKey(kingId + "-" + kingdomId + "-" + count))
-                {
-                    count++;
-                }
-
-                string kingAndKingdom = kingId + "-" + kingdomId + "-" + count;
-
-                // Only update the dictionary if the king and kingdom combination is not already in it.
-                if (!FunctionHelper.KingEndYearInKingdom.ContainsKey(kingAndKingdom))
-                {
-                    FunctionHelper.KingEndYearInKingdom[kingAndKingdom] = yeardata;
-                    a.removeTrait("zhuhou");
-                    Debug.Log("不再是国王在字典上记住" + a.getName());
-                }
-            }
-
-            return true;
-        }
     }
 }

@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Figurebox.Utils;
+using Figurebox.utils;
 
 namespace Figurebox.core.events;
 

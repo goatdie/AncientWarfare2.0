@@ -8,7 +8,6 @@ public class CityWindowPatch
     [HarmonyPatch(typeof(CityWindow), "OnEnable")]
     public static bool cityOnEnable_Prefix(CityWindow __instance)
     {
-        CityHistoryWindow.currentCity = __instance.city;
         return true;
     }
 }

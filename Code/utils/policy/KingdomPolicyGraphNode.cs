@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Figurebox.core.kingdom_policies;
 using UnityEngine;
 
-namespace Figurebox.Utils.KingdomPolicy;
+namespace Figurebox.utils.KingdomPolicy;
 
 public class KingdomPolicyGraphNode
 {

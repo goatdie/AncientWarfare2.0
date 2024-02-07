@@ -293,7 +293,7 @@ namespace Figurebox
                     Vector2.zero,
                     ButtonType.Click,
                     null,
-                    KingdomHistoryListWindow.openWindow
+                    () => { }
                 ));
             tab.AddPowerButton(OPTIONS,
                 CreateButton(

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 public class DynamicSpriteMaker
 {

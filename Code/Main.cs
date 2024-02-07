@@ -11,7 +11,7 @@ using Figurebox.patch.MoH;
 using Figurebox.patch.policies;
 using Figurebox.ui.patches;
 using Figurebox.ui.windows;
-using Figurebox.Utils;
+using Figurebox.utils;
 using HarmonyLib;
 using ModDeclaration;
 using NCMS;
@@ -31,14 +31,11 @@ namespace Figurebox
     internal class Main : MonoBehaviour, ILocalizable, IMod, IReloadable
     {
         public static GameObject backgroundAvatar;
-        public static GameObject citybg;
         public static Transform prefabs_library;
-
-        public List<string> addRaces = new List<string>()
-        {
-            "Xia"
-        };
-
+        
+        public static Main instance;
+        
+        public content.ProfessionLibrary professions;
         public content.BuildingLibrary buildingLibrary;
 
         private int race_count = 4;
@@ -63,7 +60,7 @@ namespace Figurebox
 #endif
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             NewUI.PatchResources();
-            KingdomBehLibrary.init();
+            _ = new KingdomTaskLibrary();
             _ = new ActorTaskLibrary();
             _ = new CityTaskLibrary();
             _ = new ai.ActorJobLibrary();
@@ -77,6 +74,7 @@ namespace Figurebox
             _ = new content.PlotsLibrary();
             _ = new StatusEffectLibrary();
             _ = new content.ItemLibrary();
+            _ = new content.ProjectileLibrary();
             _ = new content.TooltipLibrary();
             _ = new TraitGroupLibrary();
             _ = new RacesLibrary();
@@ -90,8 +88,8 @@ namespace Figurebox
             AW_AllianceManager.init();
             AW_UnitGroupManager.init();
             
-            AssetManager.instance.add(new UnitGroupTypeLibrary(), "unit_group_types");
-            AssetManager.instance.add(new CityTechLibrary(), "city_techs");
+            AssetManager.instance.add(UnitGroupTypeLibrary.Instance, "unit_group_types");
+            AssetManager.instance.add(CityTechLibrary.Instance, "city_techs");
             AssetManager.instance.add(KingdomPolicyLibrary.Instance, "kingdom_policies");
             AssetManager.instance.add(KingdomPolicyStateLibrary.Instance, "kingdom_policy_states");
 
@@ -100,15 +98,11 @@ namespace Figurebox
             //loadBanners("Xia");
             // NewUI.init();
             NameGeneratorAssets.init();
-            FunctionHelper.instance = functionHelper;
             
             TabManager.init();
             WindowManager.init();
-            TianmingGroup.init();
-            KingdomVassals.init();
             MapModeManager.CreateMapLayer();
             //NewUI.CreateAndPatchCharIcons();
-            instance = this;
             print("Translation loaded");
             ResourceAsset resourceAsset = AssetManager.resources.get(SR.gold);
             resourceAsset.maximum = 99999999;
@@ -128,9 +122,6 @@ namespace Figurebox
             backgroundAvatar =
                 GameObject.Find(
                     $"Canvas Container Main/Canvas - Windows/windows/inspect_unit/Background/Scroll View/Viewport/Content/Part 1/BackgroundAvatar");
-            CityHistoryWindow.init();
-            KingdomHistoryWindow.init();
-            KingdomPolicyWindow.init();
             NameGeneratorAssets.init();
             BannerGenerator.loadTexturesFromResources("Xia");
 
@@ -139,17 +130,11 @@ namespace Figurebox
 
         private void Update()
         {
-            if (instance == null) return;
             checkRaceAdded();
             // AW_Kingdom.kingsSetThisFrame.Clear();
             if (skip_frame-- > 0) return;
 
             _ = EventsManager.Instance;
-        }
-
-        private void OnApplicationQuit()
-        {
-            // EventsManager.Instance.CleanTempDataBase();
         }
 
         public string GetLocaleFilesDirectory(ModDeclare pModDeclare)
@@ -175,6 +160,7 @@ namespace Figurebox
         public void OnLoad(ModDeclare pModDecl, GameObject pGameObject)
         {
             mod_declare = pModDecl;
+            instance = this;
 
             Configure();
 
@@ -205,27 +191,6 @@ namespace Figurebox
             }
 
             LM.ApplyLocale();
-
-            Dictionary<int, (Kingdom, Kingdom)> hash_dict = new();
-            foreach (Kingdom kingdom1 in World.world.kingdoms.list)
-            {
-                foreach (Kingdom kingdom2 in World.world.kingdoms.list)
-                {
-                    int hash = Kingdom.cache_enemy_check.getHash(kingdom1, kingdom2);
-                    if (hash_dict.TryGetValue(hash, out (Kingdom, Kingdom) collision))
-                    {
-                        (Kingdom collision_k1, Kingdom collision_k2) = collision;
-                        if ((collision_k1.id != kingdom1.id || collision_k2.id != kingdom2.id) &&
-                            (collision_k1.id != kingdom2.id || collision_k2.id != kingdom1.id))
-                            LogInfo(
-                                $"Hash collision: ({kingdom1.id} {kingdom2.id}) with ({collision_k1.id} {collision_k2.id})");
-                    }
-                    else
-                    {
-                        hash_dict.Add(hash, (kingdom1, kingdom2));
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -290,28 +255,6 @@ namespace Figurebox
             _ = new KingdomManagerPatch();
             Harmony.CreateAndPatchAll(typeof(PathFinderPatch));
             Harmony.CreateAndPatchAll(typeof(ClanManagerPatch));
-            /*
-                        Harmony.CreateAndPatchAll(typeof(FunctionHelper));
-
-                        Harmony.CreateAndPatchAll(typeof(TianmingGroup));
-                        Harmony.CreateAndPatchAll(typeof(ClansManager));
-                        Harmony.CreateAndPatchAll(typeof(KingdomVassals));
-
-                        Harmony.CreateAndPatchAll(typeof(CityWindowPatch));
-
-                        Harmony.CreateAndPatchAll(typeof(KingdomPatch));
-                        Harmony.CreateAndPatchAll(typeof(KingActorPatch));
-                        Harmony.CreateAndPatchAll(typeof(WarPatch));
-
-                        Harmony.CreateAndPatchAll(typeof(CustomSaveManager));
-
-                        if (DebugConst.ACTOR_TEST)
-                        {
-                            Harmony.CreateAndPatchAll(typeof(ActorTest));
-                            BatchTest<Actor>.SelfPatch();
-                        }
-                        if (DebugConst.CITY_TEST) Harmony.CreateAndPatchAll(typeof(CityTest));
-            */
             print("Create and patch all:CTraits");
         }
 
@@ -333,12 +276,7 @@ namespace Figurebox
             }
         }
 
-        #region
 
-        public static Main instance;
-        public FunctionHelper functionHelper = new FunctionHelper();
-        public content.ProfessionLibrary professions;
 
-        #endregion
     }
 }

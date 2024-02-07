@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Figurebox.attributes;
 using Figurebox.core.events;
-using Figurebox.Utils.extensions;
-using Figurebox.Utils.MoH;
+using Figurebox.utils.extensions;
+using Figurebox.utils.MoH;
 
 #if 一米_中文名
 using Chinese_Name;

@@ -5,8 +5,8 @@ using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core.dbs;
 using Figurebox.core.events;
-using Figurebox.Utils;
-using Figurebox.Utils.MoH;
+using Figurebox.utils;
+using Figurebox.utils.MoH;
 
 namespace Figurebox.core;
 

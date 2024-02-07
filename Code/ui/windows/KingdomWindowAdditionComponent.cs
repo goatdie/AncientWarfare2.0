@@ -201,7 +201,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
             "KingdomHistory",
             "Kingdom History",
             "Shows a kingdom's history",
-            () => NewKingdomHistoryWindow.ShowWindow(Config.selectedKingdom.id)
+            () => KingdomHistoryWindow.ShowWindow(Config.selectedKingdom.id)
         );
         // 临时使用的入口
         NewUI.createBGWindowButton(

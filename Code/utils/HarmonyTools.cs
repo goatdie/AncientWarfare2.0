@@ -7,7 +7,7 @@ using System.Text;
 using Figurebox.attributes;
 using HarmonyLib;
 
-namespace Figurebox.Utils;
+namespace Figurebox.utils;
 
 internal class HarmonyTools
 {

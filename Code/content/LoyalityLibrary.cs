@@ -1,6 +1,6 @@
 using Figurebox.abstracts;
-using Figurebox.Utils.extensions;
-using Figurebox.Utils.MoH;
+using Figurebox.utils.extensions;
+using Figurebox.utils.MoH;
 
 namespace Figurebox.content
 {
