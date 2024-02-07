@@ -5,3 +5,5 @@ obj
 !.gitattributes
 !.github
 !.*.cs
+*.DotSettings
+*.user
