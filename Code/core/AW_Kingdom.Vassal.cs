@@ -1,25 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Figurebox.attributes;
-using Figurebox.constants;
-using Figurebox.core.dbs;
 using Figurebox.core.events;
-using Figurebox.utils;
-using Figurebox.utils.MoH;
 
 namespace Figurebox.core;
 
 public partial class AW_Kingdom
 {
     /// <summary>
-    ///   宗主国
-    /// </summary>
-    public AW_Kingdom suzerain { get; private set; }
-    /// <summary>
     ///   吞并的时间戳
     /// </summary>
     public double absorb_timestamp;
+
+    /// <summary>
+    ///   宗主国
+    /// </summary>
+    public AW_Kingdom suzerain { get; private set; }
 
     /// <summary>
     ///   附庸
@@ -30,6 +26,7 @@ public partial class AW_Kingdom
     {
         return suzerain != null;
     }
+
     /// <summary>
     ///   应对特殊清空的清空宗主国
     /// </summary>
@@ -37,18 +34,47 @@ public partial class AW_Kingdom
     {
         suzerain = null;
     }
-    public AW_Kingdom GetSuzerain()
+
+    /// <summary>
+    ///     获取宗主国
+    /// </summary>
+    /// <param name="pContainSelf">如果宗主国不存在是否返回自身</param>
+    /// <returns></returns>
+    public AW_Kingdom GetSuzerain(bool pContainSelf = false)
     {
-        return IsVassal() ? suzerain : null;
+        return suzerain ?? (pContainSelf ? this : null);
     }
+
+    /// <summary>
+    ///     获取根宗主国
+    /// </summary>
+    /// <remarks>
+    ///     当存在循环附庸时, 返回自身或空(取决于<paramref name="pContainSelf" />)
+    /// </remarks>
+    /// <param name="pContainSelf">如果根宗主国不存在是否返回自身</param>
+    /// <returns></returns>
+    public AW_Kingdom GetRootSuzerain(bool pContainSelf = false)
+    {
+        AW_Kingdom result = this;
+        while (result.suzerain != null)
+        {
+            result = result.suzerain;
+            if (result == this) return pContainSelf ? this : null;
+        }
+
+        return result;
+    }
+
     public List<AW_Kingdom> GetVassals()
     {
         return IsSuzerain() ? vassals : null;
     }
+
     public bool IsSuzerain()
     {
         return vassals.Count > 0;
     }
+
     public int getSuzerainArmy()
     {
         int armyCount = suzerain.getArmy();
@@ -75,15 +101,16 @@ public partial class AW_Kingdom
 
             return;
         }
+
         if (IsSuzerain())
         {
             // If it is, it can't become a vassal, so we simply return
 
             return;
         }
+
         if (king == null)
         {
-
             return;
         }
 
@@ -100,7 +127,11 @@ public partial class AW_Kingdom
         Main.LogInfo($"Before adding, lord has {lord.vassals.Count} vassals.");
         lord.vassals.Add(this);
         Main.LogInfo($"After adding, lord has {lord.vassals.Count} vassals.");
-        if (this.Rebel) { Rebel = false; }
+        if (this.Rebel)
+        {
+            Rebel = false;
+        }
+
         EventsManager.Instance.StartVassal(this, lord);
         data.colorID = lord.data.colorID;
         ColorAsset lordcolor = lord.getColor();
@@ -116,15 +147,15 @@ public partial class AW_Kingdom
                 World.world.wars.endWar(ongoingWar);
             }
         }
+
         if (lord.hasAlliance())
         {
             lord.getAlliance().join(this, true);
         }
     }
+
     public void UpdateToKingdomColor()
     {
-
-
         // 更新王国的颜色ID和颜色资产
         data.colorID = suzerain.data.colorID;
         ColorAsset lordcolor = suzerain.getColor();
@@ -142,7 +173,6 @@ public partial class AW_Kingdom
         // 如果是vassal，清除附庸的数据
         if (IsVassal())
         {
-
             EventsManager.Instance.ENDVassal(this, suzerain, false);
             suzerain.vassals.Remove(this);
             suzerain = null;
@@ -152,8 +182,8 @@ public partial class AW_Kingdom
         }
 
         // 清除旗帜
-
     }
+
     public void RemoveVassals()
     {
         // 清除附庸的数据
@@ -165,6 +195,7 @@ public partial class AW_Kingdom
             {
                 vassal.RemoveSuzerain();
             }
+
             this.vassals.Clear();
         }
     }
@@ -173,6 +204,7 @@ public partial class AW_Kingdom
     {
         return $"{colorAsset.color_main},{colorAsset.color_main_2},{colorAsset.color_banner},{colorAsset.index_id}";
     }
+
     public static void UpdateColor(Kingdom kingdom)
     {
         // 获取并检查原始颜色
@@ -195,6 +227,7 @@ public partial class AW_Kingdom
             kingdom.data.colorID = originalColorID;
         }
     }
+
     public static ColorAsset Deserialize(string s)
     {
         var parts = s.Split(',');
@@ -202,6 +235,7 @@ public partial class AW_Kingdom
         {
             throw new ArgumentException("Invalid input string");
         }
+
         var pColorMain = parts[0];
         var pColorMain2 = parts[1];
         var pColorBanner = parts[2];
@@ -215,5 +249,4 @@ public partial class AW_Kingdom
         result.initColor(); // 重新计算颜色值
         return result;
     }
-
 }

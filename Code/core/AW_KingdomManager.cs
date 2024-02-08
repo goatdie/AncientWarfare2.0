@@ -6,7 +6,7 @@ namespace Figurebox.core;
 
 public partial class AW_KingdomManager : KingdomManager
 {
-    public AW_KingdomManager(List<KingdomAsset> pKingdomAssetsToCreatedAsHidden)
+    private AW_KingdomManager(List<KingdomAsset> pKingdomAssetsToCreatedAsHidden)
     {
         _latest_hash = 0;
         dict.Clear();
@@ -18,6 +18,8 @@ public partial class AW_KingdomManager : KingdomManager
             newHiddenKingdom(item);
         }
     }
+
+    public static AW_KingdomManager Instance { get; private set; }
 
     public override void update(float pElapsed)
     {
@@ -57,6 +59,7 @@ public partial class AW_KingdomManager : KingdomManager
         World.world.kingdoms = new AW_KingdomManager(kingdom_assets_to_created_as_hidden);
         World.world.list_base_managers[World.world.list_base_managers.FindIndex(x => x is KingdomManager)] =
             World.world.kingdoms;
+        Instance = (AW_KingdomManager)World.world.kingdoms;
     }
 
     public override Kingdom loadObject(KingdomData pData)
