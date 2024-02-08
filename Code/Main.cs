@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using Figurebox.ai;
 using Figurebox.constants;
 using Figurebox.content;
@@ -10,10 +9,8 @@ using Figurebox.patch;
 using Figurebox.patch.MoH;
 using Figurebox.patch.policies;
 using Figurebox.ui.patches;
-using Figurebox.ui.windows;
 using Figurebox.utils;
 using HarmonyLib;
-using ModDeclaration;
 using NCMS;
 using NeoModLoader.api;
 using NeoModLoader.api.attributes;
@@ -31,12 +28,15 @@ namespace Figurebox
     internal class Main : MonoBehaviour, ILocalizable, IMod, IReloadable
     {
         public static GameObject backgroundAvatar;
-        public static Transform prefabs_library;
-        
+        public static Transform  prefabs_library;
+
         public static Main instance;
-        
+
+        private static readonly HashSet<string>         _logged_warnings = new();
+        private static readonly HashSet<string>         _logged_infos    = new();
+        public                  content.BuildingLibrary buildingLibrary;
+
         public content.ProfessionLibrary professions;
-        public content.BuildingLibrary buildingLibrary;
 
         private int race_count = 4;
 
@@ -51,12 +51,12 @@ namespace Figurebox
         {
             LM.AddToCurrentLocale("", "");
 #if 一米_中文名
-            print("词库加载!" + mainPath + "/name_generators/Xia");
+            print("词库加载!"                                          + mainPath + "/name_generators/Xia");
             CN_NameGeneratorLibrary.SubmitDirectoryToLoad(mainPath + "/name_generators/Xia");
-            WordLibraryManager.SubmitDirectoryToLoad(mainPath + "/name_generators/lib");
+            WordLibraryManager.SubmitDirectoryToLoad(mainPath      + "/name_generators/lib");
             NameGeneratorInitialzier.init();
             LM.AddToCurrentLocale("familyname", "姓");
-            LM.AddToCurrentLocale("clanname", "氏");
+            LM.AddToCurrentLocale("clanname",   "氏");
 #endif
             LM.ApplyLocale(); //之前是只加载了, 忘记应用了
             NewUI.PatchResources();
@@ -87,10 +87,10 @@ namespace Figurebox
             AW_KingdomManager.init();
             AW_AllianceManager.init();
             AW_UnitGroupManager.init();
-            
-            AssetManager.instance.add(UnitGroupTypeLibrary.Instance, "unit_group_types");
-            AssetManager.instance.add(CityTechLibrary.Instance, "city_techs");
-            AssetManager.instance.add(KingdomPolicyLibrary.Instance, "kingdom_policies");
+
+            AssetManager.instance.add(UnitGroupTypeLibrary.Instance,      "unit_group_types");
+            AssetManager.instance.add(CityTechLibrary.Instance,           "city_techs");
+            AssetManager.instance.add(KingdomPolicyLibrary.Instance,      "kingdom_policies");
             AssetManager.instance.add(KingdomPolicyStateLibrary.Instance, "kingdom_policy_states");
 
             KingdomPolicyLibrary.Instance.post_init();
@@ -98,7 +98,7 @@ namespace Figurebox
             //loadBanners("Xia");
             // NewUI.init();
             NameGeneratorAssets.init();
-            
+
             TabManager.init();
             WindowManager.init();
             MapModeManager.CreateMapLayer();
@@ -235,7 +235,7 @@ namespace Figurebox
                 if (DebugConst.EDITOR_INMNY)
                 {
                     DebugConfig.setOption(DebugOption.DrawCitizenJobIcons, true);
-                    DebugConfig.setOption(DebugOption.CitizenJobAttacker, true);
+                    DebugConfig.setOption(DebugOption.CitizenJobAttacker,  true);
                 }
             }
         }
@@ -253,13 +253,17 @@ namespace Figurebox
             _ = new SlavesPatch();
             _ = new CitiesManagerPatch();
             _ = new KingdomManagerPatch();
+            _ = new MapIconPatch();
             Harmony.CreateAndPatchAll(typeof(PathFinderPatch));
             Harmony.CreateAndPatchAll(typeof(ClanManagerPatch));
             print("Create and patch all:CTraits");
         }
 
-        public static void LogWarning(string pMessage, bool pShowStackTrace = false)
+        public static void LogWarning(string pMessage, bool pShowStackTrace = false, bool pLogOnlyOnce = false)
         {
+            if (pLogOnlyOnce)
+                if (!_logged_warnings.Add(pMessage))
+                    return;
             LogService.LogWarning($"[AW2.0]: {pMessage}");
             if (pShowStackTrace)
             {
@@ -267,16 +271,16 @@ namespace Figurebox
             }
         }
 
-        public static void LogInfo(string pMessage, bool pShowStackTrace = false)
+        public static void LogInfo(string pMessage, bool pShowStackTrace = false, bool pLogOnlyOnce = false)
         {
+            if (pLogOnlyOnce)
+                if (!_logged_infos.Add(pMessage))
+                    return;
             LogService.LogInfo($"[AW2.0]: {pMessage}");
             if (pShowStackTrace)
             {
                 LogService.LogStackTraceAsInfo();
             }
         }
-
-
-
     }
 }

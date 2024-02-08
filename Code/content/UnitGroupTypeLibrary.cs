@@ -14,7 +14,7 @@ public class UnitGroupTypeLibrary : AW_AssetLibrary<AW_UnitGroupAsset, UnitGroup
         base.init();
         convention = add(new AW_UnitGroupAsset());
         t.id = "convention";
-        t.path_icon = "ui/icons/minimap_flag";
+        t.path_icon = "civ/icons/minimap_flag";
         t.base_max_count = 10;
 
         guards = add(new AW_UnitGroupAsset());
@@ -24,7 +24,7 @@ public class UnitGroupTypeLibrary : AW_AssetLibrary<AW_UnitGroupAsset, UnitGroup
 
         slaves = add(new AW_UnitGroupAsset());
         t.id = "slaves";
-        t.path_icon = "ui/icons/minimap_flag";
+        t.path_icon = "ui/icons/policy/start_slaves";
         t.base_max_count = 20;
     }
 }
