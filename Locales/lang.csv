@@ -6,6 +6,7 @@ KingdomMoHWindow Title,天命国家,Mandate of Heaven
 KingdomPolicyGraphWindow Title,国策图,Kingdom Policy Graph
 KingdomHistoryWindow Title,国家历史,Kingdom History
 Suzerain,宗主国,Suzerain Kingdom
+kingdom_statistics_suzerain,宗主国\n$kingdom$,Suzerain Kingdom\n$kingdom$
 policy_state,政治状态,Policy State
 policy_queue,国策队列,Policy Queue
 optional_policies,可选国策,Optional Policies

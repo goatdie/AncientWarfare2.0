@@ -40,7 +40,7 @@ public class CitizenJobs : ExtendedLibrary<CitizenJobAsset>
             ok_for_leader = false,
             unit_job_default = AWS.king_guard,
             debug_option = DebugOption.CitizenJobAttacker,
-            path_icon = "ui/policy/start_slaves"
+            path_icon = "ui/icons/iconArmor"
         });
 
         post_init();

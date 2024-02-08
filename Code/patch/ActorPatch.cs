@@ -27,4 +27,20 @@ internal class ActorPatch
             };
         return pActor.asset.baby ? "baby" : pActor.asset.job;
     }
+
+    //[MethodReplace(typeof(ActorBase), nameof(ActorBase.getUnitTexturePath))]
+    private static string getUnitTexturePath(ActorBase pActor)
+    {
+        var sb = new StringBuilder();
+        sb.Append(pActor.race.main_texture_path);
+        if (pActor.asset.baby)
+        {
+            sb.Append("unit_child");
+            return sb.ToString();
+        }
+
+        Culture culture = World.world.cultures.get(pActor.data.culture);
+        //if (pActor.pro)
+        return "";
+    }
 }

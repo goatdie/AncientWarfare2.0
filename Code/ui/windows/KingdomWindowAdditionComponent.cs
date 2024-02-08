@@ -3,6 +3,7 @@ using Figurebox.content;
 using Figurebox.core;
 using Figurebox.prefabs;
 using Figurebox.ui.prefabs;
+using NeoModLoader.api.attributes;
 using NeoModLoader.General.UI.Window.Layout;
 using NeoModLoader.General.UI.Window.Utils.Extensions;
 using UnityEngine;
@@ -20,6 +21,7 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
     private KingdomPolicyButton      executing_policy;
     private UiUnitAvatarElement      heir_avatar;
     private UiUnitAvatarElement      king_avatar;
+    private BannerLoader             suzerain_banner;
     private KingdomWindow            Window;
     private SimpleText               year_name;
     private AW_Kingdom               kingdom => (AW_Kingdom)Config.selectedKingdom;
@@ -76,6 +78,16 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         bgRect = current_state.bg.GetComponent<RectTransform>();
         bgRect.sizeDelta = new Vector2(60, 16);
 
+        AW_Kingdom suzerain = kingdom.GetSuzerain();
+        if (suzerain == null)
+        {
+            suzerain_banner.gameObject.SetActive(false);
+        }
+        else
+        {
+            suzerain_banner.gameObject.SetActive(true);
+            suzerain_banner.load(suzerain);
+        }
 
         Window.elements.Clear();
     }
@@ -117,6 +129,16 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         layout_group.padding = new RectOffset(0, 0, 10, 5);
 
         Window = GetComponent<KingdomWindow>();
+    }
+
+    [Hotfixable]
+    private void showKingdomSuzerain()
+    {
+        Tooltip.show(suzerain_banner.gameObject, "kingdom_suzerain", new TooltipData
+        {
+            kingdom = kingdom.GetSuzerain(),
+            tip_name = "kingdom_suzerain"
+        });
     }
 
     internal void Initialize()
@@ -193,6 +215,15 @@ internal class KingdomWindowAdditionComponent : AutoVertLayoutGroup
         heir_avatar.tooltip_id = "actor_heir";
         heir_avatar.transform.Find("Kingdom Icon").gameObject.SetActive(false);
 
+        suzerain_banner =
+            Instantiate(Window.pool_elements_kingdoms._prefab, BackgroundTransform.Find("BackgroundLeft"));
+        suzerain_banner.transform.localPosition = new Vector3(21.8f, 2.5f);
+        suzerain_banner.transform.localScale = new Vector3(0.5f,     0.5f);
+        suzerain_banner.diplo_banner = true;
+        suzerain_banner.create();
+        suzerain_banner.GetComponent<TipButton>().hoverAction = showKingdomSuzerain;
+        foreach (RectTransform rect_transform in suzerain_banner.GetComponentsInChildren<RectTransform>())
+            rect_transform.sizeDelta = new Vector2(70, 70);
 
         NewUI.createBGWindowButton(
             Window.gameObject,

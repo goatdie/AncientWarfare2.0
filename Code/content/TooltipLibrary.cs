@@ -37,10 +37,23 @@ internal class TooltipLibrary : ExtendedLibrary<TooltipAsset>
             id = "history_king",
             callback = showHistoryKing
         });
+        add(new TooltipAsset
+        {
+            id = "kingdom_suzerain",
+            prefab_id = "tooltips/tooltip_kingdom",
+            callback = showKingdomSuzerain
+        });
         var resource_tooltip = AssetManager.tooltips.get(pID: "resource");
         resource_tooltip.callback = (TooltipShowAction)Delegate.Combine(
             a: resource_tooltip.callback,
             b: new TooltipShowAction(showTax));
+    }
+
+    [Hotfixable]
+    private void showKingdomSuzerain(Tooltip pTooltip, string pType, TooltipData pData)
+    {
+        AssetManager.tooltips.showKingdom(pTooltip, "kingdom", pData);
+        pTooltip.name.text = LM.Get("kingdom_statistics_suzerain").Replace("$kingdom$", pData.kingdom.data.name);
     }
 
     private static void showHeir(Tooltip pTooltip, string pType, TooltipData pData)
@@ -150,9 +163,11 @@ internal class TooltipLibrary : ExtendedLibrary<TooltipAsset>
 
         pTooltip.name.text = king.curr_name;
         pTooltip.addDescription(LM.Get("rule_time")
-            .Replace("$start_time$", GeneralHelper.getYearsOn(rule.start_time).ToString())
-            .Replace("$end_time$",
-                rule.end_time < 0 ? LM.Get("rule_time_now") : GeneralHelper.getYearsOn(rule.end_time).ToString()));
+                                  .Replace("$start_time$", GeneralHelper.getYearsOn(rule.start_time).ToString())
+                                  .Replace("$end_time$",
+                                           rule.end_time < 0
+                                               ? LM.Get("rule_time_now")
+                                               : GeneralHelper.getYearsOn(rule.end_time).ToString()));
 
         pTooltip.addStatValues("其他信息", "其他信息值");
     }
@@ -160,8 +175,6 @@ internal class TooltipLibrary : ExtendedLibrary<TooltipAsset>
     [Hotfixable]
     private static void showTax(Tooltip pTooltip, string pType, TooltipData pData = default)
     {
-
-
         AW_City city = Config.selectedCity as AW_City;
 
         // 添加税收相关的信息
@@ -178,10 +191,7 @@ internal class TooltipLibrary : ExtendedLibrary<TooltipAsset>
             if (city.isCapitalCity() && city.GetTaxToltal() != 0)
             {
                 pTooltip.addItemText("tax_income", (float)city.GetTaxToltal(), false, true, true, "#43FF43", false);
-
             }
-
         }
-
     }
 }
