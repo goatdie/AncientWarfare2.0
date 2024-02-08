@@ -5,6 +5,7 @@
     "description": "The overhaul of old Chun_Qiu(Ancient Warfare) with many new features",
     "iconPath": "icon.png",
     "RepoUrl": "https://github.com/goatdie/AncientWarfare2.0",
+    "GUID": "ANCIENTWARFARE",
     "Dependencies": [],
     "OptionalDependencies": [
         "一米_中文名"
