@@ -8,7 +8,7 @@ using Figurebox.utils;
 namespace Figurebox.ai.behaviours.city;
 
 /// <summary>
-///     使用奴隶组织奴隶军
+///     使用贵族组织禁卫军
 /// </summary>
 public class BehCheckGuard : BehaviourActionCity
 {
