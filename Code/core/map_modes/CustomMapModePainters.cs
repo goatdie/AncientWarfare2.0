@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using Figurebox.utils.extensions;
+using NeoModLoader.api.attributes;
+using NeoModLoader.services;
 using UnityEngine;
 
 namespace Figurebox.core.map_modes;
@@ -10,29 +14,62 @@ namespace Figurebox.core.map_modes;
  */
 internal static class CustomMapModePainters
 {
+    private static readonly List<Kingdom>  _tmp_kingdoms = new();
+    private static readonly List<City>     _tmp_cities   = new();
+    private static readonly List<TileZone> _tmp_zones    = new();
+
+    private static readonly HashSet<TileZone> _drawn_zones      = new();
+    private static readonly HashSet<TileZone> _last_drawn_zones = new();
+
     /// <summary>
     ///     绘制附庸图
     /// </summary>
     /// <param name="pPixels"></param>
     /// <returns></returns>
+    [Hotfixable]
     public static bool DrawVassals(Color32[] pPixels)
     {
-        var need_update = false;
-        foreach (Kingdom kingdom in AW_KingdomManager.Instance.list_civs)
+        _tmp_kingdoms.AddRange(AW_KingdomManager.Instance.list_civs);
+        foreach (Kingdom kingdom in _tmp_kingdoms)
         {
             AW_Kingdom root_suzerain = kingdom.AW().GetRootSuzerain(true);
             Color32 inside_color = root_suzerain.kingdomColor.getColorBorderInsideAlpha();
             Color32 border_color = root_suzerain.kingdomColor.getColorMain2();
-            foreach (City city in kingdom.cities)
-            foreach (TileZone zone in city.zones)
-                need_update |= ColorZone(pPixels, zone, inside_color, border_color,
-                                         IsBorderSuzerain(zone.zone_up,    city, root_suzerain),
-                                         IsBorderSuzerain(zone.zone_down,  city, root_suzerain),
-                                         IsBorderSuzerain(zone.zone_left,  city, root_suzerain),
-                                         IsBorderSuzerain(zone.zone_right, city, root_suzerain));
+
+            _tmp_cities.AddRange(kingdom.cities);
+            foreach (City city in _tmp_cities)
+            {
+                _tmp_zones.AddRange(city.zones);
+                foreach (TileZone zone in _tmp_zones)
+                    ColorZone(pPixels, zone, inside_color, border_color,
+                              IsBorderSuzerain(zone.zone_up,    city, root_suzerain),
+                              IsBorderSuzerain(zone.zone_down,  city, root_suzerain),
+                              IsBorderSuzerain(zone.zone_left,  city, root_suzerain),
+                              IsBorderSuzerain(zone.zone_right, city, root_suzerain),
+                              root_suzerain.GetHashCode());
+                _tmp_zones.Clear();
+            }
+
+            _tmp_cities.Clear();
         }
 
-        return need_update;
+        _tmp_kingdoms.Clear();
+        ClearNotDrawnZones(pPixels);
+
+        return _last_drawn_zones.Count > 0;
+    }
+
+    /// <summary>
+    ///     清除本次未被绘制的所有Zone
+    /// </summary>
+    /// <param name="pPixels"></param>
+    private static void ClearNotDrawnZones(Color32[] pPixels)
+    {
+        foreach (TileZone zone in _last_drawn_zones.Where(zone => !_drawn_zones.Contains(zone)))
+            ClearZone(pPixels, zone);
+        _last_drawn_zones.Clear();
+        _last_drawn_zones.UnionWith(_drawn_zones);
+        _drawn_zones.Clear();
     }
 
     public static bool DrawIdealogy(Color32[] pPixels)
@@ -51,25 +88,29 @@ internal static class CustomMapModePainters
     /// <param name="pDrawBorderDown"></param>
     /// <param name="pDrawBorderLeft"></param>
     /// <param name="pDrawBorderRight"></param>
+    /// <param name="pDrawnHashCode">绘制hash, 用于检测是否需要重复绘制</param>
     /// <returns>是否需要更新</returns>
+    [Hotfixable]
     private static bool ColorZone(Color32[] pPixels, TileZone pZone, Color32 pColor, Color32 pBorderColor,
-                                  bool      pDrawBorderUp   = false, bool pDrawBorderDown = false,
-                                  bool      pDrawBorderLeft = false, bool pDrawBorderRight = false)
+                                  bool pDrawBorderUp = false, bool pDrawBorderDown = false,
+                                  bool pDrawBorderLeft = false, bool pDrawBorderRight = false, int pDrawnHashCode = 0)
     {
+        _drawn_zones.Add(pZone);
+
         uint drawn_id = 0;
         if (pDrawBorderUp) drawn_id |= 1    << 0;
         if (pDrawBorderDown) drawn_id |= 1  << 1;
         if (pDrawBorderLeft) drawn_id |= 1  << 2;
         if (pDrawBorderRight) drawn_id |= 1 << 3;
 
-        if (pZone.last_drawn_id == drawn_id) return false;
-
-        var drawn_hashcode = (pColor.a << 24) | (pColor.r << 16) | (pColor.g << 8) | pColor.b;
-        drawn_hashcode ^= (pBorderColor.a << 24) | (pBorderColor.r << 16) | (pBorderColor.g << 8) | pBorderColor.b;
-        if (pZone.last_drawn_hashcode == drawn_hashcode) return false;
+        if (pDrawnHashCode != 0)
+        {
+            if (pZone.last_drawn_id == drawn_id && pZone.last_drawn_hashcode == pDrawnHashCode) return false;
+            LogService.LogInfoConcurrent($"Border of {pZone.id} {drawn_id} {pDrawnHashCode}");
+            pZone.last_drawn_hashcode = pDrawnHashCode;
+        }
 
         pZone.last_drawn_id = (int)drawn_id;
-        pZone.last_drawn_hashcode = drawn_hashcode;
         foreach (WorldTile tile in pZone.tiles)
             if (tile.worldTileZoneBorder.borderUp && pDrawBorderUp)
                 pPixels[tile.data.tile_id] = pBorderColor;
@@ -86,6 +127,16 @@ internal static class CustomMapModePainters
     }
 
     /// <summary>
+    ///     清空所有颜色
+    /// </summary>
+    /// <param name="pPixels"></param>
+    public static void ClearAll(Color32[] pPixels)
+    {
+        foreach (TileZone zone in World.world.zoneCalculator.zones) ClearZone(pPixels, zone);
+        _last_drawn_zones.Clear();
+    }
+
+    /// <summary>
     ///     清空一个Zone的颜色
     /// </summary>
     /// <param name="pPixels"></param>
@@ -93,8 +144,9 @@ internal static class CustomMapModePainters
     /// <returns></returns>
     private static bool ClearZone(Color32[] pPixels, TileZone pZone)
     {
-        if (pZone.last_drawn_id == 0) return false;
-        pZone.last_drawn_id = 0;
+        if (pZone.last_drawn_id == -1) return false;
+        pZone.last_drawn_id = -1;
+        pZone.last_drawn_hashcode = -1;
         foreach (WorldTile tile in pZone.tiles) pPixels[tile.data.tile_id] = Color.clear;
 
         return true;
@@ -102,8 +154,10 @@ internal static class CustomMapModePainters
 
     private static bool IsBorderSuzerain(TileZone pZone, City pCity, AW_Kingdom pSuzerain)
     {
-        if (pZone?.city                                      == null) return true;
-        if (pZone.city                                       == pCity) return false;
+        if (pZone?.city == null) return true;
+
+        if (pZone.city == pCity) return false;
+
         return pZone.city.kingdom.AW().GetRootSuzerain(true) != pSuzerain;
     }
 }

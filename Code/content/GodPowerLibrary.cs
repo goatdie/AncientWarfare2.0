@@ -10,7 +10,6 @@ namespace Figurebox.content
 
         protected override void init()
         {
-
             GodPower xiapower = clone("spawn_xia", "_spawnActor");
             xiapower.name = "spawn_xia";
             xiapower.actor_asset_id = "unit_Xia";
@@ -33,6 +32,21 @@ namespace Figurebox.content
             vassal_remove.path_icon = "ui/wars/war_independent";
             vassal_remove.click_special_action = new PowerActionWithID(vassal_remove_click);
             add(vassal_remove);
+
+            add_map_mode_powers();
+        }
+
+        private void add_map_mode_powers()
+        {
+            add(new GodPower
+            {
+                id = "vassal_zones",
+                name = "Vassal Layer",
+                unselectWhenWindow = true,
+                map_modes_switch = true,
+                toggle_name = "map_vassal_zones",
+                toggle_action = _ => MapModeManager.SetAllDirty()
+            });
         }
 
         private static bool vassal_click(WorldTile pTile, string pPowerID)
@@ -41,10 +55,12 @@ namespace Figurebox.content
             {
                 return false;
             }
+
             if (pTile.zone.city.kingdom == null)
             {
                 return false;
             }
+
             AW_Kingdom tilekingdom = pTile.zone.city.kingdom as AW_Kingdom;
 
             if (tilekingdom.IsVassal())
@@ -52,6 +68,7 @@ namespace Figurebox.content
                 WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is Vassal", pTranslate: false, "top", 6f);
                 return false;
             }
+
             if (SelectKingdom1 is null)
             {
                 if (tilekingdom.IsSuzerain())
@@ -59,10 +76,12 @@ namespace Figurebox.content
                     WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is Lord", pTranslate: false, "top", 6f);
                     return false;
                 }
+
                 SelectKingdom1 = pTile.zone.city.kingdom;
                 WorldTip.showNow($"Let {SelectKingdom1.data.name} to be who's vassal?", pTranslate: false, "top", 6f);
                 return false;
             }
+
             if (SelectKingdom2 is null)
             {
                 if (pTile.zone.city.kingdom == SelectKingdom1)
@@ -71,6 +90,7 @@ namespace Figurebox.content
                     SelectKingdom1 = null;
                     return false;
                 }
+
                 SelectKingdom2 = pTile.zone.city.kingdom;
                 AW_Kingdom Select2 = SelectKingdom2 as AW_Kingdom;
                 AW_Kingdom Select1 = SelectKingdom1 as AW_Kingdom;
@@ -102,9 +122,11 @@ namespace Figurebox.content
             {
                 // 这个王国是附庸，所以我们可以移除它的附庸状态
                 tilekingdom.RemoveSuzerain();
-                WorldTip.showNow($"The vassal status of {pTile.zone.city.kingdom.data.name} has been removed", false, "top", 6f);
+                WorldTip.showNow($"The vassal status of {pTile.zone.city.kingdom.data.name} has been removed", false,
+                                 "top", 6f);
                 return true;
             }
+
             // 这个王国不是附庸，所以我们不能移除它的附庸状态
             WorldTip.showNow($"{pTile.zone.city.kingdom.data.name} is not a vassal", false, "top", 6f);
             return false;

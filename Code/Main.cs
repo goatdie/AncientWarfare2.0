@@ -125,6 +125,7 @@ namespace Figurebox
             NameGeneratorAssets.init();
             BannerGenerator.loadTexturesFromResources("Xia");
 
+            MapModeManager.StartUpdate();
             patchHarmony();
         }
 

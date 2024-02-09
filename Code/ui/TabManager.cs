@@ -4,60 +4,71 @@ using NeoModLoader.General;
 using NeoModLoader.General.UI.Tab;
 using UnityEngine;
 using UnityEngine.Events;
+
 namespace Figurebox
 {
     internal class TabManager
     {
-        private const string INFO = "info";
-        private const string TOOL = "tool";
-        private const string CREATURE = "creature";
-        private const string OPTIONS = "options";
+        private const  string    MOD_INFO = "mod_info";
+        private const  string    TOOL     = "tool";
+        private const  string    CREATURE = "creature";
+        private const  string    MAP_INFO = "map_info";
+        private const  string    OPTIONS  = "options";
         private static PowersTab tab;
+
         public static void init()
         {
-            tab = NeoModLoader.General.UI.Tab.TabManager.CreateTab("AW2Mod", "AW2", "AW2 Description", Sprites.LoadSprite($"{Mod.Info.Path}/icon.png"));
+            tab = NeoModLoader.General.UI.Tab.TabManager.CreateTab("AW2Mod", "AW2", "AW2 Description",
+                                                                   Sprites.LoadSprite($"{Mod.Info.Path}/icon.png"));
             tab.SetLayout(new List<string>
             {
-                INFO,
+                MOD_INFO,
                 CREATURE,
                 TOOL,
+                MAP_INFO,
                 OPTIONS
             });
             loadButtons();
             tab.UpdateLayout();
         }
-        private static PowerButton CreateButton(string id, Sprite sprite, string name, string description, Vector2 position, ButtonType type, Transform parent = null, UnityAction action = null)
+
+        private static PowerButton CreateButton(string      id,       Sprite sprite, string name, string description,
+                                                Vector2     position, ButtonType type, Transform parent = null,
+                                                UnityAction action = null)
         {
             if (LocalizedTextManager.stringExists(id))
             {
                 name = LM.Get(id);
             }
+
             if (LocalizedTextManager.stringExists(id + " Description"))
             {
                 description = LM.Get(id + " Description");
             }
+
             return PowerButtons.CreateButton(id, sprite, name, description, position, type, parent, action);
         }
+
         private static void loadButtons()
         {
             tab.AddPowerButton(TOOL,
-                CreateButton(
-                    "vassal",
-                    Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.icon_binfa.png"),
-                    "make vassal",
-                    "set vassal for kingdom",
-                    Vector2.zero,
-                    ButtonType.GodPower
-                ));
+                               CreateButton(
+                                   "vassal",
+                                   Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.icon_binfa.png"),
+                                   "make vassal",
+                                   "set vassal for kingdom",
+                                   Vector2.zero,
+                                   ButtonType.GodPower
+                               ));
             tab.AddPowerButton(TOOL,
-                CreateButton(
-                    "vassal_remove",
-                    Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.war_independent.png"),
-                    "remove vassal",
-                    "remove vassal for kingdom",
-                    Vector2.zero,
-                    ButtonType.GodPower
-                ));
+                               CreateButton(
+                                   "vassal_remove",
+                                   Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.war_independent.png"),
+                                   "remove vassal",
+                                   "remove vassal for kingdom",
+                                   Vector2.zero,
+                                   ButtonType.GodPower
+                               ));
             /* PowerButtons.CreateButton(
                  "citizen_dej",
                  Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.Icons.civilian_icon2.png"),
@@ -264,48 +275,58 @@ namespace Figurebox
              );
              index++;*/
             tab.AddPowerButton(CREATURE,
-                CreateButton(
-                    "spawn_xia",
-                    Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconXias.png"),
-                    "Xia",
-                    "From East",
-                    Vector2.zero,
-                    ButtonType.GodPower
-                ));
+                               CreateButton(
+                                   "spawn_xia",
+                                   Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconXias.png"),
+                                   "Xia",
+                                   "From East",
+                                   Vector2.zero,
+                                   ButtonType.GodPower
+                               ));
 
-            tab.AddPowerButton(INFO,
-                CreateButton(
-                    "TianMing_board",
-                    Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconRebel.png"),
-                    "Mandate of Heaven Board",
-                    "View The Significant Units Within Your World",
-                    Vector2.zero,
-                    ButtonType.Click,
-                    null,
-                    KingdomMoHWindow.InitAndShow
-                ));
-            tab.AddPowerButton(INFO,
-                CreateButton(
-                    "Kingdom_History",
-                    Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconkingdomhistory.png"),
-                    "Kingdom History",
-                    "Window for all kingdoms' history",
-                    Vector2.zero,
-                    ButtonType.Click,
-                    null,
-                    () => { }
-                ));
+            tab.AddPowerButton(MOD_INFO,
+                               CreateButton(
+                                   "TianMing_board",
+                                   Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconRebel.png"),
+                                   "Mandate of Heaven Board",
+                                   "View The Significant Units Within Your World",
+                                   Vector2.zero,
+                                   ButtonType.Click,
+                                   null,
+                                   KingdomMoHWindow.InitAndShow
+                               ));
+            tab.AddPowerButton(MOD_INFO,
+                               CreateButton(
+                                   "Kingdom_History",
+                                   Mod.EmbededResources.LoadSprite($"{Mod.Info.Name}.Resources.iconkingdomhistory.png"),
+                                   "Kingdom History",
+                                   "Window for all kingdoms' history",
+                                   Vector2.zero,
+                                   ButtonType.Click,
+                                   null,
+                                   () => { }
+                               ));
+
+            PowerButton button = PowerButtonCreator.CreateSimpleButton("VassalList", () => { },
+                                                                       SpriteTextureLoader.getSprite(
+                                                                           "ui/icons/iconVassalList"));
+            button.image.sprite = SpriteTextureLoader.getSprite("ui/special/special_buttonred");
+            tab.AddPowerButton(MAP_INFO, button);
+            tab.AddPowerButton(
+                MAP_INFO,
+                PowerButtonCreator.CreateToggleButton("vassal_zones",
+                                                      SpriteTextureLoader.getSprite("ui/icons/iconVassalZones")));
             tab.AddPowerButton(OPTIONS,
-                CreateButton(
-                    "historical_figure",
-                    Sprites.LoadSprite($"{Mod.Info.Path}/icon.png"),
-                    "Historical Figure",
-                    "Disable Historical Figure(Enable this button to disable)",
-                    Vector2.zero,
-                    ButtonType.Toggle,
-                    null,
-                    SpecialFigure.togglefigure
-                ));
+                               CreateButton(
+                                   "historical_figure",
+                                   Sprites.LoadSprite($"{Mod.Info.Path}/icon.png"),
+                                   "Historical Figure",
+                                   "Disable Historical Figure(Enable this button to disable)",
+                                   Vector2.zero,
+                                   ButtonType.Toggle,
+                                   null,
+                                   SpecialFigure.togglefigure
+                               ));
         }
     }
 }
