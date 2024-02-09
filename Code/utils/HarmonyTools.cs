@@ -112,7 +112,21 @@ internal class HarmonyTools
         return codes;
     }
 
-    public static int FindCodeSnippet(List<CodeInstruction> codes, params BaseInstPredictor[] snippet)
+    public static int FindCodeSnippet(List<CodeInstruction>      codes, out List<CodeInstruction> result,
+                                      params BaseInstPredictor[] snippet)
+    {
+        for (var i = 0; i < codes.Count - snippet.Length; i++)
+            if (!snippet.Where((t, j) => !t.Predict(codes[i + j])).Any())
+            {
+                result = codes.GetRange(i, snippet.Length);
+                return i;
+            }
+
+        result = null;
+        return -1;
+    }
+
+    public static int FindCodeSnippetIdx(List<CodeInstruction> codes, params BaseInstPredictor[] snippet)
     {
         for (var i = 0; i < codes.Count - snippet.Length; i++)
             if (!snippet.Where((t, j) => !t.Predict(codes[i + j])).Any())
@@ -120,8 +134,14 @@ internal class HarmonyTools
         return -1;
     }
 
-    public static int FindInstruction<TOperand>(List<CodeInstruction> codes, OpCode opcode,
-                                                Func<TOperand, bool>  predicate)
+    public static CodeInstruction FindInstruction<TOperand>(List<CodeInstruction> codes, OpCode opcode,
+                                                            Func<TOperand, bool>  predicate)
+    {
+        return codes.FirstOrDefault(inst => inst.opcode == opcode && predicate((TOperand)inst.operand));
+    }
+
+    public static int FindInstructionIdx<TOperand>(List<CodeInstruction> codes, OpCode opcode,
+                                                   Func<TOperand, bool>  predicate)
     {
         for (var i = 0; i < codes.Count; i++)
             if (codes[i].opcode == opcode && predicate((TOperand)codes[i].operand))

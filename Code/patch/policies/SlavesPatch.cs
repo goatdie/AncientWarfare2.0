@@ -42,13 +42,13 @@ internal class SlavesPatch : AutoPatch
         var codes = instructions.ToList();
 
         var mood_change_index =
-            HarmonyTools.FindCodeSnippet(codes, new BaseInstPredictor(OpCodes.Ret),
-                                         new BaseInstPredictor(OpCodes.Ldarg_0),
-                                         new FieldInstPredictor(OpCodes.Ldfld,
-                                                                typeof(Actor), nameof(Actor.data)),
-                                         new FieldInstPredictor(OpCodes.Ldfld,
-                                                                typeof(ActorData), nameof(ActorData.mood)),
-                                         new BaseInstPredictor(OpCodes.Ldstr, "happy"));
+            HarmonyTools.FindCodeSnippetIdx(codes, new BaseInstPredictor(OpCodes.Ret),
+                                            new BaseInstPredictor(OpCodes.Ldarg_0),
+                                            new FieldInstPredictor(OpCodes.Ldfld,
+                                                                   typeof(Actor), nameof(Actor.data)),
+                                            new FieldInstPredictor(OpCodes.Ldfld,
+                                                                   typeof(ActorData), nameof(ActorData.mood)),
+                                            new BaseInstPredictor(OpCodes.Ldstr, "happy"));
 
         var prepend_codes = new List<CodeInstruction>();
         prepend_codes.Add(new CodeInstruction(OpCodes.Ldarg_0));

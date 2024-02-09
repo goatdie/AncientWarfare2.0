@@ -64,26 +64,26 @@ public class MapIconPatch : AutoPatch
     {
         var list = new List<CodeInstruction>(codes);
 
-        var index = HarmonyTools.FindCodeSnippet(list,
+        var index = HarmonyTools.FindCodeSnippet(list, out var snippet,
                                                  new MethodInstPredictor(OpCodes.Call, "get_world"),
                                                  new MethodInstPredictor(
                                                      OpCodes.Callvirt, nameof(MapBox.showCityZones)),
                                                  new BaseInstPredictor(OpCodes.Brfalse));
 
-        var show_city_zones_label = (Label)list[index + 2].operand;
+        var show_city_zones_label = new Label();
+        snippet[0].labels.Add(show_city_zones_label);
 
-        var flag_true_label_prev_index = HarmonyTools.FindCodeSnippet(list, new BaseInstPredictor(OpCodes.Ldc_I4_1),
-                                                                      new LocalVarInstPredictor(OpCodes.Stloc_S, 11),
-                                                                      new BaseInstPredictor(OpCodes.Br));
-        Main.LogInfo($"flag_true_label_prev_index: {flag_true_label_prev_index}");
-        var flag_true_label = (Label)list[2 + flag_true_label_prev_index].operand;
+        var flag_true_label = (Label)list[2 + HarmonyTools.FindCodeSnippetIdx(
+                                              list, new BaseInstPredictor(OpCodes.Ldc_I4_1),
+                                              new LocalVarInstPredictor(OpCodes.Stloc_S, 11),
+                                              new BaseInstPredictor(OpCodes.Br))].operand;
 
         var city2 =
-            list[HarmonyTools.FindInstruction<LocalBuilder>(list, OpCodes.Stloc_S, x => x.LocalIndex == 10)]
-                .operand as LocalBuilder;
+            HarmonyTools.FindInstruction<LocalBuilder>(list, OpCodes.Stloc_S, x => x.LocalIndex == 10)
+                        .operand as LocalBuilder;
         var flag =
-            list[HarmonyTools.FindInstruction<LocalBuilder>(list, OpCodes.Stloc_S, x => x.LocalIndex == 11)]
-                .operand as LocalBuilder;
+            HarmonyTools.FindInstruction<LocalBuilder>(list, OpCodes.Stloc_S, x => x.LocalIndex == 11)
+                        .operand as LocalBuilder;
         // push city
         list.Insert(index++, new CodeInstruction(OpCodes.Ldloc_1));
         // push city2
