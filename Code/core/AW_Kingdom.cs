@@ -20,12 +20,24 @@ namespace Figurebox.core;
 
 public partial class AW_Kingdom : Kingdom
 {
-    public bool FomerMoh; //控制是否为前天命国家
+    /// <summary>
+    /// 控制是否为前天命国家
+    /// </summary>
+    public bool FomerMoh;
     public Actor heir;
-    public bool NameIntegration; //控制国家命名是否姓氏合流
+    /// <summary>
+    /// 控制国家命名是否姓氏合流
+    /// </summary>
+    public bool NameIntegration;
     public AW_KingdomDataAddition addition_data = new();
-    public bool Rebel = false; //控制是否为起义军
-
+    /// <summary>
+    /// 控制是否为起义军
+    /// </summary>
+    public bool Rebel = false;
+    /// <summary>
+    /// 设置是否启用姓氏合流
+    /// </summary>
+    /// <param name="b"></param>
     public void ToggleNameIntegration(bool b)
     {
         NameIntegration = b;
