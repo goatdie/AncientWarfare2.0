@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
 using Figurebox.attributes;
 using Figurebox.core;
@@ -104,6 +103,39 @@ public class MapIconPatch : AutoPatch
         return list;
     }
 
+    [HarmonyTranspiler]
+    [HarmonyPatch(typeof(MapIconLibrary), nameof(MapIconLibrary.drawCursorZones))]
+    private static IEnumerable<CodeInstruction> DrawCursorZonesTranspiler(IEnumerable<CodeInstruction> codes)
+    {
+        var list = new List<CodeInstruction>(codes);
+
+        var index = HarmonyTools.FindCodeSnippet(list, out var snippet,
+                                                 new MethodInstPredictor(OpCodes.Call, "get_world"),
+                                                 new MethodInstPredictor(
+                                                     OpCodes.Callvirt, nameof(MapBox.showCityZones)),
+                                                 new BaseInstPredictor(OpCodes.Brfalse));
+/*
+        var show_city_zones_label = new Label();
+        snippet[0].labels.Add(show_city_zones_label);
+        */
+        CodeInstruction ret_inst = list.Find(x => x.opcode == OpCodes.Ret);
+
+        var ret_label = new Label();
+        ret_inst.labels.Add(ret_label);
+        // Push arg 0
+        list.Insert(index++, new CodeInstruction(OpCodes.Ldarg_0));
+        // Push city
+        list.Insert(index++, new CodeInstruction(OpCodes.Ldloc_1));
+        // Call JudgeDrawCursorZones
+        list.Insert(
+            index++,
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(MapIconPatch), nameof(JudgeDrawCursorZones))));
+        // If true, return
+        list.Insert(index++, new CodeInstruction(OpCodes.Brtrue, ret_label));
+
+        return list;
+    }
+
     private static bool JudgeScaleEffect(City pCursorCity, City pCheckCity)
     {
         switch (MapModeManager.map_mode)
@@ -111,6 +143,21 @@ public class MapIconPatch : AutoPatch
             case CustomMapMode.Vassals:
                 return pCursorCity?.kingdom?.AW()?.GetRootSuzerain(true) ==
                        pCheckCity.kingdom.AW().GetRootSuzerain(true);
+        }
+
+        return false;
+    }
+
+    [Hotfixable]
+    private static bool JudgeDrawCursorZones(MapIconAsset pAsset, City pCheckCity)
+    {
+        switch (MapModeManager.map_mode)
+        {
+            case CustomMapMode.Vassals:
+                Kingdom suzerain = pCheckCity.kingdom.AW().GetRootSuzerain(true);
+                if (suzerain == null) return true;
+                foreach (City city in suzerain.cities) MapIconLibrary.colorZones(pAsset, city.zones, pAsset.color);
+                return true;
         }
 
         return false;
