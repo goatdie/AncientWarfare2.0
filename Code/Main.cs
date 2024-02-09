@@ -10,6 +10,7 @@ using Figurebox.patch.MoH;
 using Figurebox.patch.policies;
 using Figurebox.ui.patches;
 using Figurebox.utils;
+using Figurebox.utils.instpredictors;
 using HarmonyLib;
 using NCMS;
 using NeoModLoader.api;
@@ -172,6 +173,8 @@ namespace Figurebox
             _ = new PolicyState();
             _ = new PolicyStateType();
             _ = new TechType();
+
+            BaseInstPredictor.init();
             HarmonyTools.ReplaceMethods();
         }
 

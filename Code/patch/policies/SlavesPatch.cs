@@ -6,6 +6,7 @@ using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.utils;
+using Figurebox.utils.instpredictors;
 using HarmonyLib;
 using NeoModLoader.api.attributes;
 
@@ -28,8 +29,8 @@ internal class SlavesPatch : AutoPatch
         pAction._possibleParents.AddRange(simpleList
                                           .Where(actor => !actor.isProfession(AWUnitProfession.Slave.C()) &&
                                                           !actor.hasTrait("slave")).Where(actor =>
-                                                       actor.isAlive() && actor.stats[S.fertility] > 0f &&
-                                                       num - actor.data.had_child_timeout / 5.0    >= 8.0));
+                                                  actor.isAlive() && actor.stats[S.fertility] > 0f &&
+                                                  num - actor.data.had_child_timeout / 5.0    >= 8.0));
 
         pAction._possibleParents.Shuffle();
     }
@@ -40,16 +41,14 @@ internal class SlavesPatch : AutoPatch
     {
         var codes = instructions.ToList();
 
-        var mood_change_index = HarmonyTools.FindCodeSnippet(codes, new List<CodeInstruction>
-        {
-            new(OpCodes.Ret),
-            new(OpCodes.Ldarg_0),
-            new(OpCodes.Ldfld,
-                AccessTools.Field(typeof(Actor), nameof(Actor.data))),
-            new(OpCodes.Ldfld,
-                AccessTools.Field(typeof(ActorData), nameof(ActorData.mood))),
-            new(OpCodes.Ldstr, "happy")
-        });
+        var mood_change_index =
+            HarmonyTools.FindCodeSnippet(codes, new BaseInstPredictor(OpCodes.Ret),
+                                         new BaseInstPredictor(OpCodes.Ldarg_0),
+                                         new FieldInstPredictor(OpCodes.Ldfld,
+                                                                typeof(Actor), nameof(Actor.data)),
+                                         new FieldInstPredictor(OpCodes.Ldfld,
+                                                                typeof(ActorData), nameof(ActorData.mood)),
+                                         new BaseInstPredictor(OpCodes.Ldstr, "happy"));
 
         var prepend_codes = new List<CodeInstruction>();
         prepend_codes.Add(new CodeInstruction(OpCodes.Ldarg_0));

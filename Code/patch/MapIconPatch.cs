@@ -6,6 +6,7 @@ using Figurebox.core;
 using Figurebox.core.map_modes;
 using Figurebox.utils;
 using Figurebox.utils.extensions;
+using Figurebox.utils.instpredictors;
 using HarmonyLib;
 using NeoModLoader.api.attributes;
 using UnityEngine;
@@ -62,35 +63,20 @@ public class MapIconPatch : AutoPatch
     private static IEnumerable<CodeInstruction> UpdateMapIconScaleEffect(IEnumerable<CodeInstruction> codes)
     {
         var list = new List<CodeInstruction>(codes);
-        var index = -1;
-        Label flag_true_label = default;
-        Label show_city_zones_label = default;
-        for (var i = 0; i < list.Count; i++)
-        {
-            CodeInstruction code_1 = list[i];
-            if (code_1.opcode != OpCodes.Call || ((MethodInfo)code_1.operand).Name != "get_world") continue;
 
-            CodeInstruction code_2 = list[i + 1];
-            if (code_2.opcode != OpCodes.Callvirt || ((MethodInfo)code_2.operand).Name != "showCityZones") continue;
+        var index = HarmonyTools.FindCodeSnippet(list,
+                                                 new MethodInstPredictor(OpCodes.Call, "get_world"),
+                                                 new MethodInstPredictor(
+                                                     OpCodes.Callvirt, nameof(MapBox.showCityZones)),
+                                                 new BaseInstPredictor(OpCodes.Brfalse));
 
-            CodeInstruction code_3 = list[i + 2];
-            if (code_3.opcode != OpCodes.Brfalse_S && code_3.opcode != OpCodes.Brfalse) continue;
+        var show_city_zones_label = (Label)list[index + 2].operand;
 
-            index = i;
-            show_city_zones_label = (Label)code_3.operand;
-            break;
-        }
-
-        for (var i = index; i < list.Count; i++)
-        {
-            CodeInstruction code_1 = list[i];
-            if (code_1.opcode != OpCodes.Ldc_I4_1) continue;
-            CodeInstruction code_2 = list[i + 1];
-            if (code_2.opcode != OpCodes.Stloc_S || ((LocalBuilder)code_2.operand).LocalIndex != 11) continue;
-            CodeInstruction code_3 = list[i + 2];
-            if (code_3.opcode != OpCodes.Br_S && code_3.opcode != OpCodes.Br) continue;
-            flag_true_label = code_3.operand is Label label ? label : default;
-        }
+        var flag_true_label_prev_index = HarmonyTools.FindCodeSnippet(list, new BaseInstPredictor(OpCodes.Ldc_I4_1),
+                                                                      new LocalVarInstPredictor(OpCodes.Stloc_S, 11),
+                                                                      new BaseInstPredictor(OpCodes.Br));
+        Main.LogInfo($"flag_true_label_prev_index: {flag_true_label_prev_index}");
+        var flag_true_label = (Label)list[2 + flag_true_label_prev_index].operand;
 
         var city2 =
             list[HarmonyTools.FindInstruction<LocalBuilder>(list, OpCodes.Stloc_S, x => x.LocalIndex == 10)]

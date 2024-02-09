@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Figurebox.attributes;
+using Figurebox.utils.instpredictors;
 using HarmonyLib;
 
 namespace Figurebox.utils;
@@ -111,12 +112,11 @@ internal class HarmonyTools
         return codes;
     }
 
-    public static int FindCodeSnippet(List<CodeInstruction> codes, List<CodeInstruction> snippet)
+    public static int FindCodeSnippet(List<CodeInstruction> codes, params BaseInstPredictor[] snippet)
     {
-        for (var i = 0; i < codes.Count - snippet.Count; i++)
-            if (!snippet.Where((t, j) => codes[i + j].opcode != t.opcode).Any())
+        for (var i = 0; i < codes.Count - snippet.Length; i++)
+            if (!snippet.Where((t, j) => !t.Predict(codes[i + j])).Any())
                 return i;
-
         return -1;
     }
 
