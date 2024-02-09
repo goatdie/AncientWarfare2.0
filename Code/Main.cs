@@ -278,6 +278,16 @@ namespace Figurebox
                 if (!_logged_infos.Add(pMessage))
                     return;
             LogService.LogInfo($"[AW2.0]: {pMessage}");
+            if (pShowStackTrace) LogService.LogStackTraceAsInfo();
+        }
+
+        public static void LogDebug(string pMessage, bool pShowStackTrace = false, bool pLogOnlyOnce = false)
+        {
+            if (!DebugConst.IS_DEVELOPER) return;
+            if (pLogOnlyOnce)
+                if (!_logged_infos.Add(pMessage))
+                    return;
+            LogService.LogInfo($"[AW2.0]: {pMessage}");
             if (pShowStackTrace)
             {
                 LogService.LogStackTraceAsInfo();

@@ -119,4 +119,14 @@ internal class HarmonyTools
 
         return -1;
     }
+
+    public static int FindInstruction<TOperand>(List<CodeInstruction> codes, OpCode opcode,
+                                                Func<TOperand, bool>  predicate)
+    {
+        for (var i = 0; i < codes.Count; i++)
+            if (codes[i].opcode == opcode && predicate((TOperand)codes[i].operand))
+                return i;
+
+        return -1;
+    }
 }

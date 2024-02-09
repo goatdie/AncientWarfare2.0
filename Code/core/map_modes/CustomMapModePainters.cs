@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Figurebox.utils.extensions;
 using NeoModLoader.api.attributes;
-using NeoModLoader.services;
 using UnityEngine;
 
 namespace Figurebox.core.map_modes;
@@ -106,7 +105,6 @@ internal static class CustomMapModePainters
         if (pDrawnHashCode != 0)
         {
             if (pZone.last_drawn_id == drawn_id && pZone.last_drawn_hashcode == pDrawnHashCode) return false;
-            LogService.LogInfoConcurrent($"Border of {pZone.id} {drawn_id} {pDrawnHashCode}");
             pZone.last_drawn_hashcode = pDrawnHashCode;
         }
 
