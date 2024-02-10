@@ -27,12 +27,6 @@ public delegate KingdomPolicyAsset FindPolicy(KingdomPolicyStateAsset state, AW_
 
 public class KingdomPolicyAsset : Asset
 {
-    public enum PreStateRequireType
-    {
-        All,
-        Any
-    }
-
     /// <summary>
     ///   所有前置状态, 可以为空.
     /// </summary>

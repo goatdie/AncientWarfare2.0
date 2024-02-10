@@ -1,5 +1,5 @@
 using Figurebox.abstracts;
-using Figurebox.core;
+using Figurebox.core.city_techs;
 
 namespace Figurebox.content;
 

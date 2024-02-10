@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using Figurebox.attributes;
 using Figurebox.constants;
 using Figurebox.content;
@@ -20,20 +20,25 @@ namespace Figurebox.core;
 
 public partial class AW_Kingdom : Kingdom
 {
+    public AW_KingdomDataAddition addition_data = new();
+
     /// <summary>
     /// 控制是否为前天命国家
     /// </summary>
     public bool FomerMoh;
+
     public Actor heir;
+
     /// <summary>
     /// 控制国家命名是否姓氏合流
     /// </summary>
     public bool NameIntegration;
-    public AW_KingdomDataAddition addition_data = new();
+
     /// <summary>
     /// 控制是否为起义军
     /// </summary>
     public bool Rebel = false;
+
     /// <summary>
     /// 设置是否启用姓氏合流
     /// </summary>
@@ -64,6 +69,7 @@ public partial class AW_Kingdom : Kingdom
             suzerain.vassals.Remove(this);
             RemoveSuzerain();
         }
+
         heir = null;
         base.Dispose();
     }
@@ -225,7 +231,8 @@ public partial class AW_Kingdom : Kingdom
             if (policy_asset == null)
             {
                 ForceStopPolicy();
-                if (DebugConst.LOG_ALL_EXCEPTION) Main.LogWarning($"政策'{addition_data.current_policy_id}'不存在, 终止", true);
+                if (DebugConst.LOG_ALL_EXCEPTION)
+                    Main.LogWarning($"政策'{addition_data.current_policy_id}'不存在, 终止", true);
                 return;
             }
 
@@ -288,11 +295,12 @@ public partial class AW_Kingdom : Kingdom
     {
         addition_data.Title = newTitle;
     }
+
     public bool CompareTitle(AW_Kingdom kingdom)
     {
         return addition_data.Title > kingdom.addition_data.Title;
-
     }
+
     // 根据爵位等级返回中文字符串
     public string GetTitleString(AW_KingdomDataAddition.KingdomTitle title)
     {
@@ -359,14 +367,14 @@ public partial class AW_Kingdom : Kingdom
         return pPolicyAsset != null
                && (pPolicyAsset.can_repeat ||
                    (!addition_data.policy_history.Contains(pPolicyAsset.id)
-                    && (addition_data.p_status == AW_KingdomDataAddition.PolicyStatus.Completed ||
+                    && (addition_data.p_status          == AW_KingdomDataAddition.PolicyStatus.Completed ||
                         addition_data.current_policy_id != pPolicyAsset.id)))
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
-                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.All &&
-                   pPolicyAsset.all_prepositions.All(pState => addition_data.current_states.ContainsValue(pState)) ||
-                   pPolicyAsset.pre_state_require_type == KingdomPolicyAsset.PreStateRequireType.Any &&
-                   pPolicyAsset.all_prepositions.Any(pState => addition_data.current_states.ContainsValue(pState)))
+                   (pPolicyAsset.pre_state_require_type == PreStateRequireType.All &&
+                    pPolicyAsset.all_prepositions.All(pState => addition_data.current_states.ContainsValue(pState))) ||
+                   (pPolicyAsset.pre_state_require_type == PreStateRequireType.Any &&
+                    pPolicyAsset.all_prepositions.Any(pState => addition_data.current_states.ContainsValue(pState))))
                && (pPolicyAsset.check_policy == null || pPolicyAsset.check_policy.Invoke(pPolicyAsset, this));
     }
 
@@ -490,15 +498,16 @@ public partial class AW_Kingdom : Kingdom
 
                 // 向新首都增加相应金币
                 newCapital.data.storage.change("gold", goldToTransfer);
-                EventsManager.Instance.ChangeCapital(kingdom.king, kingdom.capital.getCityName(), newCapital.getCityName());
+                EventsManager.Instance.ChangeCapital(kingdom.king, kingdom.capital.getCityName(),
+                                                     newCapital.getCityName());
                 AW_City awcap = kingdom.capital as AW_City;
                 AW_City awnewcap = newCapital as AW_City;
                 if (kingdom.king.unit_group != null)
                 {
                     kingdom.king.unit_group.disband();
+                }
 
-
-                };
+                ;
                 kingdom.capital = newCapital;
                 kingdom.king.ChangeCity(newCapital);
             }
@@ -516,15 +525,18 @@ public partial class AW_Kingdom : Kingdom
         double currentCapitalScore = CalculateCityScore(kingdom.capital, kingdom.capital, kingdom);
 
         var candidateCities = kingdom.cities
-            .Where(city => city != kingdom.capital)
-            .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
-            .ToList();
+                                     .Where(city => city != kingdom.capital)
+                                     .Where(city => city.neighbours_cities.Any(nc => kingdom.cities.Contains(nc)))
+                                     .ToList();
 
         // 为候选城市计算得分
         var scoredCities = candidateCities
-            .Select(city => new { City = city, Score = CalculateCityScore(city, kingdom.capital, kingdom) })
-            .OrderByDescending(cityScore => cityScore.Score)
-            .ToList();
+                           .Select(city => new
+                           {
+                               City = city, Score = CalculateCityScore(city, kingdom.capital, kingdom)
+                           })
+                           .OrderByDescending(cityScore => cityScore.Score)
+                           .ToList();
 
         var potentialNewCapital = scoredCities.FirstOrDefault()?.City;
         double threshold = 0.30; // 修改阈值为所需的比例
@@ -542,16 +554,16 @@ public partial class AW_Kingdom : Kingdom
 
     private static double CalculateCityScore(City city, City capital, AW_Kingdom kingdom)
     {
-        var score = city.getAge() - (city == capital ? 0 : capital.getAge()) +
+        var score = city.getAge() - (city == capital ? 0 : capital.getAge())                               +
                     (city.getPopulationTotal() - (city == capital ? 0 : capital.getPopulationTotal())) * 2 +
-                    (city.zones.Count - (city == capital ? 0 : capital.zones.Count)) * 0.55;
+                    (city.zones.Count          - (city == capital ? 0 : capital.zones.Count))          * 0.55;
 
         int neighbouringCityCount = city.neighbours_cities.Count(nc => kingdom.cities.Contains(nc));
         score += neighbouringCityCount * 30;
 
         double distanceScore = kingdom.cities
-            .Where(c => c != city)
-            .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
+                                      .Where(c => c != city)
+                                      .Sum(c => Toolbox.DistVec3(city.cityCenter, c.cityCenter));
         distanceScore = 1 / (1 + distanceScore);
 
         return score + distanceScore;
@@ -615,7 +627,7 @@ public partial class AW_Kingdom : Kingdom
 
 
     public AW_KingdomDataAddition.KingdomTitle MaxTitle(AW_KingdomDataAddition.KingdomTitle title1,
-                                                   AW_KingdomDataAddition.KingdomTitle title2)
+                                                        AW_KingdomDataAddition.KingdomTitle title2)
     {
         return (title1 > title2) ? title1 : title2;
     }
@@ -748,6 +760,7 @@ public partial class AW_Kingdom : Kingdom
                 {
                     EventsManager.Instance.ENDMOH(this);
                 }
+
                 if (!IsVassal())
                 {
                     createColors();
@@ -757,7 +770,6 @@ public partial class AW_Kingdom : Kingdom
                     World.world.zoneCalculator.redrawZones();
                     if (IsSuzerain())
                     {
-
                         foreach (var vassal in GetVassals())
                         {
                             vassal.UpdateToKingdomColor();
