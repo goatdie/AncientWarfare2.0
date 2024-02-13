@@ -854,4 +854,19 @@ public partial class AW_Kingdom : Kingdom
                 return 0; // 或者返回一个默认值
         }
     }
+
+    public int CalcPower()
+    {
+        var social_level_state_id = addition_data.GetPolicyStateId(PolicyStateType.social_level);
+        var base_value = string.IsNullOrEmpty(social_level_state_id)
+            ? KingdomPolicyStateLibrary.DefaultState.calc_kingdom_strength(this)
+            : KingdomPolicyStateLibrary.Instance.get(social_level_state_id)?.calc_kingdom_strength(this) ?? 0;
+
+        if (IsSuzerain())
+            //将附庸也算本国国力但是0.6的权重
+            base_value += GetVassals().Sum(vassal => vassal.CalcPower() * 0.6f);
+
+        power = (int)base_value;
+        return power;
+    }
 }

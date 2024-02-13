@@ -1,9 +1,28 @@
+using System.Linq;
 using Figurebox.utils.extensions;
 using Figurebox.utils.MoH;
+
 namespace Figurebox.core;
 
 public partial class AW_KingdomManager
 {
+    private void CheckMOHKingdom()
+    {
+        if (MoHTools.ExistMoHKingdom) return;
+        AW_Kingdom most_powerful_kingdom = null;
+        foreach (Kingdom kingdom in list_civs
+                     .Where(kingdom => (most_powerful_kingdom == null ||
+                                        kingdom.power         > most_powerful_kingdom.power) &&
+                                       kingdom.king != null                                  &&
+                                       kingdom.king.hasTrait("first")))
+            most_powerful_kingdom = kingdom.AW();
+        if (most_powerful_kingdom != null)
+        {
+            KingdomYearName.changeYearname(most_powerful_kingdom);
+            MoHTools.SetMoHKingdom(most_powerful_kingdom);
+        }
+    }
+
     /// <summary>
     ///     根据天命值决定天命事件
     /// </summary>
@@ -15,18 +34,18 @@ public partial class AW_KingdomManager
         {
             //天命值在什么条件发生的事件
         }
+
         if (MoHTools.MOH_Value <= MoHTools.MOH_UnderLimit)
         {
             MoHTools.MoHKingdomBoom(); //天命爆炸
         }
     }
+
     /// <summary>
     ///     根据天命国家的情况更新天命值
     /// </summary>
     public static void UpdateMoHValue()
     {
-
-
         if (!MoHTools.ExistMoHKingdom) goto LIMIT_MOH_VALUE;
 
         int value_change = 0;
@@ -35,43 +54,46 @@ public partial class AW_KingdomManager
         if (MoHTools.MoHKingdom.getEnemiesKingdoms().Count == 0)
         {
             value_change++;
-
         }
+
         if (MoHTools.MoHKingdom.hasEnemies())
         {
             value_change--;
-
         }
+
         if (!MoHTools.MoHKingdom.isSupreme())
         {
             value_change -= 2;
-
         }
-        if (World.world_era == AssetManager.era_library.get(S.age_hope) || World.world_era == AssetManager.era_library.get(S.age_wonders))
+
+        if (World.world_era == AssetManager.era_library.get(S.age_hope) ||
+            World.world_era == AssetManager.era_library.get(S.age_wonders))
         {
             value_change += 2; // 正面纪元
         }
-        if (World.world_era == AssetManager.era_library.get(S.age_despair) || World.world_era == AssetManager.era_library.get(S.age_ash) || World.world_era == AssetManager.era_library.get(S.age_chaos))
+
+        if (World.world_era == AssetManager.era_library.get(S.age_despair) ||
+            World.world_era == AssetManager.era_library.get(S.age_ash)     ||
+            World.world_era == AssetManager.era_library.get(S.age_chaos))
         {
             value_change -= 20; // 负面纪元
-
         }
+
         if (MoHTools.MoHKingdom.king != null)
         {
             if (MoHTools.MoHKingdom.king.hasTrait("first"))
             {
                 value_change += 5;
-
             }
+
             if (MoHTools.MoHKingdom.king.getAge() <= 24)
             {
                 value_change--;
-
             }
+
             if (MoHTools.MoHKingdom.king.data.intelligence <= 5)
             {
                 value_change--;
-
             }
         }
 
@@ -79,21 +101,17 @@ public partial class AW_KingdomManager
         if (kclan != null && kclan.units.Count <= 2)
         {
             value_change--;
-
         }
 
         MoHTools.ChangeMOH_Value(value_change);
 
 
-    LIMIT_MOH_VALUE:
+        LIMIT_MOH_VALUE:
 
         if (MoHTools.MOH_Value >= MoHTools.MOH_UpperLimit)
         {
             MoHTools.SetMOH_Value(MoHTools.MOH_UpperLimit);
-
         }
-
-
     }
 
     public bool CheckNoMoreRebels()
@@ -106,12 +124,14 @@ public partial class AW_KingdomManager
                 return false; // 存在反叛国家
             }
         }
+
         return true; // 没有反叛国家
     }
 
     public void CheckDeclareEmpire()
     {
-        if (MoHTools.ExistMoHKingdom) { return; }
+        if (MoHTools.ExistMoHKingdom) return;
+
         // 首先检查是否有任何国家是Rebel
         bool noRebels = CheckNoMoreRebels();
 
@@ -132,7 +152,6 @@ public partial class AW_KingdomManager
                         k.king.addTrait("first");
 
                         KingdomYearName.changeYearname(awKingdom);
-
                     }
                 }
             }
@@ -158,7 +177,8 @@ public partial class AW_KingdomManager
         float controlPercentage = (float)rebelControlledCities / totalOriginalCities;
 
         // 如果控制的城市百分比 >= 70%，则可以称帝
-        Main.LogInfo(kingodm.name + rebelControlledCities + "total:" + totalOriginalCities + "city数值" + controlPercentage);
+        Main.LogInfo(kingodm.name + rebelControlledCities + "total:" + totalOriginalCities + "city数值" +
+                     controlPercentage);
         return controlPercentage >= 0.65;
     }
 }

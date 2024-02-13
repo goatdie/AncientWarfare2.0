@@ -41,9 +41,16 @@ public partial class AW_KingdomManager : KingdomManager
             list_civs[i].updateAge();
         }
 
+        CalcKingdomsPower();
+        CheckMOHKingdom();
         UpdateMoHValue();
         UpdateMoHCondition();
         CheckDeclareEmpire();
+    }
+
+    private void CalcKingdomsPower()
+    {
+        foreach (Kingdom kingdom in list_civs) ((AW_Kingdom)kingdom).CalcPower();
     }
 
 
