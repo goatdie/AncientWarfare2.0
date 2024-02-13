@@ -256,6 +256,7 @@ namespace Figurebox
             Harmony.CreateAndPatchAll(typeof(SpecialFigure));
             _ = new SlavesPatch();
             _ = new CitiesManagerPatch();
+            _ = new DiplomacyManagerPatch();
             _ = new KingdomManagerPatch();
             _ = new MapIconPatch();
             Harmony.CreateAndPatchAll(typeof(PathFinderPatch));
