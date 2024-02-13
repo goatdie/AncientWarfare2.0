@@ -170,6 +170,7 @@ namespace Figurebox
             prefabs_library.SetParent(transform);
             _ = new AWS();
             _ = new AWDataS();
+            _ = new PlotType();
             _ = new PolicyState();
             _ = new PolicyStateType();
             _ = new TechType();
@@ -259,6 +260,7 @@ namespace Figurebox
             _ = new DiplomacyManagerPatch();
             _ = new KingdomManagerPatch();
             _ = new MapIconPatch();
+            _ = new PlotPatch();
             Harmony.CreateAndPatchAll(typeof(PathFinderPatch));
             Harmony.CreateAndPatchAll(typeof(ClanManagerPatch));
             print("Create and patch all:CTraits");

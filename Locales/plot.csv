@@ -5,6 +5,8 @@ plot_historical_character_usurpation,篡位,Usurpation
 plot_description_historical_character_usurpation,$initiator_kingdom$的$initiator_actor$正在试图篡夺王位。,$initiator_kingdom$'s $initiator_actor$ is attempting to usurp the throne.
 plot_vassal_war,附庸战争,Vassal War
 plot_description_vassal_war,$initiator_kingdom$向$target_kingdom$发起附庸战争,$initiator_kingdom$ declared a vassal war to $target_kingdom$
+plot_active_vassal,主动附庸,Active Vassal
+plot_description_active_vassal,$initiator_kingdom$尝试附庸于$target_kingdom$寻求帮助,$initiator_kingdom$ tries to be vassal of $target_kingdom$ for help
 plot_absorb_vassal,吞并附庸,Absorb Vassal
 plot_description_absorb_vassal,$initiator_kingdom$正在试图吞并$target_kingdom$,$initiator_kingdom$ is attempting to absorb $target_kingdom$
 plot_Independence_War,独立战争,Independence War

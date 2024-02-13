@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Figurebox.abstracts;
+using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.core.events;
 using Figurebox.utils;
@@ -16,17 +17,23 @@ namespace Figurebox.content
         // public static PlotAsset reclaim_war = null;
 
         private static double last_Timer = 0.0f;
-        private static double interval = 1000.0f;
+        private static double interval   = 1000.0f;
 
+        public static PlotAsset active_vassal;
 
         protected override void init()
         {
+            replace(new AW_PlotAsset(get("new_war"))
+            {
+                plot_type = PlotType.war
+            });
             // "Reclaim War" PlotAsset Initialization
 
             #region reclaimWarPlotAsset
 
-            PlotAsset reclaim = new PlotAsset();
+            var reclaim = new AW_PlotAsset();
             reclaim.id = "reclaim_war";
+            reclaim.plot_type = PlotType.war;
             reclaim.path_icon = "ui/plots/plot_reclaim";
             reclaim.translation_key = "plot_reclaim_war";
             reclaim.description = "plot_description_reclaim_war";
@@ -37,10 +44,10 @@ namespace Figurebox.content
             AssetManager.plots_library.add(reclaim);
             reclaim.check_supporters = global::PlotsLibrary.checkMembersToRemoveDefault;
             reclaim.check_should_continue = ((Plot pPlot) =>
-                    pPlot.initiator_actor.isAlive() &&
+                    pPlot.initiator_actor.isAlive()                                          &&
                     pPlot.initiator_kingdom.getArmy() + 20 >= pPlot.target_kingdom.getArmy() &&
-                    !pPlot.initiator_actor.kingdom.asset.mad &&
-                    !pPlot.initiator_kingdom.hasEnemies() &&
+                    !pPlot.initiator_actor.kingdom.asset.mad                                 &&
+                    !pPlot.initiator_kingdom.hasEnemies()                                    &&
                     (pPlot.initiator_kingdom.getAlliance() == null ||
                      !pPlot.initiator_kingdom.getAlliance().kingdoms_hashset.Contains(pPlot.target_kingdom))
                 );
@@ -85,7 +92,7 @@ namespace Figurebox.content
             reclaim.action = delegate(Plot pPlot)
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom,
-                    AssetManager.war_types_library.get("reclaim"), true);
+                                               AssetManager.war_types_library.get("reclaim"));
                 return true;
             };
 
@@ -142,7 +149,7 @@ namespace Figurebox.content
                     return false;
                 }
 
-                if (pKingdom.king != null && pActor.isCityLeader() &&
+                if (pKingdom.king                != null && pActor.isCityLeader() &&
                     pKingdom.king.getInfluence() > pActor.getInfluence())
                 {
                     return false;
@@ -216,8 +223,9 @@ namespace Figurebox.content
 
             #region VassalWarPlotAsset
 
-            PlotAsset vassalWar = new PlotAsset();
+            var vassalWar = new AW_PlotAsset();
             vassalWar.id = "vassal_war";
+            vassalWar.plot_type = PlotType.war;
             vassalWar.path_icon = "ui/plots/plot_vassal_war";
             vassalWar.translation_key = "plot_vassal_war";
             vassalWar.description = "plot_description_vassal_war";
@@ -227,18 +235,19 @@ namespace Figurebox.content
             vassalWar.check_target_kingdom = true;
             vassalWar.check_other_plots = delegate(Actor pActor, Plot pPlot)
             {
-                return pPlot.supporters.Any(actor => DiplomacyHelpers.areKingdomsClose(actor.kingdom, pActor.kingdom));
+                return pPlot.supporters.Any(
+                    actor => DiplomacyHelpers.areKingdomsClose(actor.kingdom, pActor.kingdom));
             };
             AssetManager.plots_library.add(vassalWar);
             vassalWar.check_supporters = global::PlotsLibrary.checkMembersToRemoveDefault;
             vassalWar.check_should_continue = ((Plot pPlot) =>
-                    pPlot.initiator_actor.isAlive() &&
-                    !pPlot.initiator_actor.kingdom.asset.mad &&
+                    pPlot.initiator_actor.isAlive()                                     &&
+                    !pPlot.initiator_actor.kingdom.asset.mad                            &&
                     pPlot.initiator_kingdom.getArmy() >= pPlot.target_kingdom.getArmy() &&
-                    !pPlot.initiator_kingdom.hasEnemies() &&
+                    !pPlot.initiator_kingdom.hasEnemies()                               &&
                     (!pPlot.initiator_kingdom.hasAlliance() ||
                      pPlot.initiator_kingdom.getAlliance() != pPlot.target_kingdom.getAlliance()) &&
-                    !pPlot.target_kingdom.AW().IsVassal() &&
+                    !pPlot.target_kingdom.AW().IsVassal()                                         &&
                     !pPlot.target_kingdom.AW().IsSuzerain()
                 );
 
@@ -280,7 +289,7 @@ namespace Figurebox.content
             vassalWar.action = delegate(Plot pPlot)
             {
                 World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom,
-                    AssetManager.war_types_library.get("vassal_war"), true);
+                                               AssetManager.war_types_library.get("vassal_war"));
                 WorldLogTools.LogVassalWarStart(pPlot.target_kingdom, pPlot.initiator_kingdom);
 
                 return true;
@@ -288,6 +297,28 @@ namespace Figurebox.content
 
             vassalWar.plot_power = ((Actor pActor) => (int)pActor.stats[S.warfare]);
             vassalWar.cost = 1000;
+
+            #endregion
+
+
+            #region 主动附庸
+
+            active_vassal = new PlotAsset();
+            active_vassal.id = "active_vassal";
+            active_vassal.path_icon = "ui/plots/plot_vassal_war";
+            active_vassal.translation_key = "plot_active_vassal";
+            active_vassal.description = "plot_description_active_vassal";
+            active_vassal.check_initiator_actor = true;
+            active_vassal.check_initiator_kingdom = true;
+            active_vassal.check_target_kingdom = true;
+            active_vassal.check_launch = (pActor, pKingdom) =>
+            {
+                // 仅在战争期间或即将被宣战时允许发动
+                return World.world.plots.list.Any(plot => plot.getAsset().AW()?.plot_type == PlotType.war &&
+                                                          plot.target_kingdom             == pKingdom)
+                       || World.world.wars.hasWars(pKingdom);
+            };
+            active_vassal.check_should_continue = ActiveVassalCheckContinue;
 
             #endregion
 
@@ -359,13 +390,13 @@ namespace Figurebox.content
             PlotAsset IndependenceWar = new()
             {
                 // 设置 IndependenceWar 的各个属性
-                id = "Independence_War", // 情节的唯一标识符
-                path_icon = "ui/plots/plot_Independence_War", // 情节在界面上的图标路径
-                translation_key = "plot_Independence_War", // 情节的翻译键值
+                id = "Independence_War",                           // 情节的唯一标识符
+                path_icon = "ui/plots/plot_Independence_War",      // 情节在界面上的图标路径
+                translation_key = "plot_Independence_War",         // 情节的翻译键值
                 description = "plot_description_Independence_War", // 情节的描述
-                check_initiator_actor = true, // 是否检查发起者的角色
-                check_initiator_kingdom = true, // 是否检查发起者的王国
-                check_target_kingdom = true, // 是否检查目标王国
+                check_initiator_actor = true,                      // 是否检查发起者的角色
+                check_initiator_kingdom = true,                    // 是否检查发起者的王国
+                check_target_kingdom = true,                       // 是否检查目标王国
                 cost = 1200,
                 // 设置情节强度的计算方式
                 plot_power = (Actor pActor) => (int)((pActor.stats[S.warfare] + pActor.stats[S.intelligence]) * 0.5f),
@@ -437,7 +468,7 @@ namespace Figurebox.content
                 // 调用新的函数来移除附庸关系
 
                 War war = World.world.diplomacy.startWar(vassal, lord,
-                    AssetManager.war_types_library.get("independence_war"), true);
+                                                         AssetManager.war_types_library.get("independence_war"));
                 vassal.RemoveSuzerain();
 
                 foreach (Actor actor in pPlot.supporters)
@@ -445,7 +476,7 @@ namespace Figurebox.content
                     Kingdom kingdom = actor.kingdom;
 
                     if (kingdom.isAlive() && kingdom.countCities() != 0 && !kingdom.hasEnemies() &&
-                        kingdom.king != null)
+                        kingdom.king                               != null)
                     {
                         // if kingdom is a vassal of the same suzerain as the initiator kingdom
                         if (kingdom.AW().IsVassal() && kingdom.AW().suzerain == pPlot.target_kingdom.AW())
@@ -476,14 +507,14 @@ namespace Figurebox.content
                 {
                     // 如果目标国家是天命国家，设置战争类型为 "tianming"
                     World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom,
-                        AssetManager.war_types_library.get("tianming"), false);
+                                                   AssetManager.war_types_library.get("tianming"), false);
                     WorldLogTools.logtianmingwar(pPlot.initiator_kingdom, pPlot.target_kingdom);
                 }
                 else
                 {
                     // 否则使用普通战争类型
-                    World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom, global::WarTypeLibrary.normal,
-                        true);
+                    World.world.diplomacy.startWar(pPlot.initiator_kingdom, pPlot.target_kingdom,
+                                                   global::WarTypeLibrary.normal);
                 }
 
                 return true;
@@ -570,6 +601,12 @@ namespace Figurebox.content
             #endregion
         }
 
+        private bool ActiveVassalCheckContinue(Plot pPlot)
+        {
+            return !pPlot.initiator_kingdom.isEnemy(pPlot.target_kingdom) &&
+                   pPlot.initiator_kingdom.isOpinionTowardsKingdomGood(pPlot.target_kingdom);
+        }
+
         public static void startTianmingRebellion(City pCity, Actor pActor, Plot pPlot)
         {
             Kingdom originalKingdom = pCity.kingdom;
@@ -588,7 +625,7 @@ namespace Figurebox.content
             {
                 War current = item;
                 if (current.main_attacker == originalKingdom &&
-                    current.getAsset() == AssetManager.war_types_library.get("tianmingrebel"))
+                    current.getAsset()    == AssetManager.war_types_library.get("tianmingrebel"))
                 {
                     war = current;
                     war.joinDefenders(newKingdom);
@@ -599,7 +636,7 @@ namespace Figurebox.content
             if (war == null)
             {
                 war = World.world.diplomacy.startWar(originalKingdom, newKingdom,
-                    AssetManager.war_types_library.get("tianmingrebel"));
+                                                     AssetManager.war_types_library.get("tianmingrebel"));
                 if (originalKingdom.hasAlliance())
                 {
                     foreach (Kingdom ally in originalKingdom.getAlliance().kingdoms_hashset)
@@ -615,7 +652,7 @@ namespace Figurebox.content
             foreach (Actor supporter in pPlot.supporters)
             {
                 City supporterCity = supporter.city;
-                if (supporterCity != null && supporterCity.kingdom != newKingdom &&
+                if (supporterCity         != null && supporterCity.kingdom != newKingdom &&
                     supporterCity.kingdom == originalKingdom)
                 {
                     supporterCity.joinAnotherKingdom(newKingdom);
@@ -673,6 +710,56 @@ namespace Figurebox.content
         {
             usurper.city.removeLeader();
             City.makeLeader(usurper, usurper.city);
+        }
+
+        /// <summary>
+        ///     尝试发动主动附庸
+        /// </summary>
+        /// <param name="pActor"></param>
+        /// <returns></returns>
+        public static bool tryPlotActiveVassal(ClanManager pClanManager, Actor pActor)
+        {
+            if (pClanManager.basePlotChecks(pActor, active_vassal)) return false;
+
+            AW_Kingdom kingdom = pActor.kingdom.AW();
+
+            var enemies = new HashSet<Kingdom>(kingdom.getEnemiesKingdoms());
+
+            var war_plots = World.world.plots.list
+                                 .Where(plot => plot.getAsset().AW()?.plot_type == PlotType.war &&
+                                                plot.target_kingdom             == kingdom)
+                                 .ToList();
+
+            if (!enemies.Any() && war_plots.Count == 0) return false;
+
+            var need_active_vassal =
+                enemies.Any(enemy => !(enemy.power <= kingdom.power * OtherConst.ActiveVassalPowerRate));
+
+            if (!need_active_vassal) return false;
+
+            AW_Kingdom suzerain = null;
+            float opinion = 0;
+            foreach (Kingdom possible_suzerain in World.world.kingdoms.list_civs)
+            {
+                if (enemies.Contains(possible_suzerain)) continue;
+
+                if (possible_suzerain.power <= kingdom.power * OtherConst.ActiveVassalPowerRate) continue;
+
+                var possible_opinion = World.world.diplomacy.getOpinion(possible_suzerain, kingdom).total;
+                if (suzerain == null || possible_opinion > opinion || Toolbox.randomChance(0.5f))
+                {
+                    suzerain = possible_suzerain.AW();
+                    opinion = possible_opinion;
+                }
+            }
+
+            if (suzerain == null) return false;
+
+            Plot plot = World.world.plots.newPlot(pActor, active_vassal);
+            plot.rememberInitiators(pActor);
+            plot.target_kingdom = suzerain;
+
+            return true;
         }
     }
 }
