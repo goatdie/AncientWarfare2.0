@@ -1,16 +1,15 @@
-using Figurebox.core;
-using Figurebox.utils.MoH;
-using HarmonyLib;
-using Figurebox.attributes;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using Figurebox.attributes;
+using Figurebox.core;
 using Figurebox.utils.extensions;
+using HarmonyLib;
 
 namespace Figurebox.patch;
 
 internal class ClanManagerPatch
 {
-
     [MethodReplace(nameof(ClanManager.tryPlotWar))]
     private new bool tryPlotWar(Actor pActor, PlotAsset pPlotAsset)
     {
@@ -18,16 +17,19 @@ internal class ClanManagerPatch
         {
             return false;
         }
+
         Kingdom warTarget = DiplomacyHelpers.getWarTarget(pActor.kingdom);
         if (warTarget == null)
         {
             return false;
         }
+
         Kingdom reclaimTarget = GetReclaimTarget(pActor.kingdom);
         if (reclaimTarget != null && reclaimTarget == warTarget)
         {
             return false; // 不执行原方法，因为有收复目标
         }
+
         /* Kingdom vassaltarget = GetVassalTarget(pActor.kingdom);
          if (vassaltarget != null && vassaltarget == warTarget)
          {
@@ -41,6 +43,7 @@ internal class ClanManagerPatch
             Main.LogInfo("tryPlotWar  is missing start requirements");
             return true;
         }
+
         return true;
     }
 
@@ -48,26 +51,24 @@ internal class ClanManagerPatch
     [HarmonyPatch(typeof(ClanManager), "checkActionKing")]
     public static void checkKingAction_post(Actor pActor, ref ClanManager __instance)
     {
-        // 如果该角色正在战斗或者不是国王，就返回
-        if (pActor.isFighting())
-            return;
+        if (Math.Abs(__instance._timestamp_last_plot - World.world.getCurWorldTime()) < 0.001) return;
+        if (pActor.isFighting()) return;
 
-        // 尝试启动
+        var flag = content.PlotsLibrary.tryPlotActiveVassal(__instance, pActor);
 
-        bool flag1 = tryPlotReclaimWar(pActor, AssetManager.plots_library.get("reclaim_war"));
-        bool flag2 = tryPlotVassalWar(pActor, AssetManager.plots_library.get("vassal_war"));
-        bool flagIndependence = tryPlotIndependence(pActor, AssetManager.plots_library.get("Independence_War"));
-        bool flagAbsorbVassal = tryPlotAbsorbVassal(pActor, AssetManager.plots_library.get("absorb_vassal"));
-
-
-        if (flagAbsorbVassal || flagIndependence || flag1 || flag2)
+        if (!flag)
+            // 其他plot
+            flag = tryPlotReclaimWar(pActor, AssetManager.plots_library.get("reclaim_war"));
+        if (!flag) flag = tryPlotVassalWar(pActor, AssetManager.plots_library.get("vassal_war"));
+        if (!flag) flag = tryPlotIndependence(pActor, AssetManager.plots_library.get("Independence_War"));
+        if (!flag)
         {
-            __instance._timestamp_last_plot = World.world.getCurWorldTime();
+            flag = tryPlotAbsorbVassal(pActor, AssetManager.plots_library.get("absorb_vassal"));
         }
 
-
-
+        if (flag) __instance._timestamp_last_plot = World.world.getCurWorldTime();
     }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(ClanManager), "tryPlotJoinAlliance")]
     public static bool Prefix_tryPlotJoinAlliance(Actor pActor, PlotAsset pPlotAsset)
@@ -96,19 +97,24 @@ internal class ClanManagerPatch
     }
 
 
-
     // Assuming a basePlotChecks method that validates common conditions
     private static bool basePlotChecks(Actor pActor, PlotAsset pPlotAsset)
     {
-        if (pActor == null || pPlotAsset == null) { return false; }
+        if (pActor == null || pPlotAsset == null)
+        {
+            return false;
+        }
 
-        if (!World.world.worldLaws.world_law_rebellions.boolVal || !(pActor.getInfluence() >= pPlotAsset.cost && pPlotAsset.checkInitiatorPossible(pActor) && pPlotAsset.check_launch(pActor, pActor.kingdom)))
+        if (!World.world.worldLaws.world_law_rebellions.boolVal || !(pActor.getInfluence() >= pPlotAsset.cost  &&
+                                                                     pPlotAsset.checkInitiatorPossible(pActor) &&
+                                                                     pPlotAsset.check_launch(pActor, pActor.kingdom)))
         {
             return false;
         }
 
         return true;
     }
+
     public static Kingdom GetReclaimTarget(Kingdom kingdom)
     {
         //  Main.LogInfo($"开始寻找 {kingdom.data.name} 的收复战争目标...");
@@ -131,7 +137,8 @@ internal class ClanManagerPatch
 
                 if (yearsSinceOccupation <= 100 && yearsSinceOccupation != -1 && !isCurrentlyOwned)
                 {
-                    Main.LogInfo($"找到有效目标：{otherKingdom.data.name} 城市 {awc.name} 脱离 {kingdom.data.name} 占领的年数：{yearsSinceOccupation}.");
+                    Main.LogInfo(
+                        $"找到有效目标：{otherKingdom.data.name} 城市 {awc.name} 脱离 {kingdom.data.name} 占领的年数：{yearsSinceOccupation}.");
                     return otherKingdom;
                 }
             }
@@ -140,6 +147,7 @@ internal class ClanManagerPatch
         //  Main.LogInfo("没有找到有效的收复战争目标。");
         return null;
     }
+
     public static bool HasEnoughMilitaryPower(Kingdom initiator, Kingdom target)
     {
         int initiatorPower = initiator.getArmy();
@@ -181,6 +189,7 @@ internal class ClanManagerPatch
 
         return armyCount;
     }
+
     public static bool tryPlotReclaimWar(Actor pActor, PlotAsset pPlotAsset)
     {
         if (!World.world.clans.basePlotChecks(pActor, pPlotAsset))
@@ -207,6 +216,7 @@ internal class ClanManagerPatch
 
         return true;
     }
+
     public static bool tryPlotVassalWar(Actor pActor, PlotAsset pPlotAsset)
     {
         // 基本的情节检查
@@ -237,6 +247,7 @@ internal class ClanManagerPatch
         {
             return false;
         }
+
         if (vassalTarget.AW().CompareTitle(pActor.kingdom.AW()))
         {
             return false;
@@ -249,12 +260,12 @@ internal class ClanManagerPatch
         Main.LogInfo($"获得附庸目标 ：{vassalTarget.name}");
         if (!plot.checkInitiatorAndTargets())
         {
-
             return false;
         }
 
         return true;
     }
+
     public static bool tryPlotAbsorbVassal(Actor pActor, PlotAsset pPlotAsset)
     {
         // 基本的情节检查
@@ -262,21 +273,25 @@ internal class ClanManagerPatch
         {
             return false;
         }
+
         // 确定吞并的附庸目标
         Kingdom vassalTarget = GetVassalTargettoabsorb(pActor.kingdom);
         if (vassalTarget == null)
         {
             return false;
         }
-        if (GetYearsSinceVassalageStarted(pActor.kingdom.data.id, vassalTarget.data.id) <= 10)//暂时设置为10
+
+        if (GetYearsSinceVassalageStarted(pActor.kingdom.data.id, vassalTarget.data.id) <= 10) //暂时设置为10
         {
             return false;
         }
+
         double absorbTimestamp = pActor.kingdom.AW().absorb_timestamp;
         if (absorbTimestamp > 0 && World.world.getYearsSince(absorbTimestamp) <= 10)
         {
             return false;
         }
+
         Main.LogInfo($"吞并 目标{vassalTarget.name}");
         // 检查是否有足够的军事力量来进行吞并
         if (!HasEnoughMilitaryPower(pActor.kingdom, vassalTarget))
@@ -300,6 +315,7 @@ internal class ClanManagerPatch
 
         return true;
     }
+
     public static Kingdom GetVassalTargettoabsorb(Kingdom kingdom)
     {
         AW_Kingdom k = kingdom as AW_Kingdom;
@@ -307,16 +323,13 @@ internal class ClanManagerPatch
 
         foreach (AW_Kingdom vassal in vassals)
         {
-
             if (k.getArmy() < vassal.getArmy())
             {
-
                 continue;
             }
 
             if (vassal.hasEnemies())
             {
-
                 continue;
             }
 
@@ -328,6 +341,7 @@ internal class ClanManagerPatch
         // 如果没有找到满足条件的附庸，那么返回 null
         return null;
     }
+
     public static bool tryPlotIndependence(Actor pActor, PlotAsset pPlotAsset)
     {
         // 基本的情节检查
@@ -337,7 +351,6 @@ internal class ClanManagerPatch
         }
 
 
-
         // 确定战争的目标
         // 获取宗主国
         AW_Kingdom suzerain = pActor.kingdom.AW().suzerain;
@@ -345,8 +358,6 @@ internal class ClanManagerPatch
         {
             return false;
         }
-
-
 
 
         // 如果所有条件都满足，那么就创建一个新的情节，并设置目标国家
@@ -360,8 +371,6 @@ internal class ClanManagerPatch
                 AW_Kingdom neighbour = neighbourKingdom as AW_Kingdom;
                 if (neighbour != null)
                 {
-
-
                     if (suzerain != null)
                     {
                         KingdomOpinion opinion;
@@ -371,7 +380,9 @@ internal class ClanManagerPatch
                         {
                             adjustedTotal -= 1000;
                         }
-                        if ((adjustedTotal <= 0) && neighbourKingdom.king != null && neighbourKingdom != suzerain && neighbourKingdom != pActor.kingdom)
+
+                        if ((adjustedTotal <= 0) && neighbourKingdom.king != null && neighbourKingdom != suzerain &&
+                            neighbourKingdom                              != pActor.kingdom)
                         {
                             plot.addSupporter(neighbourKingdom.king);
                         }
@@ -388,6 +399,7 @@ internal class ClanManagerPatch
 
         return true;
     }
+
     public static HashSet<Kingdom> GetNearbyKingdoms(Kingdom kingdom)
     {
         HashSet<Kingdom> nearbyKingdoms = new HashSet<Kingdom>();
@@ -399,6 +411,7 @@ internal class ClanManagerPatch
                 nearbyKingdoms.Add(neighbour);
             }
         }
+
         return nearbyKingdoms;
     }
 
@@ -414,6 +427,7 @@ internal class ClanManagerPatch
             {
                 continue;
             }
+
             if (otherKingdom == kingdom)
             {
                 continue;
@@ -437,6 +451,7 @@ internal class ClanManagerPatch
         // If no suitable vassal target is found, return null
         return null;
     }
+
     public static int GetYearsSinceVassalageStarted(string suzerainKingdomId, string vassalId)
     {
         // 初始化变量来存储开始时间
@@ -446,9 +461,10 @@ internal class ClanManagerPatch
         using (var cmd = new SQLiteCommand(EventsManager.Instance.OperatingDB))
         {
             // 在SQL查询中同时考虑宗主国ID和附庸ID
-            cmd.CommandText = "SELECT START_TIME FROM VASSAL WHERE SKID = @SKID AND KID = @KID AND END_TIME = -1 ORDER BY START_TIME DESC LIMIT 1";
+            cmd.CommandText =
+                "SELECT START_TIME FROM VASSAL WHERE SKID = @SKID AND KID = @KID AND END_TIME = -1 ORDER BY START_TIME DESC LIMIT 1";
             cmd.Parameters.AddWithValue("@SKID", suzerainKingdomId);
-            cmd.Parameters.AddWithValue("@KID", vassalId);
+            cmd.Parameters.AddWithValue("@KID",  vassalId);
 
             using (var reader = cmd.ExecuteReader())
             {
@@ -476,5 +492,4 @@ internal class ClanManagerPatch
         Main.LogInfo("未查到宗主国与附庸之间的关系开始时间");
         return -1;
     }
-
 }

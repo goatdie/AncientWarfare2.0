@@ -319,6 +319,14 @@ namespace Figurebox.content
                        || World.world.wars.hasWars(pKingdom);
             };
             active_vassal.check_should_continue = ActiveVassalCheckContinue;
+            active_vassal.action = pPlot =>
+            {
+                pPlot.initiator_kingdom.AW()?.SetVassal(pPlot.target_kingdom.AW());
+                return true;
+            };
+            active_vassal.check_supporters = (pActor, pPlot) =>
+                pActor.isUnitOk() && !pActor.kingdom.isEnemy(pPlot.initiator_kingdom) &&
+                !pActor.kingdom.isEnemy(pPlot.target_kingdom);
 
             #endregion
 
