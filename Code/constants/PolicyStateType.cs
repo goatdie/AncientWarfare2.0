@@ -20,4 +20,5 @@ public class PolicyStateType : StringLibrary
     ///    社会名制
     /// </summary>
     public static readonly string name_organization;
+    public static readonly string enfeoffment_type;
 }

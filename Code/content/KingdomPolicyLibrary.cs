@@ -7,6 +7,17 @@ namespace Figurebox.content;
 
 class KingdomPolicyLibrary : AW_AssetLibrary<KingdomPolicyAsset, KingdomPolicyLibrary>
 {
+    public static readonly KingdomPolicyAsset start_slaves;
+    public static readonly KingdomPolicyAsset control_slaves;
+    public static readonly KingdomPolicyAsset slaves_army;
+    public static readonly KingdomPolicyAsset name_integration;
+    public static readonly KingdomPolicyAsset kingdom_yearname;
+    public static readonly KingdomPolicyAsset change_capital;
+    public static readonly KingdomPolicyAsset title_upgrade;
+    public static readonly KingdomPolicyAsset start_halfaristocrat;
+    public static readonly KingdomPolicyAsset base_enfeoffment;
+    public static readonly KingdomPolicyAsset favor_order;
+    public static readonly KingdomPolicyAsset continuous_enfeoffment;
     // 这里可以根据需要添加特定于 KingdomPolicyAsset 的方法
     public override void init()
     {
@@ -35,6 +46,10 @@ class KingdomPolicyLibrary : AW_AssetLibrary<KingdomPolicyAsset, KingdomPolicyLi
         // 开启半奴隶制半封建制
         add("start_halfaristocrat", "ui/policy/start_halfaristocrat", 100, 100, null,
             MajorPolicyExecuteActions.StartHalfAristocrat, false, false);
+
+        add("base_enfeoffment", "ui/policy/base_enfeoffment", 100, 100, null, null, false, false);
+        add("favor_order", "ui/policy/favor_order", 100, 100, null, null, false, false);
+        add("continuous_enfeoffment", "ui/policy/continuous_enfeoffment", 100, 100, null, null, false, false);
     }
 
     public override void post_init()
@@ -56,7 +71,12 @@ class KingdomPolicyLibrary : AW_AssetLibrary<KingdomPolicyAsset, KingdomPolicyLi
         get("name_integration").SetTargetState(KingdomPolicyStateLibrary.Name_Integration);
 
 
-
+        get("base_enfeoffment").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_HalfAristocrat);
+        get("base_enfeoffment").SetTargetState(KingdomPolicyStateLibrary.Enfeoffment_Base);
+        get("favor_order").AddPreposition(KingdomPolicyStateLibrary.Enfeoffment_Base);
+        get("favor_order").SetTargetState(KingdomPolicyStateLibrary.Enfeoffment_Limit);
+        get("continuous_enfeoffment").AddPreposition(KingdomPolicyStateLibrary.Enfeoffment_Base);
+        get("continuous_enfeoffment").SetTargetState(KingdomPolicyStateLibrary.Enfeoffment_Unlimit);
     }
 
     public override void linkAssets()

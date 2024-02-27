@@ -40,4 +40,7 @@ public class PolicyState : StringLibrary
     ///     姓氏合流
     /// </summary>
     public static readonly string name_integration;
+    public static readonly string enfeoffment_base;
+    public static readonly string enfeoffment_limit;
+    public static readonly string enfeoffment_unlimit;
 }

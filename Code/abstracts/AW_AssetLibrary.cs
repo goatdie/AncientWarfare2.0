@@ -15,4 +15,13 @@ public class AW_AssetLibrary<TAsset, TLibrary> : AssetLibrary<TAsset> where TAss
 
         return base.get(pID);
     }
+    public override TAsset add(TAsset pAsset)
+    {
+        var field = pAsset.GetType().GetField(pAsset.id, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        if (field != null)
+        {
+            field.SetValue(null, pAsset);
+        }
+        return base.add(pAsset);
+    }
 }

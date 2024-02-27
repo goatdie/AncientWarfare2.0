@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Figurebox.constants;
+using Figurebox.core.city_techs;
 using Figurebox.exceptions;
 using Newtonsoft.Json;
 
@@ -31,7 +32,7 @@ public class KingdomPolicyAsset : Asset
     ///   所有前置状态, 可以为空.
     /// </summary>
     public HashSet<string> all_prepositions;
-
+    public HashSet<string> all_tech_requires;
     /// <summary>
     ///     是否能够重复执行
     /// </summary>
@@ -94,6 +95,11 @@ public class KingdomPolicyAsset : Asset
     {
         all_prepositions ??= new HashSet<string>();
         all_prepositions.Add(pPrepositionState.id);
+    }
+    public void AddTechRequire(AW_CityTechAsset pTech)
+    {
+        all_tech_requires ??= new HashSet<string>();
+        all_tech_requires.Add(pTech.id);
     }
 
     /// <summary>

@@ -26,6 +26,10 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
     public static KingdomPolicyStateAsset MainSoldiers_Slaves;
     public static KingdomPolicyStateAsset Name_Integration;
 
+    public static KingdomPolicyStateAsset Enfeoffment_Base;
+    public static KingdomPolicyStateAsset Enfeoffment_Limit;
+    public static KingdomPolicyStateAsset Enfeoffment_Unlimit;
+
     public static KingdomPolicyStateLibrary Instance { get; } = new();
 
     /// <summary>
@@ -54,6 +58,10 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
 
         MainSoldiers_Slaves = add(PolicyState.slave_soldier, PolicyStateType.army_main_soldiers);
         Name_Integration = add(PolicyState.name_integration, PolicyStateType.name_organization);
+
+        Enfeoffment_Base = add(PolicyState.enfeoffment_base, PolicyStateType.enfeoffment_type);
+        Enfeoffment_Limit = add(PolicyState.enfeoffment_limit, PolicyStateType.enfeoffment_type);
+        Enfeoffment_Unlimit = add(PolicyState.enfeoffment_unlimit, PolicyStateType.enfeoffment_type);
     }
 
     public override void post_init()
@@ -80,7 +88,12 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
         SocialLevel_HalfAristocrat.AddCityTasks(
            AssetManager.tasks_city.get("check_slave_job"),
            AssetManager.tasks_city.get("produce_slaves")
-       );
+        );
+
+        Enfeoffment_Base.AddOptionalPolicy(
+            KingdomPolicyLibrary.favor_order,
+            KingdomPolicyLibrary.continuous_enfeoffment
+        );
     }
 
     public override void linkAssets()
