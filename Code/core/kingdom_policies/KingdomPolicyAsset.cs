@@ -96,6 +96,10 @@ public class KingdomPolicyAsset : Asset
         all_prepositions ??= new HashSet<string>();
         all_prepositions.Add(pPrepositionState.id);
     }
+    /// <summary>
+    /// 添加科技要求, 科技要求为硬性的, 所有科技都必须满足
+    /// </summary>
+    /// <param name="pTech"></param>
     public void AddTechRequire(AW_CityTechAsset pTech)
     {
         all_tech_requires ??= new HashSet<string>();

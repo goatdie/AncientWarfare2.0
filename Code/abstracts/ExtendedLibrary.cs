@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Figurebox.abstracts;
 
@@ -7,10 +8,20 @@ public abstract class ExtendedLibrary<T> where T : Asset
     public    List<T>         added_assets = new();
     private   AssetLibrary<T> cached_library;
     protected T               t;
-
+    private   Dictionary<string, FieldInfo> _fields = new();
     protected ExtendedLibrary()
     {
         Instance = this;
+
+        var fields = GetType().GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        foreach (var field in fields)
+        {
+            if (field.FieldType == typeof(T))
+            {
+                _fields.Add(field.Name, field);
+            }
+        }
+
         init();
     }
 
@@ -32,13 +43,20 @@ public abstract class ExtendedLibrary<T> where T : Asset
         _init();
         t = pObj;
         added_assets.Add(pObj);
+
+        _set_field(pObj);
+
         return cached_library.add(pObj);
     }
 
     protected virtual T clone(string pNew, string pFrom)
     {
         _init();
-        return cached_library.clone(pNew, pFrom);
+
+        var pObj = cached_library.clone(pNew, pFrom);
+
+        _set_field(pObj);
+        return pObj;
     }
 
     protected virtual void replace(T pNew)
@@ -48,7 +66,15 @@ public abstract class ExtendedLibrary<T> where T : Asset
 
         cached_library.list.Add(pNew);
         cached_library.dict[pNew.id] = pNew;
-    }
 
+        _set_field(pNew);
+    }
+    private void _set_field(T pObj)
+    {
+        if (_fields.TryGetValue(pObj.id, out FieldInfo field))
+        {
+            field.SetValue(null, pObj);
+        }
+    }
     protected abstract void init();
 }

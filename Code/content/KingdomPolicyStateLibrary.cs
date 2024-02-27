@@ -3,6 +3,8 @@ using Figurebox.constants;
 using Figurebox.core;
 using Figurebox.core.kingdom_policies;
 using NeoModLoader.api.attributes;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Figurebox.content;
 
@@ -14,21 +16,32 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
     /// <summary>
     ///     社会统治阶级：奴隶主
     /// </summary>
-    public static KingdomPolicyStateAsset SocialLevel_SlaveOwner;
+    public static readonly KingdomPolicyStateAsset slaveowner;
     /// <summary>
     ///     社会统治阶级：半奴隶主半封建贵族
     /// </summary>
-    public static KingdomPolicyStateAsset SocialLevel_HalfAristocrat;
+    public static readonly KingdomPolicyStateAsset halfaristocrat;
 
     /// <summary>
     ///     军队主体：奴隶
     /// </summary>
-    public static KingdomPolicyStateAsset MainSoldiers_Slaves;
-    public static KingdomPolicyStateAsset Name_Integration;
-
-    public static KingdomPolicyStateAsset Enfeoffment_Base;
-    public static KingdomPolicyStateAsset Enfeoffment_Limit;
-    public static KingdomPolicyStateAsset Enfeoffment_Unlimit;
+    public static readonly KingdomPolicyStateAsset slave_soldier;
+    /// <summary>
+    ///     杂项: 姓氏合流
+    /// </summary>
+    public static readonly KingdomPolicyStateAsset name_integration;
+    /// <summary>
+    /// 分封形式: 基础分封
+    /// </summary>
+    public static readonly KingdomPolicyStateAsset enfeoffment_base;
+    /// <summary>
+    /// 分封形式: 有限分封(推恩)
+    /// </summary>
+    public static readonly KingdomPolicyStateAsset enfeoffment_limit;
+    /// <summary>
+    /// 分封形式: 无限分封(类似西方封建)
+    /// </summary>
+    public static readonly KingdomPolicyStateAsset enfeoffment_unlimit;
 
     public static KingdomPolicyStateLibrary Instance { get; } = new();
 
@@ -44,9 +57,9 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
         // 原始公平
         DefaultState = add("default", PolicyStateType.social_level);
         // 奴隶制
-        SocialLevel_SlaveOwner = add(PolicyState.slaveowner, PolicyStateType.social_level);
+        add(PolicyState.slaveowner, PolicyStateType.social_level);
         // 半奴隶制半封建
-        SocialLevel_HalfAristocrat = add(PolicyState.halfaristocrat, PolicyStateType.social_level);
+        add(PolicyState.halfaristocrat, PolicyStateType.social_level);
         // 封建贵族
         add(PolicyState.aristocrat, PolicyStateType.social_level);
         // 地主
@@ -56,41 +69,41 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
         // 无产阶级
         add(PolicyState.proletarian, PolicyStateType.social_level);
 
-        MainSoldiers_Slaves = add(PolicyState.slave_soldier, PolicyStateType.army_main_soldiers);
-        Name_Integration = add(PolicyState.name_integration, PolicyStateType.name_organization);
+        add(PolicyState.slave_soldier, PolicyStateType.army_main_soldiers);
+        add(PolicyState.name_integration, PolicyStateType.name_organization);
 
-        Enfeoffment_Base = add(PolicyState.enfeoffment_base, PolicyStateType.enfeoffment_type);
-        Enfeoffment_Limit = add(PolicyState.enfeoffment_limit, PolicyStateType.enfeoffment_type);
-        Enfeoffment_Unlimit = add(PolicyState.enfeoffment_unlimit, PolicyStateType.enfeoffment_type);
+        add(PolicyState.enfeoffment_base, PolicyStateType.enfeoffment_type);
+        add(PolicyState.enfeoffment_limit, PolicyStateType.enfeoffment_type);
+        add(PolicyState.enfeoffment_unlimit, PolicyStateType.enfeoffment_type);
     }
 
     public override void post_init()
     {
         // 添加可选政策
-        DefaultState.AddOptionalPolicy(KingdomPolicyLibrary.Instance.get("start_slaves"));
+        DefaultState.AddOptionalPolicy(KingdomPolicyLibrary.start_slaves);
 
-        SocialLevel_SlaveOwner.AddOptionalPolicy(
-            KingdomPolicyLibrary.Instance.get("control_slaves"),
-            KingdomPolicyLibrary.Instance.get("slaves_army"),
-           KingdomPolicyLibrary.Instance.get("start_halfaristocrat")
+        slaveowner.AddOptionalPolicy(
+            KingdomPolicyLibrary.control_slaves,
+            KingdomPolicyLibrary.slaves_army,
+           KingdomPolicyLibrary.start_halfaristocrat
         );
-        SocialLevel_SlaveOwner.AddCityTasks(
+        slaveowner.AddCityTasks(
             AssetManager.tasks_city.get("check_slave_job"),
             AssetManager.tasks_city.get("produce_slaves")
         );
-        SocialLevel_HalfAristocrat.AddOptionalPolicy(
-            KingdomPolicyLibrary.Instance.get("name_integration")
+        halfaristocrat.AddOptionalPolicy(
+            KingdomPolicyLibrary.name_integration
         );
 
-        MainSoldiers_Slaves.AddCityTasks(
+        slave_soldier.AddCityTasks(
             AssetManager.tasks_city.get("check_slave_army")
         );
-        SocialLevel_HalfAristocrat.AddCityTasks(
+        halfaristocrat.AddCityTasks(
            AssetManager.tasks_city.get("check_slave_job"),
            AssetManager.tasks_city.get("produce_slaves")
         );
 
-        Enfeoffment_Base.AddOptionalPolicy(
+        enfeoffment_base.AddOptionalPolicy(
             KingdomPolicyLibrary.favor_order,
             KingdomPolicyLibrary.continuous_enfeoffment
         );

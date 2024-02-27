@@ -7,76 +7,111 @@ namespace Figurebox.content;
 
 class KingdomPolicyLibrary : AW_AssetLibrary<KingdomPolicyAsset, KingdomPolicyLibrary>
 {
+    /// <summary>
+    /// 开启奴隶制
+    /// </summary>
     public static readonly KingdomPolicyAsset start_slaves;
+    /// <summary>
+    /// 强化奴隶控制
+    /// </summary>
     public static readonly KingdomPolicyAsset control_slaves;
+    /// <summary>
+    /// 奴隶军
+    /// </summary>
     public static readonly KingdomPolicyAsset slaves_army;
+    /// <summary>
+    /// 姓氏合流
+    /// </summary>
     public static readonly KingdomPolicyAsset name_integration;
+#if 一米_中文名
+    /// <summary>
+    /// 年号
+    /// </summary>
     public static readonly KingdomPolicyAsset kingdom_yearname;
+#endif
+    /// <summary>
+    /// 迁都
+    /// </summary>
     public static readonly KingdomPolicyAsset change_capital;
+    /// <summary>
+    /// 升衔
+    /// </summary>
     public static readonly KingdomPolicyAsset title_upgrade;
+    /// <summary>
+    /// 开启半奴隶半封建
+    /// </summary>
     public static readonly KingdomPolicyAsset start_halfaristocrat;
+    /// <summary>
+    /// 分封雏形
+    /// </summary>
     public static readonly KingdomPolicyAsset base_enfeoffment;
+    /// <summary>
+    /// 推恩令
+    /// </summary>
     public static readonly KingdomPolicyAsset favor_order;
+    /// <summary>
+    /// 长久分封
+    /// </summary>
     public static readonly KingdomPolicyAsset continuous_enfeoffment;
     // 这里可以根据需要添加特定于 KingdomPolicyAsset 的方法
     public override void init()
     {
         base.init();
         // 只注册政策, 不要链接状态
-        // 开启奴隶制
-        add("start_slaves", "ui/policy/start_slaves", 100, 100, null,
+        add(nameof(start_slaves), "ui/policy/start_slaves", 100, 100, null,
             MajorPolicyExecuteActions.StartSlaves, false, false);
-        // 强化奴隶控制
-        add("control_slaves", "ui/icons/iconDamage", 100, 100, null,
+        add(nameof(control_slaves), "ui/icons/iconDamage", 100, 100, null,
             MajorPolicyExecuteActions.EnforceSlavesControl, true, false);
-        // 奴隶军
-        add("slaves_army", "ui/icons/iconDamage", 100, 100, null,
+        add(nameof(slaves_army), "ui/icons/iconDamage", 100, 100, null,
             MajorPolicyExecuteActions.EnableSlavesArmy, false, false);
-        // 姓氏合流
-        add("name_integration", "ui/icons/iconDamage", 100, 100, null,
+        add(nameof(name_integration), "ui/icons/iconDamage", 100, 100, null,
             MajorPolicyExecuteActions.NameIntegration, false, false);
 #if 一米_中文名
-        add("kingdom_yearname", "ui/policy/change_name", 1, 1, null,
+        add(nameof(kingdom_yearname), "ui/policy/change_name", 1, 1, null,
             MajorPolicyExecuteActions.MakeNewYearName, true, false);
 #endif
-        add("change_capital", "ui/policy/move_capital", 100, 100, InPeace,
+        add(nameof(change_capital), "ui/policy/move_capital", 100, 100, InPeace,
             MajorPolicyExecuteActions.ChangeCapital, true, false);
-        add("title_upgrade", "ui/policy/change_name", 100, 100, CanBePromoted,
+        add(nameof(title_upgrade), "ui/policy/change_name", 100, 100, CanBePromoted,
             MajorPolicyExecuteActions.UpgradeKingdomTitle, true, false);
-        // 开启半奴隶制半封建制
-        add("start_halfaristocrat", "ui/policy/start_halfaristocrat", 100, 100, null,
+        add(nameof(start_halfaristocrat), "ui/policy/start_halfaristocrat", 100, 100, null,
             MajorPolicyExecuteActions.StartHalfAristocrat, false, false);
 
-        add("base_enfeoffment", "ui/policy/base_enfeoffment", 100, 100, null, null, false, false);
-        add("favor_order", "ui/policy/favor_order", 100, 100, null, null, false, false);
-        add("continuous_enfeoffment", "ui/policy/continuous_enfeoffment", 100, 100, null, null, false, false);
+        add(nameof(base_enfeoffment), "ui/policy/base_enfeoffment", 100, 100, null, null, false, false);
+        add(nameof(favor_order), "ui/policy/favor_order", 100, 100, null, null, false, false);
+        add(nameof(continuous_enfeoffment), "ui/policy/continuous_enfeoffment", 100, 100, null, null, false, false);
     }
 
     public override void post_init()
     {
         base.post_init();
-        get("start_slaves").AddPreposition(KingdomPolicyStateLibrary.DefaultState);
-        get("start_slaves").SetTargetState(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
+        start_slaves.AddPreposition(KingdomPolicyStateLibrary.DefaultState);
+        start_slaves.SetTargetState(KingdomPolicyStateLibrary.slaveowner);
 
-        get("control_slaves").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
+        control_slaves.AddPreposition(KingdomPolicyStateLibrary.slaveowner);
 
-        get("slaves_army").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
-        get("slaves_army").SetTargetState(KingdomPolicyStateLibrary.MainSoldiers_Slaves);
+        slaves_army.AddPreposition(KingdomPolicyStateLibrary.slaveowner);
+        slaves_army.SetTargetState(KingdomPolicyStateLibrary.slave_soldier);
 
-        get("start_halfaristocrat").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_SlaveOwner);
-        get("start_halfaristocrat").AddPreposition(KingdomPolicyStateLibrary.MainSoldiers_Slaves);
-        get("start_halfaristocrat").SetTargetState(KingdomPolicyStateLibrary.SocialLevel_HalfAristocrat);
+        start_halfaristocrat.AddPreposition(KingdomPolicyStateLibrary.slaveowner);
+        start_halfaristocrat.AddPreposition(KingdomPolicyStateLibrary.slave_soldier);
+        start_halfaristocrat.SetTargetState(KingdomPolicyStateLibrary.halfaristocrat);
 
-        get("name_integration").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_HalfAristocrat);
-        get("name_integration").SetTargetState(KingdomPolicyStateLibrary.Name_Integration);
+        name_integration.AddPreposition(KingdomPolicyStateLibrary.halfaristocrat);
+        name_integration.SetTargetState(KingdomPolicyStateLibrary.name_integration);
 
 
-        get("base_enfeoffment").AddPreposition(KingdomPolicyStateLibrary.SocialLevel_HalfAristocrat);
-        get("base_enfeoffment").SetTargetState(KingdomPolicyStateLibrary.Enfeoffment_Base);
-        get("favor_order").AddPreposition(KingdomPolicyStateLibrary.Enfeoffment_Base);
-        get("favor_order").SetTargetState(KingdomPolicyStateLibrary.Enfeoffment_Limit);
-        get("continuous_enfeoffment").AddPreposition(KingdomPolicyStateLibrary.Enfeoffment_Base);
-        get("continuous_enfeoffment").SetTargetState(KingdomPolicyStateLibrary.Enfeoffment_Unlimit);
+        base_enfeoffment.AddPreposition(KingdomPolicyStateLibrary.halfaristocrat);
+        base_enfeoffment.AddPreposition(KingdomPolicyStateLibrary.name_integration);
+        base_enfeoffment.SetTargetState(KingdomPolicyStateLibrary.enfeoffment_base);
+
+        favor_order.AddPreposition(KingdomPolicyStateLibrary.enfeoffment_base);
+        favor_order.AddTechRequire(CityTechLibrary.enfeoffment_power_analysis);
+        favor_order.SetTargetState(KingdomPolicyStateLibrary.enfeoffment_limit);
+
+        continuous_enfeoffment.AddPreposition(KingdomPolicyStateLibrary.enfeoffment_base);
+        continuous_enfeoffment.AddTechRequire(CityTechLibrary.enfeoffment_range_analysis);
+        continuous_enfeoffment.SetTargetState(KingdomPolicyStateLibrary.enfeoffment_unlimit);
     }
 
     public override void linkAssets()

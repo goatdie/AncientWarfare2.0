@@ -12,18 +12,24 @@ public class UnitGroupTypeLibrary : AW_AssetLibrary<AW_UnitGroupAsset, UnitGroup
     public override void init()
     {
         base.init();
-        convention = add(new AW_UnitGroupAsset());
-        t.id = "convention";
+        add(new AW_UnitGroupAsset()
+        {
+            id = nameof(convention)
+        });
         t.path_icon = "civ/icons/minimap_flag";
         t.base_max_count = 10;
 
-        guards = add(new AW_UnitGroupAsset());
-        t.id = "guards";
+        add(new AW_UnitGroupAsset()
+        {
+            id = nameof(guards)
+        });
         t.path_icon = "civ/icons/minimap_guard";
         t.base_max_count = 5;
 
-        slaves = add(new AW_UnitGroupAsset());
-        t.id = "slaves";
+        add(new AW_UnitGroupAsset()
+        {
+            id = nameof(slaves)
+        });
         t.path_icon = "ui/icons/policy/start_slaves";
         t.base_max_count = 20;
     }
