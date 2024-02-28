@@ -1,11 +1,13 @@
 using System.Text;
 using Figurebox.attributes;
 using Figurebox.constants;
+using Figurebox.utils.extensions;
+using HarmonyLib;
 
 namespace Figurebox.patch;
 
 // ReSharper disable once UnusedType.Global
-internal class ActorPatch
+internal class ActorPatch : AutoPatch
 {
     [MethodReplace(typeof(ActorBase), nameof(ActorBase.nextJobActor))]
     private static string nextJobActor(ActorBase pActor)
@@ -27,7 +29,17 @@ internal class ActorPatch
             };
         return pActor.asset.baby ? "baby" : pActor.asset.job;
     }
+    [HarmonyPostfix, HarmonyPatch(typeof(ActorBase), nameof(ActorBase.taskSwitchedAction))]
+    private static void checkTechProgress(ActorBase __instance)
+    {
+        if (__instance.city == null || !__instance.city.isAlive() || __instance.citizen_job == null)
+        {
+            return;
+        }
+        if (!Toolbox.randomChance(__instance.stats[S.intelligence] / 100)) return;
 
+        __instance.city.AW().PushResearchThrough(__instance as Actor, __instance.citizen_job);
+    }
     //[MethodReplace(typeof(ActorBase), nameof(ActorBase.getUnitTexturePath))]
     private static string getUnitTexturePath(ActorBase pActor)
     {

@@ -7,6 +7,7 @@ using Figurebox.core.dbs;
 using Figurebox.utils;
 using Figurebox.utils.extensions;
 using Figurebox.utils.MoH;
+using UnityEngine;
 
 namespace Figurebox.core;
 
@@ -268,44 +269,26 @@ public partial class AW_City : City
 
             food_count_for_slaves_this_year = (int)(total_food * 0.1f);
         }
+        updateTechResearch();
     }
 
     [MethodReplace(nameof(City.updateCapture))]
-    private void updateCapture(float pElapsed)
+    private new void updateCapture(float pElapsed)
     {
         if (this.last_ticks == 0 && !this.isGettingCaptured())
         {
             return;
         }
 
-        if ((int)this._capture_ticks == this.last_ticks)
-        {
-            if (this.last_ticks > 100)
-            {
-                this.last_ticks = 100;
-            }
-
-            if (this.last_ticks < 0)
-            {
-                this.last_ticks = 0;
-            }
-        }
-        else if ((int)this._capture_ticks > this.last_ticks)
+        if ((int)this._capture_ticks > this.last_ticks)
         {
             this.last_ticks++;
-            if (this.last_ticks > 100)
-            {
-                this.last_ticks = 100;
-            }
         }
-        else
+        else if ((int)this._capture_ticks < this.last_ticks)
         {
             this.last_ticks--;
-            if (this.last_ticks < 0)
-            {
-                this.last_ticks = 0;
-            }
         }
+        last_ticks = Mathf.Clamp(last_ticks, 0, 100);
 
         if (this.captureTimer > 0f)
         {
