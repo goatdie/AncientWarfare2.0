@@ -5,7 +5,7 @@ using Figurebox.core.kingdom_policies;
 using NeoModLoader.api.attributes;
 using UnityEngine;
 
-namespace Figurebox.utils.KingdomPolicy;
+namespace Figurebox.utils.policy;
 
 public class KingdomPolicyGraphTools
 {
@@ -37,7 +37,7 @@ public class KingdomPolicyGraphTools
                 KingdomPolicyStateAsset state = node.as_state;
                 if (state.all_optional_policies == null) continue;
                 foreach (var branch_policy in state.all_optional_policies)
-                    if (nodes.TryGetValue("p_" + branch_policy, out SortNode branch_node))
+                    if (nodes.TryGetValue("p_" + branch_policy.id, out SortNode branch_node))
                     {
                         branch_node.prev_nodes.Add(node);
                         node.next_nodes.Add(branch_node);
@@ -56,7 +56,7 @@ public class KingdomPolicyGraphTools
                 if (policy.all_prepositions == null) continue;
 
                 foreach (var prev_state in policy.all_prepositions)
-                    if (nodes.TryGetValue("s_" + prev_state, out SortNode prev_node))
+                    if (nodes.TryGetValue("s_" + prev_state.id, out SortNode prev_node))
                     {
                         prev_node.next_nodes.Add(node);
                         node.prev_nodes.Add(prev_node);
@@ -85,17 +85,17 @@ public class KingdomPolicyGraphTools
 
     public static void CalcNodePositions(List<List<KingdomPolicyGraphNode>> pSortedPolicies)
     {
-        var x = 40f;
+        var y = -20f;
         foreach (var list in pSortedPolicies)
         {
             var j = 0;
             foreach (KingdomPolicyGraphNode node in list)
             {
-                node.position = new Vector2(x, (j - list.Count * 0.5f) * 50);
+                node.position = new Vector2((j - list.Count * 0.5f) * 50, y);
                 j++;
             }
 
-            x += Mathf.Min(Mathf.Sqrt(list.Count * 0.2f) * 100 + 50, 200);
+            y -= Mathf.Min(Mathf.Sqrt(list.Count * 0.2f) * 100 + 20, 50);
         }
     }
 

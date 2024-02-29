@@ -15,12 +15,12 @@ public class AW_CityTechAsset : Asset
     /// <summary>
     ///     该科技的所有解锁分支
     /// </summary>
-    public HashSet<string> all_branches;
+    public HashSet<AW_CityTechAsset> all_branches;
 
     /// <summary>
     ///     所有前置科技要求
     /// </summary>
-    public HashSet<string> all_prepositions;
+    public HashSet<AW_CityTechAsset> all_prepositions;
 
     /// <summary>
     ///     检查是否能够开始研究

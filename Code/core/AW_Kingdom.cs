@@ -8,6 +8,7 @@ using Figurebox.core.events;
 using Figurebox.core.kingdom_policies;
 using Figurebox.patch.MoH;
 using Figurebox.utils;
+using Figurebox.utils.extensions;
 using Figurebox.utils.MoH;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
@@ -372,9 +373,11 @@ public partial class AW_Kingdom : Kingdom
                && (!pPolicyAsset.only_moh || MoHTools.IsMoHKingdom(this))
                && (pPolicyAsset.all_prepositions == null ||
                    (pPolicyAsset.pre_state_require_type == PreStateRequireType.All &&
-                    pPolicyAsset.all_prepositions.All(pState => addition_data.current_states.ContainsValue(pState))) ||
+                    pPolicyAsset.all_prepositions.All(pState => addition_data.current_states.ContainsValue(pState.id))) ||
                    (pPolicyAsset.pre_state_require_type == PreStateRequireType.Any &&
-                    pPolicyAsset.all_prepositions.Any(pState => addition_data.current_states.ContainsValue(pState))))
+                    pPolicyAsset.all_prepositions.Any(pState => addition_data.current_states.ContainsValue(pState.id))))
+               && (pPolicyAsset.all_tech_requires == null ||
+                   (capital != null && pPolicyAsset.all_tech_requires.All(pTech => capital.AW().addition_data.own_tech.Contains(pTech.id))))
                && (pPolicyAsset.check_policy == null || pPolicyAsset.check_policy.Invoke(pPolicyAsset, this));
     }
 

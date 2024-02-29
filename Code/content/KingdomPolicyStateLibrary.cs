@@ -150,6 +150,6 @@ public class KingdomPolicyStateLibrary : AW_AssetLibrary<KingdomPolicyStateAsset
     {
         return pState.all_optional_policies.Count == 0
             ? null
-            : KingdomPolicyLibrary.Instance.get(pState.all_optional_policies.GetRandom());
+            : KingdomPolicyLibrary.Instance.get(pState.all_optional_policies.GetRandom().id);
     }
 }

@@ -11,7 +11,7 @@ public class KingdomPolicyStateAsset : Asset
     /// <summary>
     ///     所有当前状态类型可选的政策
     /// </summary>
-    public HashSet<string> all_optional_policies = new();
+    public HashSet<KingdomPolicyAsset> all_optional_policies = new();
 
     /// <summary>
     ///     国家实力计算方法, 不同政体应当有不同的计算方法
@@ -50,7 +50,7 @@ public class KingdomPolicyStateAsset : Asset
 
     public void AddOptionalPolicy(params KingdomPolicyAsset[] pPolicy)
     {
-        all_optional_policies.UnionWith(pPolicy.Select(p => p.id));
+        all_optional_policies.UnionWith(pPolicy);
     }
 
     public void AddCityTasks(params BehaviourTaskCity[] pCityTask)

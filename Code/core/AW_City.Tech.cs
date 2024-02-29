@@ -8,7 +8,7 @@ namespace Figurebox.core;
 
 public partial class AW_City
 {
-    private readonly HashSet<string> _available_techs = new();
+    private readonly HashSet<AW_CityTechAsset> _available_techs = new();
     private readonly Dictionary<string, List<TechResearchData>> _tech_under_research = new();
     public bool HasTech(string pTechId)
     {
@@ -43,7 +43,7 @@ public partial class AW_City
         if (addition_data.tech_research_data.ContainsKey(pTechAsset.id)) return false;
 
         _addTechUnderResearch(pTechAsset, pInitiator);
-        _available_techs.Remove(pTechAsset.id);
+        _available_techs.Remove(pTechAsset);
         return true;
     }
     /// <summary>
@@ -53,11 +53,25 @@ public partial class AW_City
     {
         if (!_tech_under_research.TryGetValue(pJob.id, out var research_list) || research_list.Count == 0)
         {
-            if (!_tech_under_research.TryGetValue(string.Empty, out research_list) || research_list.Count == 0) return;
+            if (!_tech_under_research.TryGetValue(string.Empty, out research_list) || research_list.Count == 0)
+            {
+                if (_available_techs.Count > 0)
+                {
+                    _randomNewResearch(pActor);
+                }
+                return;
+            }
         }
         var random_research = research_list.GetRandom();
         random_research.Update(this, pActor);
     }
+
+    private void _randomNewResearch(Actor pActor)
+    {
+        var random_tech = _available_techs.GetRandom();
+        BeginTechResearch(random_tech, pActor);
+    }
+
     private void _addTechUnderResearch(AW_CityTechAsset pTechAsset, Actor pInitiator)
     {
         addition_data.tech_research_data.Add(pTechAsset.id, new TechResearchData(pTechAsset));
@@ -108,7 +122,7 @@ public partial class AW_City
         foreach (var research in addition_data.tech_research_data)
         {
             if (!research.Value.IsFinished()) continue;
-            // TODO: 移出正在研究, 加入已拥有
+            GetTech(research.Value.tech_asset);
         }
     }
 }

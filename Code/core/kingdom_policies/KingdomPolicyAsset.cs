@@ -31,8 +31,11 @@ public class KingdomPolicyAsset : Asset
     /// <summary>
     ///   所有前置状态, 可以为空.
     /// </summary>
-    public HashSet<string> all_prepositions;
-    public HashSet<string> all_tech_requires;
+    public HashSet<KingdomPolicyStateAsset> all_prepositions;
+    /// <summary>
+    /// 所有科技要求, 科技要求为硬性的, 所有科技都必须满足
+    /// </summary>
+    public HashSet<AW_CityTechAsset> all_tech_requires;
     /// <summary>
     ///     是否能够重复执行
     /// </summary>
@@ -93,8 +96,8 @@ public class KingdomPolicyAsset : Asset
     /// </summary>
     public void AddPreposition(KingdomPolicyStateAsset pPrepositionState)
     {
-        all_prepositions ??= new HashSet<string>();
-        all_prepositions.Add(pPrepositionState.id);
+        all_prepositions ??= new HashSet<KingdomPolicyStateAsset>();
+        all_prepositions.Add(pPrepositionState);
     }
     /// <summary>
     /// 添加科技要求, 科技要求为硬性的, 所有科技都必须满足
@@ -102,8 +105,8 @@ public class KingdomPolicyAsset : Asset
     /// <param name="pTech"></param>
     public void AddTechRequire(AW_CityTechAsset pTech)
     {
-        all_tech_requires ??= new HashSet<string>();
-        all_tech_requires.Add(pTech.id);
+        all_tech_requires ??= new HashSet<AW_CityTechAsset>();
+        all_tech_requires.Add(pTech);
     }
 
     /// <summary>
