@@ -5,9 +5,9 @@ namespace Figurebox.content;
 
 public class UnitGroupTypeLibrary : AW_AssetLibrary<AW_UnitGroupAsset, UnitGroupTypeLibrary>
 {
-    internal static AW_UnitGroupAsset convention;
-    internal static AW_UnitGroupAsset guards;
-    internal static AW_UnitGroupAsset slaves;
+    public static AW_UnitGroupAsset convention;
+    public static AW_UnitGroupAsset guards;
+    public static AW_UnitGroupAsset slaves;
 
     public override void init()
     {

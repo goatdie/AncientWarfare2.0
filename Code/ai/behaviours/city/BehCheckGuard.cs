@@ -4,6 +4,7 @@ using Figurebox.constants;
 using Figurebox.content;
 using Figurebox.core;
 using Figurebox.utils;
+using Figurebox.utils.extensions;
 
 namespace Figurebox.ai.behaviours.city;
 
@@ -14,7 +15,8 @@ public class BehCheckGuard : BehaviourActionCity
 {
     public override BehResult execute(City pObject)
     {
-        var city = (AW_City)pObject;
+        AW_City city = pObject.AW();
+        if (city == null) return BehResult.Continue;
         if (city.groups.TryGetValue(UnitGroupTypeLibrary.guards.id, out AW_UnitGroup group))
         {
             findWarriorsForGroup(city, group);
@@ -51,9 +53,10 @@ public class BehCheckGuard : BehaviourActionCity
         }
 
         foreach (Actor unit in pCity.professionsDict[AWUnitProfession.Unit.C()]
-                                    .Where(unit => unit.unit_group == null)
+                                    .Where(unit => unit.unit_group  == null)
                                     .Where(unit => unit.citizen_job == null)
-                                    .Where(unit => unit.hasClan() && unit.getClan().data.id != pCity.kingdom.data.royal_clan_id))
+                                    .Where(unit => unit.hasClan() &&
+                                                   unit.getClan().data.id != pCity.kingdom.data.royal_clan_id))
         {
             pGroup.addUnit(unit);
             unit.addTrait("禁卫军");
