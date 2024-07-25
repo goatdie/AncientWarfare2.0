@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Figurebox.abstracts;
+namespace AncientWarfare.Abstracts;
 
 public abstract class ExtendedLibrary<T> where T : Asset
 {
@@ -36,6 +36,15 @@ public abstract class ExtendedLibrary<T> where T : Asset
     {
         _init();
         return cached_library.get(pId);
+    }
+    protected void init_fields()
+    {
+        _init();
+        if (cached_library == null) return;
+        foreach (var asset in cached_library.list)
+        {
+            _set_field(asset);
+        }
     }
 
     protected virtual T add(T pObj)

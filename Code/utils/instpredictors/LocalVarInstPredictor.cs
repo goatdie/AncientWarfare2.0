@@ -2,7 +2,7 @@ using System;
 using System.Reflection.Emit;
 using HarmonyLib;
 
-namespace Figurebox.utils.instpredictors;
+namespace AncientWarfare.Utils.InstPredictors;
 
 internal class LocalVarInstPredictor : GenericInstPredictor<LocalBuilder>
 {

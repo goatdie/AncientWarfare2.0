@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using HarmonyLib;
 
-namespace Figurebox.utils.instpredictors;
+namespace AncientWarfare.Utils.InstPredictors;
 
 internal class BaseInstPredictor
 {
@@ -49,7 +49,10 @@ internal class BaseInstPredictor
         return pInstruction.opcode == pOpCode ||
                (equal_opcodes.TryGetValue(pOpCode, out var set) && set.Contains(pInstruction.opcode));
     }
-
+    static BaseInstPredictor()
+    {
+        init();
+    }
     internal static void init()
     {
         AddEqualOpCodes(OpCodes.Br,      OpCodes.Br_S);

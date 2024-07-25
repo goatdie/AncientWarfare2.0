@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Figurebox.utils.instpredictors;
+namespace AncientWarfare.Utils.InstPredictors;
 
 internal class MethodInstPredictor : GenericInstPredictor<MethodInfo>
 {

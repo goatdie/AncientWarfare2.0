@@ -1,10 +1,9 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Figurebox.constants;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Figurebox.utils;
+namespace AncientWarfare.Utils;
 
 /// <summary>
 ///     仅用于存放一些通用的方法, 别搞成之前FunctionHelper那样了
@@ -37,12 +36,6 @@ public static class GeneralHelper
         if (private_members_included) return JsonConvert.DeserializeObject<T>(json, private_members_visit_settings);
 
         return JsonConvert.DeserializeObject<T>(json);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static UnitProfession C(this AWUnitProfession pThis)
-    {
-        return (UnitProfession)pThis;
     }
 
     public static int getYearsOn(double pTime)

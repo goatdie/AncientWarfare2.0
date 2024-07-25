@@ -4,16 +4,25 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using Figurebox.attributes;
-using Figurebox.utils.instpredictors;
+using AncientWarfare.Attributes;
+using AncientWarfare.Utils.InstPredictors;
 using HarmonyLib;
 
-namespace Figurebox.utils;
+namespace AncientWarfare.Utils;
 
 internal class HarmonyTools
 {
     private static MethodInfo _new_method;
-
+    public static void PatchAll()
+    {
+        foreach(var t in Assembly.GetExecutingAssembly().GetTypes())
+        {
+            if (t.Namespace.Contains("Patch"))
+            {
+                Harmony.CreateAndPatchAll(t);
+            }
+        }
+    }
     public static void ReplaceMethods()
     {
         Type[] types = Assembly.GetExecutingAssembly().GetTypes();

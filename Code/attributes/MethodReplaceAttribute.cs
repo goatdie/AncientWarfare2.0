@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 
-namespace Figurebox.attributes;
+namespace AncientWarfare.Attributes;
 
 public class MethodReplaceAttribute : Attribute
 {

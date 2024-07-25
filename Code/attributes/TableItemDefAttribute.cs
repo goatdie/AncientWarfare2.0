@@ -1,6 +1,6 @@
 using System;
 
-namespace Figurebox.attributes;
+namespace AncientWarfare.Attributes;
 
 public class TableItemDefAttribute : Attribute
 {

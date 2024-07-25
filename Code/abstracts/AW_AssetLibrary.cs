@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Figurebox.abstracts;
+namespace AncientWarfare.Abstracts;
 
 public class AW_AssetLibrary<TAsset, TLibrary> : AssetLibrary<TAsset> where TAsset : Asset
     where TLibrary : AW_AssetLibrary<TAsset, TLibrary>, new()

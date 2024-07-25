@@ -1,13 +1,13 @@
 using System;
-using Figurebox.core;
 using Random = UnityEngine.Random;
 #if 一米_中文名
 using System.Collections.Generic;
 using Chinese_Name;
 #endif
 
-namespace Figurebox;
+namespace AncientWarfare;
 #if 一米_中文名
+/*
 internal static class NameGeneratorInitialzier
 {
     static void NewActorNameGeneratorDefaultParameterGetter(Actor pActor, Dictionary<string, string> pParameters)
@@ -101,7 +101,7 @@ internal static class NameGeneratorInitialzier
         CN_NameGeneratorLibrary.Submit(generator);
 
         ParameterGetters.PutActorParameterGetter("default",
-            (Action<Actor, Dictionary<string, string>>)Delegate.Combine(
+            (ParameterGetter<Actor>)Delegate.Combine(
                 ParameterGetters.GetActorParameterGetter("default"), NewActorNameGeneratorDefaultParameterGetter));
         ParameterGetters.PutCultureParameterGetter("default", Culture_city_parameter_getter);
     }
@@ -137,6 +137,7 @@ internal static class NameGeneratorInitialzier
         }
     }
 }
+*/
 #else
 internal static class NameGeneratorInitialzier{
 

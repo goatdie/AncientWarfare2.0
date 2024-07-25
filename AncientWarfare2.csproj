@@ -5,8 +5,8 @@
 		<ProjectGuid>{BA1F00FC-6365-47D1-B2E4-7BDA09C27B3C}</ProjectGuid>
 		<OutputType>Library</OutputType>
 		<DefineConstants>DEBUG;TRACE;一米_中文名</DefineConstants>
-		<RootNamespace>Figurebox</RootNamespace>
-		<AssemblyName>AcientWarfare2</AssemblyName>
+		<RootNamespace>AncientWarfare</RootNamespace>
+		<AssemblyName>AncientWarfare2</AssemblyName>
 		<TargetFramework>net48</TargetFramework>
 		<FileAlignment>512</FileAlignment>
 		<LangVersion>11</LangVersion>
@@ -112,7 +112,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="word_libraries\" />
-		<Folder Include="name_generators\" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Utilities\IconGenerate.py" />
@@ -120,6 +119,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="C5" Version="2.5.3" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 
 </Project>

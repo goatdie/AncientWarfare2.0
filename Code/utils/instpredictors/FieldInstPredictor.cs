@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 
-namespace Figurebox.utils.instpredictors;
+namespace AncientWarfare.Utils.InstPredictors;
 
 internal class FieldInstPredictor : GenericInstPredictor<FieldInfo>
 {
