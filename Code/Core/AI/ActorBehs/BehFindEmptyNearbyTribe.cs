@@ -17,7 +17,7 @@ namespace AncientWarfare.Core.AI.ActorBehs
             var tribe = GetEmptyTribe(pObject.currentTile);
             if (tribe != null)
             {
-                pObject.JoinTribe(tribe);
+                ForceManager.MakeJoinToForce(pObject, tribe);
                 return BehResult.Continue;
             }
             return BehResult.Stop;

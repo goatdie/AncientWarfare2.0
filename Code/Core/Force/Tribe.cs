@@ -1,6 +1,7 @@
 ﻿using AncientWarfare.Core.Extensions;
 using AncientWarfare.NameGenerators;
 using Chinese_Name;
+using NeoModLoader.api.attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AncientWarfare.Core.Force
 {
-    public class Tribe : BaseForce<TribeData>
+    public class Tribe : BaseForce<TribeData>, IHasMember
     {
         public List<TileZone> zones = new();
         private ColorAsset _color;
@@ -59,9 +60,17 @@ namespace AncientWarfare.Core.Force
             ParameterGetters.GetCustomParameterGetter<TribeNameGenerator.TribeParameterGetter>(name_generator.parameter_getter)(this, param);
             return name_generator.GenerateName(param);
         }
-        public void AddNewActor(Actor actor)
+        [Hotfixable]
+        public void AddMemberOneside(Actor actor)
         {
+            Main.LogDebug($"{actor.data.id} joins {GetName()}", true);
             Data.members.Add(actor.data.id);
+        }
+        [Hotfixable]
+        public void RemoveMemberOneside(string actor_id)
+        {
+            Main.LogDebug($"{actor_id} leaves {GetName()}", true);
+            Data.members.Remove(actor_id);
         }
     }
 }

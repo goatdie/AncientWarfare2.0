@@ -1,5 +1,6 @@
 ﻿using ai.behaviours;
 using AncientWarfare.Core.Extensions;
+using AncientWarfare.Core.Force;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace AncientWarfare.Core.AI.ActorBehs
             if (pObject.IsMemberOf(tribe)) return BehResult.Stop;
             if (tribe.IsFull()) return BehResult.Stop;
 
-            pObject.JoinTribe(tribe);
+            ForceManager.MakeJoinToForce(pObject, tribe);
 
             return BehResult.Continue;
         }

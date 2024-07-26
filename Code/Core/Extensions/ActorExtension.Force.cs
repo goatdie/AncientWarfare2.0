@@ -13,17 +13,22 @@ namespace AncientWarfare.Core.Extensions
         {
             return actor.GetAdditionData().Forces.Contains(force.BaseData.id);
         }
-        public static void JoinTribe(this Actor actor, Tribe tribe)
+        public static void JoinForceOneside(this Actor actor, LowBaseForce force)
         {
             var data = actor.GetAdditionData();
 
-            data.Forces.Add(tribe.BaseData.id);
-            tribe.AddNewActor(actor);
+            data.Forces.Add(force.BaseData.id);
+        }
+        public static void LeaveForceOneside(this Actor actor, LowBaseForce force)
+        {
+            var data = actor.GetAdditionData();
+
+            data.Forces.Remove(force.BaseData.id);
         }
         public static Tribe GetTribe(this Actor actor)
         {
             var data = actor.GetAdditionData();
-            var tribe = data.Forces.Select(ForceManager.GetForce<Tribe>).First(x => x!=null);
+            var tribe = data.Forces.Select(ForceManager.GetForce<Tribe>).FirstOrDefault(x => x!=null);
             return tribe;
         }
     }

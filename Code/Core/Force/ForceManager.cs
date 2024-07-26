@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AncientWarfare.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,40 @@ namespace AncientWarfare.Core.Force
                 id = Guid.NewGuid().ToString();
             }
             return id;
+        }
+        public static void MakeJoinToForce(Actor actor, IHasMember force)
+        {
+            if (force is not LowBaseForce)
+            {
+                Main.LogDebug("force is not LowBaseForce", true);
+                return;
+            }
+            actor.JoinForceOneside(force as LowBaseForce);
+            force.AddMemberOneside(actor);
+        }
+        public static void MakeLeaveForce(Actor actor, IHasMember force)
+        {
+            if (force is not LowBaseForce)
+            {
+                Main.LogDebug("force is not LowBaseForce", true);
+                return;
+            }
+            actor.LeaveForceOneside(force as LowBaseForce);
+            force.RemoveMemberOneside(actor.data.id);
+        }
+        public static void MakeLeaveForce(Actor actor, string id)
+        {
+            var force = GetForce<LowBaseForce>(id);
+            if (force == null)
+            {
+                Main.LogDebug($"force {id} is null", true);
+                return;
+            }
+            actor.LeaveForceOneside(force);
+            if (force is IHasMember has_member)
+            {
+                has_member.RemoveMemberOneside(actor.data.id);
+            }
         }
     }
 }

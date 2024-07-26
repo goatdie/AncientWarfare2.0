@@ -1,5 +1,6 @@
 ﻿using AncientWarfare.Core;
 using AncientWarfare.Core.Extensions;
+using AncientWarfare.Core.Force;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,16 @@ namespace AncientWarfare.Patches
             __result = "random_move";
 
             return false;
+        }
+        [HarmonyPostfix, HarmonyPatch(typeof(Actor), nameof(Actor.killHimself))]
+        private static void Postfix_killHimself(Actor __instance)
+        {
+            var data = __instance.GetAdditionData();
+            var forces = new HashSet<string>(data.Forces);
+            foreach (var force_id in forces)
+            {
+                ForceManager.MakeLeaveForce(__instance, force_id);
+            }
         }
     }
 }

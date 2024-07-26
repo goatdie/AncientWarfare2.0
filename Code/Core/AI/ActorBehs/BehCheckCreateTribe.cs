@@ -24,7 +24,7 @@ namespace AncientWarfare.Core.AI.ActorBehs
             tribe = ForceManager.I.tribes.CreateNewTribe(zone);
             if (tribe == null) return BehResult.Stop;
 
-            pObject.JoinTribe(tribe);
+            ForceManager.MakeJoinToForce(pObject, tribe);
             WorldLogHelper.LogNewTribe(tribe);
 
             return BehResult.Continue;
