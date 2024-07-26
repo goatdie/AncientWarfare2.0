@@ -6,9 +6,9 @@
     "iconPath": "icon.png",
     "RepoUrl": "https://github.com/goatdie/AncientWarfare2.0",
     "GUID": "ANCIENTWARFARE",
-    "Dependencies": [],
+    "Dependencies": ["一米_中文名" ],
     "OptionalDependencies": [
-        "一米_中文名"
+       
     ],
     "IncompatibleWith": []
 }

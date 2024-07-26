@@ -9,6 +9,7 @@ namespace AncientWarfare.Core.Force
     public class TribeData : BaseForceData
     {
         public int color_id = -1;
+        public string clan_name = "";
         public HashSet<string> members = new();
     }
 }

@@ -15,15 +15,6 @@ using NCMS.Extensions;
 using System.Reflection;
 using AncientWarfare.Attributes;
 
-
-
-
-
-
-#if 一米_中文名
-using Chinese_Name;
-#endif
-
 namespace AncientWarfare
 {
     internal class Main : BasicMod<Main>, IReloadable

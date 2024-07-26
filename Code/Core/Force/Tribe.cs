@@ -1,4 +1,6 @@
 ﻿using AncientWarfare.Core.Extensions;
+using AncientWarfare.NameGenerators;
+using Chinese_Name;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +54,10 @@ namespace AncientWarfare.Core.Force
 
         public override string NewName()
         {
-            return "Tribe " + Data.id;
+            var name_generator = CN_NameGeneratorLibrary.Get(TribeNameGenerator.ID);
+            var param = new Dictionary<string, string>();
+            ParameterGetters.GetCustomParameterGetter<TribeNameGenerator.TribeParameterGetter>(name_generator.parameter_getter)(this, param);
+            return name_generator.GenerateName(param);
         }
         public void AddNewActor(Actor actor)
         {

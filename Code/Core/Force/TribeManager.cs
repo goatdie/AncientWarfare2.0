@@ -19,7 +19,7 @@ namespace AncientWarfare.Core.Force
         {
             TribeData data = new TribeData();
             data.id = ForceManager.I.GetNewId();
-            data.name = "Tribe " + All.Count;
+            //data.name = "Tribe " + All.Count;
 
             Tribe tribe = new Tribe(data);
             tribe.AddZone(zone);

@@ -20,5 +20,11 @@ namespace AncientWarfare.Core.Extensions
             data.Forces.Add(tribe.BaseData.id);
             tribe.AddNewActor(actor);
         }
+        public static Tribe GetTribe(this Actor actor)
+        {
+            var data = actor.GetAdditionData();
+            var tribe = data.Forces.Select(ForceManager.GetForce<Tribe>).First(x => x!=null);
+            return tribe;
+        }
     }
 }

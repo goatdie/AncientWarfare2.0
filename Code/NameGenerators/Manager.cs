@@ -1,9 +1,6 @@
 ﻿using AncientWarfare.Abstracts;
 using AncientWarfare.Const;
-
-#if 一米_中文名
 using Chinese_Name;
-#endif
 using NeoModLoader.General;
 using System;
 using System.Collections.Generic;
@@ -18,14 +15,13 @@ namespace AncientWarfare.NameGenerators
     {
         public void Initialize()
         {
-#if 一米_中文名
-
-#else
-            return;
-#endif
             WordLibraryManager.SubmitDirectoryToLoad(CPaths.WordLibrariesPath);
 
-            //CN_NameGeneratorLibrary.Submit(new ActorNameGenerator());
+            CN_NameGeneratorLibrary.Submit(new ActorNameGenerator("human_name"));
+            CN_NameGeneratorLibrary.Submit(new TribeNameGenerator());
+
+            ParameterGetters.PutActorParameterGetter("default", ActorNameGenerator.NewDefaultActorParameterGetter);
+            ParameterGetters.PutCustomParameterGetter<TribeNameGenerator.TribeParameterGetter>("default", TribeNameGenerator.DefaultTribeParameterGetter);
         }
     }
 }

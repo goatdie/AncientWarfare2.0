@@ -8,6 +8,8 @@ namespace AncientWarfare.Core
 {
     public class ActorAdditionData
     {
+        public string family_name = "";
+        public string clan_name = "";
         public HashSet<string> Forces = new();
     }
 }
