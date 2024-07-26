@@ -1,4 +1,5 @@
 ﻿using AncientWarfare.Abstracts;
+using AncientWarfare.Const;
 using NeoModLoader.services;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace AncientWarfare.Core.MapModes
         {
             get
             {
-                if (true || PlayerConfig.optionBoolEnabled("map_tribe_zones"))
+                if (PlayerConfig.optionBoolEnabled(ToggleNames.map_tribe_zones))
                     return CustomMapMode.Tribe;
                 return CustomMapMode.Hidden;
             }

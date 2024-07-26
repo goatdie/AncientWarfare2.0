@@ -10,5 +10,7 @@ namespace AncientWarfare.LocaleKeys
     {
         public static readonly string familyname;
         public static readonly string clanname;
+
+        public static readonly string ancient_warfare;
     }
 }

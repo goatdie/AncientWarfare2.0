@@ -13,6 +13,8 @@ using System.Linq;
 using AncientWarfare.Abstracts;
 using NCMS.Extensions;
 using System.Reflection;
+using AncientWarfare.Attributes;
+
 
 
 
@@ -177,12 +179,30 @@ namespace AncientWarfare
                 LogDebug($"Initialize string library: {t.Name}");
             });
 
-            types.Where(t => typeof(IManager).IsAssignableFrom(t) && !t.IsInterface).ForEach(t =>
+            var manager_types = types.Where(t => typeof(IManager).IsAssignableFrom(t) && !t.IsInterface).ToList();
+            SortManagerTypes(manager_types);
+            foreach (var t in manager_types)
             {
                 var manager = (IManager)Activator.CreateInstance(t);
                 manager?.Initialize();
                 LogDebug($"Initialize manager: {t.FullName}(null?{manager == null})");
-            });
+            }
+        }
+        private static void SortManagerTypes(List<Type> manager_types)
+        {
+            for (int i = 0; i < manager_types.Count; i++)
+            {
+                var i_attr = manager_types[i].GetCustomAttribute<ManagerInitializeAfterAttribute>();
+                if (i_attr == null) continue;
+                for (int j = i + 1; j < manager_types.Count; j++)
+                {
+                    if (i_attr.after_types.Contains(manager_types[j]))
+                    {
+                        manager_types.Swap(i, j);
+                        break;
+                    }
+                }
+            }
         }
     }
 }

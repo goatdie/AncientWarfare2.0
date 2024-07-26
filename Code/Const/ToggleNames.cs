@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AncientWarfare.Core.MapModes
+namespace AncientWarfare.Const
 {
-    internal enum CustomMapMode
+    public class ToggleNames : StringLibrary
     {
-        Hidden,
-        Tribe = 114514
+        public static readonly string map_tribe_zones;
     }
 }
