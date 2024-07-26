@@ -174,9 +174,18 @@ namespace AncientWarfare
             SortManagerTypes(manager_types);
             foreach (var t in manager_types)
             {
-                var manager = (IManager)Activator.CreateInstance(t);
-                manager?.Initialize();
-                LogDebug($"Initialize manager: {t.FullName}(null?{manager == null})");
+                try
+                {
+                    var manager = (IManager)Activator.CreateInstance(t);
+                    manager?.Initialize();
+                    LogDebug($"Initialize manager: {t.FullName}(null?{manager == null})");
+                }
+                catch(Exception e)
+                {
+                    LogError($"Failed to initialize manager: {t.FullName}");
+                    LogError(e.Message);
+                    LogError(e.StackTrace);
+                }
             }
         }
         private static void SortManagerTypes(List<Type> manager_types)

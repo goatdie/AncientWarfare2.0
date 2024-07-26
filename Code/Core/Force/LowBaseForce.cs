@@ -17,6 +17,7 @@ namespace AncientWarfare.Core.Force
             }
             return BaseData.name;
         }
+        public abstract void Update();
         public abstract string NewName();
     }
     public abstract class BaseForce<TData> : LowBaseForce where TData : BaseForceData

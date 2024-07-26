@@ -13,6 +13,7 @@ namespace AncientWarfare.Core.Force
     public class Tribe : BaseForce<TribeData>, IHasMember
     {
         public List<TileZone> zones = new();
+        public List<Quest> quests = new();
         private ColorAsset _color;
         public ColorAsset Color { get
             {
@@ -63,14 +64,21 @@ namespace AncientWarfare.Core.Force
         [Hotfixable]
         public void AddMemberOneside(Actor actor)
         {
-            Main.LogDebug($"{actor.data.id} joins {GetName()}", true);
             Data.members.Add(actor.data.id);
         }
         [Hotfixable]
         public void RemoveMemberOneside(string actor_id)
         {
-            Main.LogDebug($"{actor_id} leaves {GetName()}", true);
             Data.members.Remove(actor_id);
+        }
+        internal void FreshQuests()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public override void Update()
+        {
+            FreshQuests();
         }
     }
 }

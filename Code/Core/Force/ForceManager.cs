@@ -16,6 +16,10 @@ namespace AncientWarfare.Core.Force
         {
             tribes = new TribeManager(total_container);
         }
+        internal void Update()
+        {
+            Parallel.ForEach(total_container.Values, force => force.Update());
+        }
         public static T GetForce<T>(string id) where T : LowBaseForce
         {
             if (string.IsNullOrEmpty(id)) return null;

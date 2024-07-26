@@ -2,6 +2,7 @@
 using AncientWarfare.Attributes;
 using AncientWarfare.Core.Content;
 using AncientWarfare.LocaleKeys;
+using AncientWarfare.UI.Windows;
 using NeoModLoader.General;
 using NeoModLoader.General.UI.Tab;
 using System;
@@ -18,6 +19,12 @@ namespace AncientWarfare.UI
         public void Initialize()
         {
             create_tab();
+            create_windows();
+        }
+
+        private void create_windows()
+        {
+            TribeInfoWindow.CreateAndInit(nameof(TribeInfoWindow));
         }
 
         private void create_tab()

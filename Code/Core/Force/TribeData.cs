@@ -10,6 +10,7 @@ namespace AncientWarfare.Core.Force
     {
         public int color_id = -1;
         public string clan_name = "";
+        public Storage storage = new();
         public HashSet<string> members = new();
     }
 }
