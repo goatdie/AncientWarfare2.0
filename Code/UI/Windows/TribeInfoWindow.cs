@@ -26,6 +26,7 @@ namespace AncientWarfare.UI.Windows
             Info = new GameObject("Info", typeof(Text)).GetComponent<Text>();
             Info.transform.SetParent(BackgroundTransform);
             Info.color = Color.white;
+            Info.font = LocalizedTextManager.currentFont;
             Info.resizeTextForBestFit = true;
             Info.resizeTextMaxSize = 12;
             Info.resizeTextMinSize = 8;
@@ -55,7 +56,7 @@ ID: {mTribe.BaseData.id}
                 info_builder.AppendLine($"{actor_id}: {World.world.units.get(actor_id).getName()}");
             }
             info_builder.AppendLine("资源:");
-            foreach(var res in mTribe.Data.storage.resources)
+            foreach(var res in mTribe.Data.storage.GetResDict())
             {
                 info_builder.AppendLine($"{res.Key}: {res.Value}");
             }

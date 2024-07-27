@@ -9,15 +9,18 @@ namespace AncientWarfare.Core.AI
 {
     public class ActorJobExtendLibrary : ExtendedLibrary<ActorJob>
     {
-        
+        public static readonly ActorJob unit;
+        public static readonly ActorJob gatherer_bushes;
         protected override void init()
         {
+            init_fields();
+
             modify_unit_job();
         }
 
         private void modify_unit_job()
         {
-            t = get("unit");
+            t = unit;
             t.tasks.Clear();
 
             t.addTask(nameof(ActorTaskExtendLibrary.try_join_tribe_here));

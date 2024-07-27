@@ -2,6 +2,7 @@
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Utils;
+using AncientWarfare.Utils.InstPredictors;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,10 @@ namespace AncientWarfare.Patches
             var codes = new List<CodeInstruction>(insts);
 
             int remove_start_idx = HarmonyTools.FindInstructionIdx<MethodInfo>(codes, OpCodes.Call, x => x.Name == nameof(Actor.decreaseHunger))+1;
-            int remove_end_idx = HarmonyTools.FindInstructionIdx<MethodInfo>(codes, OpCodes.Call, x => x.Name == nameof(Actor.consumeCityFoodItem));
+            int remove_end_idx = HarmonyTools.FindCodeSnippetIdx(codes,
+                new MethodInstPredictor(OpCodes.Call, nameof(Actor.consumeCityFoodItem)),
+                new BaseInstPredictor(OpCodes.Ldarg_0),
+                new FieldInstPredictor(AccessTools.Field(typeof(Actor), nameof(Actor.data))));
             codes.RemoveRange(remove_start_idx, remove_end_idx - remove_start_idx + 1);
 
             int insert_idx = remove_start_idx;

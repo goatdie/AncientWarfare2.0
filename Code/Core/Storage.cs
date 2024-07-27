@@ -15,6 +15,10 @@ namespace AncientWarfare.Core
         }
         private Dictionary<string, ResourceSlot> resource_slots = new();
         private Dictionary<ResType, List<ResourceSlot>> typed_resource_slots = new();
+        public Dictionary<string, int> GetResDict()
+        {
+            return resource_slots.Where(x => x.Value.count > 0).ToDictionary(x => x.Key, x => x.Value.count);
+        }
         public void Store(string resource_id, int count)
         {
             if (resource_slots.ContainsKey(resource_id))

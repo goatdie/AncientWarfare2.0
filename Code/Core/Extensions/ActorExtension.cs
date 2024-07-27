@@ -8,6 +8,7 @@ namespace AncientWarfare.Core.Extensions
 {
     public static partial class ActorExtension
     {
+        private static readonly List<Building> temp_for_FindAvailableResourceBuildingInTribe = new();
         public static bool IsValid(this Actor actor)
         {
             return actor != null && actor.isAlive();
@@ -15,6 +16,59 @@ namespace AncientWarfare.Core.Extensions
         public static ActorAdditionData GetAdditionData(this Actor actor)
         {
             return ActorAdditionDataManager.Get(actor.data.id);
+        }
+        public static Building FindAvailableResourceBuildingInTribe(this Actor actor, string type)
+        {
+            if (string.IsNullOrEmpty(type)) return null;
+
+            var possible_targets = temp_for_FindAvailableResourceBuildingInTribe;
+            possible_targets.Clear();
+
+            var tribe = actor.GetTribe();
+            if (tribe == null)
+            {
+                return null;
+            }
+            foreach(var zone in tribe.zones)
+            {
+                HashSet<Building> search_set = null;
+                if (type == SB.type_flower || type == SB.type_vegetation)
+                {
+                    search_set = zone.plants;
+                }
+                else if (type == SB.type_tree)
+                {
+                    search_set = zone.trees;
+                }
+                else if (type == SB.type_mineral)
+                {
+                    search_set = zone.minerals;
+                }
+                else if (type == SB.type_fruits)
+                {
+                    search_set = zone.food;
+                }
+                if (search_set?.Count > 0)
+                {
+                    foreach(var it in search_set)
+                    {
+                        if (it.currentTile.targetedBy != null) continue;
+                        if (!it.currentTile.isSameIsland(actor.currentTile)) continue;
+                        if (!it.hasResources) continue;
+
+                        possible_targets.Add(it);
+                    }
+                    if (possible_targets.Count > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            var res = possible_targets.Count > 0 ? possible_targets.GetRandom() : null;
+            possible_targets.Clear();
+            return res;
         }
         public static void ConsumeFood(this Actor actor, ResourceAsset food)
         {

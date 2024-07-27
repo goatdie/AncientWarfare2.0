@@ -16,6 +16,7 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor check_join_empty_nearby_tribe;
         public static readonly BehaviourTaskActor nomad_try_create_tribe;
 
+        public static readonly BehaviourTaskActor collect_fruits;
 
         public static readonly BehaviourTaskActor check_if_stuck_on_small_land;
 
@@ -27,6 +28,29 @@ namespace AncientWarfare.Core.AI
             init_fields();
 
             init_jobs_for_unit();
+            modify_collect_fruits();
+        }
+
+        private void modify_collect_fruits()
+        {
+            t = collect_fruits;
+            t.list.Clear();
+
+            t.addBeh(new BehTribeFindBuilding(SB.type_fruits));
+            t.addBeh(new BehFindRandomFrontBuildingTile());
+            t.addBeh(new BehGoToTileTarget());
+            t.addBeh(new BehLookAtTarget("building_target"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
+            t.addBeh(new BehResourceGatheringAnimation(0f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
+            t.addBeh(new BehExtractResourcesFromBuilding());
+            t.addBeh(new BehRandomWait(2f, 3f));
+            // TODO: 等写出实体仓库后移动到仓库提交
+            t.addBeh(new BehTribeSubmitResources());
+            // TODO: 等写出更具体的需求后改为判断是否重复该任务
+            t.addBeh(new BehRestartTask());
         }
 
         private void init_jobs_for_unit()
