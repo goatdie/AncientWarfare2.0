@@ -36,7 +36,10 @@ namespace AncientWarfare.Core.AI
             t = collect_fruits;
             t.list.Clear();
 
-            t.addBeh(new BehTribeFindBuilding(SB.type_fruits));
+            t.addBeh(new BehFindRandomTile());
+            t.addBeh(new BehGoToTileTarget());
+            t.addBeh(new BehRandomWait(0, 3));
+            t.addBeh(new BehTribeFindBuilding(SB.type_fruits, SB.type_vegetation));
             t.addBeh(new BehFindRandomFrontBuildingTile());
             t.addBeh(new BehGoToTileTarget());
             t.addBeh(new BehLookAtTarget("building_target"));

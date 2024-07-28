@@ -8,33 +8,28 @@ namespace AncientWarfare.Core
 {
     public class Storage
     {
-        class ResourceSlot
-        {
-            public int count;
-            public string id;
-        }
-        private Dictionary<string, ResourceSlot> resource_slots = new();
-        private Dictionary<ResType, List<ResourceSlot>> typed_resource_slots = new();
+        private Dictionary<string, ResourceContainer> resource_slots = new();
+        private Dictionary<ResType, List<ResourceContainer>> typed_resource_slots = new();
         public Dictionary<string, int> GetResDict()
         {
-            return resource_slots.Where(x => x.Value.count > 0).ToDictionary(x => x.Key, x => x.Value.count);
+            return resource_slots.Where(x => x.Value.amount > 0).ToDictionary(x => x.Key, x => x.Value.amount);
         }
         public void Store(string resource_id, int count)
         {
             if (resource_slots.ContainsKey(resource_id))
             {
-                resource_slots[resource_id].count += count;
+                resource_slots[resource_id].amount += count;
             }
             else
             {
-                var slot = new ResourceSlot { count = count, id = resource_id };
+                var slot = new ResourceContainer { amount = count, id = resource_id };
                 resource_slots[resource_id] = slot;
                 var asset = AssetManager.resources.get(resource_id);
                 if (asset != null)
                 {
-                    if (!typed_resource_slots.TryGetValue(asset.type, out List<ResourceSlot> slots))
+                    if (!typed_resource_slots.TryGetValue(asset.type, out var slots))
                     {
-                        slots = new List<ResourceSlot>();
+                        slots = new ();
                         typed_resource_slots[asset.type] = slots;
                     }
                     slots.Add(slot);
@@ -43,9 +38,9 @@ namespace AncientWarfare.Core
         }
         public bool Take(string resource_id, int count)
         {
-            if (resource_slots.TryGetValue(resource_id, out var slot) && slot.count >= count)
+            if (resource_slots.TryGetValue(resource_id, out var slot) && slot.amount >= count)
             {
-                slot.count -= count;
+                slot.amount -= count;
                 return true;
             }
             return false;
@@ -55,9 +50,9 @@ namespace AncientWarfare.Core
             if (typed_resource_slots.TryGetValue(ResType.Food, out var slots))
             {
                 if (slots.Count == 0) return null;
-                if (!string.IsNullOrEmpty(prefer_food) && resource_slots.TryGetValue(prefer_food, out var slot) && slot.count > 0)
+                if (!string.IsNullOrEmpty(prefer_food) && resource_slots.TryGetValue(prefer_food, out var slot) && slot.amount > 0)
                 {
-                    slot.count--;
+                    slot.amount--;
                     return AssetManager.resources.get(prefer_food);
                 }
                 return AssetManager.resources.get(slots.GetRandom().id);
@@ -68,7 +63,7 @@ namespace AncientWarfare.Core
         {
             foreach(var list in typed_resource_slots.Values)
             {
-                list.FindAll(x => x.count <= 0).ForEach(x => { list.Remove(x); resource_slots.Remove(x.id); });
+                list.FindAll(x => x.amount <= 0).ForEach(x => { list.Remove(x); resource_slots.Remove(x.id); });
             }
         }
     }

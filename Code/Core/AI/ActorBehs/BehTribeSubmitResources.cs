@@ -15,7 +15,7 @@ namespace AncientWarfare.Core.AI.ActorBehs
     {
         public override BehResult execute(Actor pObject)
         {
-
+            pObject.SubmitInventoryResourcesToTribe();
             return BehResult.Continue;
         }
     }

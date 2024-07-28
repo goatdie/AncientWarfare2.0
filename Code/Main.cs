@@ -176,7 +176,7 @@ namespace AncientWarfare
             {
                 try
                 {
-                    var manager = (IManager)Activator.CreateInstance(t);
+                    var manager = (IManager)Activator.CreateInstance(t, true);
                     manager?.Initialize();
                     LogDebug($"Initialize manager: {t.FullName}(null?{manager == null})");
                 }

@@ -8,7 +8,8 @@ namespace AncientWarfare.Core.Extensions
 {
     public static partial class ActorExtension
     {
-        private static readonly List<Building> temp_for_FindAvailableResourceBuildingInTribe = new();
+        private static readonly List<Building> temp_buildings_for_FindAvailableResourceBuildingInTribe = new();
+        private static readonly List<TileZone> temp_zones_for_FindAvailableResourceBuildingInTribe = new();
         public static bool IsValid(this Actor actor)
         {
             return actor != null && actor.isAlive();
@@ -17,19 +18,37 @@ namespace AncientWarfare.Core.Extensions
         {
             return ActorAdditionDataManager.Get(actor.data.id);
         }
+        public static void SubmitInventoryResourcesToTribe(this Actor actor)
+        {
+            if (!actor.inventory.hasResources()) return;
+            var tribe = actor.GetTribe();
+            if (tribe == null) return;
+            foreach(var it in actor.inventory.getResources())
+            {
+                tribe.Data.storage.Store(it.Value.id, it.Value.amount);
+            }
+            actor.inventory.empty();
+        }
         public static Building FindAvailableResourceBuildingInTribe(this Actor actor, string type)
         {
             if (string.IsNullOrEmpty(type)) return null;
 
-            var possible_targets = temp_for_FindAvailableResourceBuildingInTribe;
+            var possible_targets = temp_buildings_for_FindAvailableResourceBuildingInTribe;
+            var search_zones = temp_zones_for_FindAvailableResourceBuildingInTribe;
+            // 没必要但是为了保险
             possible_targets.Clear();
+            search_zones.Clear();
 
             var tribe = actor.GetTribe();
             if (tribe == null)
             {
                 return null;
             }
-            foreach(var zone in tribe.zones)
+            search_zones.AddRange(tribe.zones);
+            search_zones.Add(actor.currentTile.zone);
+            search_zones.AddRange(actor.currentTile.zone.neighboursAll);
+            search_zones.ShuffleOne();
+            foreach(var zone in search_zones)
             {
                 HashSet<Building> search_set = null;
                 if (type == SB.type_flower || type == SB.type_vegetation)
@@ -68,6 +87,7 @@ namespace AncientWarfare.Core.Extensions
 
             var res = possible_targets.Count > 0 ? possible_targets.GetRandom() : null;
             possible_targets.Clear();
+            search_zones.Clear();
             return res;
         }
         public static void ConsumeFood(this Actor actor, ResourceAsset food)

@@ -1,4 +1,5 @@
 ﻿using AncientWarfare.Core;
+using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Utils;
@@ -29,7 +30,7 @@ namespace AncientWarfare.Patches
                 return false;
             }
 
-            __result = "random_move";
+            __result = nameof(ActorJobExtendLibrary.gatherer_bushes);
 
             return false;
         }
