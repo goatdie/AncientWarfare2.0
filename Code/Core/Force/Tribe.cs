@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Quest;
 using AncientWarfare.Core.Quest.QuestSettingParams;
@@ -12,9 +13,10 @@ namespace AncientWarfare.Core.Force
     public class Tribe : BaseForce<TribeData>, IHasMember
     {
         private ColorAsset      _color;
-        public  List<TileZone>  border_zones = new();
-        public  List<QuestInst> quests       = new();
-        public  List<TileZone>  zones        = new();
+        private bool            _zones_updated = true;
+        public  List<TileZone>  border_zones   = new();
+        public  List<QuestInst> quests         = new();
+        public  List<TileZone>  zones          = new();
 
         public Tribe(TribeData data) : base(data)
         {
@@ -72,6 +74,8 @@ namespace AncientWarfare.Core.Force
 
             zones.Add(zone);
             zone.SetTribe(this);
+
+            _zones_updated = true;
         }
 
         public void RemoveZone(TileZone zone)
@@ -79,6 +83,7 @@ namespace AncientWarfare.Core.Force
             if (zones.Remove(zone))
             {
                 zone.SetTribe(null);
+                _zones_updated = true;
             }
         }
 
@@ -96,7 +101,7 @@ namespace AncientWarfare.Core.Force
             return name_generator.GenerateName(param);
         }
 
-        internal void FreshQuests()
+        private void FreshQuests()
         {
             foreach (QuestInst quest in quests) quest.UpdateProgress();
         }
@@ -104,6 +109,15 @@ namespace AncientWarfare.Core.Force
         public override void Update()
         {
             FreshQuests();
+            CheckZones();
+        }
+
+        private void CheckZones()
+        {
+            if (!_zones_updated) return;
+            _zones_updated = false;
+            border_zones.Clear();
+            border_zones.AddRange(zones.Where(zone => zone.neighboursAll.Exists(x => x.GetTribe() != this)));
         }
     }
 }
