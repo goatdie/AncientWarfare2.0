@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AncientWarfare.Const;
+using AncientWarfare.Core.Force;
+using AncientWarfare.Utils;
 
 namespace AncientWarfare.Core.Extensions
 {
@@ -10,25 +10,84 @@ namespace AncientWarfare.Core.Extensions
     {
         private static readonly List<Building> temp_buildings_for_FindAvailableResourceBuildingInTribe = new();
         private static readonly List<TileZone> temp_zones_for_FindAvailableResourceBuildingInTribe = new();
+
         public static bool IsValid(this Actor actor)
         {
             return actor != null && actor.isAlive();
         }
+
         public static ActorAdditionData GetAdditionData(this Actor actor)
         {
             return ActorAdditionDataManager.Get(actor.data.id);
         }
+
+        public static void GiveChildBirth(this Actor actor)
+        {
+            actor.data.get(ActorDataKeys.aw_pregnant_child_data, out string raw_child_data);
+            if (string.IsNullOrEmpty(raw_child_data)) return;
+
+            actor.data.makeChild(World.world.getCurWorldTime());
+            actor.data.removeString(ActorDataKeys.aw_pregnant_child_data);
+
+            var child_data = GeneralHelper.FromJSON<ActorData>(raw_child_data);
+            // 补足孩子的数据
+            var names = actor.data.name.Split(ComnConst.COMN_SEPERATOR);
+
+            child_data.name = "";
+            child_data.id = World.world.mapStats.getNextId("unit");
+            child_data.x = actor.currentTile.pos.x;
+            child_data.y = actor.currentTile.pos.y;
+            child_data.created_time = World.world.getCreationTime();
+            ActorAsset asset = AssetManager.actor_library.get(child_data.asset_id);
+            ActorBase.generateCivUnit(asset, child_data, AssetManager.raceLibrary.get(asset.race));
+            child_data.health = (int)asset.base_stats[S.health];
+            child_data.hunger = asset.maxHunger / 2;
+
+            var family_name = names[0];
+            var clan_name = names[1];
+            ActorAdditionData addition_data = ActorAdditionDataManager.Get(child_data.id);
+            addition_data.family_name = family_name;
+            addition_data.clan_name = clan_name;
+
+
+            var baby_asset_id = asset.id.Replace("unit_", "baby_");
+            child_data.profession = UnitProfession.Baby;
+            if (!AssetManager.actor_library.Contains(baby_asset_id))
+            {
+                baby_asset_id = "baby_" + asset.id;
+                if (!AssetManager.actor_library.Contains(baby_asset_id))
+                {
+                    baby_asset_id = asset.id;
+                    child_data.profession = UnitProfession.Unit;
+                }
+            }
+
+            ActorAsset baby_asset = AssetManager.actor_library.get(baby_asset_id);
+            if (child_data.profession == UnitProfession.Baby)
+                foreach (var it in baby_asset.traits.Where(it => !child_data.traits.Contains(it)))
+                    child_data.traits.Add(it);
+
+            Tribe tribe = actor.GetTribe();
+
+            Actor child = World.world.units.loadObject(child_data);
+
+            if (child == null || tribe == null) return;
+            ForceManager.MakeJoinToForce(child, tribe);
+        }
+
         public static void SubmitInventoryResourcesToTribe(this Actor actor)
         {
             if (!actor.inventory.hasResources()) return;
             var tribe = actor.GetTribe();
             if (tribe == null) return;
-            foreach(var it in actor.inventory.getResources())
+            foreach (var it in actor.inventory.getResources())
             {
                 tribe.Data.storage.Store(it.Value.id, it.Value.amount);
             }
+
             actor.inventory.empty();
         }
+
         public static Building FindAvailableResourceBuildingInTribe(this Actor actor, string type)
         {
             if (string.IsNullOrEmpty(type)) return null;
@@ -44,11 +103,12 @@ namespace AncientWarfare.Core.Extensions
             {
                 return null;
             }
+
             search_zones.AddRange(tribe.zones);
             search_zones.Add(actor.currentTile.zone);
             search_zones.AddRange(actor.currentTile.zone.neighboursAll);
             search_zones.ShuffleOne();
-            foreach(var zone in search_zones)
+            foreach (TileZone zone in search_zones)
             {
                 HashSet<Building> search_set = null;
                 if (type == SB.type_flower || type == SB.type_vegetation)
@@ -67,9 +127,10 @@ namespace AncientWarfare.Core.Extensions
                 {
                     search_set = zone.food;
                 }
+
                 if (search_set?.Count > 0)
                 {
-                    foreach(var it in search_set)
+                    foreach (Building it in search_set)
                     {
                         if (it.currentTile.targetedBy != null) continue;
                         if (!it.currentTile.isSameIsland(actor.currentTile)) continue;
@@ -77,6 +138,7 @@ namespace AncientWarfare.Core.Extensions
 
                         possible_targets.Add(it);
                     }
+
                     if (possible_targets.Count > 0)
                     {
                         break;
@@ -90,19 +152,22 @@ namespace AncientWarfare.Core.Extensions
             search_zones.Clear();
             return res;
         }
+
         public static void ConsumeFood(this Actor actor, ResourceAsset food)
         {
             if (!actor.IsValid() || food == null)
             {
                 return;
             }
+
             int hunger_restore = food.restoreHunger;
             float health_restore = food.restoreHealth;
-            if(food.id == actor.data.favoriteFood)
+            if (food.id == actor.data.favoriteFood)
             {
                 hunger_restore += hunger_restore / 2;
                 health_restore *= 1.5f;
             }
+
             actor.restoreStatsFromEating(hunger_restore, health_restore);
             if (Toolbox.randomChance(food.give_chance))
             {
@@ -114,6 +179,7 @@ namespace AncientWarfare.Core.Extensions
                         actor.addTrait(trait, false);
                     }
                 }
+
                 if (food.give_status != null && food.give_status.Count > 0 && Toolbox.randomBool())
                 {
                     string status = food.give_status.GetRandom();
@@ -122,12 +188,12 @@ namespace AncientWarfare.Core.Extensions
                         actor.addStatusEffect(status, -1f);
                     }
                 }
+
                 if (food.give_action != null && Toolbox.randomBool())
                 {
                     food.give_action(food);
                 }
             }
-
 
 
             actor.timer_action = 1.5f;
@@ -142,11 +208,13 @@ namespace AncientWarfare.Core.Extensions
                 actor.changeMood("happy");
                 return;
             }
+
             if (actor.data.mood == "happy")
             {
                 actor.changeMood("normal");
                 return;
             }
+
             if (actor.data.mood == "normal")
             {
                 if (Toolbox.randomChance(0.2f))

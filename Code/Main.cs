@@ -1,30 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using AncientWarfare.Abstracts;
+using AncientWarfare.Attributes;
+using AncientWarfare.Const;
 using AncientWarfare.Utils;
+using NCMS.Extensions;
 using NeoModLoader.api;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
 using NeoModLoader.services;
-using NeoModLoader.utils;
 using UnityEngine;
-using AncientWarfare.Const;
-using System.Linq;
-using AncientWarfare.Abstracts;
-using NCMS.Extensions;
-using System.Reflection;
-using AncientWarfare.Attributes;
 
 namespace AncientWarfare
 {
     internal class Main : BasicMod<Main>, IReloadable
     {
-        public static Transform  prefabs_library;
+        public static Transform prefabs_library;
 
         public static Main instance;
 
-        private static readonly HashSet<string>         _logged_warnings = new();
-        private static readonly HashSet<string>         _logged_infos    = new();
+        private static readonly HashSet<string> _logged_warnings = new();
+        private static readonly HashSet<string> _logged_infos    = new();
 
         public static string mainPath => mod_declare.FolderPath; // 这种方式更鲁棒, 可以适配不同的模组文件夹位置
         public static ModDeclare mod_declare { get; private set; }
@@ -45,7 +44,9 @@ namespace AncientWarfare
 
         private void Update()
         {
-            checkRaceAdded();
+            var elapsed = World.world.getCurElapsed();
+
+            TribePlaceFinder.I.Update(elapsed);
         }
 
         [Hotfixable]
@@ -115,6 +116,7 @@ namespace AncientWarfare
                     DebugConfig.setOption(DebugOption.CitizenJobAttacker,  true);
                 }
             }
+
             LogInfo($"IS_DEVELOPER: {DebugConst.IS_DEVELOPER}, EDITOR_INMNY: {DebugConst.EDITOR_INMNY}");
         }
 
@@ -180,7 +182,7 @@ namespace AncientWarfare
                     manager?.Initialize();
                     LogDebug($"Initialize manager: {t.FullName}(null?{manager == null})");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     LogError($"Failed to initialize manager: {t.FullName}");
                     LogError(e.Message);
@@ -188,6 +190,7 @@ namespace AncientWarfare
                 }
             }
         }
+
         private static void SortManagerTypes(List<Type> manager_types)
         {
             for (int i = 0; i < manager_types.Count; i++)

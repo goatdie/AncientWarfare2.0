@@ -1,11 +1,6 @@
 ﻿using ai.behaviours;
 using AncientWarfare.Abstracts;
 using AncientWarfare.Core.AI.ActorBehs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AncientWarfare.Core.AI
 {
@@ -17,12 +12,14 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor nomad_try_create_tribe;
 
         public static readonly BehaviourTaskActor collect_fruits;
+        public static readonly BehaviourTaskActor find_couple_and_make_pregnant;
 
         public static readonly BehaviourTaskActor check_if_stuck_on_small_land;
 
 
         public static readonly BehaviourTaskActor random_move;
         public static readonly BehaviourTaskActor end_job;
+
         protected override void init()
         {
             init_fields();
@@ -76,6 +73,11 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehGoToTileTarget());
             t.addBeh(new BehCheckCreateTribe());
             t.addBeh(new BehEndJob());
+
+            add(new BehaviourTaskActor { id = nameof(find_couple_and_make_pregnant) });
+            t.addBeh(new BehTribeFindCouple());
+            t.addBeh(new BehGoToActorTarget());
+            t.addBeh(new BehMakePregnant());
         }
     }
 }

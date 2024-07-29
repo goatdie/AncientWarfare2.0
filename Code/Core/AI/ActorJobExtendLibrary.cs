@@ -1,21 +1,28 @@
 ﻿using AncientWarfare.Abstracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AncientWarfare.Core.AI
 {
     public class ActorJobExtendLibrary : ExtendedLibrary<ActorJob>
     {
         public static readonly ActorJob unit;
+        public static readonly ActorJob random_move;
         public static readonly ActorJob gatherer_bushes;
+        public static readonly ActorJob produce_children;
+
         protected override void init()
         {
             init_fields();
 
             modify_unit_job();
+            add_produce_children();
+        }
+
+        private void add_produce_children()
+        {
+            add(new ActorJob { id = nameof(produce_children) });
+
+            t.addTask(nameof(ActorTaskExtendLibrary.find_couple_and_make_pregnant));
+            t.addTask(nameof(ActorTaskExtendLibrary.end_job));
         }
 
         private void modify_unit_job()

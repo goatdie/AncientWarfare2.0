@@ -1,17 +1,13 @@
-﻿using AncientWarfare.Core;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
+using AncientWarfare.Core.Quest;
 using AncientWarfare.Utils;
 using AncientWarfare.Utils.InstPredictors;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AncientWarfare.Patches
 {
@@ -30,10 +26,29 @@ namespace AncientWarfare.Patches
                 return false;
             }
 
-            __result = nameof(ActorJobExtendLibrary.gatherer_bushes);
+            // TODO: 多势力任务协调
+            Tribe tribe = actor.GetTribe();
+            if (tribe == null)
+            {
+                __result = nameof(ActorJobExtendLibrary.random_move);
+                return false;
+            }
+
+            foreach (QuestInst quest in tribe.quests)
+            {
+                if (!quest.Active) continue;
+                __result = quest.asset.allow_jobs.GetRandom();
+                return false;
+            }
+
+            __result = Toolbox.randomBool()
+                ? nameof(ActorJobExtendLibrary.produce_children)
+                : nameof(ActorJobExtendLibrary.random_move);
+
 
             return false;
         }
+
         [HarmonyPostfix, HarmonyPatch(typeof(Actor), nameof(Actor.killHimself))]
         private static void Postfix_killHimself(Actor __instance)
         {
@@ -44,23 +59,29 @@ namespace AncientWarfare.Patches
                 ForceManager.MakeLeaveForce(__instance, force_id);
             }
         }
+
         [HarmonyTranspiler, HarmonyPatch(typeof(Actor), nameof(Actor.updateHunger))]
         private static IEnumerable<CodeInstruction> Transpiler_updateHunger(IEnumerable<CodeInstruction> insts)
         {
             var codes = new List<CodeInstruction>(insts);
 
-            int remove_start_idx = HarmonyTools.FindInstructionIdx<MethodInfo>(codes, OpCodes.Call, x => x.Name == nameof(Actor.decreaseHunger))+1;
+            var remove_start_idx =
+                HarmonyTools.FindInstructionIdx<MethodInfo>(codes, OpCodes.Call,
+                                                            x => x.Name == nameof(Actor.decreaseHunger)) + 1;
             int remove_end_idx = HarmonyTools.FindCodeSnippetIdx(codes,
-                new MethodInstPredictor(OpCodes.Call, nameof(Actor.consumeCityFoodItem)),
-                new BaseInstPredictor(OpCodes.Ldarg_0),
-                new FieldInstPredictor(AccessTools.Field(typeof(Actor), nameof(Actor.data))));
+                                                                 new MethodInstPredictor(
+                                                                     OpCodes.Call, nameof(Actor.consumeCityFoodItem)),
+                                                                 new BaseInstPredictor(OpCodes.Ldarg_0),
+                                                                 new FieldInstPredictor(
+                                                                     AccessTools.Field(
+                                                                         typeof(Actor), nameof(Actor.data))));
             codes.RemoveRange(remove_start_idx, remove_end_idx - remove_start_idx + 1);
 
             int insert_idx = remove_start_idx;
             codes.InsertRange(insert_idx, new List<CodeInstruction>
             {
-                new (OpCodes.Ldarg_0),
-                new (OpCodes.Call, AccessTools.Method(typeof(PatchActor), nameof(TryToTakeTribeFood)))
+                new(OpCodes.Ldarg_0),
+                new(OpCodes.Call, AccessTools.Method(typeof(PatchActor), nameof(TryToTakeTribeFood)))
             });
 
             return codes;

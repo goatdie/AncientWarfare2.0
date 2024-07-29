@@ -1,11 +1,6 @@
 ﻿using ai.behaviours;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AncientWarfare.Core.AI.ActorBehs
 {
@@ -17,8 +12,8 @@ namespace AncientWarfare.Core.AI.ActorBehs
 
             TileZone target_tile_zone = null;
             float min_dist = float.MaxValue;
-            TribePlaceFinder.zones.ShuffleOne();
-            foreach (var zone in TribePlaceFinder.zones)
+            TribePlaceFinder.I.zones.ShuffleOne();
+            foreach (TileZone zone in TribePlaceFinder.I.zones)
             {
                 var zone_data = zone.GetAdditionData();
                 if (!zone_data.good_for_new_tribe) continue;
@@ -41,6 +36,7 @@ namespace AncientWarfare.Core.AI.ActorBehs
             {
                 pObject.beh_tile_target = target_tile_zone.tiles.GetRandom();
             }
+
             return BehResult.Continue;
         }
     }

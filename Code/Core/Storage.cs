@@ -1,19 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AncientWarfare.Core
 {
     public class Storage
     {
-        private Dictionary<string, ResourceContainer> resource_slots = new();
+        private readonly Dictionary<string, ResourceContainer> resource_slots = new();
         private Dictionary<ResType, List<ResourceContainer>> typed_resource_slots = new();
+
         public Dictionary<string, int> GetResDict()
         {
             return resource_slots.Where(x => x.Value.amount > 0).ToDictionary(x => x.Key, x => x.Value.amount);
         }
+
+        public int GetCount(string resource_id)
+        {
+            return resource_slots.TryGetValue(resource_id, out ResourceContainer slot) ? slot.amount : 0;
+        }
+
+        public int GetCount(ResType resource_type)
+        {
+            return typed_resource_slots.TryGetValue(resource_type, out var slots) ? slots.Sum(x => x.amount) : 0;
+        }
+
         public void Store(string resource_id, int count)
         {
             if (resource_slots.ContainsKey(resource_id))
@@ -29,13 +38,15 @@ namespace AncientWarfare.Core
                 {
                     if (!typed_resource_slots.TryGetValue(asset.type, out var slots))
                     {
-                        slots = new ();
+                        slots = new List<ResourceContainer>();
                         typed_resource_slots[asset.type] = slots;
                     }
+
                     slots.Add(slot);
                 }
             }
         }
+
         public bool Take(string resource_id, int count)
         {
             if (resource_slots.TryGetValue(resource_id, out var slot) && slot.amount >= count)
@@ -43,27 +54,38 @@ namespace AncientWarfare.Core
                 slot.amount -= count;
                 return true;
             }
+
             return false;
         }
+
         public ResourceAsset TakeFood(string prefer_food)
         {
             if (typed_resource_slots.TryGetValue(ResType.Food, out var slots))
             {
                 if (slots.Count == 0) return null;
-                if (!string.IsNullOrEmpty(prefer_food) && resource_slots.TryGetValue(prefer_food, out var slot) && slot.amount > 0)
+                if (!string.IsNullOrEmpty(prefer_food)                                  &&
+                    resource_slots.TryGetValue(prefer_food, out ResourceContainer slot) &&
+                    slot.amount > 0)
                 {
                     slot.amount--;
                     return AssetManager.resources.get(prefer_food);
                 }
+
                 return AssetManager.resources.get(slots.GetRandom().id);
             }
+
             return null;
         }
+
         public void CleanEmptySlots()
         {
-            foreach(var list in typed_resource_slots.Values)
+            foreach (var list in typed_resource_slots.Values)
             {
-                list.FindAll(x => x.amount <= 0).ForEach(x => { list.Remove(x); resource_slots.Remove(x.id); });
+                list.FindAll(x => x.amount <= 0).ForEach(x =>
+                {
+                    list.Remove(x);
+                    resource_slots.Remove(x.id);
+                });
             }
         }
     }
