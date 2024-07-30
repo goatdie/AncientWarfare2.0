@@ -8,20 +8,20 @@ namespace AncientWarfare.Core.AI
         public static readonly ActorJob random_move;
         public static readonly ActorJob gatherer_bushes;
         public static readonly ActorJob produce_children;
+        public static readonly ActorJob expand_tribe;
 
         protected override void init()
         {
             init_fields();
 
             modify_unit_job();
-            add_produce_children();
-        }
 
-        private void add_produce_children()
-        {
             add(new ActorJob { id = nameof(produce_children) });
-
             t.addTask(nameof(ActorTaskExtendLibrary.find_couple_and_make_pregnant));
+            t.addTask(nameof(ActorTaskExtendLibrary.end_job));
+
+            add(new ActorJob { id = nameof(expand_tribe) });
+            t.addTask(nameof(ActorTaskExtendLibrary.expand_tribe));
             t.addTask(nameof(ActorTaskExtendLibrary.end_job));
         }
 

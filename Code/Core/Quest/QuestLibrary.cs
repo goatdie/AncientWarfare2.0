@@ -27,6 +27,6 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         t.type = QuestTypeLibrary.tribe_expand_for_resource;
         t.disposable = true;
         t.merge_action_when_repeat = (_, _) => { };
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.gatherer_bushes));
+        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.expand_tribe));
     }
 }

@@ -42,7 +42,7 @@ public static class QuestTypeDelegates
 
         quest.Data.get(TribeExpandForResourceSettingKeys.resource_type, out string type);
         quest.Data.get(TribeExpandForResourceSettingKeys.building_id,   out string building_id);
-        foreach (TileZone zone in tribe.border_zones) // 新扩张的区域肯定是边界区域
+        foreach (TileZone zone in tribe.zones)
         {
             if (string.IsNullOrEmpty(type))
             {

@@ -6,6 +6,7 @@ using AncientWarfare.Core.Quest.QuestSettingParams;
 using AncientWarfare.NameGenerators;
 using Chinese_Name;
 using NeoModLoader.api.attributes;
+using Manager = AncientWarfare.Core.MapModes.Manager;
 
 namespace AncientWarfare.Core.Force
 {
@@ -95,6 +96,7 @@ namespace AncientWarfare.Core.Force
             zone.SetTribe(this);
 
             _zones_updated = true;
+            Manager.SetAllDirty();
         }
 
         public void RemoveZone(TileZone zone)
@@ -103,6 +105,7 @@ namespace AncientWarfare.Core.Force
             {
                 zone.SetTribe(null);
                 _zones_updated = true;
+                Manager.SetAllDirty();
             }
         }
 

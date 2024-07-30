@@ -10,13 +10,10 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor create_tribe_here;
         public static readonly BehaviourTaskActor check_join_empty_nearby_tribe;
         public static readonly BehaviourTaskActor nomad_try_create_tribe;
-
         public static readonly BehaviourTaskActor collect_fruits;
         public static readonly BehaviourTaskActor find_couple_and_make_pregnant;
-
+        public static readonly BehaviourTaskActor expand_tribe;
         public static readonly BehaviourTaskActor check_if_stuck_on_small_land;
-
-
         public static readonly BehaviourTaskActor random_move;
         public static readonly BehaviourTaskActor end_job;
 
@@ -78,6 +75,12 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehTribeFindCouple());
             t.addBeh(new BehGoToActorTarget());
             t.addBeh(new BehMakePregnant());
+
+            add(new BehaviourTaskActor { id = nameof(expand_tribe) });
+            t.addBeh(new BehTribeFindZoneToExpand());
+            t.addBeh(new BehGoToTileTarget());
+            t.addBeh(new BehRandomWait(1, 5));
+            t.addBeh(new BehTribeExpandZone());
         }
     }
 }

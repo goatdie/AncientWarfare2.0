@@ -3,6 +3,7 @@ using System.Linq;
 using AncientWarfare.Const;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Utils;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Core.Extensions
 {
@@ -21,6 +22,7 @@ namespace AncientWarfare.Core.Extensions
             return ActorAdditionDataManager.Get(actor.data.id);
         }
 
+        [Hotfixable]
         public static void GiveChildBirth(this Actor actor)
         {
             actor.data.get(ActorDataKeys.aw_pregnant_child_data, out string raw_child_data);
@@ -44,7 +46,7 @@ namespace AncientWarfare.Core.Extensions
             child_data.hunger = asset.maxHunger / 2;
 
             var family_name = names[0];
-            var clan_name = names[1];
+            var clan_name = names.Length == 2 ? names[1] : string.Empty;
             ActorAdditionData addition_data = ActorAdditionDataManager.Get(child_data.id);
             addition_data.family_name = family_name;
             addition_data.clan_name = clan_name;
