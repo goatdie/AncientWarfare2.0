@@ -1,30 +1,38 @@
-﻿using ai.behaviours;
-using AncientWarfare.Core.Extensions;
-using AncientWarfare.Core.Force;
-using HarmonyLib;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using ai.behaviours;
+using AncientWarfare.Core.Extensions;
+using HarmonyLib;
 
-namespace AncientWarfare.Core.AI.ActorBehs
+namespace AncientWarfare.Core.AI.ActorBehs;
+
+public class BehTribeFindBuilding : BehTribe
 {
-    public class BehTribeFindBuilding : BehTribe
-    {
-        private string[] types;
-        public BehTribeFindBuilding(string neccessary_type, params string[] types)
-        {
-            this.types = new List<string>(types).AddItem(neccessary_type).ToArray();
-        }
-        public override BehResult execute(Actor pObject)
-        {
-            var type = types.GetRandom();
-            // TODO: 改为更通用的方法，目前只能找到资源建筑
-            pObject.beh_building_target = pObject.FindAvailableResourceBuildingInTribe(type);
+    private string[] types;
 
-            return BehResult.Continue;
-        }
+    public BehTribeFindBuilding(string neccessary_type, params string[] types)
+    {
+        this.types = new List<string>(types).AddItem(neccessary_type).ToArray();
+    }
+
+    public override BehResult execute(Actor pObject)
+    {
+        var type = types.GetRandom();
+        // TODO: 改为更通用的方法，目前只能找到资源建筑
+        pObject.beh_building_target = pObject.FindAvailableResourceBuildingInTribe(type);
+
+        if (IsResourceBuilding(type) && pObject.beh_building_target == null)
+            pObject.GetTribe().NewExpandQuest(type);
+
+        return BehResult.Continue;
+    }
+
+    private static bool IsResourceBuilding(string type)
+    {
+        if (type == SB.type_flower  || type == SB.type_vegetation || type == SB.type_tree ||
+            type == SB.type_mineral || type == SB.type_fruits)
+            return true;
+
+        return false;
     }
 }

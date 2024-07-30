@@ -4,7 +4,6 @@ using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Quest;
 using AncientWarfare.Core.Quest.QuestSettingParams;
 using AncientWarfare.NameGenerators;
-using AncientWarfare.Utils;
 using Chinese_Name;
 using NeoModLoader.api.attributes;
 
@@ -53,13 +52,33 @@ namespace AncientWarfare.Core.Force
 
         private void InitializeQuests()
         {
-            quests.Expand(
+            EnqueueQuests(
                 new QuestInst(QuestLibrary.food_base_collect, this, new Dictionary<string, object>
                 {
                     { TypedResourceCollectSettingKeys.resource_type, ResType.Food },
                     { TypedResourceCollectSettingKeys.resource_count, 10 }
                 })
             );
+        }
+
+        public void EnqueueQuest(QuestInst quest)
+        {
+            if (quest.asset.merge_action_when_repeat == null)
+            {
+                quests.Add(quest);
+                return;
+            }
+
+            QuestInst repeat_q = quests.FirstOrDefault(x => x.asset == quest.asset);
+            if (repeat_q != null)
+                repeat_q.asset.merge_action_when_repeat(repeat_q, quest);
+            else
+                quests.Add(quest);
+        }
+
+        public void EnqueueQuests(params QuestInst[] list)
+        {
+            foreach (QuestInst q in list) EnqueueQuest(q);
         }
 
         public void AddZone(TileZone zone)
@@ -104,12 +123,25 @@ namespace AncientWarfare.Core.Force
         private void FreshQuests()
         {
             foreach (QuestInst quest in quests) quest.UpdateProgress();
+
+            quests.RemoveAll(quest => quest.Disposable && !quest.Active);
         }
 
         public override void Update()
         {
-            FreshQuests();
             CheckZones();
+
+            FreshQuests();
+        }
+
+        public void NewExpandQuest(string target_resource_type)
+        {
+            var quest = new QuestInst(QuestLibrary.expand_tribe_for_resource, this, new Dictionary<string, object>
+            {
+                { TribeExpandForResourceSettingKeys.resource_type, target_resource_type }
+            });
+            EnqueueQuest(quest);
+            // throw new NotImplementedException();
         }
 
         private void CheckZones()

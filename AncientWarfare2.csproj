@@ -18,7 +18,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp">
-			<HintPath>..\..\worldbox_Data\StreamingAssets\mods\NML\Assembly-CSharp-Publicized.dll</HintPath>
+			<HintPath>Assemblies\Assembly-CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="NeoModLoader">
 			<HintPath Condition="Exists('..\..\worldbox_Data\StreamingAssets\mods\NeoModLoader_memload.dll')">..\..\worldbox_Data\StreamingAssets\mods\NeoModLoader_memload.dll</HintPath>

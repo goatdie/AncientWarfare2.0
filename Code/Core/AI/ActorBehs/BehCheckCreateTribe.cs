@@ -2,11 +2,6 @@
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AncientWarfare.Core.AI.ActorBehs
 {
@@ -23,7 +18,7 @@ namespace AncientWarfare.Core.AI.ActorBehs
 
             tribe = ForceManager.I.tribes.CreateNewTribe(zone);
             if (tribe == null) return BehResult.Stop;
-
+            TribePlaceFinder.I.SetDirty();
             ForceManager.MakeJoinToForce(pObject, tribe);
             WorldLogHelper.LogNewTribe(tribe);
 

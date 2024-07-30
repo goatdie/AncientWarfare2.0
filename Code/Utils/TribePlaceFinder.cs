@@ -117,7 +117,7 @@ namespace AncientWarfare.Utils
             zones.Clear();
             foreach (TileZone zone in World.world.zoneCalculator.zones)
                 zone.GetAdditionData().good_for_new_tribe =
-                    zone.CanStartTribeHere() && zone.centerTile.region.island.getTileCount() < 300;
+                    zone.CanStartTribeHere() && zone.centerTile.region.island.getTileCount() >= 300;
         }
 
         public void SetDirty()

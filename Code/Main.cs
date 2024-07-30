@@ -166,13 +166,15 @@ namespace AncientWarfare
             HarmonyTools.ReplaceMethods();
 
             var types = Assembly.GetExecutingAssembly().GetTypes();
-            types.Where(t => t.IsSubclassOf(typeof(StringLibrary))).ForEach(t =>
+            types.Where(t => t.IsSubclassOf(typeof(StringLibrary)) && !t.IsAbstract).ForEach(t =>
             {
                 _ = Activator.CreateInstance(t);
                 LogDebug($"Initialize string library: {t.Name}");
             });
 
-            var manager_types = types.Where(t => typeof(IManager).IsAssignableFrom(t) && !t.IsInterface).ToList();
+            var manager_types = types
+                                .Where(t => typeof(IManager).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+                                .ToList();
             SortManagerTypes(manager_types);
             foreach (var t in manager_types)
             {
