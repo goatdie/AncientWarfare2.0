@@ -78,7 +78,6 @@ namespace AncientWarfare.Core.AI
 
             add(new BehaviourTaskActor { id = nameof(expand_tribe) });
             t.addBeh(new BehTribeFindZoneToExpand());
-            t.addBeh(new BehGoToTileTarget());
             t.addBeh(new BehRandomWait(1, 5));
             t.addBeh(new BehTribeExpandZone());
         }
