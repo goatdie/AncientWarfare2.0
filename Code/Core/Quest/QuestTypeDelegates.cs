@@ -7,6 +7,10 @@ namespace AncientWarfare.Core.Quest;
 
 public static class QuestTypeDelegates
 {
+    public static void empty_merge(QuestInst source, QuestInst repeat_meet)
+    {
+    }
+
     public static void init__typed_resource_collect(QuestInst                  quest, LowBaseForce owner,
                                                     Dictionary<string, object> setting)
     {

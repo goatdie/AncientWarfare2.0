@@ -6,7 +6,29 @@ namespace AncientWarfare.Core
     public class Storage
     {
         private readonly Dictionary<string, ResourceContainer> resource_slots = new();
-        private Dictionary<ResType, List<ResourceContainer>> typed_resource_slots = new();
+        private          int _curr_amount;
+        private          bool _curr_amount_dirty = true;
+        private          int _size = -1;
+        private readonly Dictionary<ResType, List<ResourceContainer>> typed_resource_slots = new();
+        public           int CurrAmount => _curr_amount_dirty ? UpdateCurrAmount() : _curr_amount;
+        public           int Size => _size < 0 ? int.MaxValue : _size;
+
+        public bool IsFull()
+        {
+            return _size >= 0 && CurrAmount >= _size;
+        }
+
+        public void SetSize(int size)
+        {
+            _size = size;
+        }
+
+        private int UpdateCurrAmount()
+        {
+            _curr_amount = resource_slots.Sum(x => x.Value.amount);
+            _curr_amount_dirty = false;
+            return _curr_amount;
+        }
 
         public Dictionary<string, int> GetResDict()
         {
@@ -25,9 +47,9 @@ namespace AncientWarfare.Core
 
         public void Store(string resource_id, int count)
         {
-            if (resource_slots.ContainsKey(resource_id))
+            if (resource_slots.TryGetValue(resource_id, out ResourceContainer resource_slot))
             {
-                resource_slots[resource_id].amount += count;
+                resource_slot.amount += count;
             }
             else
             {
@@ -45,6 +67,8 @@ namespace AncientWarfare.Core
                     slots.Add(slot);
                 }
             }
+
+            _curr_amount_dirty = true;
         }
 
         public bool Take(string resource_id, int count)
@@ -52,6 +76,7 @@ namespace AncientWarfare.Core
             if (resource_slots.TryGetValue(resource_id, out var slot) && slot.amount >= count)
             {
                 slot.amount -= count;
+                _curr_amount_dirty = true;
                 return true;
             }
 
@@ -60,21 +85,35 @@ namespace AncientWarfare.Core
 
         public ResourceAsset TakeFood(string prefer_food)
         {
+            CleanEmptySlots(ResType.Food);
             if (typed_resource_slots.TryGetValue(ResType.Food, out var slots))
             {
                 if (slots.Count == 0) return null;
-                if (!string.IsNullOrEmpty(prefer_food)                                  &&
-                    resource_slots.TryGetValue(prefer_food, out ResourceContainer slot) &&
-                    slot.amount > 0)
+                _curr_amount_dirty = true;
+
+                if (string.IsNullOrEmpty(prefer_food) || !
+                        resource_slots.TryGetValue(prefer_food, out ResourceContainer food_to_take))
                 {
-                    slot.amount--;
-                    return AssetManager.resources.get(prefer_food);
+                    food_to_take = slots.GetRandom();
                 }
 
-                return AssetManager.resources.get(slots.GetRandom().id);
+                food_to_take.amount--;
+
+
+                return AssetManager.resources.get(food_to_take.id);
             }
 
             return null;
+        }
+
+        public void CleanEmptySlots(ResType type)
+        {
+            if (typed_resource_slots.TryGetValue(type, out var slots))
+                slots.FindAll(x => x.amount <= 0).ForEach(x =>
+                {
+                    slots.Remove(x);
+                    resource_slots.Remove(x.id);
+                });
         }
 
         public void CleanEmptySlots()

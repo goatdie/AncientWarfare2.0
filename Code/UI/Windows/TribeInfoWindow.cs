@@ -54,13 +54,15 @@ namespace AncientWarfare.UI.Windows
                 $"""
                  ID: {mTribe.BaseData.id}
                  人数: {mTribe.Data.members.Count}
+
                  """);
+            /*
             foreach (var actor_id in mTribe.Data.members)
             {
                 info_builder.AppendLine($"{actor_id}: {World.world.units.get(actor_id).getName()}");
             }
-
-            info_builder.AppendLine("资源:");
+            */
+            info_builder.AppendLine($"资源({mTribe.Data.storage.CurrAmount}/{mTribe.Data.storage.Size}):");
             foreach (var res in mTribe.Data.storage.GetResDict())
             {
                 info_builder.AppendLine($"{res.Key}: {res.Value}");

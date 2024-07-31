@@ -37,6 +37,8 @@ namespace AncientWarfare.Patches
             foreach (QuestInst quest in tribe.quests)
             {
                 if (!quest.Active) continue;
+                if (!quest.CanTake) continue;
+                quest.Take();
                 __result = quest.asset.allow_jobs.GetRandom();
                 return false;
             }

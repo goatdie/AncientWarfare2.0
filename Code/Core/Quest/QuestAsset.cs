@@ -9,5 +9,6 @@ public class QuestAsset : Asset
     public List<string>       allow_jobs = new();
     public bool               disposable;
     public QuestMergeDelegate merge_action_when_repeat;
+    public bool multitable = true;
     public QuestTypeAsset     type;
 }

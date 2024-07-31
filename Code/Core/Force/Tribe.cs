@@ -12,16 +12,18 @@ namespace AncientWarfare.Core.Force
 {
     public class Tribe : BaseForce<TribeData>, IHasMember, IHasBuilding
     {
-        public readonly List<TileZone>    border_zones = new();
-        public readonly BuildingContainer buildings    = new();
-        public readonly List<QuestInst>   quests       = new();
-        public readonly List<TileZone>    zones        = new();
+        public readonly List<TileZone>    border_zones       = new();
+        public readonly BuildingContainer buildings          = new();
+        public readonly List<QuestInst>   quests             = new();
+        public readonly List<TileZone>    zones              = new();
+        private         bool              _buildings_updated = true;
         private         ColorAsset        _color;
         private         bool              _zones_updated = true;
 
         public Tribe(TribeData data) : base(data)
         {
             InitializeQuests();
+            data.storage.SetSize(0);
         }
 
         public ColorAsset Color
@@ -40,13 +42,16 @@ namespace AncientWarfare.Core.Force
 
         public WorldTile CenterTile => zones[0].centerTile;
 
-        public void RemoveBuildingOneside(string building_id)
+        public void RemoveBuildingOneside(Building building)
         {
+            buildings.Remove(building);
+            _buildings_updated = true;
         }
 
         public void AddBuildingOneside(Building building)
         {
             buildings.Add(building);
+            _buildings_updated = true;
         }
 
         [Hotfixable]
@@ -142,9 +147,35 @@ namespace AncientWarfare.Core.Force
 
         public override void Update()
         {
+            buildings.checkAddRemove();
+
             CheckZones();
+            CheckStorages();
 
             FreshQuests();
+
+            ClearDirty();
+        }
+
+        private void ClearDirty()
+        {
+            _buildings_updated = false;
+            _zones_updated = false;
+        }
+
+        private void CheckStorages()
+        {
+            if (!_buildings_updated) return;
+            var building_list = buildings.getSimpleList();
+            var storage_size = 0;
+            foreach (Building b in building_list)
+            {
+                if (!b.asset.storage) continue;
+
+                storage_size += b.asset.GetAdditionAsset().storage_size;
+            }
+
+            Data.storage.SetSize(storage_size);
         }
 
         public void NewExpandQuest(string target_resource_type)
@@ -160,9 +191,12 @@ namespace AncientWarfare.Core.Force
         private void CheckZones()
         {
             if (!_zones_updated) return;
-            _zones_updated = false;
             border_zones.Clear();
             border_zones.AddRange(zones.Where(zone => zone.neighboursAll.Exists(x => x.GetTribe() != this)));
+        }
+
+        public void NewExpandStorageQuest()
+        {
         }
     }
 }

@@ -82,6 +82,12 @@ namespace AncientWarfare.Core.Extensions
             if (!actor.inventory.hasResources()) return;
             var tribe = actor.GetTribe();
             if (tribe == null) return;
+            if (tribe.Data.storage.IsFull())
+            {
+                tribe.NewExpandStorageQuest();
+                return;
+            }
+
             foreach (var it in actor.inventory.getResources())
             {
                 tribe.Data.storage.Store(it.Value.id, it.Value.amount);

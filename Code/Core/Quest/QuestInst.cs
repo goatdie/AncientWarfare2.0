@@ -19,11 +19,19 @@ public class QuestInst
         asset.type.InitDelegate?.Invoke(this, this.owner, setting ?? new Dictionary<string, object>());
     }
 
+    public bool CanTake { get; private set; } = true;
+
     public bool Disposable => asset.disposable;
     public bool Active     { get; protected set; }
+
+    public void Take()
+    {
+        if (!asset.multitable) CanTake = false;
+    }
 
     public void UpdateProgress()
     {
         Active = asset.type.UpdateDelegate?.Invoke(this, owner) ?? true;
+        if (!Active) CanTake = true;
     }
 }

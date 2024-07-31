@@ -6,6 +6,7 @@ public class QuestTypeLibrary : AW_AssetLibrary<QuestTypeAsset, QuestTypeLibrary
 {
     public static readonly QuestTypeAsset typed_resource_collect;
     public static readonly QuestTypeAsset resource_collect;
+    public static readonly QuestTypeAsset construct_building;
     public static readonly QuestTypeAsset tribe_expand_for_resource;
 
     public void Initialize()
@@ -25,5 +26,7 @@ public class QuestTypeLibrary : AW_AssetLibrary<QuestTypeAsset, QuestTypeLibrary
         add(new QuestTypeAsset { id = nameof(tribe_expand_for_resource) });
         t.InitDelegate = QuestTypeDelegates.init__tribe_expand_for_resource;
         t.UpdateDelegate = QuestTypeDelegates.update__tribe_expand_for_resource;
+
+        add(new QuestTypeAsset { id = nameof(construct_building) });
     }
 }

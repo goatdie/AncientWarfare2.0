@@ -26,7 +26,7 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         add(new QuestAsset { id = nameof(expand_tribe_for_resource) });
         t.type = QuestTypeLibrary.tribe_expand_for_resource;
         t.disposable = true;
-        t.merge_action_when_repeat = (_, _) => { };
+        t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
         t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.expand_tribe));
     }
 }
