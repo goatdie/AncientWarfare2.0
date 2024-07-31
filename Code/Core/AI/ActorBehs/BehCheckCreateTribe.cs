@@ -22,6 +22,9 @@ namespace AncientWarfare.Core.AI.ActorBehs
             ForceManager.MakeJoinToForce(pObject, tribe);
             WorldLogHelper.LogNewTribe(tribe);
 
+            Building bonfire = World.world.buildings.addBuilding(SB.bonfire, zone.centerTile);
+            ForceManager.MakeJoinToForce(bonfire, tribe);
+
             return BehResult.Continue;
         }
     }

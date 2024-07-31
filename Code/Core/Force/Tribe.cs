@@ -10,13 +10,14 @@ using Manager = AncientWarfare.Core.MapModes.Manager;
 
 namespace AncientWarfare.Core.Force
 {
-    public class Tribe : BaseForce<TribeData>, IHasMember
+    public class Tribe : BaseForce<TribeData>, IHasMember, IHasBuilding
     {
-        private ColorAsset      _color;
-        private bool            _zones_updated = true;
-        public  List<TileZone>  border_zones   = new();
-        public  List<QuestInst> quests         = new();
-        public  List<TileZone>  zones          = new();
+        public readonly List<TileZone>    border_zones = new();
+        public readonly BuildingContainer buildings    = new();
+        public readonly List<QuestInst>   quests       = new();
+        public readonly List<TileZone>    zones        = new();
+        private         ColorAsset        _color;
+        private         bool              _zones_updated = true;
 
         public Tribe(TribeData data) : base(data)
         {
@@ -38,6 +39,15 @@ namespace AncientWarfare.Core.Force
         }
 
         public WorldTile CenterTile => zones[0].centerTile;
+
+        public void RemoveBuildingOneside(string building_id)
+        {
+        }
+
+        public void AddBuildingOneside(Building building)
+        {
+            buildings.Add(building);
+        }
 
         [Hotfixable]
         public void AddMemberOneside(Actor actor)

@@ -11,6 +11,7 @@ using NCMS.Extensions;
 using NeoModLoader.api;
 using NeoModLoader.api.attributes;
 using NeoModLoader.General;
+using NeoModLoader.General.Game.extensions;
 using NeoModLoader.services;
 using UnityEngine;
 
@@ -164,6 +165,8 @@ namespace AncientWarfare
 
             HarmonyTools.PatchAll();
             HarmonyTools.ReplaceMethods();
+
+            AssetManager.buildings.ForEach<BuildingAsset, BuildingLibrary>(x => x.cityBuilding = false);
 
             var types = Assembly.GetExecutingAssembly().GetTypes();
             types.Where(t => t.IsSubclassOf(typeof(StringLibrary)) && !t.IsAbstract).ForEach(t =>
