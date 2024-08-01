@@ -14,38 +14,38 @@ public static class QuestTypeDelegates
     public static void init__typed_resource_collect(QuestInst                  quest, LowBaseForce owner,
                                                     Dictionary<string, object> setting)
     {
-        var resource_type = (ResType)setting[TypedResourceCollectSettingKeys.resource_type];
-        var resource_count = (int)setting[TypedResourceCollectSettingKeys.resource_count];
+        var resource_type = (ResType)setting[TypedResourceCollectSettingKeys.resource_type_int];
+        var resource_count = (int)setting[TypedResourceCollectSettingKeys.resource_count_int];
 
-        quest.Data.set(TypedResourceCollectSettingKeys.resource_type,  (int)resource_type);
-        quest.Data.set(TypedResourceCollectSettingKeys.resource_count, resource_count);
+        quest.Data.set(TypedResourceCollectSettingKeys.resource_type_int,  (int)resource_type);
+        quest.Data.set(TypedResourceCollectSettingKeys.resource_count_int, resource_count);
     }
 
     public static bool update__typed_resource_collect(QuestInst quest, LowBaseForce owner)
     {
         if (owner is not Tribe tribe) throw new NotImplementedException();
 
-        quest.Data.get(TypedResourceCollectSettingKeys.resource_type,  out int res_type);
-        quest.Data.get(TypedResourceCollectSettingKeys.resource_count, out int res_count);
+        quest.Data.get(TypedResourceCollectSettingKeys.resource_type_int,  out int res_type);
+        quest.Data.get(TypedResourceCollectSettingKeys.resource_count_int, out int res_count);
         return tribe.Data.storage.GetCount((ResType)res_type) < res_count;
     }
 
     public static void init__tribe_expand_for_resource(QuestInst                  quest, LowBaseForce owner,
                                                        Dictionary<string, object> setting)
     {
-        if (setting.TryGetValue(TribeExpandForResourceSettingKeys.resource_type, out var raw_resource_type))
-            quest.Data.set(TribeExpandForResourceSettingKeys.resource_type, (string)raw_resource_type);
+        if (setting.TryGetValue(TribeExpandForResourceSettingKeys.resource_type_string, out var raw_resource_type))
+            quest.Data.set(TribeExpandForResourceSettingKeys.resource_type_string, (string)raw_resource_type);
 
-        if (setting.TryGetValue(TribeExpandForResourceSettingKeys.building_id, out var raw_building_id))
-            quest.Data.set(TribeExpandForResourceSettingKeys.building_id, (string)raw_building_id);
+        if (setting.TryGetValue(TribeExpandForResourceSettingKeys.building_id_string, out var raw_building_id))
+            quest.Data.set(TribeExpandForResourceSettingKeys.building_id_string, (string)raw_building_id);
     }
 
     public static bool update__tribe_expand_for_resource(QuestInst quest, LowBaseForce owner)
     {
         if (owner is not Tribe tribe) throw new NotImplementedException();
 
-        quest.Data.get(TribeExpandForResourceSettingKeys.resource_type, out string type);
-        quest.Data.get(TribeExpandForResourceSettingKeys.building_id,   out string building_id);
+        quest.Data.get(TribeExpandForResourceSettingKeys.resource_type_string, out string type);
+        quest.Data.get(TribeExpandForResourceSettingKeys.building_id_string,   out string building_id);
         foreach (TileZone zone in tribe.zones)
         {
             if (string.IsNullOrEmpty(type))
@@ -71,5 +71,23 @@ public static class QuestTypeDelegates
         }
 
         return true;
+    }
+
+    public static void init__construct_building(QuestInst quest, LowBaseForce owner, Dictionary<string, object> setting)
+    {
+        if (setting.TryGetValue(ConstructBuildingSettingKeys.building_key_string, out var raw_building_id))
+            quest.Data.set(ConstructBuildingSettingKeys.building_key_string, (string)raw_building_id);
+        if (setting.TryGetValue(ConstructBuildingSettingKeys.upgrade_building_if_possible_bool,
+                                out var upgrade_building_if_possible))
+            quest.Data.set(ConstructBuildingSettingKeys.upgrade_building_if_possible_bool,
+                           (bool)upgrade_building_if_possible);
+    }
+
+    public static bool update__construct_building(QuestInst quest, LowBaseForce owner)
+    {
+        if (owner is not Tribe tribe) throw new NotImplementedException();
+        quest.Data.get(ConstructBuildingSettingKeys.building_key_string, out string building_id);
+
+        return !tribe.buildings.getSimpleList().Exists(x => x.asset.id == building_id && !x.isUnderConstruction());
     }
 }

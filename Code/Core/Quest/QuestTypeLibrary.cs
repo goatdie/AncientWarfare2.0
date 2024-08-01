@@ -28,5 +28,7 @@ public class QuestTypeLibrary : AW_AssetLibrary<QuestTypeAsset, QuestTypeLibrary
         t.UpdateDelegate = QuestTypeDelegates.update__tribe_expand_for_resource;
 
         add(new QuestTypeAsset { id = nameof(construct_building) });
+        t.InitDelegate = QuestTypeDelegates.init__construct_building;
+        t.UpdateDelegate = QuestTypeDelegates.update__construct_building;
     }
 }

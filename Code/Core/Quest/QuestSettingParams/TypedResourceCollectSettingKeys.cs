@@ -2,6 +2,6 @@
 
 public class TypedResourceCollectSettingKeys : SettingKeys
 {
-    public static readonly string resource_type;
-    public static readonly string resource_count;
+    public static readonly string resource_type_int;
+    public static readonly string resource_count_int;
 }

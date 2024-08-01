@@ -17,6 +17,7 @@ namespace AncientWarfare.Core.Force
         public readonly List<QuestInst>   quests             = new();
         public readonly List<TileZone>    zones              = new();
         private         bool              _buildings_updated = true;
+        private Race _cache_race;
         private         ColorAsset        _color;
         private         bool              _zones_updated = true;
 
@@ -24,6 +25,18 @@ namespace AncientWarfare.Core.Force
         {
             InitializeQuests();
             data.storage.SetSize(0);
+        }
+
+        public Race Race
+        {
+            get
+            {
+                if (_cache_race == null)
+                    if (!string.IsNullOrEmpty(Data.race_id))
+                        _cache_race = AssetManager.raceLibrary.get(Data.race_id);
+
+                return _cache_race;
+            }
         }
 
         public ColorAsset Color
@@ -57,6 +70,8 @@ namespace AncientWarfare.Core.Force
         [Hotfixable]
         public void AddMemberOneside(Actor actor)
         {
+            if (string.IsNullOrEmpty(Data.race_id)) Data.race_id = actor.race.id;
+
             Data.members.Add(actor.data.id);
         }
 
@@ -71,8 +86,8 @@ namespace AncientWarfare.Core.Force
             EnqueueQuests(
                 new QuestInst(QuestLibrary.food_base_collect, this, new Dictionary<string, object>
                 {
-                    { TypedResourceCollectSettingKeys.resource_type, ResType.Food },
-                    { TypedResourceCollectSettingKeys.resource_count, 10 }
+                    { TypedResourceCollectSettingKeys.resource_type_int, ResType.Food },
+                    { TypedResourceCollectSettingKeys.resource_count_int, 10 }
                 })
             );
         }
@@ -182,7 +197,7 @@ namespace AncientWarfare.Core.Force
         {
             var quest = new QuestInst(QuestLibrary.expand_tribe_for_resource, this, new Dictionary<string, object>
             {
-                { TribeExpandForResourceSettingKeys.resource_type, target_resource_type }
+                { TribeExpandForResourceSettingKeys.resource_type_string, target_resource_type }
             });
             EnqueueQuest(quest);
             // throw new NotImplementedException();

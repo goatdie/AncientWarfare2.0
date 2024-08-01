@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AncientWarfare.Core
@@ -6,10 +7,10 @@ namespace AncientWarfare.Core
     public class Storage
     {
         private readonly Dictionary<string, ResourceContainer> resource_slots = new();
+        private readonly Dictionary<ResType, List<ResourceContainer>> typed_resource_slots = new();
         private          int _curr_amount;
         private          bool _curr_amount_dirty = true;
         private          int _size = -1;
-        private readonly Dictionary<ResType, List<ResourceContainer>> typed_resource_slots = new();
         public           int CurrAmount => _curr_amount_dirty ? UpdateCurrAmount() : _curr_amount;
         public           int Size => _size < 0 ? int.MaxValue : _size;
 
@@ -81,6 +82,12 @@ namespace AncientWarfare.Core
             }
 
             return false;
+        }
+
+        public bool HasResourceForUpgrading(BuildingAsset building_asset)
+        {
+            return true;
+            throw new NotImplementedException();
         }
 
         public ResourceAsset TakeFood(string prefer_food)

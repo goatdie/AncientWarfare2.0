@@ -17,6 +17,13 @@ using UnityEngine;
 
 namespace AncientWarfare
 {
+    internal enum DebugMsgLevel
+    {
+        Info,
+        Warning,
+        Error
+    }
+
     internal class Main : BasicMod<Main>, IReloadable
     {
         public static Transform prefabs_library;
@@ -142,16 +149,43 @@ namespace AncientWarfare
             if (pShowStackTrace) LogService.LogStackTraceAsInfo();
         }
 
-        public static void LogDebug(string pMessage, bool pShowStackTrace = false, bool pLogOnlyOnce = false)
+        public static void LogDebug(string        pMessage, bool pShowStackTrace = false, bool pLogOnlyOnce = false,
+                                    DebugMsgLevel pLevel = DebugMsgLevel.Info)
         {
             if (!DebugConst.IS_DEVELOPER) return;
             if (pLogOnlyOnce)
                 if (!_logged_infos.Add(pMessage))
                     return;
-            LogService.LogInfo($"[AW2.0]: {pMessage}");
+            var info_to_log = $"[AW2.0]: {pMessage}";
+            switch (pLevel)
+            {
+                case DebugMsgLevel.Info:
+                    LogService.LogInfo(info_to_log);
+                    break;
+                case DebugMsgLevel.Warning:
+                    LogService.LogWarning(info_to_log);
+                    break;
+                case DebugMsgLevel.Error:
+                    LogService.LogError(info_to_log);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(pLevel), pLevel, null);
+            }
+
             if (pShowStackTrace)
             {
-                LogService.LogStackTraceAsInfo();
+                switch (pLevel)
+                {
+                    case DebugMsgLevel.Info:
+                        LogService.LogStackTraceAsInfo();
+                        break;
+                    case DebugMsgLevel.Warning:
+                        LogService.LogStackTraceAsWarning();
+                        break;
+                    case DebugMsgLevel.Error:
+                        LogService.LogStackTraceAsError();
+                        break;
+                }
             }
         }
 

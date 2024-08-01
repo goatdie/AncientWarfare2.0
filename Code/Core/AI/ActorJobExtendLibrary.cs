@@ -9,6 +9,7 @@ namespace AncientWarfare.Core.AI
         public static readonly ActorJob gatherer_bushes;
         public static readonly ActorJob produce_children;
         public static readonly ActorJob expand_tribe;
+        public static readonly ActorJob build_or_upgrade_storage;
 
         protected override void init()
         {
@@ -22,6 +23,11 @@ namespace AncientWarfare.Core.AI
 
             add(new ActorJob { id = nameof(expand_tribe) });
             t.addTask(nameof(ActorTaskExtendLibrary.expand_tribe));
+            t.addTask(nameof(ActorTaskExtendLibrary.end_job));
+
+            add(new ActorJob { id = nameof(build_or_upgrade_storage) });
+            t.addTask(nameof(ActorTaskExtendLibrary.start_build_or_upgrade_storage));
+            t.addTask(nameof(ActorTaskExtendLibrary.construct_building));
             t.addTask(nameof(ActorTaskExtendLibrary.end_job));
         }
 

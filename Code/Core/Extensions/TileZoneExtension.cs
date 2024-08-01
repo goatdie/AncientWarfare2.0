@@ -1,4 +1,5 @@
-﻿using AncientWarfare.Core.Force;
+﻿using System.Linq;
+using AncientWarfare.Core.Force;
 
 namespace AncientWarfare.Core.Extensions
 {
@@ -23,6 +24,11 @@ namespace AncientWarfare.Core.Extensions
         public static bool HasTribe(this TileZone zone)
         {
             return !string.IsNullOrEmpty(zone.GetAdditionData().tribe_id);
+        }
+
+        public static bool HasBuildingType(this TileZone zone, string building_type)
+        {
+            return zone.buildings.Any(building => building.asset.type == building_type);
         }
 
         public static bool CanStartTribeHere(this TileZone zone)
