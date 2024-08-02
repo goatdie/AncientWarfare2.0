@@ -33,6 +33,7 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         add(new QuestAsset { id = nameof(build_or_upgrade_storage_building) });
         t.type = QuestTypeLibrary.construct_building;
         t.disposable = true;
+        t.multitable = false;
         t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
         t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.build_or_upgrade_storage));
     }

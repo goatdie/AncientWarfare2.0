@@ -17,9 +17,11 @@ namespace AncientWarfare.Core.Extensions
             return actor != null && actor.isAlive();
         }
 
-        public static ActorAdditionData GetAdditionData(this Actor actor)
+        public static ActorAdditionData GetAdditionData(this Actor actor, bool null_if_not_exists = false)
         {
-            return ActorAdditionDataManager.Get(actor.data.id);
+            return null_if_not_exists
+                ? ActorAdditionDataManager.TryGet(actor.data.id)
+                : ActorAdditionDataManager.Get(actor.data.id);
         }
 
         [Hotfixable]
@@ -84,7 +86,6 @@ namespace AncientWarfare.Core.Extensions
             if (tribe == null) return;
             if (tribe.Data.storage.IsFull())
             {
-                tribe.NewExpandStorageQuest();
                 return;
             }
 

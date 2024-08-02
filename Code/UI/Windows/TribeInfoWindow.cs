@@ -73,7 +73,7 @@ namespace AncientWarfare.UI.Windows
             StringBuilder quest_builder = new("任务:\n");
             var idx = 0;
             foreach (QuestInst quest in mTribe.quests)
-                quest_builder.AppendLine($"[{idx++}]: {quest.asset.id}(Active?{quest.Active})");
+                quest_builder.AppendLine($"[{idx++}]: {quest.asset.id}(Active?{quest.Active},CanTake?{quest.CanTake})");
 
             QuestInfo.text = quest_builder.ToString();
         }

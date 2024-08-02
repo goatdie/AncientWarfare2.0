@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using AncientWarfare.Core;
 using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
@@ -34,6 +35,7 @@ namespace AncientWarfare.Patches
                 return false;
             }
 
+            tribe.quests.ShuffleOne();
             foreach (QuestInst quest in tribe.quests)
             {
                 if (!quest.Active) continue;
@@ -54,7 +56,8 @@ namespace AncientWarfare.Patches
         [HarmonyPostfix, HarmonyPatch(typeof(Actor), nameof(Actor.killHimself))]
         private static void Postfix_killHimself(Actor __instance)
         {
-            var data = __instance.GetAdditionData();
+            ActorAdditionData data = __instance.GetAdditionData(true);
+            if (data == null) return;
             var forces = new HashSet<string>(data.Forces);
             foreach (var force_id in forces)
             {

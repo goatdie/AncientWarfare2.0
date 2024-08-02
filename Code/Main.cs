@@ -6,6 +6,7 @@ using System.Reflection;
 using AncientWarfare.Abstracts;
 using AncientWarfare.Attributes;
 using AncientWarfare.Const;
+using AncientWarfare.Core.Extensions;
 using AncientWarfare.Utils;
 using NCMS.Extensions;
 using NeoModLoader.api;
@@ -200,7 +201,6 @@ namespace AncientWarfare
             HarmonyTools.PatchAll();
             HarmonyTools.ReplaceMethods();
 
-            AssetManager.buildings.ForEach<BuildingAsset, BuildingLibrary>(x => x.cityBuilding = false);
 
             var types = Assembly.GetExecutingAssembly().GetTypes();
             types.Where(t => t.IsSubclassOf(typeof(StringLibrary)) && !t.IsAbstract).ForEach(t =>
@@ -228,6 +228,16 @@ namespace AncientWarfare
                     LogError(e.StackTrace);
                 }
             }
+
+            AssetManager.buildings.ForEach<BuildingAsset, BuildingLibrary>(x =>
+            {
+                x.cityBuilding = false;
+                if (x.type == SB.type_hall)
+                {
+                    x.storage = true;
+                    x.GetAdditionAsset().storage_size = 10 * (int)Math.Pow(2, x.upgradeLevel);
+                }
+            });
         }
 
         private static void SortManagerTypes(List<Type> manager_types)

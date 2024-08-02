@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Core.Quest.QuestSettingParams;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Core.Quest;
 
@@ -88,6 +89,9 @@ public static class QuestTypeDelegates
         if (owner is not Tribe tribe) throw new NotImplementedException();
         quest.Data.get(ConstructBuildingSettingKeys.building_key_string, out string building_id);
 
-        return !tribe.buildings.getSimpleList().Exists(x => x.asset.id == building_id && !x.isUnderConstruction());
+        return !tribe.buildings.getSimpleList().Exists([Hotfixable](x) =>
+        {
+            return x.asset.id == building_id && !x.isUnderConstruction();
+        });
     }
 }

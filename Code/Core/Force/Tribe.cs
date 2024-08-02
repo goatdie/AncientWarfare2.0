@@ -155,9 +155,11 @@ namespace AncientWarfare.Core.Force
 
         private void FreshQuests()
         {
+            if (Data.storage.IsFull()) NewExpandStorageQuest();
+
             foreach (QuestInst quest in quests) quest.UpdateProgress();
 
-            quests.RemoveAll(quest => quest.Disposable && !quest.Active);
+            quests.RemoveAll(quest => quest.Finished);
         }
 
         public override void Update()
@@ -212,6 +214,23 @@ namespace AncientWarfare.Core.Force
 
         public void NewExpandStorageQuest()
         {
+            var quest = new QuestInst(QuestLibrary.build_or_upgrade_storage_building, this,
+                                      new Dictionary<string, object>
+                                      {
+                                          { ConstructBuildingSettingKeys.building_key_string, SB.order_hall_0 },
+                                          { ConstructBuildingSettingKeys.upgrade_building_if_possible_bool, true }
+                                      });
+            EnqueueQuest(quest);
+        }
+
+        public void SignalBuildingQuestFinished(Building building)
+        {
+            foreach (QuestInst quest in quests)
+            {
+                if (quest.asset != QuestLibrary.build_or_upgrade_storage_building) continue;
+                quest.MarkFinished();
+                return;
+            }
         }
     }
 }

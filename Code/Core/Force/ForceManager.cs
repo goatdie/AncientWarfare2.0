@@ -59,6 +59,12 @@ namespace AncientWarfare.Core.Force
                 return;
             }
 
+            if (building == null)
+            {
+                Main.LogDebug("building is null", true);
+                return;
+            }
+
             building.JoinForceOneside(base_force);
             force.AddBuildingOneside(building);
         }
@@ -89,6 +95,19 @@ namespace AncientWarfare.Core.Force
             {
                 has_member.RemoveMemberOneside(actor.data.id);
             }
+        }
+
+        public static void MakeLeaveForce(Building building, string id)
+        {
+            var force = GetForce<LowBaseForce>(id);
+            if (force == null)
+            {
+                Main.LogDebug($"force {id} is null", true);
+                return;
+            }
+
+            building.LeaveForceOnesice(force);
+            if (force is IHasBuilding has_building) has_building.RemoveBuildingOneside(building);
         }
     }
 }

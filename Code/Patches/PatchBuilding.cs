@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using AncientWarfare.Attributes;
+using AncientWarfare.Core;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
+using HarmonyLib;
 using UnityEngine;
 
 namespace AncientWarfare.Patches;
@@ -66,5 +69,15 @@ internal static class PatchBuilding
             pThis.last_main_sprite = sprite;
             pThis._last_color_asset = current_color_asset;
         }
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Building), nameof(Building.removeBuildingFinal))]
+    private static void Postfix_removeBuildingFinal(Building __instance)
+    {
+        BuildingAdditionData data = __instance.GetAdditionData();
+        if (data == null) return;
+        var forces = new HashSet<string>(data.Forces);
+        foreach (var force_id in forces) ForceManager.MakeLeaveForce(__instance, force_id);
     }
 }

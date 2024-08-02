@@ -8,4 +8,9 @@ internal class BuildingAdditionDataManager : AdditionDataManager<BuildingAdditio
     {
         return _data.TryGetValue(id, out BuildingAdditionData data) ? data : _data[id] = new BuildingAdditionData();
     }
+
+    public static BuildingAdditionData TryGet(string id)
+    {
+        return _data.TryGetValue(id, out BuildingAdditionData data) ? data : null;
+    }
 }

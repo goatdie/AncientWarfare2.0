@@ -1,17 +1,16 @@
 ﻿using AncientWarfare.Abstracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AncientWarfare.Core
+namespace AncientWarfare.Core;
+
+internal class ActorAdditionDataManager : AdditionDataManager<ActorAdditionData>
 {
-    internal class ActorAdditionDataManager : AdditionDataManager<ActorAdditionData>
+    public static ActorAdditionData Get(string id)
     {
-        public static ActorAdditionData Get(string id)
-        {
-            return _data.TryGetValue(id, out var data) ? data : _data[id] = new ActorAdditionData();
-        }
+        return _data.TryGetValue(id, out var data) ? data : _data[id] = new ActorAdditionData();
+    }
+
+    public static ActorAdditionData TryGet(string id)
+    {
+        return _data.TryGetValue(id, out ActorAdditionData data) ? data : null;
     }
 }

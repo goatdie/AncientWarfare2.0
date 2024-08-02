@@ -13,12 +13,13 @@ public class BehTribeFindStorageToUpgrade : BehTribe
         {
             if (!building.asset.storage) continue;
             if (!building.asset.canBeUpgraded) continue;
-            if (!tribe.Data.storage.HasResourceForUpgrading(building.asset)) continue;
+            if (!tribe.Data.storage.HasResourceForConstruct(AssetManager.buildings.get(building.asset.upgradeTo).cost))
+                continue;
 
             if (!building.CanUpgradeForSurrounding()) continue;
 
             pObject.beh_building_target = building;
-            return BehResult.Stop;
+            return BehResult.Skip;
         }
 
         return BehResult.Continue;

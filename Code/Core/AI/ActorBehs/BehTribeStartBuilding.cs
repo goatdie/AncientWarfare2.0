@@ -3,6 +3,7 @@ using System.Linq;
 using ai.behaviours;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Core.AI.ActorBehs;
 
@@ -16,6 +17,7 @@ public class BehTribeStartBuilding : BehTribe
         this.building_key = building_key;
     }
 
+    [Hotfixable]
     public override BehResult execute(Actor pObject)
     {
         Tribe tribe = pObject.GetTribe();
@@ -35,12 +37,14 @@ public class BehTribeStartBuilding : BehTribe
 
         BuildingAsset building_asset = AssetManager.buildings.get(building_id);
         WorldTile tile = FindPlaceToStartBuilding(building_asset, pObject, tribe, race);
+        if (tile == null) return BehResult.RepeatStep;
 
         Building building = World.world.buildings.addBuilding(building_id, tile, false, true);
         building.setUnderConstruction();
+        ForceManager.MakeJoinToForce(building, tribe);
 
         pObject.beh_building_target = building;
-        return BehResult.Stop;
+        return BehResult.Continue;
     }
 
     private bool IsZoneHasBuilding(TileZone zone, string building_type)
@@ -51,11 +55,11 @@ public class BehTribeStartBuilding : BehTribe
         return true;
     }
 
+    [Hotfixable]
     private WorldTile FindPlaceToStartBuilding(BuildingAsset asset, Actor actor, Tribe tribe, Race race)
     {
         List<TileZone> possible_zones = new();
         _temp_zones.Clear();
-
         foreach (TileZone zone in tribe.zones)
         {
             if (asset.build_place_batch)
@@ -74,6 +78,8 @@ public class BehTribeStartBuilding : BehTribe
 
             possible_zones.Add(zone);
         }
+
+        if (asset.build_place_batch && possible_zones.Count == 0) possible_zones.AddRange(tribe.zones);
 
         _temp_zones.Clear();
 

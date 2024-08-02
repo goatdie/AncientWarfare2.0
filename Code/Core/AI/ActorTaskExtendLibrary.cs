@@ -123,15 +123,19 @@ namespace AncientWarfare.Core.AI
             add(new BehaviourTaskActor { id = nameof(start_build_or_upgrade_storage) });
             t.addBeh(new BehTribeFindStorageToUpgrade());
             t.addBeh(new BehTribeStartBuilding(SB.order_hall_0));
+            t.addBeh(new BehStoreBuildingTarget());
 
             add(new BehaviourTaskActor { id = nameof(construct_building) });
+            t.addBeh(new BehLoadBuildingTarget(false));
             t.addBeh(new BehFindConstructionTile());
             t.addBeh(new BehGoToTileTarget());
             t.addBeh(new BehLookAtTarget("building_target"));
             t.addBeh(new BehAngleAnimation("building_target", "event:/SFX/BUILDINGS/СonstructionBuildingGeneric"));
-            t.addBeh(new BehBuildTargetProgress());
+            t.addBeh(new BehBuildTargetProgressFixed());
             t.addBeh(new BehRandomWait(0.5f));
-            t.addBeh(new BehChuckTargetBuildProgress());
+            t.addBeh(new BehCheckTargetBuildProgressFixed());
+            t.addBeh(new BehLoadBuildingTarget());
+            t.addBeh(new BehTribeSubmitConstructBuildingQuest());
         }
     }
 }

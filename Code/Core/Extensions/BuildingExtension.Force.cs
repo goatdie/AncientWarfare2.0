@@ -18,4 +18,11 @@ public static partial class BuildingExtension
 
         data.Forces.Add(force.BaseData.id);
     }
+
+    public static void LeaveForceOnesice(this Building building, LowBaseForce force)
+    {
+        BuildingAdditionData data = building.GetAdditionData();
+
+        data.Forces.Remove(force.BaseData.id);
+    }
 }

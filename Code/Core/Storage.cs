@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AncientWarfare.Core
@@ -84,10 +83,14 @@ namespace AncientWarfare.Core
             return false;
         }
 
-        public bool HasResourceForUpgrading(BuildingAsset building_asset)
+        public bool HasResourceForConstruct(ConstructionCost cost)
         {
             return true;
-            throw new NotImplementedException();
+            if (cost.gold          > 0 && cost.gold          > GetCount(SR.gold)) return false;
+            if (cost.stone         > 0 && cost.stone         > GetCount(SR.stone)) return false;
+            if (cost.wood          > 0 && cost.wood          > GetCount(SR.wood)) return false;
+            if (cost.common_metals > 0 && cost.common_metals > GetCount(SR.common_metals)) return false;
+            return true;
         }
 
         public ResourceAsset TakeFood(string prefer_food)

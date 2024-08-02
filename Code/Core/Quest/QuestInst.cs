@@ -19,10 +19,16 @@ public class QuestInst
         asset.type.InitDelegate?.Invoke(this, this.owner, setting ?? new Dictionary<string, object>());
     }
 
-    public bool CanTake { get; private set; } = true;
+    public bool Finished { get; private set; }
+    public bool CanTake  { get; private set; } = true;
 
     public bool Disposable => asset.disposable;
     public bool Active     { get; protected set; }
+
+    public void MarkFinished()
+    {
+        Finished = true;
+    }
 
     public void Take()
     {
@@ -32,6 +38,8 @@ public class QuestInst
     public void UpdateProgress()
     {
         Active = asset.type.UpdateDelegate?.Invoke(this, owner) ?? true;
+        if (!Active && Disposable) Finished = true;
+
         if (!Active) CanTake = true;
     }
 }
