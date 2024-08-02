@@ -1,19 +1,13 @@
-﻿using AncientWarfare.Abstracts;
-using AncientWarfare.Const;
-using NeoModLoader.services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
+using AncientWarfare.Abstracts;
+using AncientWarfare.Const;
 using UnityEngine;
 
 namespace AncientWarfare.Core.MapModes
 {
     internal class Manager : IManager
     {
-        private static bool is_running;
         public static CustomMapLayer map_layer { get; private set; }
 
         public static CustomMapMode map_mode
@@ -25,33 +19,7 @@ namespace AncientWarfare.Core.MapModes
                 return CustomMapMode.Hidden;
             }
         }
-        internal void StartUpdate()
-        {
-            new Thread(() =>
-            {
-                try
-                {
-                    is_running = true;
-                    while (true)
-                    {
-                        map_layer.PreparePixels();
-                        Thread.Sleep((int)(500 / Math.Max(Config.timeScale, 1)));
-                    }
-                }
-                catch (Exception e)
-                {
-                    is_running = false;
-                    LogService.LogErrorConcurrent($"Error when updating map mode: {map_mode}. It is now disabled.");
-                    LogService.LogErrorConcurrent(e.Message);
-                    LogService.LogErrorConcurrent(e.StackTrace);
-                }
-            }).Start();
-        }
 
-        public static void SetAllDirty()
-        {
-            map_layer.SetAllDirty();
-        }
         public void Initialize()
         {
             GameObject custom_map_layer_obj =
@@ -64,6 +32,32 @@ namespace AncientWarfare.Core.MapModes
             World.world.mapLayers.Add(map_layer);
 
             StartUpdate();
+        }
+
+        internal void StartUpdate()
+        {
+            new Thread(() =>
+            {
+                while (true)
+                    try
+                    {
+                        Thread.Sleep((int)(500 / Math.Max(Config.timeScale, 1)));
+                        map_layer.PreparePixels();
+                    }
+                    catch (Exception e)
+                    {
+                        //is_running = false;
+                        Main.LogDebug("游戏时间倍率过高", pLogOnlyOnce: true, pConcurrent: true,
+                                      pLevel: DebugMsgLevel.Warning);
+                        Main.LogDebug(e.Message, pLogOnlyOnce: true, pConcurrent: true, pLevel: DebugMsgLevel.Warning);
+                        //LogService.LogErrorConcurrent(e.StackTrace);
+                    }
+            }).Start();
+        }
+
+        public static void SetAllDirty()
+        {
+            map_layer.SetAllDirty();
         }
     }
 }

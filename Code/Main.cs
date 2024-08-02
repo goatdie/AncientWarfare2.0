@@ -151,23 +151,32 @@ namespace AncientWarfare
         }
 
         public static void LogDebug(string        pMessage, bool pShowStackTrace = false, bool pLogOnlyOnce = false,
-                                    DebugMsgLevel pLevel = DebugMsgLevel.Info)
+                                    DebugMsgLevel pLevel = DebugMsgLevel.Info, bool pConcurrent = false)
         {
             if (!DebugConst.IS_DEVELOPER) return;
             if (pLogOnlyOnce)
                 if (!_logged_infos.Add(pMessage))
                     return;
             var info_to_log = $"[AW2.0]: {pMessage}";
-            switch (pLevel)
+            switch (pLevel, pConcurrent)
             {
-                case DebugMsgLevel.Info:
+                case (DebugMsgLevel.Info, false):
                     LogService.LogInfo(info_to_log);
                     break;
-                case DebugMsgLevel.Warning:
+                case (DebugMsgLevel.Info, true):
+                    LogService.LogInfoConcurrent(info_to_log);
+                    break;
+                case (DebugMsgLevel.Warning, false):
                     LogService.LogWarning(info_to_log);
                     break;
-                case DebugMsgLevel.Error:
+                case (DebugMsgLevel.Warning, true):
+                    LogService.LogWarningConcurrent(info_to_log);
+                    break;
+                case (DebugMsgLevel.Error, false):
                     LogService.LogError(info_to_log);
+                    break;
+                case (DebugMsgLevel.Error, true):
+                    LogService.LogErrorConcurrent(info_to_log);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(pLevel), pLevel, null);
