@@ -3,6 +3,7 @@ using AncientWarfare.Abstracts;
 using AncientWarfare.Core;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Utils
 {
@@ -57,6 +58,7 @@ namespace AncientWarfare.Utils
                     zones.Add(zone);
         }
 
+        [Hotfixable]
         private void SimulateWave()
         {
             var waves_checking = _wave;
@@ -88,8 +90,11 @@ namespace AncientWarfare.Utils
                     foreach (MapRegion path_region in list_pool)
                     {
                         var new_c = new ZoneConnection(neighbour, path_region);
-                        neighbour.GetAdditionData().good_for_new_tribe = false;
-                        queueConnection(new_c, waves_to_check, true);
+                        if (_zones_checked.Add(new_c))
+                        {
+                            neighbour.GetAdditionData().good_for_new_tribe = false;
+                            queueConnection(new_c, waves_to_check, true);
+                        }
                     }
                 }
             }
@@ -111,13 +116,15 @@ namespace AncientWarfare.Utils
             }
         }
 
+        [Hotfixable]
         private void InitBasicZones()
         {
             base.clearAll();
             zones.Clear();
             foreach (TileZone zone in World.world.zoneCalculator.zones)
                 zone.GetAdditionData().good_for_new_tribe =
-                    zone.CanStartTribeHere() && zone.centerTile.region.island.getTileCount() >= 300;
+                    zone.CanStartTribeHere() || zone.centerTile.region.island.getTileCount() >= 300;
+            //Main.LogDebug($"Initialize zones with {World.world.zoneCalculator.zones.Count(x=>x.GetAdditionData().good_for_new_tribe)} good for new tribe");
         }
 
         public void SetDirty()
