@@ -89,4 +89,19 @@ internal static class PatchBuilding
         var forces = new HashSet<string>(data.Forces);
         foreach (var force_id in forces) ForceManager.MakeLeaveForce(__instance, force_id);
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Building), nameof(Building.setUnderConstruction))]
+    private static void Postfix_setUnderConstruction(Building __instance)
+    {
+        if (__instance.asset.sprites.construction == null) return;
+        __instance.GetTribe()?.SetBuildingUpdated();
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Building), nameof(Building.completeConstruction))]
+    private static void Postfix_completeConstruction(Building __instance)
+    {
+        __instance.GetTribe()?.SetBuildingUpdated();
+    }
 }

@@ -171,6 +171,11 @@ namespace AncientWarfare.Core.Force
             ClearDirty();
         }
 
+        public void SetBuildingUpdated()
+        {
+            _buildings_updated = true;
+        }
+
         private void ClearDirty()
         {
             _buildings_updated = false;
