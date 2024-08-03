@@ -10,6 +10,7 @@ namespace AncientWarfare.Core.AI
         public static readonly ActorJob random_move;
         public static readonly ActorJob gatherer_bushes;
         public static readonly ActorJob woodcutter;
+        public static readonly ActorJob hunter;
         public static readonly ActorJob produce_children;
         public static readonly ActorJob expand_tribe;
         public static readonly ActorJob build_or_upgrade_storage;
@@ -45,10 +46,20 @@ namespace AncientWarfare.Core.AI
         private void modify_resource_collect_jobs()
         {
             t = gatherer_bushes;
-            t.InsertTask(-2, nameof(ActorTaskExtendLibrary.submit_resource));
+            t.InsertTask(-2, nameof(ActorTaskExtendLibrary.submit_resource),
+                         new CondActorNeedSubmitResource { expected_result = true });
 
             t = woodcutter;
-            t.InsertTask(-2, nameof(ActorTaskExtendLibrary.submit_resource));
+            t.InsertTask(-2, nameof(ActorTaskExtendLibrary.submit_resource),
+                         new CondActorNeedSubmitResource { expected_result = true });
+
+            t = hunter;
+            t.tasks.Clear();
+            t.addTask(nameof(ActorTaskExtendLibrary.random_move));
+            t.addTask(nameof(ActorTaskExtendLibrary.look_for_animals));
+            t.addTask(nameof(ActorTaskExtendLibrary.submit_resource));
+            t.addCondition(new CondActorNeedSubmitResource());
+            t.addTask(nameof(ActorTaskExtendLibrary.hunter_check_end_job));
         }
 
         private void modify_unit_job()

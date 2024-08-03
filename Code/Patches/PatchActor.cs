@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using AncientWarfare.Core;
 using AncientWarfare.Core.AI;
+using AncientWarfare.Core.Content;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Core.Quest;
@@ -49,7 +50,7 @@ namespace AncientWarfare.Patches
                     if (!quest.CanTake) continue;
                     quest.Take();
                     __result = quest.asset.allow_jobs.GetRandom();
-                    Main.LogDebug($"{actor.data.id} takes quest {quest.asset.id} with job {__result}");
+                    // Main.LogDebug($"{actor.data.id} takes quest {quest.asset.id} with job {__result}");
                     return false;
                 }
             }
@@ -116,6 +117,24 @@ namespace AncientWarfare.Patches
             food = tribe.Data.storage.TakeFood(actor.data.favoriteFood);
             if (food == null) return;
             actor.ConsumeFood(food);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Actor), nameof(Actor.newKillAction))]
+        private static void Postfix_newKillAction(Actor __instance, Actor pDeadUnit)
+        {
+            Tribe tribe = __instance.GetTribe();
+            if (tribe == null) return;
+
+            if (!pDeadUnit.asset.animal) return;
+
+            var base_drop = Toolbox.randomInt(1, (int)pDeadUnit.asset.actorSize);
+            if (__instance.hasTrait(ActorTraitExtendLibrary.savage.id)) base_drop *= 2;
+
+            __instance.addToInventory(SR.meat,    base_drop);
+            __instance.addToInventory(SR.bones,   Toolbox.randomInt(1, base_drop + 1));
+            __instance.addToInventory(SR.leather, Toolbox.randomInt(0, base_drop));
+            Main.LogDebug($"Hunter {__instance.data.id} get resources with base drop count {base_drop}");
         }
     }
 }

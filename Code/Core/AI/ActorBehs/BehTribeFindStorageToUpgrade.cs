@@ -24,8 +24,6 @@ public class BehTribeFindStorageToUpgrade : BehTribe
                 continue;
             }
 
-            if (!building.CanUpgradeForSurrounding()) continue;
-
             building.upgradeBuilding();
             building.setUnderConstruction();
             pObject.beh_building_target = building;
@@ -35,7 +33,7 @@ public class BehTribeFindStorageToUpgrade : BehTribe
         if (buildings_has_not_resource_to_upgrade.Count > 0)
         {
             Building nearest_b =
-                pObject.GetNearestBuildingIn(buildings_has_not_resource_to_upgrade, b => b.CanUpgradeForSurrounding());
+                pObject.GetNearestBuildingIn(buildings_has_not_resource_to_upgrade);
             tribe.NewResourceQuestsFromCost(nearest_b.asset.cost);
         }
 

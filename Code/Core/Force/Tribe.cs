@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Quest;
@@ -19,6 +20,7 @@ namespace AncientWarfare.Core.Force
         private         bool              _buildings_updated = true;
         private Race _cache_race;
         private         ColorAsset        _color;
+        private QuestInst _food_base_quest;
         private         bool              _zones_updated = true;
 
         public Tribe(TribeData data) : base(data)
@@ -58,13 +60,13 @@ namespace AncientWarfare.Core.Force
         public void RemoveBuildingOneside(Building building)
         {
             buildings.Remove(building);
-            _buildings_updated = true;
+            SetBuildingUpdated();
         }
 
         public void AddBuildingOneside(Building building)
         {
             buildings.Add(building);
-            _buildings_updated = true;
+            SetBuildingUpdated();
         }
 
         [Hotfixable]
@@ -83,11 +85,12 @@ namespace AncientWarfare.Core.Force
 
         private void InitializeQuests()
         {
+            _food_base_quest = new QuestInst(QuestLibrary.food_base_collect, this, new Dictionary<string, object>
+            {
+                { TypedResourceCollectSettingKeys.resource_count_int, 10 }
+            });
             EnqueueQuests(
-                new QuestInst(QuestLibrary.food_base_collect, this, new Dictionary<string, object>
-                {
-                    { TypedResourceCollectSettingKeys.resource_count_int, 10 }
-                })
+                _food_base_quest
             );
         }
 
@@ -154,6 +157,9 @@ namespace AncientWarfare.Core.Force
 
         private void FreshQuests(float elapsed)
         {
+            _food_base_quest.Data.set(TypedResourceCollectSettingKeys.resource_count_int,
+                                      Math.Max(10, Data.members.Count));
+
             foreach (QuestInst quest in quests) quest.UpdateProgress(elapsed);
 
             quests.RemoveAll(quest => quest.Finished);

@@ -27,8 +27,8 @@ public static class BuildingAssetExtension
         var any_unsuitable_for_dock = false;
         temp_for_CanBuildOn.Clear();
         var tiles = temp_for_CanBuildOn;
-        for (var x = x_min; x < x_max; x++)
-        for (var y = y_min; y < y_max; y++)
+        for (var x = x_min; x <= x_max; x++)
+        for (var y = y_min; y <= y_max; y++)
         {
             WorldTile check_tile = World.world.GetTile(x, y);
             if (check_tile == null) return false;

@@ -19,6 +19,34 @@ internal static class PatchBuilding
         return true;
     }
 
+    [MethodReplace(typeof(Building), nameof(Building.checkTilesForUpgrade))]
+    private static bool Replace_checkTilesForUpgrade(Building      building, WorldTile center_tile,
+                                                     BuildingAsset upgraded_asset)
+    {
+        var x_min = center_tile.pos.x - upgraded_asset.fundament.left;
+        var x_max = center_tile.pos.x + upgraded_asset.fundament.right;
+        var y_min = center_tile.pos.y - upgraded_asset.fundament.bottom;
+        var y_max = center_tile.pos.y + upgraded_asset.fundament.top;
+
+        Tribe tribe = building.GetTribe();
+        for (var x = x_min; x <= x_max; x++)
+        for (var y = y_min; y <= y_max; y++)
+        {
+            WorldTile check_tile = World.world.GetTile(x, y);
+            if (check_tile                 == null) return false;
+            if (check_tile.zone.GetTribe() != tribe) return false;
+
+            Building check_building = check_tile.building;
+            if (check_building != null && check_building != building)
+            {
+                if (check_building.asset.priority     >= building.asset.priority) return false;
+                if (check_building.asset.upgradeLevel >= building.asset.upgradeLevel) return false;
+            }
+        }
+
+        return true;
+    }
+
     [MethodReplace(typeof(Building), nameof(Building.checkSpriteToRender))]
     private static void Replace_checkSpriteToRender(Building pThis)
     {

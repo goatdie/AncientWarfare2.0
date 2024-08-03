@@ -27,7 +27,7 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         t.type = QuestTypeLibrary.typed_resource_collect;
         t.given_setting = new Dictionary<string, object>
             { { TypedResourceCollectSettingKeys.resource_type_int, ResType.Food } };
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.gatherer_bushes));
+        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.gatherer_bushes), nameof(ActorJobExtendLibrary.hunter));
 
         add(new QuestAsset { id = nameof(chop_wood) });
         t.type = QuestTypeLibrary.resource_collect;

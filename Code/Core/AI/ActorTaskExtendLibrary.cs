@@ -32,6 +32,16 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor collect_fruits;
 
         /// <summary>
+        ///     寻找动物并狩猎
+        /// </summary>
+        public static readonly BehaviourTaskActor look_for_animals;
+
+        /// <summary>
+        ///     猎人检查任务是否结束(血量不足/饥饿/达到狩猎次数)
+        /// </summary>
+        public static readonly BehaviourTaskActor hunter_check_end_job;
+
+        /// <summary>
         ///     砍树
         /// </summary>
         public static readonly BehaviourTaskActor chop_trees;
@@ -86,8 +96,15 @@ namespace AncientWarfare.Core.AI
             init_fields();
 
             init_jobs_for_unit();
+            modify_look_for_animals();
             modify_collect_fruits();
             modify_chop_trees();
+        }
+
+        private void modify_look_for_animals()
+        {
+            t = look_for_animals;
+            t.list[0] = new BehFindTargetForHunterFixed();
         }
 
         private void modify_chop_trees()
@@ -197,6 +214,11 @@ namespace AncientWarfare.Core.AI
 
             add(new BehaviourTaskActor { id = nameof(giveup_build_storage_quest) });
             t.addBeh(new BehTribeGiveupBuildStorageQuest());
+
+            add(new BehaviourTaskActor { id = nameof(hunter_check_end_job) });
+            t.addBeh(new BehCheckHuntCount());
+            t.addBeh(new BehCheckHealth(reverse: true));
+            t.addBeh(new BehEndJob());
         }
     }
 }

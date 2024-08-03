@@ -4,11 +4,13 @@ using ai.behaviours;
 using AncientWarfare.Const;
 using AncientWarfare.Core.Content;
 using AncientWarfare.Core.Extensions;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Core.AI.ActorBehs;
 
 public class BehMakePregnant : BehaviourActionActor
 {
+    [Hotfixable]
     public override BehResult execute(Actor pObject)
     {
         Actor couple = pObject.beh_actor_target?.a;

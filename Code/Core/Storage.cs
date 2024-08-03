@@ -94,25 +94,38 @@ namespace AncientWarfare.Core
 
         public ResourceAsset TakeFood(string prefer_food)
         {
-            CleanEmptySlots(ResType.Food);
-            if (typed_resource_slots.TryGetValue(ResType.Food, out var slots))
-            {
-                if (slots.Count == 0) return null;
-                _curr_amount_dirty = true;
+            var first_check_type = ResType.Food;
+            if (!string.IsNullOrEmpty(prefer_food)) first_check_type = AssetManager.resources.get(prefer_food).type;
 
-                if (string.IsNullOrEmpty(prefer_food) || !
-                        resource_slots.TryGetValue(prefer_food, out ResourceContainer food_to_take))
+            ResourceAsset food = take_one_type(first_check_type);
+            if (food != null) return food;
+            if (first_check_type != ResType.Food)
+                food = take_one_type(ResType.Food);
+            else
+                food = take_one_type(ResType.IngredientFood);
+
+            return food;
+
+            ResourceAsset take_one_type(ResType res_type)
+            {
+                CleanEmptySlots(res_type);
+                if (typed_resource_slots.TryGetValue(res_type, out var slots))
                 {
-                    food_to_take = slots.GetRandom();
+                    if (slots.Count == 0) return null;
+                    _curr_amount_dirty = true;
+
+                    if (string.IsNullOrEmpty(prefer_food) || !
+                            resource_slots.TryGetValue(prefer_food, out ResourceContainer food_to_take))
+                        food_to_take = slots.GetRandom();
+
+                    food_to_take.amount--;
+
+
+                    return AssetManager.resources.get(food_to_take.id);
                 }
 
-                food_to_take.amount--;
-
-
-                return AssetManager.resources.get(food_to_take.id);
+                return null;
             }
-
-            return null;
         }
 
         public void CleanEmptySlots(ResType type)
