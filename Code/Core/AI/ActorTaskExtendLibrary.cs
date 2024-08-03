@@ -32,6 +32,11 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor collect_fruits;
 
         /// <summary>
+        ///     砍树
+        /// </summary>
+        public static readonly BehaviourTaskActor chop_trees;
+
+        /// <summary>
         ///     寻找配偶并生育
         /// </summary>
         public static readonly BehaviourTaskActor find_couple_and_make_pregnant;
@@ -44,14 +49,34 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor check_if_stuck_on_small_land;
 
         /// <summary>
-        ///     开始建造或升级仓库
+        ///     寻找可以升级的仓库
         /// </summary>
-        public static readonly BehaviourTaskActor start_build_or_upgrade_storage;
+        public static readonly BehaviourTaskActor find_storage_to_upgrade;
+
+        /// <summary>
+        ///     开始建造新的仓库
+        /// </summary>
+        public static readonly BehaviourTaskActor start_build_new_storage;
 
         /// <summary>
         ///     完成建筑任务
         /// </summary>
         public static readonly BehaviourTaskActor construct_building;
+
+        /// <summary>
+        ///     提交建筑任务
+        /// </summary>
+        public static readonly BehaviourTaskActor submit_building;
+
+        /// <summary>
+        ///     提交资源
+        /// </summary>
+        public static readonly BehaviourTaskActor submit_resource;
+
+        /// <summary>
+        ///     放弃建造/升级仓库的任务
+        /// </summary>
+        public static readonly BehaviourTaskActor giveup_build_storage_quest;
 
         public static readonly BehaviourTaskActor random_move;
         public static readonly BehaviourTaskActor end_job;
@@ -62,6 +87,27 @@ namespace AncientWarfare.Core.AI
 
             init_jobs_for_unit();
             modify_collect_fruits();
+            modify_chop_trees();
+        }
+
+        private void modify_chop_trees()
+        {
+            t = chop_trees;
+            t.list.Clear();
+
+            t.addBeh(new BehTribeFindBuilding(SB.type_tree));
+            t.addBeh(new BehFindRandomFrontBuildingTile());
+            t.addBeh(new BehGoToTileTarget());
+            t.addBeh(new BehLookAtTarget("building_target"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehResourceGatheringAnimation(0f, "event:/SFX/CIVILIZATIONS/ChopTree"));
+            t.addBeh(new BehExtractResourcesFromBuilding());
         }
 
         private void modify_collect_fruits()
@@ -82,11 +128,11 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
             t.addBeh(new BehResourceGatheringAnimation(0f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
             t.addBeh(new BehExtractResourcesFromBuilding());
-            t.addBeh(new BehRandomWait(2f, 3f));
-            // TODO: 等写出实体仓库后移动到仓库提交
+            t.addBeh(new BehTribeFindStorage());
+            t.addBeh(new BehFindRandomFrontBuildingTile());
+            t.addBeh(new BehGoToTileTarget());
             t.addBeh(new BehTribeSubmitResources());
-            // TODO: 等写出更具体的需求后改为判断是否重复该任务
-            t.addBeh(new BehRestartTask());
+            t.addBeh(new BehRandomWait(1, 2));
         }
 
         private void init_jobs_for_unit()
@@ -120,8 +166,11 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehRandomWait(1, 5));
             t.addBeh(new BehTribeExpandZone());
 
-            add(new BehaviourTaskActor { id = nameof(start_build_or_upgrade_storage) });
+            add(new BehaviourTaskActor { id = nameof(find_storage_to_upgrade) });
             t.addBeh(new BehTribeFindStorageToUpgrade());
+            t.addBeh(new BehStoreBuildingTarget());
+
+            add(new BehaviourTaskActor { id = nameof(start_build_new_storage) });
             t.addBeh(new BehTribeStartBuilding(SB.order_hall_0));
             t.addBeh(new BehStoreBuildingTarget());
 
@@ -134,8 +183,20 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehBuildTargetProgressFixed());
             t.addBeh(new BehRandomWait(0.5f));
             t.addBeh(new BehCheckTargetBuildProgressFixed());
+
+            add(new BehaviourTaskActor { id = nameof(submit_building) });
             t.addBeh(new BehLoadBuildingTarget());
             t.addBeh(new BehTribeSubmitConstructBuildingQuest());
+
+            add(new BehaviourTaskActor { id = nameof(submit_resource) });
+            t.addBeh(new BehTribeFindStorage());
+            t.addBeh(new BehFindRandomFrontBuildingTile());
+            t.addBeh(new BehGoToTileTarget());
+            t.addBeh(new BehTribeSubmitResources());
+            t.addBeh(new BehRandomWait(1, 2));
+
+            add(new BehaviourTaskActor { id = nameof(giveup_build_storage_quest) });
+            t.addBeh(new BehTribeGiveupBuildStorageQuest());
         }
     }
 }

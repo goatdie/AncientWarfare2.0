@@ -85,7 +85,6 @@ namespace AncientWarfare.Core
 
         public bool HasResourceForConstruct(ConstructionCost cost)
         {
-            return true;
             if (cost.gold          > 0 && cost.gold          > GetCount(SR.gold)) return false;
             if (cost.stone         > 0 && cost.stone         > GetCount(SR.stone)) return false;
             if (cost.wood          > 0 && cost.wood          > GetCount(SR.wood)) return false;

@@ -1,17 +1,14 @@
-﻿using AncientWarfare.Const;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using AncientWarfare.Const;
 using AncientWarfare.Core;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
+using AncientWarfare.Core.MapModes;
 using AncientWarfare.UI.Windows;
 using AncientWarfare.Utils;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using CustomMapMode = AncientWarfare.Core.MapModes.CustomMapMode;
 
 namespace AncientWarfare.Patches
@@ -23,19 +20,24 @@ namespace AncientWarfare.Patches
         {
             TileZoneAdditionDataManager.Reset();
         }
+
         [HarmonyPostfix, HarmonyPatch(typeof(MapBox), nameof(MapBox.updateCities))]
-        private static void Postfix_updateCities()
+        private static void Postfix_updateCities(float pElapsed)
         {
             Toolbox.bench("forces", "game_total");
-            ForceManager.I.Update();
+            ForceManager.I.Update(pElapsed);
             Toolbox.benchEnd("forces", "game_total", false, 0);
         }
+
         [HarmonyTranspiler, HarmonyPatch(typeof(MapBox), nameof(MapBox.checkClickTouchInspect))]
-        private static IEnumerable<CodeInstruction> Transpiler_checkClickTouchInspect(IEnumerable<CodeInstruction> insts)
+        private static IEnumerable<CodeInstruction> Transpiler_checkClickTouchInspect(
+            IEnumerable<CodeInstruction> insts)
         {
             var codes = new List<CodeInstruction>(insts);
 
-            var insert_idx = HarmonyTools.FindInstructionIdx<MethodInfo>(codes, OpCodes.Call, x => x.Name == nameof(MapBox.isRenderMiniMap));
+            var insert_idx =
+                HarmonyTools.FindInstructionIdx<MethodInfo>(codes, OpCodes.Call,
+                                                            x => x.Name == nameof(MapBox.isRenderMiniMap));
             var continue_judge = new Label();
             var break_judge = (Label)codes[insert_idx - 1].operand;
 
@@ -44,16 +46,19 @@ namespace AncientWarfare.Patches
             codes.InsertRange(insert_idx, new List<CodeInstruction>
             {
                 new CodeInstruction(OpCodes.Ldloc_0),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(PatchMapBox), nameof(PatchMapBox.CheckClickTouchInspectBreak))),
+                new(OpCodes.Call,
+                    AccessTools.Method(typeof(PatchMapBox),
+                                       nameof(CheckClickTouchInspectBreak))),
                 new CodeInstruction(OpCodes.Brfalse_S, continue_judge),
-                new CodeInstruction(OpCodes.Br_S, break_judge)
+                new(OpCodes.Br_S, break_judge)
             });
 
             return codes;
         }
+
         private static bool CheckClickTouchInspectBreak(WorldTile tile)
         {
-            var map_mode = Core.MapModes.Manager.map_mode;
+            var map_mode = Manager.map_mode;
             switch (map_mode)
             {
                 case CustomMapMode.Hidden:
@@ -65,8 +70,10 @@ namespace AncientWarfare.Patches
                         AdditionConfig.selectedTribe = tribe;
                         ScrollWindow.showWindow(nameof(TribeInfoWindow));
                     }
+
                     break;
             }
+
             return true;
         }
     }

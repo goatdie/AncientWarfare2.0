@@ -1,4 +1,6 @@
 ﻿using AncientWarfare.Abstracts;
+using AncientWarfare.Core.AI.ActorConds;
+using AncientWarfare.Core.Extensions;
 
 namespace AncientWarfare.Core.AI
 {
@@ -7,6 +9,7 @@ namespace AncientWarfare.Core.AI
         public static readonly ActorJob unit;
         public static readonly ActorJob random_move;
         public static readonly ActorJob gatherer_bushes;
+        public static readonly ActorJob woodcutter;
         public static readonly ActorJob produce_children;
         public static readonly ActorJob expand_tribe;
         public static readonly ActorJob build_or_upgrade_storage;
@@ -16,6 +19,7 @@ namespace AncientWarfare.Core.AI
             init_fields();
 
             modify_unit_job();
+            modify_resource_collect_jobs();
 
             add(new ActorJob { id = nameof(produce_children) });
             t.addTask(nameof(ActorTaskExtendLibrary.find_couple_and_make_pregnant));
@@ -26,9 +30,25 @@ namespace AncientWarfare.Core.AI
             t.addTask(nameof(ActorTaskExtendLibrary.end_job));
 
             add(new ActorJob { id = nameof(build_or_upgrade_storage) });
-            t.addTask(nameof(ActorTaskExtendLibrary.start_build_or_upgrade_storage));
+            t.addTask(nameof(ActorTaskExtendLibrary.find_storage_to_upgrade));
+            t.addTask(nameof(ActorTaskExtendLibrary.start_build_new_storage));
+            t.addCondition(new CondActorHasBuildingTarget(), false);
             t.addTask(nameof(ActorTaskExtendLibrary.construct_building));
+            t.addCondition(new CondActorHasBuildingTarget());
+            t.addTask(nameof(ActorTaskExtendLibrary.submit_building));
+            t.addCondition(new CondActorHasBuildingTarget());
+            t.addTask(nameof(ActorTaskExtendLibrary.giveup_build_storage_quest));
+            t.addCondition(new CondActorHasBuildingTarget(), false);
             t.addTask(nameof(ActorTaskExtendLibrary.end_job));
+        }
+
+        private void modify_resource_collect_jobs()
+        {
+            t = gatherer_bushes;
+            t.InsertTask(-2, nameof(ActorTaskExtendLibrary.submit_resource));
+
+            t = woodcutter;
+            t.InsertTask(-2, nameof(ActorTaskExtendLibrary.submit_resource));
         }
 
         private void modify_unit_job()

@@ -9,11 +9,13 @@ using AncientWarfare.Core.Quest;
 using AncientWarfare.Utils;
 using AncientWarfare.Utils.InstPredictors;
 using HarmonyLib;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Patches
 {
     internal static class PatchActor
     {
+        [Hotfixable]
         [HarmonyPrefix, HarmonyPatch(typeof(ActorBase), nameof(ActorBase.getNextJob))]
         private static bool Patch_getNextJob(ActorBase __instance, ref string __result)
         {
@@ -31,21 +33,29 @@ namespace AncientWarfare.Patches
             Tribe tribe = actor.GetTribe();
             if (tribe == null)
             {
+                Main.LogDebug($"{actor.data.id}'s tribe==null(actor has forces: {data.Forces.Join()})",
+                              pLevel: DebugMsgLevel.Warning, pShowStackTrace: true, pLogOnlyOnce: true);
                 __result = nameof(ActorJobExtendLibrary.random_move);
                 return false;
             }
 
-            tribe.quests.ShuffleOne();
-            foreach (QuestInst quest in tribe.quests)
+            var work_chance = 0.8f;
+            if (Toolbox.randomChance(work_chance))
             {
-                if (!quest.Active) continue;
-                if (!quest.CanTake) continue;
-                quest.Take();
-                __result = quest.asset.allow_jobs.GetRandom();
-                return false;
+                tribe.quests.ShuffleOne();
+                foreach (QuestInst quest in tribe.quests)
+                {
+                    if (!quest.Active) continue;
+                    if (!quest.CanTake) continue;
+                    quest.Take();
+                    __result = quest.asset.allow_jobs.GetRandom();
+                    Main.LogDebug($"{actor.data.id} takes quest {quest.asset.id} with job {__result}");
+                    return false;
+                }
             }
 
-            __result = Toolbox.randomBool()
+            var produce_chance = 0.6f;
+            __result = Toolbox.randomChance(produce_chance)
                 ? nameof(ActorJobExtendLibrary.produce_children)
                 : nameof(ActorJobExtendLibrary.random_move);
 

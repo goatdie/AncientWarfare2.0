@@ -17,9 +17,9 @@ namespace AncientWarfare.Core.Force
 
         public static ForceManager I { get; } = new();
 
-        internal void Update()
+        internal void Update(float elapsed)
         {
-            Parallel.ForEach(total_container.Values, force => force.Update());
+            Parallel.ForEach(total_container.Values, force => force.Update(elapsed));
         }
 
         public static T GetForce<T>(string id) where T : LowBaseForce

@@ -10,6 +10,15 @@ namespace AncientWarfare.Patches;
 
 internal static class PatchBuilding
 {
+    [MethodReplace(typeof(Building), nameof(Building.canBeUpgraded))]
+    private static bool Replace_canBeUpgraded(Building building)
+    {
+        if (building.isUnderConstruction()) return false;
+        if (!building.asset.canBeUpgraded) return false;
+        // TODO: 检查科技要求
+        return true;
+    }
+
     [MethodReplace(typeof(Building), nameof(Building.checkSpriteToRender))]
     private static void Replace_checkSpriteToRender(Building pThis)
     {

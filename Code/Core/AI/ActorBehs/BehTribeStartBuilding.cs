@@ -36,6 +36,13 @@ public class BehTribeStartBuilding : BehTribe
         }
 
         BuildingAsset building_asset = AssetManager.buildings.get(building_id);
+        if (!tribe.Data.storage.HasResourceForConstruct(building_asset.cost))
+        {
+            tribe.NewResourceQuestsFromCost(building_asset.cost);
+
+            return BehResult.Stop;
+        }
+
         WorldTile tile = FindPlaceToStartBuilding(building_asset, pObject, tribe, race);
         if (tile == null) return BehResult.RepeatStep;
 

@@ -19,6 +19,7 @@ public class BehLoadBuildingTarget : BehaviourActionActor
         pObject.data.get(key, out string beh_building_target_id);
         if (clean_after_loading) pObject.data.removeString(key);
         pObject.beh_building_target = World.world.buildings.get(beh_building_target_id);
+        if (pObject.beh_building_target == null) return BehResult.Stop;
         return BehResult.Continue;
     }
 }

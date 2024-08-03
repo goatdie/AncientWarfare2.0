@@ -1,3 +1,4 @@
+using AncientWarfare.Core.Extend;
 using AncientWarfare.Core.Force;
 
 namespace AncientWarfare.Core.Extensions;
@@ -25,6 +26,6 @@ public static partial class BuildingExtension
         Tribe tribe = building.GetTribe();
         WorldTile tile = building.currentTile;
 
-        return upgrade_asset.CanBuildOn(tile, tribe);
+        return upgrade_asset.CanBuildOn(tile, tribe, ExtendBuildPlacingType.Upgrade);
     }
 }

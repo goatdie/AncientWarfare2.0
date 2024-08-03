@@ -244,7 +244,10 @@ namespace AncientWarfare
                 if (x.type == SB.type_hall)
                 {
                     x.storage = true;
-                    x.GetAdditionAsset().storage_size = 10 * (int)Math.Pow(2, x.upgradeLevel);
+                    x.cost.gold = 0;
+                    x.cost.common_metals = 0;
+                    x.cost.stone = 0;
+                    x.GetAdditionAsset().storage_size = 20 * (int)Math.Pow(2, x.upgradeLevel);
                 }
             });
         }

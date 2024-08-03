@@ -86,7 +86,6 @@ namespace AncientWarfare.Core.Force
             EnqueueQuests(
                 new QuestInst(QuestLibrary.food_base_collect, this, new Dictionary<string, object>
                 {
-                    { TypedResourceCollectSettingKeys.resource_type_int, ResType.Food },
                     { TypedResourceCollectSettingKeys.resource_count_int, 10 }
                 })
             );
@@ -100,11 +99,11 @@ namespace AncientWarfare.Core.Force
                 return;
             }
 
-            QuestInst repeat_q = quests.FirstOrDefault(x => x.asset == quest.asset);
-            if (repeat_q != null)
-                repeat_q.asset.merge_action_when_repeat(repeat_q, quest);
-            else
-                quests.Add(quest);
+            foreach (QuestInst repeat_q in quests)
+                if (repeat_q.asset == quest.asset && repeat_q.asset.merge_action_when_repeat(repeat_q, quest))
+                    return;
+
+            quests.Add(quest);
         }
 
         public void EnqueueQuests(params QuestInst[] list)
@@ -153,23 +152,21 @@ namespace AncientWarfare.Core.Force
             return name_generator.GenerateName(param);
         }
 
-        private void FreshQuests()
+        private void FreshQuests(float elapsed)
         {
-            if (Data.storage.IsFull()) NewExpandStorageQuest();
-
-            foreach (QuestInst quest in quests) quest.UpdateProgress();
+            foreach (QuestInst quest in quests) quest.UpdateProgress(elapsed);
 
             quests.RemoveAll(quest => quest.Finished);
         }
 
-        public override void Update()
+        public override void Update(float elapsed)
         {
             buildings.checkAddRemove();
 
             CheckZones();
             CheckStorages();
 
-            FreshQuests();
+            FreshQuests(elapsed);
 
             ClearDirty();
         }
@@ -212,6 +209,37 @@ namespace AncientWarfare.Core.Force
             border_zones.AddRange(zones.Where(zone => zone.neighboursAll.Exists(x => x.GetTribe() != this)));
         }
 
+        public void NewResourceQuest(string resource_id, int target_count)
+        {
+            QuestAsset asset = null;
+            if (resource_id == SR.wood) asset = QuestLibrary.chop_wood;
+
+            if (asset == null)
+            {
+                Main.LogDebug($"Not found quest asset for {resource_id}");
+                return;
+            }
+
+            QuestInst quest = new(asset, this,
+                                  new Dictionary<string, object>
+                                  {
+                                      { ResourceCollectSettingKeys.resource_target_count_int, target_count }
+                                  });
+            EnqueueQuest(quest);
+        }
+
+        public void NewResourceQuestsFromCost(ConstructionCost cost)
+        {
+            if (cost.gold > Data.storage.GetCount(SR.gold)) NewResourceQuest(SR.gold, cost.gold);
+
+            if (cost.wood > Data.storage.GetCount(SR.wood)) NewResourceQuest(SR.wood, cost.wood);
+
+            if (cost.stone > Data.storage.GetCount(SR.stone)) NewResourceQuest(SR.stone, cost.stone);
+
+            if (cost.common_metals > Data.storage.GetCount(SR.common_metals))
+                NewResourceQuest(SR.common_metals, cost.common_metals);
+        }
+
         public void NewExpandStorageQuest()
         {
             var quest = new QuestInst(QuestLibrary.build_or_upgrade_storage_building, this,
@@ -223,13 +251,26 @@ namespace AncientWarfare.Core.Force
             EnqueueQuest(quest);
         }
 
+        public void RestartQuest(string quest_asset_id)
+        {
+            foreach (QuestInst q in quests)
+                if (q.asset.id == quest_asset_id)
+                {
+                    q.MarkRestart();
+                    return;
+                }
+        }
+
         public void SignalBuildingQuestFinished(Building building)
         {
             foreach (QuestInst quest in quests)
             {
-                if (quest.asset != QuestLibrary.build_or_upgrade_storage_building) continue;
-                quest.MarkFinished();
-                return;
+                if (quest.asset == QuestLibrary.build_or_upgrade_storage_building)
+                    if (building.asset.storage)
+                    {
+                        quest.MarkFinished();
+                        break;
+                    }
             }
         }
     }

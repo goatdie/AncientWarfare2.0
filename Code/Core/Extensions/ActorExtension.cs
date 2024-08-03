@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AncientWarfare.Const;
 using AncientWarfare.Core.Force;
@@ -86,7 +87,7 @@ namespace AncientWarfare.Core.Extensions
             if (tribe == null) return;
             if (tribe.Data.storage.IsFull())
             {
-                return;
+                tribe.NewExpandStorageQuest();
             }
 
             foreach (var it in actor.inventory.getResources())
@@ -236,6 +237,26 @@ namespace AncientWarfare.Core.Extensions
             {
                 actor.changeMood("angry");
             }
+        }
+
+        public static Building GetNearestBuildingIn(this Actor           actor, IEnumerable<Building> buildings,
+                                                    Func<Building, bool> check = null)
+        {
+            Building nearest_b = null;
+            var min_dist = float.MaxValue;
+            foreach (Building b in buildings)
+            {
+                if (!check?.Invoke(b) ?? false) continue;
+
+                var dist = Toolbox.DistVec2(b.currentTile.pos, actor.currentTile.pos);
+                if (dist < min_dist)
+                {
+                    min_dist = dist;
+                    nearest_b = b;
+                }
+            }
+
+            return nearest_b;
         }
     }
 }
