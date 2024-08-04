@@ -13,4 +13,9 @@ public static class ActorJobExtension
 
         job.tasks.Insert(idx, container);
     }
+
+    public static ActorJobAdditionAsset GetAdditionAsset(this ActorJob job)
+    {
+        return ActorJobAdditionAssetLibrary.Get(job.id);
+    }
 }

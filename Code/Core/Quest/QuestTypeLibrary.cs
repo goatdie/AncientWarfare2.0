@@ -12,8 +12,8 @@ public class QuestTypeLibrary : AW_AssetLibrary<QuestTypeAsset, QuestTypeLibrary
 
     public void Initialize()
     {
-        init();
         id = "aw_quest_types";
+        init();
     }
 
     public override void init()

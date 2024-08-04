@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using AncientWarfare.Core.Profession;
 
 namespace AncientWarfare.Core
 {
     public class ActorAdditionData
     {
-        public string family_name = "";
-        public string clan_name = "";
-        public HashSet<string> Forces = new();
+        public string                                clan_name   = "";
+        public string                                family_name = "";
+        public HashSet<string>                       Forces      = new();
+        public Dictionary<string, NewProfessionData> ProfessionDatas;
+        public HashSet<string>                       TechsOwned;
     }
 }

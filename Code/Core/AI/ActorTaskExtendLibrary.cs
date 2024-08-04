@@ -153,7 +153,7 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/ChopTree"));
             t.addBeh(new BehResourceGatheringAnimation(0f, "event:/SFX/CIVILIZATIONS/ChopTree"));
-            t.addBeh(new BehExtractResourcesFromBuilding());
+            t.addBeh(new BehExtractResourcesFromBuildingExtended());
         }
 
         private void modify_collect_fruits()
@@ -174,7 +174,7 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
             t.addBeh(new BehResourceGatheringAnimation(0f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
-            t.addBeh(new BehExtractResourcesFromBuilding());
+            t.addBeh(new BehExtractResourcesFromBuildingExtended());
             t.addBeh(new BehTribeFindStorage());
             t.addBeh(new BehFindRandomFrontBuildingTile());
             t.addBeh(new BehGoToTileTarget());

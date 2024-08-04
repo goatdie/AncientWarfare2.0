@@ -2,12 +2,15 @@ using System.Reflection;
 using AncientWarfare.Abstracts;
 using AncientWarfare.Const;
 using AncientWarfare.Core.Extensions;
+using AncientWarfare.Core.Force;
+using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Core.Content;
 
 public class DebugToolExtendLibrary : ExtendedLibrary<DebugToolAsset>, IManager
 {
     public static readonly DebugToolAsset Building_Info;
+    public static readonly DebugToolAsset New_Unit_Info;
 
     public void Initialize()
     {
@@ -18,11 +21,56 @@ public class DebugToolExtendLibrary : ExtendedLibrary<DebugToolAsset>, IManager
         init_fields();
 
         modify_assets();
+
+        add(new DebugToolAsset { id = nameof(New_Unit_Info), action_1 = ShowUnitInfo });
     }
 
     private void modify_assets()
     {
         Building_Info.action_1 = ShowBuildingInfo;
+    }
+
+    [Hotfixable]
+    private static void ShowUnitInfo(DebugTool tool)
+    {
+        Actor actor = World.world.getActorNearCursor();
+        if (actor == null) return;
+        tool.setText("id:",       actor.data.id);
+        tool.setText("name:",     actor.getName());
+        tool.setText("asset id:", actor.asset.id);
+        ActorAdditionData data = actor.GetAdditionData(true);
+        if (data != null)
+        {
+            tool.setText("clan name:",   data.clan_name);
+            tool.setText("family name:", data.family_name);
+            tool.setSeparator();
+            if (data.Forces.Count > 0)
+            {
+                tool.setText("forces:", "below");
+                var idx = 0;
+                foreach (var f_id in data.Forces)
+                    tool.setText($"[{idx++}]", $"{ForceManager.GetForce<LowBaseForce>(f_id).GetName()}");
+
+                tool.setSeparator();
+            }
+
+            if (data.ProfessionDatas?.Count > 0)
+            {
+                tool.setText("professions:", "below");
+                foreach (var p_data in data.ProfessionDatas) tool.setText(p_data.Key, p_data.Value.exp);
+
+                tool.setSeparator();
+            }
+
+            if (data.TechsOwned?.Count > 0)
+            {
+                tool.setText("techs:", "below");
+                var idx = 0;
+                foreach (var tech in data.TechsOwned) tool.setText($"[{idx++}]", tech);
+
+                tool.setSeparator();
+            }
+        }
     }
 
     private static void ShowBuildingInfo(DebugTool tool)

@@ -19,8 +19,8 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
 
     public void Initialize()
     {
-        init();
         id = "aw_quests";
+        init();
     }
 
     public override void init()

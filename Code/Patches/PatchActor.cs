@@ -41,6 +41,7 @@ namespace AncientWarfare.Patches
                 return false;
             }
 
+            // TODO: 添加任务队列
             var work_chance = 0.8f;
             if (Toolbox.randomChance(work_chance))
             {
@@ -50,7 +51,7 @@ namespace AncientWarfare.Patches
                     if (!quest.Active) continue;
                     if (!quest.CanTake) continue;
                     quest.Take();
-                    __result = quest.asset.allow_jobs.GetRandom();
+                    __result = quest.asset.allow_jobs.GetRandom(); // TODO: 改成选择能够执行的job
                     actor.data.set(ActorDataKeys.aw_working_quest_uid_string, quest.UID);
                     // Main.LogDebug($"{actor.data.id} takes quest {quest.asset.id} with job {__result}");
                     return false;
@@ -58,6 +59,7 @@ namespace AncientWarfare.Patches
             }
 
             actor.data.set(ActorDataKeys.aw_working_quest_uid_string, string.Empty);
+            // TODO: 研究任务
             var produce_chance = 0.6f;
             __result = Toolbox.randomChance(produce_chance)
                 ? nameof(ActorJobExtendLibrary.produce_children)

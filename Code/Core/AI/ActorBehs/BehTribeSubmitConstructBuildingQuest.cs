@@ -1,5 +1,6 @@
 using ai.behaviours;
 using AncientWarfare.Const;
+using AncientWarfare.Core.AI.Abstract;
 using AncientWarfare.Core.Extensions;
 
 namespace AncientWarfare.Core.AI.ActorBehs;

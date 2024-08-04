@@ -1,4 +1,5 @@
 ﻿using ai.behaviours;
+using AncientWarfare.Core.AI.Abstract;
 using AncientWarfare.Core.Content;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;

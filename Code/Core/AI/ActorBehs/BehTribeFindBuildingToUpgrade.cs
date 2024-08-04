@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ai.behaviours;
+using AncientWarfare.Core.AI.Abstract;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using NeoModLoader.api.attributes;

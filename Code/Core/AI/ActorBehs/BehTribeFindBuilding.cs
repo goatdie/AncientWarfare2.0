@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ai.behaviours;
+using AncientWarfare.Core.AI.Abstract;
 using AncientWarfare.Core.Extensions;
 using HarmonyLib;
 
