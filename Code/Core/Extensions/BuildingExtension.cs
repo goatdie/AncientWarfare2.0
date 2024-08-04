@@ -1,5 +1,5 @@
-using AncientWarfare.Core.Extend;
-using AncientWarfare.Core.Force;
+using System;
+using AncientWarfare.Const;
 
 namespace AncientWarfare.Core.Extensions;
 
@@ -12,20 +12,22 @@ public static partial class BuildingExtension
             : BuildingAdditionDataManager.Get(building.data.id);
     }
 
-    public static bool CanUpgradeForSurrounding(this Building building)
+    public static bool IsFull(this Building building)
     {
-        BuildingAsset upgrade_asset = AssetManager.buildings.get(building.asset.upgradeTo);
-        if (upgrade_asset == null)
+        if (building.asset.housing <= 0)
         {
-            Main.LogDebug(
-                $"Building {building.asset.id} cannot upgrade because it has not valid upgrade building asset with id \"{building.asset.upgradeTo}\"",
-                true, true);
-            return false;
+            Main.LogDebug($"You should not judge a building {building.asset.id} without housing as full",
+                          pLevel: DebugMsgLevel.Warning, pShowStackTrace: true, pLogOnlyOnce: true);
+            return true;
         }
 
-        Tribe tribe = building.GetTribe();
-        WorldTile tile = building.currentTile;
+        building.data.get(BuildingDataKeys.curr_housing_int, out int curr_housing);
+        return curr_housing >= building.asset.housing;
+    }
 
-        return upgrade_asset.CanBuildOn(tile, tribe, ExtendBuildPlacingType.Upgrade);
+    public static void ChangeCurrHousing(this Building building, int change)
+    {
+        building.data.get(BuildingDataKeys.curr_housing_int, out int curr_housing);
+        building.data.set(BuildingDataKeys.curr_housing_int, Math.Max(0, curr_housing + change));
     }
 }

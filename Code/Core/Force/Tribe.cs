@@ -284,5 +284,9 @@ namespace AncientWarfare.Core.Force
                     }
             }
         }
+
+        public void NewExpandHousingQuest()
+        {
+        }
     }
 }

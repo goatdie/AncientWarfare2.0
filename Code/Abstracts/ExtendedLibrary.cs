@@ -5,15 +5,16 @@ namespace AncientWarfare.Abstracts;
 
 public abstract class ExtendedLibrary<T> where T : Asset
 {
-    public    List<T>         added_assets = new();
-    private   AssetLibrary<T> cached_library;
-    protected T               t;
-    private   Dictionary<string, FieldInfo> _fields = new();
+    protected Dictionary<string, FieldInfo> _fields      = new();
+    public    List<T>                       added_assets = new();
+    private   AssetLibrary<T>               cached_library;
+    protected T                             t;
+
     protected ExtendedLibrary()
     {
         Instance = this;
 
-        var fields = GetType().GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        var fields = GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
         foreach (var field in fields)
         {
             if (field.FieldType == typeof(T))
@@ -37,6 +38,7 @@ public abstract class ExtendedLibrary<T> where T : Asset
         _init();
         return cached_library.get(pId);
     }
+
     protected void init_fields()
     {
         _init();
@@ -78,12 +80,14 @@ public abstract class ExtendedLibrary<T> where T : Asset
 
         _set_field(pNew);
     }
-    private void _set_field(T pObj)
+
+    protected virtual void _set_field(T pObj)
     {
         if (_fields.TryGetValue(pObj.id, out FieldInfo field))
         {
             field.SetValue(null, pObj);
         }
     }
+
     protected abstract void init();
 }

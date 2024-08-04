@@ -46,7 +46,7 @@ public class BehMakePregnant : BehaviourActionActor
         }
 
         male.data.makeChild(World.world.getCurWorldTime());
-        female.data.set(ActorDataKeys.aw_pregnant_child_data, ActorDataForPregnantToJSON(child_data));
+        female.data.set(ActorDataKeys.aw_pregnant_child_data_string, ActorDataForPregnantToJSON(child_data));
 
 
         return BehResult.Continue;

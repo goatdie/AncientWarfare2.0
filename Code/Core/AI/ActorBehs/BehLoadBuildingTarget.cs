@@ -10,7 +10,7 @@ public class BehLoadBuildingTarget : BehaviourActionActor
 
     public BehLoadBuildingTarget(bool clean_after_loading = true, string reason = "")
     {
-        key = reason + ActorDataKeys.aw_stored_building_target;
+        key = reason + ActorDataKeys.aw_stored_building_target_string;
         this.clean_after_loading = clean_after_loading;
     }
 

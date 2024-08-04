@@ -64,9 +64,40 @@ namespace AncientWarfare.Patches
             return false;
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(Actor), nameof(Actor.updateAge))]
+        private static void Postfix_updateAge(Actor __instance)
+        {
+            if (!__instance.asset.unit) return;
+            if (__instance.isHomeBuildingUsable()) return;
+
+            Tribe tribe = __instance.GetTribe();
+            if (tribe == null) return;
+            foreach (Building b in tribe.buildings.getSimpleList())
+            {
+                if (b.asset.housing <= 0) continue;
+                if (b.IsFull()) continue;
+
+                __instance.setHomeBuilding(b);
+                break;
+            }
+
+            // 建新房子
+            if (__instance.homeBuilding == null) tribe.NewExpandHousingQuest();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Actor), nameof(Actor.setHomeBuilding))]
+        private static void Prefix_setHomeBuilding(Actor __instance, Building pBuilding)
+        {
+            __instance.homeBuilding?.ChangeCurrHousing(-1);
+            pBuilding?.ChangeCurrHousing(1);
+        }
+
         [HarmonyPostfix, HarmonyPatch(typeof(Actor), nameof(Actor.killHimself))]
         private static void Postfix_killHimself(Actor __instance)
         {
+            __instance.setHomeBuilding(null);
             ActorAdditionData data = __instance.GetAdditionData(true);
             if (data == null) return;
             var forces = new HashSet<string>(data.Forces);

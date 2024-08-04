@@ -28,11 +28,11 @@ namespace AncientWarfare.Core.Extensions
         [Hotfixable]
         public static void GiveChildBirth(this Actor actor)
         {
-            actor.data.get(ActorDataKeys.aw_pregnant_child_data, out string raw_child_data);
+            actor.data.get(ActorDataKeys.aw_pregnant_child_data_string, out string raw_child_data);
             if (string.IsNullOrEmpty(raw_child_data)) return;
 
             actor.data.makeChild(World.world.getCurWorldTime());
-            actor.data.removeString(ActorDataKeys.aw_pregnant_child_data);
+            actor.data.removeString(ActorDataKeys.aw_pregnant_child_data_string);
 
             var child_data = GeneralHelper.FromJSON<ActorData>(raw_child_data);
             // 补足孩子的数据

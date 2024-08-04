@@ -9,7 +9,7 @@ public class BehStoreBuildingTarget : BehaviourActionActor
 
     public BehStoreBuildingTarget(string reason = "")
     {
-        key = reason + ActorDataKeys.aw_stored_building_target;
+        key = reason + ActorDataKeys.aw_stored_building_target_string;
     }
 
     public override BehResult execute(Actor pObject)
