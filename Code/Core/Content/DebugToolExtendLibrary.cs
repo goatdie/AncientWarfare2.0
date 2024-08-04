@@ -54,7 +54,7 @@ public class DebugToolExtendLibrary : ExtendedLibrary<DebugToolAsset>, IManager
         }
     }
 
-    protected override void _set_field(DebugToolAsset pObj)
+    protected override void set_field(DebugToolAsset pObj)
     {
         if (_fields.TryGetValue(pObj.id, out FieldInfo field))
             field.SetValue(null,                                                                 pObj);
