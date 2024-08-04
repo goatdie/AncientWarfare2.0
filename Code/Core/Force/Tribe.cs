@@ -13,16 +13,17 @@ namespace AncientWarfare.Core.Force
 {
     public class Tribe : BaseForce<TribeData>, IHasMember, IHasBuilding
     {
-        public readonly List<TileZone>    border_zones       = new();
-        public readonly BuildingContainer buildings          = new();
-        public readonly List<QuestInst>   quests             = new();
-        public readonly List<TileZone>    zones              = new();
-        private         bool              _buildings_updated = true;
-        private Race _cache_race;
-        private         ColorAsset        _color;
-        private QuestInst _finish_constructing_building_quest;
-        private QuestInst _food_base_quest;
-        private         bool              _zones_updated = true;
+        public readonly  List<TileZone>                border_zones       = new();
+        public readonly  BuildingContainer             buildings          = new();
+        public readonly  List<QuestInst>               quests             = new();
+        private readonly Dictionary<string, QuestInst> quests_dict        = new();
+        public readonly  List<TileZone>                zones              = new();
+        private          bool                          _buildings_updated = true;
+        private          Race                          _cache_race;
+        private          ColorAsset                    _color;
+        private          QuestInst                     _finish_constructing_building_quest;
+        private          QuestInst                     _food_base_quest;
+        private          bool                          _zones_updated = true;
 
         public Tribe(TribeData data) : base(data)
         {
@@ -98,18 +99,24 @@ namespace AncientWarfare.Core.Force
             );
         }
 
+        public void SignalQuestFinish(string quest_uid)
+        {
+            if (quests_dict.TryGetValue(quest_uid, out QuestInst q)) q.MarkFinished();
+        }
+
+        public void SignalQuestRestart(string quest_uid)
+        {
+            if (quests_dict.TryGetValue(quest_uid, out QuestInst q)) q.MarkRestart();
+        }
+
         public void EnqueueQuest(QuestInst quest)
         {
-            if (quest.asset.merge_action_when_repeat == null)
-            {
-                quests.Add(quest);
-                return;
-            }
+            if (quest.asset.merge_action_when_repeat != null)
+                foreach (QuestInst repeat_q in quests)
+                    if (repeat_q.asset == quest.asset && repeat_q.asset.merge_action_when_repeat(repeat_q, quest))
+                        return;
 
-            foreach (QuestInst repeat_q in quests)
-                if (repeat_q.asset == quest.asset && repeat_q.asset.merge_action_when_repeat(repeat_q, quest))
-                    return;
-
+            quests_dict[quest.UID] = quest;
             quests.Add(quest);
         }
 
@@ -166,7 +173,10 @@ namespace AncientWarfare.Core.Force
 
             foreach (QuestInst quest in quests) quest.UpdateProgress(elapsed);
 
-            quests.RemoveAll(quest => quest.Finished);
+            var finished_quests = quests.FindAll(q => q.Finished);
+            foreach (QuestInst q in finished_quests) quests_dict.Remove(q.UID);
+
+            quests.RemoveAll(q => q.Finished);
         }
 
         public override void Update(float elapsed)
@@ -276,21 +286,21 @@ namespace AncientWarfare.Core.Force
                 }
         }
 
-        public void SignalBuildingQuestFinished(Building building)
+        public void SignalBuildingQuestFinished(string quest_id, Building building)
         {
-            foreach (QuestInst quest in quests)
-            {
-                if (quest.asset == QuestLibrary.build_or_upgrade_storage_building)
-                    if (building.asset.storage)
-                    {
-                        quest.MarkFinished();
-                        break;
-                    }
-            }
+            SignalQuestFinish(quest_id);
+            // 之后可以根据building发奖励
         }
 
         public void NewExpandHousingQuest()
         {
+            var quest = new QuestInst(QuestLibrary.build_or_upgrade_housing_building, this,
+                                      new Dictionary<string, object>
+                                      {
+                                          { ConstructBuildingSettingKeys.building_key_string, SB.order_house_0 },
+                                          { ConstructBuildingSettingKeys.upgrade_building_if_possible_bool, true }
+                                      });
+            EnqueueQuest(quest);
         }
     }
 }

@@ -53,9 +53,14 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor find_couple_and_make_pregnant;
 
         /// <summary>
-        ///     扩张部落
+        ///     寻找地块扩张部落
         /// </summary>
         public static readonly BehaviourTaskActor expand_tribe;
+
+        /// <summary>
+        ///     扩张部落
+        /// </summary>
+        public static readonly BehaviourTaskActor expand_tribe_raw;
 
         public static readonly BehaviourTaskActor check_if_stuck_on_small_land;
 
@@ -63,6 +68,16 @@ namespace AncientWarfare.Core.AI
         ///     寻找可以升级的仓库
         /// </summary>
         public static readonly BehaviourTaskActor find_storage_to_upgrade;
+
+        /// <summary>
+        ///     寻找可以升级的房屋
+        /// </summary>
+        public static readonly BehaviourTaskActor find_housing_to_upgrade;
+
+        /// <summary>
+        ///     开始建造新的房屋
+        /// </summary>
+        public static readonly BehaviourTaskActor start_build_new_housing;
 
         /// <summary>
         ///     开始建造新的仓库
@@ -90,9 +105,9 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor submit_resource;
 
         /// <summary>
-        ///     放弃建造/升级仓库的任务
+        ///     放弃任务
         /// </summary>
-        public static readonly BehaviourTaskActor giveup_build_storage_quest;
+        public static readonly BehaviourTaskActor giveup_quest;
 
         public static readonly BehaviourTaskActor random_move;
         public static readonly BehaviourTaskActor end_job;
@@ -148,6 +163,7 @@ namespace AncientWarfare.Core.AI
 
             t.addBeh(new BehFindRandomTile());
             t.addBeh(new BehGoToTileTarget());
+            t.addBeh(new BehTribeExpandZone());
             t.addBeh(new BehRandomWait(0, 3));
             t.addBeh(new BehTribeFindBuilding(SB.type_fruits, SB.type_vegetation));
             t.addBeh(new BehFindRandomFrontBuildingTile());
@@ -197,12 +213,23 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehRandomWait(1, 5));
             t.addBeh(new BehTribeExpandZone());
 
+            add(new BehaviourTaskActor { id = nameof(expand_tribe_raw) });
+            t.addBeh(new BehTribeExpandZone());
+
             add(new BehaviourTaskActor { id = nameof(find_storage_to_upgrade) });
-            t.addBeh(new BehTribeFindStorageToUpgrade());
+            t.addBeh(new BehTribeFindBuildingToUpgrade(b => b.asset.storage));
             t.addBeh(new BehStoreBuildingTarget());
 
             add(new BehaviourTaskActor { id = nameof(start_build_new_storage) });
             t.addBeh(new BehTribeStartBuilding(SB.order_hall_0));
+            t.addBeh(new BehStoreBuildingTarget());
+
+            add(new BehaviourTaskActor { id = nameof(find_housing_to_upgrade) });
+            t.addBeh(new BehTribeFindBuildingToUpgrade(b => b.asset.type == SB.type_house));
+            t.addBeh(new BehStoreBuildingTarget());
+
+            add(new BehaviourTaskActor { id = nameof(start_build_new_housing) });
+            t.addBeh(new BehTribeStartBuilding(SB.order_house_0));
             t.addBeh(new BehStoreBuildingTarget());
 
             add(new BehaviourTaskActor { id = nameof(construct_building) });
@@ -226,8 +253,8 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehTribeSubmitResources());
             t.addBeh(new BehRandomWait(1, 2));
 
-            add(new BehaviourTaskActor { id = nameof(giveup_build_storage_quest) });
-            t.addBeh(new BehTribeGiveupBuildStorageQuest());
+            add(new BehaviourTaskActor { id = nameof(giveup_quest) });
+            t.addBeh(new BehTribeSignalQuestRestart());
 
             add(new BehaviourTaskActor { id = nameof(hunter_check_end_job) });
             t.addBeh(new BehCheckHuntCount());

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AncientWarfare.Core.Force;
 
@@ -29,8 +30,9 @@ public class QuestInst
     public bool Finished { get; private set; }
     public bool CanTake  { get; private set; } = true;
 
-    public bool Disposable => asset.disposable;
-    public bool Active     { get; protected set; }
+    public bool   Disposable => asset.disposable;
+    public bool   Active     { get; protected set; }
+    public string UID        { get; private set; } = Guid.NewGuid().ToString();
 
     public void MarkFinished()
     {

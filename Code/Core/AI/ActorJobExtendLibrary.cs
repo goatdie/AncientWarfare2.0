@@ -14,6 +14,7 @@ namespace AncientWarfare.Core.AI
         public static readonly ActorJob produce_children;
         public static readonly ActorJob expand_tribe;
         public static readonly ActorJob build_or_upgrade_storage;
+        public static readonly ActorJob build_or_upgrade_housing;
         public static readonly ActorJob builder;
 
         protected override void init()
@@ -39,7 +40,19 @@ namespace AncientWarfare.Core.AI
             t.addCondition(new CondActorHasBuildingTarget());
             t.addTask(nameof(ActorTaskExtendLibrary.submit_building));
             t.addCondition(new CondActorHasBuildingTarget());
-            t.addTask(nameof(ActorTaskExtendLibrary.giveup_build_storage_quest));
+            t.addTask(nameof(ActorTaskExtendLibrary.giveup_quest));
+            t.addCondition(new CondActorHasBuildingTarget(), false);
+            t.addTask(nameof(ActorTaskExtendLibrary.end_job));
+
+            add(new ActorJob { id = nameof(build_or_upgrade_housing) });
+            t.addTask(nameof(ActorTaskExtendLibrary.find_housing_to_upgrade));
+            t.addTask(nameof(ActorTaskExtendLibrary.start_build_new_housing));
+            t.addCondition(new CondActorHasBuildingTarget(), false);
+            t.addTask(nameof(ActorTaskExtendLibrary.construct_building));
+            t.addCondition(new CondActorHasBuildingTarget());
+            t.addTask(nameof(ActorTaskExtendLibrary.submit_building));
+            t.addCondition(new CondActorHasBuildingTarget());
+            t.addTask(nameof(ActorTaskExtendLibrary.giveup_quest));
             t.addCondition(new CondActorHasBuildingTarget(), false);
             t.addTask(nameof(ActorTaskExtendLibrary.end_job));
         }
@@ -58,6 +71,7 @@ namespace AncientWarfare.Core.AI
             t.tasks.Clear();
             t.addTask(nameof(ActorTaskExtendLibrary.random_move));
             t.addTask(nameof(ActorTaskExtendLibrary.look_for_animals));
+            t.addTask(nameof(ActorTaskExtendLibrary.expand_tribe_raw));
             t.addTask(nameof(ActorTaskExtendLibrary.submit_resource));
             t.addCondition(new CondActorNeedSubmitResource());
             t.addTask(nameof(ActorTaskExtendLibrary.hunter_check_end_job));

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using AncientWarfare.Const;
 using AncientWarfare.Core;
 using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Content;
@@ -50,11 +51,13 @@ namespace AncientWarfare.Patches
                     if (!quest.CanTake) continue;
                     quest.Take();
                     __result = quest.asset.allow_jobs.GetRandom();
+                    actor.data.set(ActorDataKeys.aw_working_quest_uid_string, quest.UID);
                     // Main.LogDebug($"{actor.data.id} takes quest {quest.asset.id} with job {__result}");
                     return false;
                 }
             }
 
+            actor.data.set(ActorDataKeys.aw_working_quest_uid_string, string.Empty);
             var produce_chance = 0.6f;
             __result = Toolbox.randomChance(produce_chance)
                 ? nameof(ActorJobExtendLibrary.produce_children)
