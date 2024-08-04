@@ -11,6 +11,7 @@ namespace AncientWarfare.Core.Quest;
 public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
 {
     public static readonly QuestAsset food_base_collect;
+    public static readonly QuestAsset finish_constructing_building;
     public static readonly QuestAsset chop_wood;
     public static readonly QuestAsset expand_tribe_for_resource;
     public static readonly QuestAsset build_or_upgrade_storage_building;
@@ -28,6 +29,12 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         t.given_setting = new Dictionary<string, object>
             { { TypedResourceCollectSettingKeys.resource_type_int, ResType.Food } };
         t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.gatherer_bushes), nameof(ActorJobExtendLibrary.hunter));
+
+        add(new QuestAsset { id = nameof(finish_constructing_building) });
+        t.type = QuestTypeLibrary.finish_constructing_building;
+        t.multitable = true;
+        t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
+        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.builder));
 
         add(new QuestAsset { id = nameof(chop_wood) });
         t.type = QuestTypeLibrary.resource_collect;

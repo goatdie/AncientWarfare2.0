@@ -11,6 +11,7 @@ namespace AncientWarfare.Core.Extensions
     public static partial class ActorExtension
     {
         private static readonly List<Building> temp_buildings_for_FindAvailableResourceBuildingInTribe = new();
+        private static readonly List<Building> temp_buildings_for_FindBuildingTarget               = new();
         private static readonly List<TileZone> temp_zones_for_FindAvailableResourceBuildingInTribe = new();
 
         public static bool IsValid(this Actor actor)
@@ -96,6 +97,31 @@ namespace AncientWarfare.Core.Extensions
             }
 
             actor.inventory.empty();
+        }
+
+        public static Building FindBuildingTarget(this Actor actor, string type)
+        {
+            Tribe tribe = actor.GetTribe();
+            if (tribe == null) return null;
+
+            var possible_targets = temp_buildings_for_FindBuildingTarget;
+            possible_targets.Clear();
+            if (type == BuildTargetType.new_building)
+            {
+                var list = tribe.buildings.getSimpleList();
+                possible_targets.AddRange(list.FindAll(x => x.isUnderConstruction() &&
+                                                            (x.getConstructionTile()?.isSameIsland(actor.currentTile) ??
+                                                             false)));
+            }
+            else
+            {
+                return actor.FindAvailableResourceBuildingInTribe(type);
+            }
+
+            if (possible_targets.Count == 0) return null;
+            Building res = possible_targets.GetRandom();
+            possible_targets.Clear();
+            return res;
         }
 
         public static Building FindAvailableResourceBuildingInTribe(this Actor actor, string type)

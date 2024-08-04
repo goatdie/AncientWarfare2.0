@@ -14,12 +14,13 @@ namespace AncientWarfare.Core.AI
         public static readonly ActorJob produce_children;
         public static readonly ActorJob expand_tribe;
         public static readonly ActorJob build_or_upgrade_storage;
+        public static readonly ActorJob builder;
 
         protected override void init()
         {
             init_fields();
 
-            modify_unit_job();
+            modify_unit_jobs();
             modify_resource_collect_jobs();
 
             add(new ActorJob { id = nameof(produce_children) });
@@ -62,11 +63,10 @@ namespace AncientWarfare.Core.AI
             t.addTask(nameof(ActorTaskExtendLibrary.hunter_check_end_job));
         }
 
-        private void modify_unit_job()
+        private void modify_unit_jobs()
         {
             t = unit;
             t.tasks.Clear();
-
             t.addTask(nameof(ActorTaskExtendLibrary.try_join_tribe_here));
             t.addTask(nameof(ActorTaskExtendLibrary.create_tribe_here));
             t.addTask(nameof(ActorTaskExtendLibrary.random_move));

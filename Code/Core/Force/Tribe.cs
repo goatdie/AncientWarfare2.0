@@ -20,6 +20,7 @@ namespace AncientWarfare.Core.Force
         private         bool              _buildings_updated = true;
         private Race _cache_race;
         private         ColorAsset        _color;
+        private QuestInst _finish_constructing_building_quest;
         private QuestInst _food_base_quest;
         private         bool              _zones_updated = true;
 
@@ -89,8 +90,11 @@ namespace AncientWarfare.Core.Force
             {
                 { TypedResourceCollectSettingKeys.resource_count_int, 10 }
             });
+            _finish_constructing_building_quest =
+                new QuestInst(QuestLibrary.finish_constructing_building, this, new Dictionary<string, object>());
             EnqueueQuests(
-                _food_base_quest
+                _food_base_quest,
+                _finish_constructing_building_quest
             );
         }
 

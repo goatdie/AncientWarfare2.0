@@ -18,8 +18,7 @@ public class BehTribeFindBuilding : BehTribe
     public override BehResult execute(Actor pObject)
     {
         var type = types.GetRandom();
-        // TODO: 改为更通用的方法，目前只能找到资源建筑
-        pObject.beh_building_target = pObject.FindAvailableResourceBuildingInTribe(type);
+        pObject.beh_building_target = pObject.FindBuildingTarget(type);
 
         if (IsResourceBuilding(type) && pObject.beh_building_target == null)
             pObject.GetTribe().NewExpandQuest(type);

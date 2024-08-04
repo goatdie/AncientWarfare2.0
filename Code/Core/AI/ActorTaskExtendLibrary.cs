@@ -1,5 +1,6 @@
 ﻿using ai.behaviours;
 using AncientWarfare.Abstracts;
+using AncientWarfare.Const;
 using AncientWarfare.Core.AI.ActorBehs;
 
 namespace AncientWarfare.Core.AI
@@ -69,6 +70,11 @@ namespace AncientWarfare.Core.AI
         public static readonly BehaviourTaskActor start_build_new_storage;
 
         /// <summary>
+        ///     建造新建筑
+        /// </summary>
+        public static readonly BehaviourTaskActor build_new_building;
+
+        /// <summary>
         ///     完成建筑任务
         /// </summary>
         public static readonly BehaviourTaskActor construct_building;
@@ -96,9 +102,17 @@ namespace AncientWarfare.Core.AI
             init_fields();
 
             init_jobs_for_unit();
+            modify_build_new_building();
             modify_look_for_animals();
             modify_collect_fruits();
             modify_chop_trees();
+        }
+
+        private void modify_build_new_building()
+        {
+            t = build_new_building;
+            t.list[0] = new BehTribeFindBuilding(BuildTargetType.new_building);
+            t.list[t.list.Count - 1] = new BehCheckTargetBuildProgressFixed();
         }
 
         private void modify_look_for_animals()

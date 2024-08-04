@@ -125,4 +125,10 @@ public static class QuestTypeDelegates
             return x.asset.id == building_id && !x.isUnderConstruction();
         });
     }
+
+    public static bool update__finish_constructing_building(QuestInst quest, LowBaseForce owner)
+    {
+        if (owner is not Tribe tribe) throw new NotImplementedException();
+        return tribe.buildings.getSimpleList().Exists(b => b.isUnderConstruction());
+    }
 }
