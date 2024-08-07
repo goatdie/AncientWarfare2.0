@@ -7,6 +7,8 @@ namespace AncientWarfare.Core.AI
     public class ActorJobExtendLibrary : ExtendedLibrary<ActorJob>
     {
         public static readonly ActorJob unit;
+        public static readonly ActorJob baby;
+        public static readonly ActorJob learn_tech;
         public static readonly ActorJob random_move;
         public static readonly ActorJob gatherer_bushes;
         public static readonly ActorJob woodcutter;
@@ -23,6 +25,9 @@ namespace AncientWarfare.Core.AI
 
             modify_unit_jobs();
             modify_resource_collect_jobs();
+
+            add(new ActorJob { id = nameof(learn_tech) });
+
 
             add(new ActorJob { id = nameof(produce_children) });
             t.addTask(nameof(ActorTaskExtendLibrary.find_couple_and_make_pregnant));

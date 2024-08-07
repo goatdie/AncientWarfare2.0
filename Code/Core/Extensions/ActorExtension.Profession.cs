@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 using AncientWarfare.Core.Profession;
-using AncientWarfare.Core.Tech;
+using AncientWarfare.Core.Quest;
 using NeoModLoader.api.attributes;
 
 namespace AncientWarfare.Core.Extensions;
@@ -49,15 +50,11 @@ public static partial class ActorExtension
     private static void CheckTech(Actor             actor, ActorAdditionData addition_data, string profession_id,
                                   NewProfessionData prof_data)
     {
-        var possible_techs = new List<TechAsset>();
-        // TODO: 考虑智力等影响因素
-        TechAsset tech_to_unlock = possible_techs.FindAll(tech =>
-        {
-            return tech.from_production && tech.min_intelligence_required <= actor.data.intelligence &&
-                   tech.base_cost                                         <= prof_data.exp;
-        }).GetRandom();
+        throw new NotImplementedException();
+    }
 
-        actor.AddTech(tech_to_unlock.id);
-        prof_data.exp -= tech_to_unlock.base_cost;
+    public static float ComputeScoreFor(this Actor actor, QuestInst quest)
+    {
+        throw new NotImplementedException();
     }
 }

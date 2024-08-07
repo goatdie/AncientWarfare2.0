@@ -284,5 +284,15 @@ namespace AncientWarfare.Core.Extensions
 
             return nearest_b;
         }
+
+        public static float GetPossibilityToFindJobItSelf(this Actor actor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static string FindJobItSelf(this Actor actor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

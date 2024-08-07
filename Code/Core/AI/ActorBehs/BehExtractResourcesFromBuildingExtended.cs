@@ -50,13 +50,13 @@ public class BehExtractResourcesFromBuildingExtended : BehActionActorProfWrapped
         switch (asset.buildingType)
         {
             case BuildingType.Mineral:
-                actor.IncreaseProfessionExp(nameof(NewProfessionLibrary.miner));
+                actor.IncreaseProfessionExp(nameof(NewProfessionLibrary.mine));
                 break;
             case BuildingType.Fruits:
             case BuildingType.Plant:
             case BuildingType.Wheat:
             case BuildingType.Tree:
-                actor.IncreaseProfessionExp(nameof(NewProfessionLibrary.collector));
+                actor.IncreaseProfessionExp(nameof(NewProfessionLibrary.collect));
                 break;
         }
     }

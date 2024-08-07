@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using AncientWarfare.Core.Profession;
 
 namespace AncientWarfare.Core.Tech
 {
@@ -9,28 +9,36 @@ namespace AncientWarfare.Core.Tech
         public int               base_cost;
         public TechCategoryAsset direct_category;
 
-        /// <summary>
-        ///     是否来自于生产经验
-        /// </summary>
-        public bool from_production;
-
-        public int  min_intelligence_required;
-        public bool only_random;
-
-        public TechAsset(string id, TechCategoryAsset category, int cost, params TechAsset[] preliminaries)
+        public TechAsset(string id, int cost, params NewProfessionAsset[] professions)
         {
             this.id = id;
             base_cost = cost;
-            direct_category = category;
-            AddPreliminaries(preliminaries.ToList());
+            AddProfessions(professions);
         }
 
-        public List<TechAsset> PreliminaryList   { get; } = new();
-        public List<string>    PreliminaryIDList { get; } = new();
+        public List<NewProfessionAsset> ProfessionList    { get; } = new();
+        public List<string>             ProfessionIDList  { get; } = new();
+        public List<TechAsset>          PreliminaryList   { get; } = new();
+        public List<string>             PreliminaryIDList { get; } = new();
+        public List<TechAsset>          InspirationList   { get; } = new();
+        public List<string>             InspirationIDList { get; } = new();
 
-        public void AddPreliminaries(List<TechAsset> preliminaries)
+        public void AddProfessions(params NewProfessionAsset[] professions)
         {
-            throw new NotImplementedException();
+            ProfessionList.AddRange(professions);
+            ProfessionIDList.AddRange(professions.Select(x => x.id));
+        }
+
+        public void AddPreliminaries(params TechAsset[] preliminaries)
+        {
+            PreliminaryList.AddRange(preliminaries);
+            PreliminaryIDList.AddRange(preliminaries.Select(x => x.id));
+        }
+
+        public void AddInspirations(params TechAsset[] inspirations)
+        {
+            InspirationList.AddRange(inspirations);
+            InspirationIDList.AddRange(inspirations.Select(x => x.id));
         }
     }
 }

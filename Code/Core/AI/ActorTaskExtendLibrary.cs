@@ -134,6 +134,7 @@ namespace AncientWarfare.Core.AI
         {
             t = look_for_animals;
             t.list[0] = new BehFindTargetForHunterFixed();
+            t.list[1] = new BehAttackActorTargetExtended();
         }
 
         private void modify_chop_trees()

@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using AncientWarfare.Const;
 using AncientWarfare.Core;
 using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Content;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Core.Quest;
+using AncientWarfare.Core.Tech;
 using AncientWarfare.Utils;
 using AncientWarfare.Utils.InstPredictors;
 using HarmonyLib;
@@ -23,6 +24,8 @@ namespace AncientWarfare.Patches
         {
             if (!__instance.asset.unit) return true;
             var actor = __instance as Actor;
+            if (actor == null) throw new Exception();
+
             var data = actor.GetAdditionData();
 
             if (data.Forces.Count == 0)
@@ -41,31 +44,61 @@ namespace AncientWarfare.Patches
                 return false;
             }
 
-            // TODO: 添加任务队列
-            var work_chance = 0.8f;
-            if (Toolbox.randomChance(work_chance))
+            if (actor.getAge() <= Math.Max(actor.asset.procreate_age, 3))
             {
-                tribe.quests.ShuffleOne();
-                foreach (QuestInst quest in tribe.quests)
+                __result = nameof(ActorJobExtendLibrary.baby);
+                return false;
+            }
+
+            if (actor.HasTechToUnlock() && tribe.AllowUnlockTechWithoutProduction(actor))
+            {
+                var tech_to_unlock = actor.GetNextTechToUnlock();
+                if (tribe.HasTech(tech_to_unlock))
                 {
-                    if (!quest.Active) continue;
-                    if (!quest.CanTake) continue;
-                    quest.Take();
-                    __result = quest.asset.allow_jobs.GetRandom(); // TODO: 改成选择能够执行的job
-                    actor.data.set(ActorDataKeys.aw_working_quest_uid_string, quest.UID);
-                    // Main.LogDebug($"{actor.data.id} takes quest {quest.asset.id} with job {__result}");
+                    __result = nameof(ActorJobExtendLibrary.learn_tech);
+                    return false;
+                }
+
+                if (actor.WantToStudy(tech_to_unlock))
+                {
+                    __result = actor.FindJobToUnlockTech(tech_to_unlock);
                     return false;
                 }
             }
 
-            actor.data.set(ActorDataKeys.aw_working_quest_uid_string, string.Empty);
-            // TODO: 研究任务
-            var produce_chance = 0.6f;
-            __result = Toolbox.randomChance(produce_chance)
-                ? nameof(ActorJobExtendLibrary.produce_children)
-                : nameof(ActorJobExtendLibrary.random_move);
+            if (tribe.AllowFindJobItSelf(actor) && Toolbox.randomChance(actor.GetPossibilityToFindJobItSelf()))
+            {
+                __result = actor.FindJobItSelf();
+                return false;
+            }
 
+            List<KeyValuePair<QuestInst, float>> quests = new();
+            var suitable_quest_found = false;
+            foreach (QuestInst q in tribe.quests)
+            {
+                if (!q.Active) continue;
+                if (!q.CanTake) continue;
 
+                var score = actor.ComputeScoreFor(q);
+                quests.Add(new KeyValuePair<QuestInst, float>(q, score));
+                suitable_quest_found |= score > 0;
+            }
+
+            if (!suitable_quest_found)
+                if (tribe.AllowFindJobItSelf(actor) && Toolbox.randomChance(actor.GetPossibilityToFindJobItSelf()))
+                {
+                    __result = actor.FindJobItSelf();
+                    return false;
+                }
+
+            quests.Sort((a, b) => a.Value.CompareTo(b.Value));
+            var quest_to_take = quests.GetRandom(5);
+            if (!suitable_quest_found)
+                if (tribe.AllowUnlockTechWithoutProduction(actor))
+                    actor.TrackTechsToUnlock(new List<TechAsset>()); // TODO: 从任务中获取科技要求
+
+            quest_to_take.Key.Take();
+            __result = quest_to_take.Key.asset.allow_jobs.GetRandom();
             return false;
         }
 

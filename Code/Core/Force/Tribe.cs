@@ -302,5 +302,32 @@ namespace AncientWarfare.Core.Force
                                       });
             EnqueueQuest(quest);
         }
+
+        /// <summary>
+        ///     是否允许<paramref name="actor" />脱产进行科技解锁
+        /// </summary>
+        /// <param name="actor"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool AllowUnlockTechWithoutProduction(Actor actor)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     是否拥有科技<paramref name="tech" />
+        /// </summary>
+        /// <param name="tech"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public bool HasTech(string tech)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AllowFindJobItSelf(Actor actor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
