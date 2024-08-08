@@ -1,6 +1,6 @@
 using C5;
 
-namespace AncientWarfare.Core;
+namespace AncientWarfare.Core.Additions;
 
 public class BuildingAdditionData
 {

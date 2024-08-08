@@ -1,25 +1,21 @@
 ﻿using AncientWarfare.Abstracts;
-using AncientWarfare.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AncientWarfare.Core
+namespace AncientWarfare.Core.Additions
 {
     public class TileZoneAdditionDataManager : IManager
     {
         private static TileZoneAdditionData[,] _data;
-        public static TileZoneAdditionData Get(int x, int y)
-        {
-            return _data[x, y];
-        }
 
         public void Initialize()
         {
             //Reset();
         }
+
+        public static TileZoneAdditionData Get(int x, int y)
+        {
+            return _data[x, y];
+        }
+
         internal static void Reset()
         {
             var zone_size = 8;
@@ -34,6 +30,7 @@ namespace AncientWarfare.Core
                     _data[x, y] = new TileZoneAdditionData();
                 }
             }
+
             Main.LogDebug($"TileZoneAdditionDataManager Reset to ({width}*{height})");
         }
     }

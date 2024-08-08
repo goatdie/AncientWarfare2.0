@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AncientWarfare.Core.Profession;
 
-namespace AncientWarfare.Core
+namespace AncientWarfare.Core.Additions
 {
     public class ActorAdditionData
     {

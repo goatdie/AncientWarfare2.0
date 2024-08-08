@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AncientWarfare.Core
+namespace AncientWarfare.Core.Additions
 {
     public class TileZoneAdditionData
     {

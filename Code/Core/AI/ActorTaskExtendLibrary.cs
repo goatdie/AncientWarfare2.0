@@ -1,7 +1,9 @@
-﻿using ai.behaviours;
+﻿using System.Collections.Generic;
+using ai.behaviours;
 using AncientWarfare.Abstracts;
 using AncientWarfare.Const;
 using AncientWarfare.Core.AI.ActorBehs;
+using AncientWarfare.Core.Profession;
 
 namespace AncientWarfare.Core.AI
 {
@@ -175,7 +177,9 @@ namespace AncientWarfare.Core.AI
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
             t.addBeh(new BehResourceGatheringAnimation(1f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
             t.addBeh(new BehResourceGatheringAnimation(0f, "event:/SFX/CIVILIZATIONS/CollectFruits"));
-            t.addBeh(new BehExtractResourcesFromBuildingExtended());
+            t.addBeh(new BehExtractResourcesFromBuildingExtended(
+                         new List<string>(),
+                         new Dictionary<string, int> { { nameof(NewProfessionLibrary.collect), 1 } }));
             t.addBeh(new BehTribeFindStorage());
             t.addBeh(new BehFindRandomFrontBuildingTile());
             t.addBeh(new BehGoToTileTarget());

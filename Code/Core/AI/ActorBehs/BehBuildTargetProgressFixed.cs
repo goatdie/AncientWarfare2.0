@@ -5,14 +5,18 @@ using AncientWarfare.Core.Profession;
 
 namespace AncientWarfare.Core.AI.ActorBehs;
 
-public class BehBuildTargetProgressFixed : BehActionActorProfWrapped
+public class BehBuildTargetProgressFixed : BehActionActorExtended
 {
-    public override HashSet<string> ProfessionRequired { get; } = null;
+    public BehBuildTargetProgressFixed() : base(BehResult.Continue)
+    {
+    }
 
-    public override Dictionary<string, int> ProfessionExpGivenPerExecute { get; } = new()
+    public override Dictionary<string, int> ExpGiven { get; } = new()
     {
         { nameof(NewProfessionLibrary.build), 1 }
     };
+
+    public override List<string> TechRequired { get; }
 
     public override void create()
     {
@@ -21,11 +25,11 @@ public class BehBuildTargetProgressFixed : BehActionActorProfWrapped
         null_check_tile_target = true;
     }
 
-    public override BehResult execute(Actor pObject)
+    public override (BehResult, bool) OnExecute(Actor actor)
     {
-        if (!pObject.beh_building_target.isUnderConstruction())
-            return BehResult.Stop;
-        pObject.beh_building_target.updateBuild();
-        return BehResult.Continue;
+        if (!actor.beh_building_target.isUnderConstruction())
+            return (BehResult.Stop, false);
+        actor.beh_building_target.updateBuild();
+        return (BehResult.Continue, true);
     }
 }

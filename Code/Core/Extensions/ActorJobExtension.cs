@@ -1,3 +1,5 @@
+using AncientWarfare.Core.Additions;
+
 namespace AncientWarfare.Core.Extensions;
 
 public static class ActorJobExtension

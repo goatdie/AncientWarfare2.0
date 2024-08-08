@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Tech;
 
 namespace AncientWarfare.Core.Extensions;
@@ -9,6 +10,11 @@ public static partial class ActorExtension
     public static bool HasTech(this Actor actor, string tech_id)
     {
         return actor.GetAdditionData(true)?.TechsOwned?.Contains(tech_id) ?? false;
+    }
+
+    public static bool OverlapTechs(this Actor actor, IEnumerable<string> tech_ids)
+    {
+        return actor.GetAdditionData(true)?.TechsOwned.Overlaps(tech_ids) ?? false;
     }
 
     public static bool HasTechToUnlock(this Actor actor)

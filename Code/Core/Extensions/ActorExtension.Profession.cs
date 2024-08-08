@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Profession;
 using AncientWarfare.Core.Quest;
 using NeoModLoader.api.attributes;

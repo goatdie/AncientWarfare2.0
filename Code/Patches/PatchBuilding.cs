@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using AncientWarfare.Attributes;
-using AncientWarfare.Core;
+using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using HarmonyLib;

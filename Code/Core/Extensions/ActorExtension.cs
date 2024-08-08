@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AncientWarfare.Const;
+using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Utils;
 using NeoModLoader.api.attributes;

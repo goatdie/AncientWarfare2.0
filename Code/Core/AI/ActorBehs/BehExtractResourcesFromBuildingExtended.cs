@@ -6,14 +6,20 @@ using AncientWarfare.Core.Profession;
 
 namespace AncientWarfare.Core.AI.ActorBehs;
 
-public class BehExtractResourcesFromBuildingExtended : BehActionActorProfWrapped
+public class BehExtractResourcesFromBuildingExtended : BehActionActorExtended
 {
-    public BehExtractResourcesFromBuildingExtended() : base(false)
+    public BehExtractResourcesFromBuildingExtended(List<string>            tech_required = null,
+                                                   Dictionary<string, int> exp_given = null) : base(BehResult.Continue)
     {
+        TechRequired = tech_required;
+        ExpGiven = exp_given;
+        if (tech_required != null) TechRequiredAccurate = true;
     }
 
-    public override HashSet<string>         ProfessionRequired           { get; }
-    public override Dictionary<string, int> ProfessionExpGivenPerExecute { get; }
+
+    public override Dictionary<string, int> ExpGiven             { get; }
+    public override List<string>            TechRequired         { get; }
+    public override bool                    TechRequiredAccurate { get; }
 
     public override void create()
     {
@@ -22,26 +28,26 @@ public class BehExtractResourcesFromBuildingExtended : BehActionActorProfWrapped
         check_building_target_non_usable = true;
     }
 
-    public override BehResult execute(Actor pActor)
+    public override (BehResult, bool) OnExecute(Actor actor)
     {
-        BuildingAsset asset = pActor.beh_building_target.asset;
-        pActor.beh_building_target.extractResources(pActor);
+        BuildingAsset asset = actor.beh_building_target.asset;
+        actor.beh_building_target.extractResources(actor);
         if (asset.resources_given != null)
         {
             foreach (ResourceContainer item in asset.resources_given)
             {
-                var bonus_resource = GetBonusResource(pActor, item.id);
+                var bonus_resource = GetBonusResource(actor, item.id);
                 var num = item.amount + bonus_resource;
-                if (asset.buildingType == BuildingType.Mineral && pActor.hasTrait("miner") &&
+                if (asset.buildingType == BuildingType.Mineral && actor.hasTrait("miner") &&
                     Toolbox.randomBool()) num++;
 
-                pActor.addToInventory(item.id, num);
+                actor.addToInventory(item.id, num);
             }
 
-            AddExpForActor(pActor);
+            return (BehResult.Continue, true);
         }
 
-        return BehResult.Continue;
+        return (BehResult.Continue, false);
     }
 
     private static void AddExpForActor(Actor actor)

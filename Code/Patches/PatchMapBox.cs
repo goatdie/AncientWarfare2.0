@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using AncientWarfare.Const;
-using AncientWarfare.Core;
+using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Extensions;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Core.MapModes;

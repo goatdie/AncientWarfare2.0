@@ -1,6 +1,6 @@
 ﻿using AncientWarfare.Abstracts;
 
-namespace AncientWarfare.Core;
+namespace AncientWarfare.Core.Additions;
 
 internal class ActorAdditionDataManager : AdditionDataManager<ActorAdditionData>
 {

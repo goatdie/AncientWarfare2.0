@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using AncientWarfare.Core;
+using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Content;
 using AncientWarfare.Core.Extensions;
