@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Profession;
 using AncientWarfare.Core.Quest;
@@ -24,6 +25,14 @@ public static partial class ActorExtension
                 return false;
 
         return true;
+    }
+
+    public static int GetProfessionExp(this Actor actor, string profession_id)
+    {
+        ActorAdditionData data = actor.GetAdditionData(true);
+        return data?.ProfessionDatas?.TryGetValue(profession_id, out NewProfessionData prof_data) ?? false
+            ? prof_data.exp
+            : 0;
     }
 
     [Hotfixable]
@@ -56,6 +65,30 @@ public static partial class ActorExtension
 
     public static float ComputeScoreFor(this Actor actor, QuestInst quest)
     {
-        throw new NotImplementedException();
+        var best_score = float.MinValue;
+        foreach (var job_id in quest.asset.allow_jobs)
+        {
+            ActorJob job = AssetManager.job_actor.get(job_id);
+            ActorJobAdditionAsset addition_asset = job.GetAdditionAsset();
+
+            float score = 0;
+            if (!addition_asset.IsTechsRequiredAccurate())
+                score -= job.tasks.Select(container => AssetManager.tasks_actor.get(container.id).GetAdditionAsset())
+                            .Count(task_addition => task_addition.IsTechsRequiredAccurate()) * 10;
+
+            var tech_required = addition_asset.GetTechsRequired();
+            var prof_about = addition_asset.GetProfessionsAbout();
+
+            if (tech_required.Count > 0)
+                score -= (tech_required.Count - tech_required.Count(actor.HasTech)) *
+                         NewProfessionLibrary.Instance.Count;
+
+            if (prof_about.Count > 0)
+                score += prof_about.Sum(prof => Math.Min((int)Math.Log10(actor.GetProfessionExp(prof)), 3));
+
+            best_score = Math.Max(score, best_score);
+        }
+
+        return best_score;
     }
 }

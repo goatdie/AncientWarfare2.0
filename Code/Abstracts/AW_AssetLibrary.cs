@@ -6,9 +6,8 @@ namespace AncientWarfare.Abstracts;
 public class AW_AssetLibrary<TAsset, TLibrary> : AssetLibrary<TAsset> where TAsset : Asset
     where TLibrary : AW_AssetLibrary<TAsset, TLibrary>, new()
 {
-    public static TLibrary Instance { get; } = new TLibrary();
-
     private Dictionary<string, FieldInfo> _fields = new();
+
     public AW_AssetLibrary() : base()
     {
         var fields = GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
@@ -21,6 +20,10 @@ public class AW_AssetLibrary<TAsset, TLibrary> : AssetLibrary<TAsset> where TAss
         }
     }
 
+    public static TLibrary Instance { get; } = new();
+
+    public int Count => list.Count;
+
     public override TAsset get(string pID)
     {
         if (string.IsNullOrEmpty(pID))
@@ -31,11 +34,13 @@ public class AW_AssetLibrary<TAsset, TLibrary> : AssetLibrary<TAsset> where TAss
 
         return base.get(pID);
     }
+
     public override TAsset add(TAsset pAsset)
     {
         _set_field(pAsset);
         return base.add(pAsset);
     }
+
     private void _set_field(TAsset pObj)
     {
         if (_fields.TryGetValue(pObj.id, out FieldInfo field))
