@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using AncientWarfare.Core.Additions;
@@ -50,6 +51,7 @@ namespace AncientWarfare.Patches
                 return false;
             }
 
+            Start:
             if (actor.HasTechToUnlock() && tribe.AllowUnlockTechWithoutProduction(actor))
             {
                 var tech_to_unlock = actor.GetNextTechToUnlock();
@@ -62,7 +64,7 @@ namespace AncientWarfare.Patches
                 if (actor.WantToStudy(tech_to_unlock))
                 {
                     __result = actor.FindJobToUnlockTech(tech_to_unlock);
-                    return false;
+                    if (!string.IsNullOrEmpty(__result)) return false;
                 }
             }
 
@@ -85,7 +87,8 @@ namespace AncientWarfare.Patches
             }
 
             if (!suitable_quest_found)
-                if (tribe.AllowFindJobItSelf(actor) && Toolbox.randomChance(actor.GetPossibilityToFindJobItSelf()))
+                if (quests.Count == 0 || (tribe.AllowFindJobItSelf(actor) &&
+                                          Toolbox.randomChance(actor.GetPossibilityToFindJobItSelf())))
                 {
                     __result = actor.FindJobItSelf();
                     return false;
@@ -95,10 +98,25 @@ namespace AncientWarfare.Patches
             var quest_to_take = quests.GetRandom(5);
             if (!suitable_quest_found)
                 if (tribe.AllowUnlockTechWithoutProduction(actor))
-                    actor.TrackTechsToUnlock(new List<TechAsset>()); // TODO: 从任务中获取科技要求
+                {
+                    actor.TrackTechsToUnlock(quest_to_take.Key.asset.allow_jobs.GetRandom().GetAdditionAsset()
+                                                          .GetTechsRequired().Select(TechLibrary.Instance.get)
+                                                          .ToList());
+                    goto Start;
+                }
 
             quest_to_take.Key.Take();
-            __result = quest_to_take.Key.asset.allow_jobs.GetRandom();
+            float best_job_score = 0;
+            foreach (ActorJob job in quest_to_take.Key.asset.allow_jobs)
+            {
+                var score = actor.ComputeScoreFor(job);
+                if (score > best_job_score)
+                {
+                    __result = job.id;
+                    best_job_score = score;
+                }
+            }
+
             return false;
         }
 

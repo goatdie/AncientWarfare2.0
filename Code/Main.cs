@@ -7,6 +7,7 @@ using AncientWarfare.Abstracts;
 using AncientWarfare.Attributes;
 using AncientWarfare.Const;
 using AncientWarfare.Core.Extensions;
+using AncientWarfare.Core.Tech;
 using AncientWarfare.Utils;
 using NCMS.Extensions;
 using NeoModLoader.api;
@@ -56,6 +57,7 @@ namespace AncientWarfare
             var elapsed = World.world.getCurElapsed();
 
             TribePlaceFinder.I.Update(elapsed);
+            TechLibrary.Instance.CheckTopo();
         }
 
         [Hotfixable]

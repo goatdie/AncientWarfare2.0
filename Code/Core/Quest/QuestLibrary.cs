@@ -3,11 +3,10 @@ using AncientWarfare.Abstracts;
 using AncientWarfare.Attributes;
 using AncientWarfare.Core.AI;
 using AncientWarfare.Core.Quest.QuestSettingParams;
-using AncientWarfare.Utils;
 
 namespace AncientWarfare.Core.Quest;
 
-[ManagerInitializeAfter(typeof(QuestTypeLibrary))]
+[ManagerInitializeAfter(typeof(QuestTypeLibrary), typeof(ActorJobExtendLibrary))]
 public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
 {
     public static readonly QuestAsset food_base_collect;
@@ -29,26 +28,26 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         t.type = QuestTypeLibrary.typed_resource_collect;
         t.given_setting = new Dictionary<string, object>
             { { TypedResourceCollectSettingKeys.resource_type_int, ResType.Food } };
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.gatherer_bushes), nameof(ActorJobExtendLibrary.hunter));
+        t.allow_jobs.Add(ActorJobExtendLibrary.gatherer_bushes, ActorJobExtendLibrary.hunter);
 
         add(new QuestAsset { id = nameof(finish_constructing_building) });
         t.type = QuestTypeLibrary.finish_constructing_building;
         t.multitable = true;
         t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.builder));
+        t.allow_jobs.Add(ActorJobExtendLibrary.builder);
 
         add(new QuestAsset { id = nameof(chop_wood) });
         t.type = QuestTypeLibrary.resource_collect;
         t.disposable = true;
         t.merge_action_when_repeat = QuestTypeDelegates.merge__resource_collect;
         t.given_setting = new Dictionary<string, object> { { ResourceCollectSettingKeys.resource_id_string, SR.wood } };
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.woodcutter));
+        t.allow_jobs.Add(ActorJobExtendLibrary.woodcutter);
 
         add(new QuestAsset { id = nameof(expand_tribe_for_resource) });
         t.type = QuestTypeLibrary.tribe_expand_for_resource;
         t.disposable = true;
         t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.expand_tribe));
+        t.allow_jobs.Add(ActorJobExtendLibrary.expand_tribe);
 
         add(new QuestAsset { id = nameof(build_or_upgrade_storage_building) });
         t.type = QuestTypeLibrary.construct_building;
@@ -56,7 +55,7 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         t.multitable = false;
         t.restart_timeout = 120;
         t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.build_or_upgrade_storage));
+        t.allow_jobs.Add(ActorJobExtendLibrary.build_or_upgrade_storage);
 
 
         add(new QuestAsset { id = nameof(build_or_upgrade_housing_building) });
@@ -65,6 +64,6 @@ public class QuestLibrary : AW_AssetLibrary<QuestAsset, QuestLibrary>, IManager
         t.multitable = false;
         t.restart_timeout = 120;
         t.merge_action_when_repeat = QuestTypeDelegates.empty_merge;
-        t.allow_jobs.Expand(nameof(ActorJobExtendLibrary.build_or_upgrade_housing));
+        t.allow_jobs.Add(ActorJobExtendLibrary.build_or_upgrade_housing);
     }
 }

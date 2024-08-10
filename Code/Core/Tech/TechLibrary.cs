@@ -16,12 +16,23 @@ namespace AncientWarfare.Core.Tech
         public static readonly TechAsset sharp_tools;
         public static readonly TechAsset armor;
         public static readonly TechAsset leather_armor;
+        private bool topo_dirty = true;
 
         public void Initialize()
         {
             id = "aw_techs";
             init();
             post_init();
+        }
+
+        internal void SetTopoDirty()
+        {
+            topo_dirty = true;
+        }
+
+        internal void CheckTopo()
+        {
+            if (!topo_dirty) return;
         }
 
         public void LoadFromTableFile(string file_path)

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using AncientWarfare.Abstracts;
 using AncientWarfare.Core.Profession;
 
 namespace AncientWarfare.Core.Tech
@@ -16,29 +15,31 @@ namespace AncientWarfare.Core.Tech
             AddProfessions(professions);
         }
 
-        public List<NewProfessionAsset> ProfessionList    { get; } = new();
-        public List<string>             ProfessionIDList  { get; } = new();
-        public List<TechAsset>          PreliminaryList   { get; } = new();
-        public List<string>             PreliminaryIDList { get; } = new();
-        public List<TechAsset>          InspirationList   { get; } = new();
-        public List<string>             InspirationIDList { get; } = new();
+        public AssetListContainer<ActorJob>           Suggestions     { get; } = new();
+        public AssetListContainer<NewProfessionAsset> ProfessionList  { get; } = new();
+        public AssetListContainer<TechAsset>          PreliminaryList { get; } = new();
+        public AssetListContainer<TechAsset>          InspirationList { get; } = new();
+
+        public void AddSuggestions(params ActorJob[] suggestions)
+        {
+            Suggestions.AddRange(suggestions);
+        }
 
         public void AddProfessions(params NewProfessionAsset[] professions)
         {
             ProfessionList.AddRange(professions);
-            ProfessionIDList.AddRange(professions.Select(x => x.id));
         }
 
         public void AddPreliminaries(params TechAsset[] preliminaries)
         {
             PreliminaryList.AddRange(preliminaries);
-            PreliminaryIDList.AddRange(preliminaries.Select(x => x.id));
+            TechLibrary.Instance.SetTopoDirty();
         }
 
         public void AddInspirations(params TechAsset[] inspirations)
         {
             InspirationList.AddRange(inspirations);
-            InspirationIDList.AddRange(inspirations.Select(x => x.id));
+            TechLibrary.Instance.SetTopoDirty();
         }
     }
 }

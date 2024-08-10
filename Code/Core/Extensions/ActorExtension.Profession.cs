@@ -4,7 +4,9 @@ using System.Linq;
 using AncientWarfare.Core.Additions;
 using AncientWarfare.Core.Profession;
 using AncientWarfare.Core.Quest;
+using AncientWarfare.Core.Tech;
 using NeoModLoader.api.attributes;
+using UnityEngine;
 
 namespace AncientWarfare.Core.Extensions;
 
@@ -31,7 +33,7 @@ public static partial class ActorExtension
     {
         ActorAdditionData data = actor.GetAdditionData(true);
         return data?.ProfessionDatas?.TryGetValue(profession_id, out NewProfessionData prof_data) ?? false
-            ? prof_data.exp
+            ? prof_data.exp_until_now
             : 0;
     }
 
@@ -53,42 +55,84 @@ public static partial class ActorExtension
             data.ProfessionDatas[profession_id] = prof_data;
         }
 
-        prof_data.exp += count;
-        //CheckTech(actor, data, profession_id, prof_data);
+        var old_exp = prof_data.exp_until_now;
+        prof_data.AddExp(count);
+        CheckTech(actor, data, profession_id, prof_data);
+        if (old_exp != (int)Mathf.Log10(prof_data.exp_until_now)) data.JobScoresDirty = true;
     }
 
     private static void CheckTech(Actor             actor, ActorAdditionData addition_data, string profession_id,
                                   NewProfessionData prof_data)
     {
-        throw new NotImplementedException();
+        var tech_to_get = "";
+        if (actor.HasTechToUnlock())
+        {
+            if (addition_data.TechsOwned == null) return;
+
+            foreach (var tech_id in addition_data.TechToUnlock)
+            {
+                TechAsset tech = TechLibrary.Instance.get(tech_id);
+                if (tech.ProfessionList.Contains(profession_id) && tech.base_cost <= prof_data.exp_left)
+                {
+                    prof_data.TakeExp(tech.base_cost);
+                    tech_to_get = tech.id;
+                    break;
+                }
+            }
+        }
+
+        if (string.IsNullOrEmpty(tech_to_get))
+            foreach (var tech_id in addition_data.TechsOwned)
+            {
+                TechAsset tech = TechLibrary.Instance.get(tech_id);
+                foreach (TechAsset insp_tech in tech.InspirationList)
+                    if (insp_tech.ProfessionList.Contains(profession_id) && insp_tech.base_cost <= prof_data.exp_left)
+                    {
+                        prof_data.TakeExp(insp_tech.base_cost);
+                        tech_to_get = insp_tech.id;
+                        break;
+                    }
+
+                if (!string.IsNullOrEmpty(tech_to_get)) break;
+            }
+
+        if (!string.IsNullOrEmpty(tech_to_get))
+            actor.AddTech(tech_to_get);
     }
 
     public static float ComputeScoreFor(this Actor actor, QuestInst quest)
     {
         var best_score = float.MinValue;
-        foreach (var job_id in quest.asset.allow_jobs)
-        {
-            ActorJob job = AssetManager.job_actor.get(job_id);
-            ActorJobAdditionAsset addition_asset = job.GetAdditionAsset();
-
-            float score = 0;
-            if (!addition_asset.IsTechsRequiredAccurate())
-                score -= job.tasks.Select(container => AssetManager.tasks_actor.get(container.id).GetAdditionAsset())
-                            .Count(task_addition => task_addition.IsTechsRequiredAccurate()) * 10;
-
-            var tech_required = addition_asset.GetTechsRequired();
-            var prof_about = addition_asset.GetProfessionsAbout();
-
-            if (tech_required.Count > 0)
-                score -= (tech_required.Count - tech_required.Count(actor.HasTech)) *
-                         NewProfessionLibrary.Instance.Count;
-
-            if (prof_about.Count > 0)
-                score += prof_about.Sum(prof => Math.Min((int)Math.Log10(actor.GetProfessionExp(prof)), 3));
-
-            best_score = Math.Max(score, best_score);
-        }
+        foreach (ActorJob job in quest.asset.allow_jobs) best_score = Math.Max(actor.ComputeScoreFor(job), best_score);
 
         return best_score;
+    }
+
+    public static float ComputeScoreFor(this Actor actor, ActorJob job)
+    {
+        ActorJobAdditionAsset addition_asset = job.GetAdditionAsset();
+
+        float score = 0;
+        ActorAdditionData addition_data = actor.GetAdditionData(true);
+        if (addition_data != null)
+            if (addition_data.JobScores.TryGetValue(job.id, out score))
+                return score;
+
+        if (!addition_asset.IsTechsRequiredAccurate())
+            score -= job.tasks.Select(container => AssetManager.tasks_actor.get(container.id).GetAdditionAsset())
+                        .Count(task_addition => task_addition.IsTechsRequiredAccurate()) * 10;
+
+        var tech_required = addition_asset.GetTechsRequired();
+        var prof_about = addition_asset.GetProfessionsAbout();
+
+        if (tech_required.Count > 0)
+            score -= (tech_required.Count - tech_required.Count(actor.HasTech)) *
+                     NewProfessionLibrary.Instance.Count;
+
+        if (prof_about.Count > 0)
+            score += prof_about.Sum(prof => Math.Min((int)Math.Log10(actor.GetProfessionExp(prof)), 3));
+        addition_data ??= actor.GetAdditionData();
+        addition_data.JobScoresInternal[job.id] = score;
+        return score;
     }
 }

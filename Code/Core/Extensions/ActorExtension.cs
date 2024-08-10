@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using AncientWarfare.Const;
 using AncientWarfare.Core.Additions;
+using AncientWarfare.Core.AI;
+using AncientWarfare.Core.Content;
 using AncientWarfare.Core.Force;
 using AncientWarfare.Utils;
 using NeoModLoader.api.attributes;
+using UnityEngine;
 
 namespace AncientWarfare.Core.Extensions
 {
@@ -288,12 +291,21 @@ namespace AncientWarfare.Core.Extensions
 
         public static float GetPossibilityToFindJobItSelf(this Actor actor)
         {
-            throw new NotImplementedException();
+            return 0.4f;
         }
 
         public static string FindJobItSelf(this Actor actor)
         {
-            throw new NotImplementedException();
+            var can_make_pregnant = false;
+            if (actor.getAge() >= (actor.asset.procreate_age == 3 ? 18 : actor.asset.procreate_age))
+                if (actor.data.gender == ActorGender.Female &&
+                    !actor.hasStatus(nameof(StatusEffectExtendLibrary.pregnant)))
+                    can_make_pregnant = true;
+
+            if (can_make_pregnant && Toolbox.randomChance(Mathf.Min(0.8f, actor.stats[S.fertility])))
+                return nameof(ActorJobExtendLibrary.produce_children);
+
+            return nameof(ActorJobExtendLibrary.random_move);
         }
     }
 }

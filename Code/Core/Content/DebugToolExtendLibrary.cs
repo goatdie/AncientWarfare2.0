@@ -58,7 +58,8 @@ public class DebugToolExtendLibrary : ExtendedLibrary<DebugToolAsset>, IManager
             if (data.ProfessionDatas?.Count > 0)
             {
                 tool.setText("professions:", "below");
-                foreach (var p_data in data.ProfessionDatas) tool.setText(p_data.Key, p_data.Value.exp);
+                foreach (var p_data in data.ProfessionDatas)
+                    tool.setText(p_data.Key, $"{p_data.Value.exp_left} / {p_data.Value.exp_until_now}");
 
                 tool.setSeparator();
             }

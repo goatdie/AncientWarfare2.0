@@ -311,7 +311,7 @@ namespace AncientWarfare.Core.Force
         /// <exception cref="NotImplementedException"></exception>
         public bool AllowUnlockTechWithoutProduction(Actor actor)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         /// <summary>
@@ -322,12 +322,12 @@ namespace AncientWarfare.Core.Force
         /// <exception cref="NotImplementedException"></exception>
         public bool HasTech(string tech)
         {
-            throw new NotImplementedException();
+            return Data.techs.Contains(tech);
         }
 
         public bool AllowFindJobItSelf(Actor actor)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }
